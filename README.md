@@ -1,6 +1,6 @@
 <div align="center">
 <a href="https://cossas-project.org/cossas-software/soarca"><img src="img/soarca-logo.svg"/>
-
+</div>
 
 # SOARCA-GUI
 
