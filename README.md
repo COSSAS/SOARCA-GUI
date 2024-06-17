@@ -1,33 +1,118 @@
-<div align="center">
-<a href="https://cossas-project.org/cossas-software/soarca"><img src="img/soarca-logo.svg"/>
+# 🔭 cng - run commands on file ChaNGes
 
+> Run commands on file change using glob patterns, heavily inspired by the excellent [onchange][onchange], but written in Go.
 
-[![https://cossas-project.org/portfolio/SOARCA/](https://img.shields.io/badge/website-cossas--project.org-orange)](https://cossas-project.org/portfolio/SOARCA/)
-[![Pipeline status](https://github.com/cossas/soarca/actions/workflows/ci.yml/badge.svg?development)](https://github.com/COSSAS/SOARCA/actions)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-</div></a>
+## Install
 
+Download a [release](https://github.com/danawoodman/cng/releases) for your platform and add it to your path.
 
-Automate threat and incident response workflows with CACAO security playbooks	
+Or just install with Golang:
 
-## Context and backgound 
+```shell
+go install github.com/danawoodman/cng
+```
 
-Organisations are increasingly automating threat and incident response through playbook driven security workflow orchestration. The essence of this concept is that specific security events trigger a predefined series of response actions that are executed with no or only limited human intervention. These automated workflows are captured in machine-readable security playbooks, which are typically executed by a so called Security Orchestration, Automation and Response (SOAR) tool. The market for SOAR solutions has matured significantly over the past years and present day products support sophisticated automation workflows and a wide array of integrations with external security tools and data resources. Typically, however, the technology employed is proprietary and not easily adaptable for research and experimentation purposes. SOARCA aims to offer an open-source alternative for such solutions that is free of vendor dependencies and supports standardized formats and technologies where applicable.
+## Usage
 
-SOARCA was developed for research and innovation purposes and allows SOC, CERT and CTI professionals to experiment with the concept of playbook driven security automation. It is open and extensible and its interfaces are well-defined and elaborately documented. Importantly, it offers native support for the emerging technology standards CACAOv2 and OpenC2, both developed and maintained by OASIS Open. CACAO (Collaborative Automated Course of Action Operations) provides a standardized scheme for machine-readable security playbooks while OpenC2 offers a standardized language for the command and control of cyber defense technologies (e.g. firewalls or IAM solutions).
+```shell
+# Run `go run ./cmd/myapp` when any .go or .html files change.
+# `-i` runs the command once initially, without any event
+# `-k`` kills running processes between changes
+# The command you want to run is followed by the `--` separator:
+cng -ik '**/*.go' 'templates/**/*.html' -- go run ./cmd/myapp
 
+# Run tests when your source or tests change:
+cng 'app/**/*.{ts,tsx}' '**/*.test.ts' -- npm test
 
-## Software
-SOARCA is a security orchestrator that can ingest, validate and execute CACAOv2 security playbooks. These playbooks and the triggers for their execution are consumed via a JSON API. SOARCA comes with native http(s), SSH and OpenC2 capabilities to interface with external tools and data resources. These native capabilities can be extended via a dedicated MQTT interface, allowing developers to compile additional integrations according their needs.
+# Wait 500ms before running the command:
+cng -d 500 '*.md' -- echo "changed!"
 
-Development is ongoing. The current version solely supports machine and command line interfaces, but a graphical user interface will be added in the foreseeable future. Furthermore, its current capability to run CACAOv2 playbooks sequentially will evolve towards the ability to run multiple playbooks in parallel. Such further developments will be announced and published on the SOARCA repository on Github.
+# Ignore/exclude some paths:
+cng -e 'path/to/exclude/*.go' '**/*.go' -- echo "changed!"
+```
 
+## Features
 
-## Documentation
+- Watch for changes using global patterns like `'*.go'` or `'src/**/*.jsx?'` (using [doublestar][doublestar], which is a much more flexible option than Go's built in glob matching). Watching is done using the very fast [fsnotify][fsnotify] library.
+- Run any command you want, like `go run ./cmd/myapp` or `npm test`
+- Optionally kill running processes between changes, useful for when running web servers for example. Importantly, cng kills all child processes as well, so your ports get properly freed between runs (avoids errors like `"bind: address already in use"`)
+- Optionally run the task immediately or only run when a change is detected (default)
+- Pass in a delay to wait between re-runs. If a change is detected in the delay window, the command will not be re-run. This is useful for when you're making a lot of changes at once and don't want to run the command for each change.
+- Optionally exclude paths from triggering the command
 
-For the latest documentation we refer to our [Github pages](https://cossas.github.io/SOARCA/).
+## Options
 
+```
+$ cng
+Runs a command when file changes are detected
 
-## Source Project
+Usage:
+  cng [flags] [paths] -- [command]
 
-More information on the source of the project can be found [here](https://cossas.github.io/SOARCA/docs/about/).
+Flags:
+  -a, --add               execute command for initially added paths
+  -d, --delay int         delay between process changes in milliseconds
+  -e, --exclude strings   exclude matching paths
+  -h, --help              help for cng
+  -i, --initial           execute command once on load without any event
+  -k, --kill              kill running processes between changes
+  -v, --verbose           enable verbose logging
+```
+
+## Notes and Limitations
+
+Currently, cng only supports a subset of the onchange commands, but I'm open to adding more. Please open an issue if you have a feature request.
+
+This is a very new project and hasn't been tested really anywhere outside of my machine (macOS), if you run into any issues, please open an issue!
+
+No test suite as of yet, but I aspire to add one 😇.
+
+## Motivations
+
+Mostly, this project was an excuse to play more with Go, but also I wanted a more portable version of onchange.
+
+I also couldn't find the tool I wanted in the Go (or broader) ecosystem that was a portable binary. I tried out [air][air], [gow][gow], [Task][task] and others but none of them really fit my needs (still great tools tho!). For me, air didn't work well when I tried it with `go run`. `gow` does work with `go run` but it's not generic enough to use outside of go projects. `Task` is a cool modern alternative to make but I also could get it working well with `go run` and killing my web server processes (and associated port binding).
+
+I loved onchange but the combo of requiring Node, not being maintained anymore, and not being a portable binary was a deal breaker for me (well that and I just wanted to try and make it myself in Go 😅).
+
+## Development
+
+PRs welcome!
+
+We use Cobra to parse command line arguments.
+
+```shell
+# Build the CLI
+make build
+
+# Run tests once
+make test
+make test-unit
+make test-e2e
+
+# Run tests in watch mode
+make watch-test
+make watch-unit-test
+make watch-e2e-test
+
+# Install the CLI locally
+make install
+
+# Reinstall the CLI after making changes:
+make watch-install
+```
+
+## License
+
+MIT
+
+## Credits
+
+Written by [Dana Woodman](https://danawoodman.com) with heavy inspiration from [onchange][onchange].
+
+[onchange]: https://github.com/Qard/onchange
+[air]: https://github.com/cosmtrek/air
+[gow]: https://github.com/mitranim/gow
+[task]: https://github.com/go-task/task
+[doublestar]: https://github.com/bmatcuk/doublestar
+[fsnotify]: https://github.com/fsnotify/fsnotify
