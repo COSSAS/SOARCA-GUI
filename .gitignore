@@ -6,3 +6,5 @@ build/*
 !build/build.md
 bin/*
 temp/*
+
+**_templ.go
