@@ -7,12 +7,6 @@
 A [Go](https://go.dev), [Templ](https://templ.guide/), [Tailwind CSS](https://tailwindcss.com/) and [HTMX](https://htmx.org/) based GUI for [SOARCA](https://github.com/COSSAS/SOARCA). 
 
 
-<center>
-  <img width="400" alt="SOARCA-GUI" src="img/screenshots/dashboard1.PNG" />
-</center>
-
-
-
 ## Quick Use
 
 Usage of this SOARCA-GUI is described [here](https://cossas.github.io/SOARCA/docs/).
