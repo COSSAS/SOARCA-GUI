@@ -2,6 +2,8 @@
 <a href="https://cossas-project.org/cossas-software/soarca"><img src="img/soarca-logo.svg"/>
 </div>
 
+# SOARCA-GUI
+
 Automate threat and incident response workflows with CACAO security playbooks
 
 SOARCA-GUI a [Go](https://go.dev), [Templ](https://templ.guide/), [Tailwind CSS](https://tailwindcss.com/) and [HTMX](https://htmx.org/) based GUI for [SOARCA](https://github.com/COSSAS/SOARCA). 
