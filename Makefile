@@ -3,7 +3,6 @@
 #-----------------------------------------------------
 # DEV
 #-----------------------------------------------------
-templ:
 
 dev:
 	@make -j dev-templ dev-tailwind dev-server 
@@ -42,8 +41,7 @@ dev-tailwind:
 # BUILD
 #-----------------------------------------------------
 
-build:
-	@make build-tailwind build-server build-templ
+build: build-tailwind build-server build-templ 
 
 build-server:
 	@go build -o bin/server ./server/main.go
