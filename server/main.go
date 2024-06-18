@@ -14,6 +14,8 @@ var (
 	Buildtime string
 )
 
+// @title           SOARCA-GUI
+// @version         0.0.1
 func main() {
 	errenv := godotenv.Load(".env")
 
