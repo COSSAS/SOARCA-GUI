@@ -1,0 +1,17 @@
+package layouts
+
+import "soarca-gui/views/components"
+
+templ DashboardLayout(title string, version string, homelink string) {
+   @BaseLayout() {
+    <body class="bg-blue-50 font-family-sans-serif flex">
+            @components.Navsidebar(title, version, homelink)
+        <div class="w-full flex flex-col h-screen overflow-y-hidden">
+            @components.HeaderBar() 
+            <div class="w-full overflow-x-hidden border-t flex flex-col">
+                {children...}          
+            </div>
+        </div>
+    </body>
+    }
+}

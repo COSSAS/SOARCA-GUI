@@ -1,0 +1,44 @@
+package components
+
+type link struct{
+    Name string
+    Href string
+}
+
+var links = []link{
+    //{Name: "Home", Href: "/home"},
+    {Name: "Reporting", Href: "/reporting"},
+    //{Name: "Fins", Href: "/fins"},
+    //{Name: "Integrations", Href: "/integrations"},
+    {Name: "Settings", Href: "/settings"},
+}
+
+templ RenderLinks(links []link) {
+    for _, link := range links {
+        <a href={templ.URL(link.Href)} class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item">
+        <i class="fas fa-tachometer-alt mr-3"></i> {link.Name} </a>
+    }
+}
+
+templ Navsidebar(title string, version string, documentation_url string) {
+    <aside class="relative bg-blue-600 dark:bg-blue-950 h-screen w-64 hidden sm:block shadow-xl">
+        <div class="p-6">
+            <a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
+            <img src="https://github.com/COSSAS/SOARCA/raw/development/img/soarca-logo.svg" class="w-30 py-3 md:py-0 g-image">
+            </a>
+            <button class="w-full bg-white text-blue-800 font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
+                <i class="fas fa-plus mr-3"></i> New Report
+            </button>
+        </div>
+        <nav class="text-white text-base font-semibold pt-3">
+        
+        @RenderLinks(links)
+        
+        </nav>
+        <a href={templ.URL(documentation_url)} class="absolute w-full bg-blue-700 bottom-0 active-nav-link text-white flex items-center justify-center py-4">
+            <i class="fas fa-arrow-circle-up mr-3"></i>
+                Documentation
+            <span style="font-style: italic;">{version}</span>
+        </a>
+    </aside>    
+}
