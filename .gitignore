@@ -6,5 +6,5 @@ build/*
 !build/build.md
 bin/*
 temp/*
-
+**/*.log
 **_templ.go
