@@ -33,3 +33,10 @@ func Reporting(app *gin.RouterGroup) {
 		reportingRoute.GET("/reportingcard/:id", handlers.ReportingCard)
 	}
 }
+
+func StatusGroup(app *gin.RouterGroup) {
+	statusRoute := app.Group("/")
+	{
+		statusRoute.GET("/indicator/card", handlers.ReportingDashboard)
+	}
+}

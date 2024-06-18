@@ -1,0 +1,24 @@
+package components
+
+
+import "fmt"
+
+type HealthIndicatorData struct {
+    Loaded bool
+    Healthy bool
+}
+
+
+templ HealthIndicator(data HealthIndicatorData) {
+    if data.Loaded {
+        <div
+            hx-get={ string(templ.URL(fmt.Sprintf("/status/indicator/card"))) }
+            hx-trigger="load"
+            hx-swap="outerHTML"
+            class="relative"
+        div> </div>
+
+    }
+    <span class="flex w-3 h-3 me-3 bg-green-500 rounded-full"></span>
+    <span class="flex w-3 h-3 me-3 bg-red-500 rounded-full"></span>
+}
