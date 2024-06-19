@@ -13,12 +13,36 @@ templ HealthIndicator(data HealthIndicatorData) {
     if data.Loaded {
         <div
             hx-get={ string(templ.URL(fmt.Sprintf("/status/indicator/card"))) }
-            hx-trigger="load"
+            hx-trigger="load, every 10s"
             hx-swap="outerHTML"
             class="relative"
-        div> </div>
-
+        > </div>
+    } else {
+        @Indicator(false, "data not loaded")
     }
-    <span class="flex w-3 h-3 me-3 bg-green-500 rounded-full"></span>
-    <span class="flex w-3 h-3 me-3 bg-red-500 rounded-full"></span>
+
+}
+
+templ Indicator(healthOk bool, message string) {
+    <span x-data="{ showTooltip: false }"
+        @mouseover="showTooltip = true"
+        @mouseout="showTooltip = false"
+        class="relative flex items-center"
+        x-bind:title="showTooltip ? 'Hover over me!' : ''"
+    >
+    if healthOk {
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <div x-show="showTooltip" class="absolute p-1 left-2 top-1/2 mt-5 w-32 transform -translate-y-1/2 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
+            <h1 class="text-sm text-green-500">{ message }</h1>
+        </div>
+        
+    } else {
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+        <div x-show="showTooltip" class="absolute p-1 left-2 top-1/2 mt-5 w-32 transform -translate-y-1/2 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
+            <h1 class="text-sm text-red-500">{ message }</h1>
+        </div>
+    }
+   </span>
 }

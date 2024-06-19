@@ -4,28 +4,9 @@ package components
 templ HeaderBar() {
 <header class="w-full items-center bg-slate-50 py-2 px-6 sm:flex">
 
-
-    <span x-data="{ showTooltip: false }"
-        @mouseover="showTooltip = true"
-        @mouseout="showTooltip = false"
-        class="relative flex items-center"
-        x-bind:title="showTooltip ? 'Hover over me!' : ''">
-
-        <!-- Indicator circle -->
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-
-        <!-- Animation circle for hover effect -->
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-
-        <!-- Tooltip content -->
-        <div x-show="showTooltip" class="absolute truncate left-3 mt-5 w-32 bg-white shadow-lg rounded-lg p-1">
-            <h1 class="text-sm text-green-500">Connection OK</h1>
-        </div>
-
-    </span>
+    @HealthIndicator(HealthIndicatorData{Loaded: false})
 
     <div class="w-1/2"></div>
-
     <div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
         <button @click="isOpen = !isOpen"
                 class="relative z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-gray-400 hover:border-blue-600 focus:border-blue-600 focus:outline-none">
@@ -39,6 +20,5 @@ templ HeaderBar() {
         </div>
     </div>
 </header>
-
 
 }
