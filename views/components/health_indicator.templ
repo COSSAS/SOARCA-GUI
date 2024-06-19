@@ -18,17 +18,17 @@ templ HealthIndicator(data HealthIndicatorData) {
             class="relative"
         > </div>
     } else {
-        @Indicator(false, "data not loaded")
+        @indicator(false, "data not loaded")
     }
 
 }
 
-templ Indicator(healthOk bool, message string) {
+templ indicator(healthOk bool, message string) {
     <span x-data="{ showTooltip: false }"
         @mouseover="showTooltip = true"
         @mouseout="showTooltip = false"
         class="relative flex items-center"
-        x-bind:title="showTooltip ? 'Hover over me!' : ''"
+        x-bind:title="showTooltip ? '' : ''"
     >
     if healthOk {
         <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
@@ -36,13 +36,13 @@ templ Indicator(healthOk bool, message string) {
         <div x-show="showTooltip" class="absolute p-1 left-2 top-1/2 mt-5 w-32 transform -translate-y-1/2 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
             <h1 class="text-sm text-green-500">{ message }</h1>
         </div>
-        
-    } else {
+            
+     } else {
         <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
         <div x-show="showTooltip" class="absolute p-1 left-2 top-1/2 mt-5 w-32 transform -translate-y-1/2 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
             <h1 class="text-sm text-red-500">{ message }</h1>
         </div>
-    }
+        }
    </span>
 }
