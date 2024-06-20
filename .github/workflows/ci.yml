@@ -35,8 +35,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+
       - name: lint
         run: |
           ls -la
