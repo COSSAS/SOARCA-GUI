@@ -52,4 +52,7 @@ build-templ:
 build-tailwind:
 	@npx tailwindcss -m -i ./views/assets/app.css -o ./public/public/styles.css $(ARGS)
 
+lint:
+	golangci-lint run --timeout -5m -v
+
 .DEFAULT_GOAL := dev  
