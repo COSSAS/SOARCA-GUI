@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Install swaggo
+      - name: Install Templ 
         run:  go install github.com/a-h/templ/cmd/templ@latest 
 
       - name: Setup node
