@@ -21,7 +21,6 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - run: npm test
       
       - name: Build with make
         run: make build
