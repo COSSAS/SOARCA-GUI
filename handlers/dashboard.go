@@ -18,7 +18,6 @@ func HomeDashboard(context *gin.Context) {
 }
 
 func ReportingDashboard(context *gin.Context) {
-
 	render := utils.NewTempl(context, http.StatusOK,
 		reporting.ReportingIndex())
 
@@ -26,13 +25,14 @@ func ReportingDashboard(context *gin.Context) {
 }
 
 func ReportingCard(context *gin.Context) {
-
 	id := context.Param("id")
 	fmt.Println(id)
-	updatedCard := components.ReportingCardData{Loaded: true,
-		ID:    fmt.Sprint(id),
-		Value: 10,
-		Name:  "Executed Playbooks"}
+	updatedCard := components.ReportingCardData{
+		Loaded: true,
+		ID:     fmt.Sprint(id),
+		Value:  10,
+		Name:   "Executed Playbooks",
+	}
 	render := utils.NewTempl(context, http.StatusOK, components.ReportingCard(updatedCard))
 
 	context.Render(http.StatusOK, render)

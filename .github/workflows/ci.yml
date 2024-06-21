@@ -1,0 +1,49 @@
+name: Ci
+
+on:
+  pull_request:
+    branches: [ master, development ]
+
+jobs:
+  build:
+    name: Build binary
+    runs-on: ubuntu-latest
+    container:
+      image: golangci/golangci-lint:latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Make repo safe
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+      - name: Install Templ 
+        run:  go install github.com/a-h/templ/cmd/templ@latest 
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      
+      - name: Build with make
+        run: make build
+
+  lint:
+    name: Lint go code with golangci
+    runs-on: ubuntu-latest
+    container:
+      image: golangci/golangci-lint:latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Templ 
+        run:  go install github.com/a-h/templ/cmd/templ@latest 
+
+      - name: lint
+        run: |
+          ls -la
+          make lint
+        shell: bash

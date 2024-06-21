@@ -1,4 +1,4 @@
-.PHONY: dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy
+.PHONY: dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean
 
 #-----------------------------------------------------
 # DEV
@@ -41,7 +41,7 @@ dev-tailwind:
 # BUILD
 #-----------------------------------------------------
 
-build: build-tailwind build-server build-templ 
+build:  build-templ build-tailwind build-server
 
 build-server:
 	@go build -o bin/server ./server/main.go
@@ -51,5 +51,12 @@ build-templ:
 
 build-tailwind:
 	@npx tailwindcss -m -i ./views/assets/app.css -o ./public/public/styles.css $(ARGS)
+
+lint: build-templ
+	GOFLAGS=-buildvcs=false golangci-lint run --timeout 5m0s -v
+
+clean:
+	find . -type f -name '*_templ.go' -exec rm -f {} ls **/*_templ.go
+
 
 .DEFAULT_GOAL := dev  
