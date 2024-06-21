@@ -38,6 +38,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Install Templ 
+        run:  go install github.com/a-h/templ/cmd/templ@latest 
 
       - name: lint
         run: |
