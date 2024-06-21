@@ -53,7 +53,7 @@ build-tailwind:
 	@npx tailwindcss -m -i ./views/assets/app.css -o ./public/public/styles.css $(ARGS)
 
 lint: build-templ
-	golangci-lint run --timeout 5m0s -v
+	GOFLAGS=-buildvcs=false golangci-lint run --timeout 5m0s -v
 
 clean:
 	find . -type f -name '*_templ.go' -exec rm -f {} ls **/*_templ.go
