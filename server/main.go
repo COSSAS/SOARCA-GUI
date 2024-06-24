@@ -26,5 +26,9 @@ func main() {
 	app := gin.Default()
 	routes.Setup(app)
 
-	app.Run(":8081")
+	err := app.Run(":8081")
+	if err != nil {
+		fmt.Println("failed to start server")
+	}
+	fmt.Println("exit")
 }
