@@ -3,6 +3,7 @@ package routes
 import (
 	"soarca-gui/handlers"
 	"soarca-gui/public"
+	"soarca-gui/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,6 +12,7 @@ func Setup(app *gin.Engine) {
 	publicRoutes := app.Group("/")
 	PublicRoutes(publicRoutes)
 	Reporting(publicRoutes)
+	StatusGroup(publicRoutes)
 }
 
 func PublicRoutes(app *gin.RouterGroup) {
@@ -35,8 +37,10 @@ func Reporting(app *gin.RouterGroup) {
 }
 
 func StatusGroup(app *gin.RouterGroup) {
-	statusRoute := app.Group("/")
+	statusHandler := handlers.NewStatusHandler(utils.GetEnv("SOARCA_URI", "http://localhost:8080"))
+
+	statusRoute := app.Group("/status")
 	{
-		statusRoute.GET("/indicator/card", handlers.ReportingDashboard)
+		statusRoute.GET("/indicator/card", statusHandler.HealthComponentHandler)
 	}
 }

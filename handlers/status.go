@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"soarca-gui/utils"
+	"soarca-gui/views/components"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -18,18 +23,24 @@ func NewStatusHandler(host string) statusHandler {
 	return statusHandler{Host: host}
 }
 
-func HealthHandler() {
-	// id := context.Param("id")
-	// fmt.Println(id)
-	// updatedCard := components.ReportingCardData{
-	// 	Loaded: true,
-	// 	ID:     fmt.Sprint(id),
-	// 	Value:  10,
-	// 	Name:   "Executed Playbooks",
-	// }
-	// render := utils.NewTempl(context, http.StatusOK, components.ReportingCard(updatedCard))
+func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
+	response, err := s.getPongFromStatus()
+	indicatorData := components.HealthIndicatorData{Loaded: true}
 
-	// context.Render(http.StatusOK, render)
+	switch {
+	case err != nil:
+		indicatorData.Healthy = false
+		indicatorData.Message = "error on backend call"
+	case response == "pong":
+		indicatorData.Healthy = true
+		indicatorData.Message = "connected"
+	default:
+		indicatorData.Healthy = false
+		indicatorData.Message = "wrong msg backend"
+	}
+
+	render := utils.NewTempl(context, http.StatusOK, components.HealthIndicator(indicatorData))
+	context.Render(http.StatusOK, render)
 }
 
 func (s *statusHandler) getPongFromStatus() (string, error) {
