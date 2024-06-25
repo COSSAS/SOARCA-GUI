@@ -21,6 +21,7 @@ func Setup(app *gin.Engine) {
 	PublicRoutes(publicRoutes)
 	Reporting(publicRoutes)
 	StatusGroup(publicRoutes)
+	SettingsRouter(publicRoutes)
 }
 
 func PublicRoutes(app *gin.RouterGroup) {
@@ -51,5 +52,12 @@ func StatusGroup(app *gin.RouterGroup) {
 	statusRoute := app.Group("/status")
 	{
 		statusRoute.GET("/indicator/card", statusHandler.HealthComponentHandler)
+	}
+}
+
+func SettingsRouter(app *gin.RouterGroup) {
+	reportingRoute := app.Group("/settings")
+	{
+		reportingRoute.GET("/", handlers.SettingsDashboard)
 	}
 }
