@@ -14,8 +14,6 @@ templ SettingsIndex() {
 
 templ settingBase() {
 
-
-
   <h1 class="text-3xl text-black pb-2">Settings</h1>
   <div class="grid grid-cols-8 pt-3 sm:grid-cols-10">
     <div class="relative my-4 w-56 sm:hidden">
@@ -26,8 +24,8 @@ templ settingBase() {
       </svg>
       <ul class="max-h-0 select-none flex-col overflow-hidden rounded-b-lg shadow-md transition-all duration-300 peer-checked:max-h-56 peer-checked:py-3">
         <li class="cursor-pointer px-3 py-2 text-sm text-slate-600 hover:bg-blue-700 hover:text-white">SOARCA</li>
-        <li class="cursor-pointer px-3 py-2 text-sm text-slate-600 hover:bg-blue-700 hover:text-white">Team</li>
-        <li class="cursor-pointer px-3 py-2 text-sm text-slate-600 hover:bg-blue-700 hover:text-white">Others</li>
+        <li class="cursor-pointer px-3 py-2 text-sm text-slate-600 hover:bg-blue-700 hover:text-white">Accounts</li>
+        <li class="cursor-pointer px-3 py-2 text-sm text-slate-600 hover:bg-blue-700 hover:text-white">Integrations</li>
       </ul>
     </div>
 
@@ -35,11 +33,10 @@ templ settingBase() {
       <ul>
         <li class="mt-5 cursor-pointer border-l-2 border-transparent px-2 py-2 font-semibold transition hover:border-l-blue-700 hover:text-blue-700">SOARCA</li>
         <li class="mt-5 cursor-pointer border-l-2 border-l-blue-700 px-2 py-2 font-semibold text-blue-700 transition hover:border-l-blue-700 hover:text-blue-700">Accounts</li>
-
         <li class="mt-5 cursor-pointer border-l-2 border-transparent px-2 py-2 font-semibold transition hover:border-l-blue-700 hover:text-blue-700">Integrations</li>
       </ul>
     </div>
-
+    
     <div class="col-span-8 overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 sm:shadow">
       <div class="pt-4">
         <h1 class="py-2 text-2xl font-semibold">Account settings</h1>
