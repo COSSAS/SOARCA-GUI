@@ -13,7 +13,7 @@ import (
 func Setup(app *gin.Engine) {
 	app.GET("/404-page", handlers.ErrorPage)
 	app.NoRoute(func(ctx *gin.Context) {
-		ctx.Redirect(http.StatusMovedPermanently, "/404-page")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
 	publicRoutes := app.Group("/")
