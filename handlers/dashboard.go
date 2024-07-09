@@ -33,6 +33,7 @@ func ReportingCard(context *gin.Context) {
 		Value:  10,
 		Name:   "Executed Playbooks",
 	}
+
 	render := utils.NewTempl(context, http.StatusOK, components.ReportingCard(updatedCard))
 
 	context.Render(http.StatusOK, render)

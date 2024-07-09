@@ -56,7 +56,8 @@ lint: build-templ
 	GOFLAGS=-buildvcs=false golangci-lint run --timeout 5m0s -v
 
 clean:
-	find . -type f -name '*_templ.go' -exec rm -f {} ls **/*_templ.go
+	find . -type f -name '*_templ.go' -exec rm -f {} \;
+	
 
 
 .DEFAULT_GOAL := dev  
