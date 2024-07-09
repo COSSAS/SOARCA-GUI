@@ -5,6 +5,14 @@ import (
 	"soarca-gui/views/layouts"
 )
 
+type report struct{
+    ExecutionID string
+    PlaybookID string
+    
+    Status int
+
+}
+
 var initialCards = []components.ReportingCardData{
 	{Loaded: false, ID: "1"},
 	{Loaded: false, ID: "2"},
@@ -16,6 +24,8 @@ templ ReportingIndex() {
 		@ReportList()
 	}
 }
+
+
 
 templ ReportList() {
 	<div class="flex flex-col">

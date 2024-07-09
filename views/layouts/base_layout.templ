@@ -17,7 +17,6 @@ templ Head(title string, description string, content string) {
 		<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer><
         // <script src="/public/hyperscript@0.9.12.js" defer></script>
         // <script src="/public/alpine@3.13.3.js" defer></script>
-        <script src="https://unpkg.com/feather-icons"></script>
         <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
 
@@ -27,9 +26,12 @@ templ Head(title string, description string, content string) {
 }
 
 templ BaseLayout() {
-	<!DOCTYPE html>
-	<html lang="en">
-		@Head(appTitle, "", "")
-		{ children... }
-	</html>
+    <!DOCTYPE html>
+    <html lang="en" >
+        @Head(apptitle,"","")
+        { children... }
+    </html>
+    <script>
+        feather.replace();
+    </script>
 }
