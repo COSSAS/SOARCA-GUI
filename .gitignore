@@ -23,3 +23,5 @@ docs/.hugo_build.lock
 **.hugo_build.lock
 **_templ.go
 tmp/*
+
+public/public/styles.css
