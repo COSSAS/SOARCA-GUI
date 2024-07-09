@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"net/http"
+
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
@@ -11,7 +13,7 @@ import (
 func Setup(app *gin.Engine) {
 	app.GET("/404-page", handlers.ErrorPage)
 	app.NoRoute(func(ctx *gin.Context) {
-		ctx.Redirect(301, "/404-page")
+		ctx.Redirect(http.StatusNotFound, "/404-page")
 	})
 
 	publicRoutes := app.Group("/")
