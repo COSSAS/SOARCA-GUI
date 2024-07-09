@@ -9,7 +9,13 @@ import (
 )
 
 func Setup(app *gin.Engine) {
+	app.GET("/404-page", handlers.ErrorPage)
+	app.NoRoute(func(ctx *gin.Context) {
+		ctx.Redirect(301, "/404-page")
+	})
+
 	publicRoutes := app.Group("/")
+
 	PublicRoutes(publicRoutes)
 	Reporting(publicRoutes)
 	StatusGroup(publicRoutes)
@@ -25,6 +31,7 @@ func PublicRoutes(app *gin.RouterGroup) {
 		publicRoute.GET("/dashboard", handlers.HomeDashboard)
 
 	}
+
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 

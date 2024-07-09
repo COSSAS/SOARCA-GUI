@@ -8,9 +8,15 @@ import (
 	"soarca-gui/views"
 	"soarca-gui/views/components"
 	"soarca-gui/views/dashboard/reporting"
+	"soarca-gui/views/layouts"
 
 	"github.com/gin-gonic/gin"
 )
+
+func ErrorPage(context *gin.Context) {
+	render := utils.NewTempl(context, http.StatusOK, layouts.Error404())
+	context.Render(http.StatusOK, render)
+}
 
 func HomeDashboard(context *gin.Context) {
 	render := utils.NewTempl(context, http.StatusOK, views.Home(nil))
