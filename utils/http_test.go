@@ -16,8 +16,8 @@ type ResponseBody struct {
 	Status string `json:"status"`
 }
 
-func TestMakeJsonRequest(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func MockHTTPJsonServer(responseBody RequestBody) *httptest.Server {
+	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var reqBody RequestBody
 		err := json.NewDecoder(r.Body).Decode(&reqBody)
 		if err != nil {
@@ -30,20 +30,26 @@ func TestMakeJsonRequest(t *testing.T) {
 			return
 		}
 
-		respBody := ResponseBody{
-			Status: "success",
-		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(respBody)
+		json.NewEncoder(w).Encode(responseBody)
 	}))
-	defer ts.Close()
 
+	return testServer
+}
+
+func TestMakeJsonRequest(t *testing.T) {
 	reqBody := RequestBody{
 		Message: "test message",
 	}
 
-	var respBody ResponseBody
-	respBody, err := utils.MakeJsonRequest(ts.URL, http.MethodPost, reqBody, respBody)
+	respBody := ResponseBody{
+		Status: "success",
+	}
+
+	testServer := MockHTTPJsonServer(reqBody)
+	defer testServer.Close()
+
+	respBody, err := utils.MakeJsonRequest(testServer.URL, http.MethodGet, reqBody, respBody)
 	if err != nil {
 		t.Fatalf("MakeJsonRequest returned an error: %v", err)
 	}
