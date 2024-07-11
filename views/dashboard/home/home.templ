@@ -5,6 +5,26 @@ import (
 	"soarca-gui/views/layouts"
 )
 
+templ dummyCardReadmore(title string, text string) {
+	<div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+		<a href="#">
+			<img class="rounded-t-lg" src="https://www.simplilearn.com/ice9/free_resources_article_thumb/What_is_Data_Types_of_Data_and_How_To_Analyze_Data.jpg" alt=""/>
+		</a>
+		<div class="p-8 align-middle">
+			<a href="#">
+				<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{ title }</h5>
+			</a>
+			<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{ text }</p>
+			<a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+				Read more
+				<svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"></path>
+				</svg>
+			</a>
+		</div>
+	</div>
+}
+
 templ dummyActivity() {
 	<div class="p-4">
 		<div class="flex items-center justify-between mb-4">
@@ -68,27 +88,19 @@ templ Home(comp templ.Component) {
 	@layouts.DashboardLayout("SOARCA-GUI", "", "") {
 		@banner()
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
-			@card.Card(card.WithHeight24(), card.WithShadow())
-			@card.Card(card.WithHeight24(), card.WithShadow())
-			@card.Card(card.WithHeight24(), card.WithShadow())
-			@card.Card(card.WithHeight24(), card.WithShadow())
+			@card.Card(card.WithHeight24())
+			@card.Card(card.WithHeight24())
+			@card.Card(card.WithHeight24())
+			@card.Card(card.WithHeight24())
 		</div>
 		<div class="grid grid-cols-2 gap-4 mb-4">
-			@card.Card(card.WithShadow()) {
+			@card.Card() {
 				@dummyActivity()
 			}
-			<div
-				class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-			></div>
-			<div
-				class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-			></div>
-			<div
-				class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-			></div>
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-2 ">
+				@dummyCardReadmore("Learn how to expand SOARCA capabilities", "The goal of the protocol is to provide a simple and robust way to communicate between the SOARCA orchestrator and the capabilities (Fins) that can provide extra functions")
+				@dummyCardReadmore("Learn how to expand SOARCA capabilities", "")
+			</div>
 		</div>
-		<div
-			class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-		></div>
 	}
 }
