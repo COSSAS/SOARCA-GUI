@@ -5,6 +5,10 @@ type link struct {
 	Href string
 }
 
+const (
+	homeLink = "/dashboard"
+)
+
 var links = []link{
 	{Name: "Reporting", Href: "/reporting"},
 	{Name: "Settings", Href: "/settings"},
@@ -21,7 +25,7 @@ templ RenderLinks(links []link) {
 templ Navsidebar(title string, version string, documentation_url string) {
 	<aside class="relative bg-blue-600 dark:bg-blue-950 h-screen w-64 hidden sm:block shadow-xl">
 		<div class="p-6">
-			<a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
+			<a href={ templ.URL(homeLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
 				<img src="https://github.com/COSSAS/SOARCA/raw/development/img/soarca-logo.svg" class="w-30 py-3 md:py-0 g-image"/>
 			</a>
 			<button class="w-full bg-white text-blue-800 font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
