@@ -1,8 +1,7 @@
 package views
 
 import (
-	"soarca-gui/views/components"
-	"soarca-gui/views/components"
+	"soarca-gui/views/components/card"
 	"soarca-gui/views/layouts"
 )
 
@@ -26,10 +25,10 @@ templ Home(comp templ.Component) {
 	@layouts.DashboardLayout("SOARCA-GUI", "", "") {
 		@banner()
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
-			@card.Card(card.WithHeight24(),card.WithShadow()
-			@components.Card(withShadow(), withHeight24())
-			@components.Card(withShadow(), withHeight24())
-			@components.Card(withShadow(), withHeight24())
+			@card.Card(card.WithHeight24(), card.WithShadow())
+			@card.Card(card.WithHeight24(), card.WithShadow())
+			@card.Card(card.WithHeight24(), card.WithShadow())
+			@card.Card(card.WithHeight24(), card.WithShadow())
 		</div>
 		<div class="grid grid-cols-2 gap-4 mb-4">
 			<div
