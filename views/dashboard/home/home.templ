@@ -1,64 +1,51 @@
+package dashboard
 
-// templ Home(components templ.Component){
+import (
+	"soarca-gui/views/components/card"
+	"soarca-gui/views/layouts"
+)
 
-//     @layouts.DashboardLayout("SOARCA-GUI","",""){
-//        <main class="w-full flex-grow px-4 pt-6">
-//         <div class="grid gap-4 lg:gap-4 md:grid-cols-3 p-4 pt-1">
-//             <div class="relative p-2 rounded-lg bg-white border-gray-200 shadow-lg shadow-blue-500/50 dark:bg-gray-800 md:col-span-2">
+templ banner() {
+	<div class="mx-auto">
+		<div class="flex items-center justify-between mb-4 h-20 rounded-lg bg-gradient-to-r from-blue-600 to-fuchsia-500 px-8 text-white shadow-lg">
+			<div class="align-middle lg:my-8 lg:w-1/2">
+				<h1 class="text-2xl dark:text-white">Welcome 'some name' back to SOARCA</h1>
+				<button type="submit" class="group flex items-center cursor-pointer text-xl font-semibold leading-tight text-white">
+					Go to reporting
+					<svg xmlns="http://www.w3.org/2000/svg" class="group-hover:ml-8 ml-4 h-7 w-7 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+}
 
-//  <div class="container w-full">
-//         <div class="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal" style="font-family:Georgia,serif;">
-//             <!-- Title -->
-//             <div class="font-sans">
-//                 <h1 class="font-bold font-sans break-normal text-gray-900 pt-6 pb-2 text-3xl md:text-4xl">Welcome to SOARCA</h1>
-//                 <p class="text-sm md:text-base font-normal text-gray-600">Published 10 July 2024</p>
-//             </div>
-
-//             <!-- Post Content -->
-//             <!-- Lead Para -->
-//             <p class="py-6">
-//                 Security Orchestrator for Advanced Response to Cyber Attacks​ - SOARCA
-//             </p>
-
-//             <p class="py-6">
-//                 Organisations are increasingly automating threat and incident response through playbook driven security workflow orchestration. The essence of this concept is that specific security events trigger a predefined series of response actions that are executed with no or only limited human intervention. These automated workflows are captured in machine-readable security playbooks, which are typically executed by a so-called Security Orchestration, Automation and Response (SOAR) tool. The market for SOAR solutions has matured significantly over the past years and present-day products support sophisticated automation workflows and a wide array of integrations with external security tools and data resources. Typically, however, the technology employed is proprietary and not easily adaptable for research and experimentation purposes. SOARCA aims to offer an open-source alternative for such solutions that is free of vendor dependencies and supports standardized formats and technologies where applicable.
-//             </p>
-
-//             <p class="py-6">
-//                 SOARCA, TNO’s open-source SOAR, was developed for research and innovation purposes and allows SOC, CERT and CTI professionals to experiment with the concept of playbook-driven security automation. It is open and extensible and its interfaces are well-defined and elaborately documented. It also offers native support for two emerging technology standards, both developed and maintained by OASIS Open:
-//             </p>
-
-//             <ol>
-//                 <li class="py-3">
-//                     Maecenas accumsan lacus sit amet elementum porta. Aliquam eu libero lectus. Fusce vehicula dictum mi. In non dolor at sem ullamcorper venenatis ut sed dui. Ut ut est quam. Suspendisse quam quam, commodo sit amet placerat in, interdum a ipsum. Morbi sit amet tellus scelerisque tortor semper posuere.
-//                 </li>
-//                 <li class="py-3">
-//                     Morbi varius posuere blandit. Praesent gravida bibendum neque eget commodo. Duis auctor ornare mauris, eu accumsan odio viverra in. Proin sagittis maximus pharetra. Nullam lorem mauris, faucibus ut odio tempus, ultrices aliquet ex. Nam id quam eget ipsum luctus hendrerit. Ut eros magna, eleifend ac ornare vulputate, pretium nec felis.
-//                 </li>
-//                 <li class="py-3">
-//                     Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc vitae pretium elit. Cras leo mauris, tristique in risus ac, tristique rutrum velit. Mauris accumsan tempor felis vitae gravida. Cras egestas convallis malesuada. Etiam ac ante id tortor vulputate pretium. Maecenas vel sapien suscipit, elementum odio et, consequat tellus.
-//                 </li>
-//             </ol>
-
-//             <blockquote class="border-l-4 border-green-500 italic my-8 pl-8 md:pl-12">
-//                 Example of blockquote - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at ipsum eu nunc commodo posuere et sit amet ligula.
-//             </blockquote>
-
-//         </div>
-//     </div>
-//     </div>
-
- 
-
-                           
-                      
-                
-//                 <div class="relative p-2 rounded-lg bg-white border-gray-200 shadow-lg shadow-blue-500/50 dark:bg-gray-800 md:col-span-1">
-//                     <h2 class="text-xl font-bold mb-4">Card Title 2</h2>
-//                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.</p>
-//                 </div>
-
-//             </div>
-//         </main>
-//     }
-// }
+templ Home(comp templ.Component) {
+	@layouts.DashboardLayout("SOARCA-GUI", "", "") {
+		@banner()
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+			@card.Card(card.WithHeight24(), card.WithShadow())
+			@card.Card(card.WithHeight24(), card.WithShadow())
+			@card.Card(card.WithHeight24(), card.WithShadow())
+			@card.Card(card.WithHeight24(), card.WithShadow())
+		</div>
+		<div class="grid grid-cols-2 gap-4 mb-4">
+			<div
+				class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
+			></div>
+			<div
+				class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
+			></div>
+			<div
+				class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
+			></div>
+			<div
+				class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
+			></div>
+		</div>
+		<div
+			class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
+		></div>
+	}
+}

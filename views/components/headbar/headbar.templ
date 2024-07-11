@@ -1,8 +1,10 @@
-package components
+package headbar
+
+import "soarca-gui/views/components"
 
 templ HeaderBar() {
 	<header class="w-full items-center bg-slate-50 py-2 px-6 sm:flex">
-		@HealthIndicator(HealthIndicatorData{Loaded: false})
+		@components.HealthIndicator(components.HealthIndicatorData{Loaded: false})
 		<div class="w-1/2"></div>
 		<div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
 			<button
