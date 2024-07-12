@@ -1,24 +1,33 @@
 package navbar
 
+import "soarca-gui/utils"
+
 type link struct {
 	Name string
 	Href string
+	Icon string
 }
 
 const (
-	homeLink = "/dashboard"
+	homeLink                = "/dashboard"
+	defaultLinkInputClasses = "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
 )
 
 var links = []link{
-	{Name: "Reporting", Href: "/reporting"},
-	{Name: "Settings", Href: "/settings"},
+
+	{Name: "Reporting", Href: "/reporting", Icon: "activity"},
+	{Name: "Settings", Href: "/settings", Icon: "settings"},
 }
 
-templ RenderLinks(links []link) {
+templ linkWithIcon(link link) {
+	<a href={ templ.URL(link.Href) } { utils.CreateAttrs(defaultLinkInputClasses, "")... }>
+		<i { utils.CreateAttrs("mr-3","", utils.Icon(link.Icon))... }></i> { link.Name }
+	</a>
+}
+
+templ renderLinks(links []link) {
 	for _, link := range links {
-		<a href={ templ.URL(link.Href) } class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item">
-			<i class="fas fa-tachometer-alt mr-3"></i> { link.Name }
-		</a>
+		@linkWithIcon(link)
 	}
 }
 
@@ -33,7 +42,7 @@ templ Navsidebar(title string, version string, documentation_url string) {
 			</button>
 		</div>
 		<nav class="text-white text-base font-semibold pt-3">
-			@RenderLinks(links)
+			@renderLinks(links)
 		</nav>
 		<a href={ templ.URL(documentation_url) } class="absolute w-full bg-blue-700 bottom-0 active-nav-link text-white flex items-center justify-center py-4">
 			<i class="fas fa-arrow-circle-up mr-3"></i>

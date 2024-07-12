@@ -13,6 +13,7 @@ func CreateAttrs(baseClass string, defaultClass string, opts ...func(*templ.Attr
 	for _, o := range opts {
 		o(&attrs)
 	}
+	fmt.Println(attrs)
 	return attrs
 }
 
@@ -25,5 +26,12 @@ func Class(class string) func(*templ.Attributes) {
 		attr := *attrs
 		class := attr["class"].(string) + " " + class
 		attr["class"] = class
+	}
+}
+
+func Icon(iconName string) func(*templ.Attributes) {
+	return func(attrs *templ.Attributes) {
+		attr := *attrs
+		attr["data-feather"] = iconName
 	}
 }
