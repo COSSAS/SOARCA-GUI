@@ -11,6 +11,8 @@ const (
 
 templ DashboardLayout(title string, version string, homelink string) {
 	@BaseLayout() {
+		<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<body class="bg-blue-50 font-family-sans-serif flex">
 			@navbar.Navsidebar(title, version, homelink)
 			<div class="w-full flex flex-col h-screen overflow-y-hidden">
