@@ -4,6 +4,9 @@
 
 # SOARCA-GUI
 
+> [!WARNING]
+> SOARCA-GUI is still in development and features for the base version v0.1 are still being added.
+
 A [Go](https://go.dev), [Templ](https://templ.guide/), [Tailwind CSS](https://tailwindcss.com/) and [HTMX](https://htmx.org/) based GUI for [SOARCA](https://github.com/COSSAS/SOARCA). 
 
 
