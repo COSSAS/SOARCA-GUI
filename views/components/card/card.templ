@@ -1,0 +1,18 @@
+package card
+
+import "soarca-gui/utils"
+
+const cardBaseClass = "p-2 rounded-lg bg-white border-gray-100 shadow-lg dark:bg-gray-800"
+
+templ Card(opts ...func(*templ.Attributes)) {
+	<div { utils.CreateAttrs(cardBaseClass, "", opts...)... }>
+		{ children... }
+	</div>
+}
+
+func WithShadow() func(*templ.Attributes) {
+	return utils.Class("shadow-blue-500/50")
+}
+func WithHeight24() func(*templ.Attributes) {
+	return utils.Class("h-24")
+}

@@ -1,73 +1,64 @@
 package components
 
-
-
 import "fmt"
 
-
 const (
-    statusCardEndpoint = "/status/indicator/card"
-    pollInterval = "every 30s"
+	statusCardEndpoint = "/status/indicator/card"
+	pollInterval       = "every 30s"
 )
+
 type HealthIndicatorData struct {
-    Loaded bool
-    Message string
-    Healthy bool
+	Loaded  bool
+	Message string
+	Healthy bool
 }
 
-
-
-
 templ HealthIndicator(data HealthIndicatorData) {
- 
-    if !data.Loaded {
-        <div
-            hx-get={ string(templ.URL(fmt.Sprintf(statusCardEndpoint))) }
-            hx-trigger="load"
-            hx-swap="outerHTML"
-            class="relative"
-        >
-        @indicator(false, "not loaded")
-    </div> 
-
-    } else {
-        <div
-            hx-get={ string(templ.URL(fmt.Sprintf(statusCardEndpoint))) }
-            hx-trigger={ pollInterval }
-            hx-swap="innerHTML"
-            class="relative"
-        >
-            @indicator(data.Healthy, data.Message)
-        </div>
-    }
-
+	if !data.Loaded {
+		<div
+			hx-get={ string(templ.URL(fmt.Sprintf(statusCardEndpoint))) }
+			hx-trigger="load"
+			hx-swap="outerHTML"
+			class="relative"
+		>
+			@indicator(false, "not loaded")
+		</div>
+	} else {
+		<div
+			hx-get={ string(templ.URL(fmt.Sprintf(statusCardEndpoint))) }
+			hx-trigger={ pollInterval }
+			hx-swap="innerHTML"
+			class="relative"
+		>
+			@indicator(data.Healthy, data.Message)
+		</div>
+	}
 }
 
 templ indicator(healthOk bool, message string) {
-    <span x-data="{ showTooltip: false }"
-        @mouseover="showTooltip = true"
-        @mouseout="showTooltip = false"
-        class="relative flex items-center"
-        x-bind:title="showTooltip ? '' : ''"
-    >
-    if healthOk {
-    <div class="relative inline-flex items-center">
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-        
-        <div x-show="showTooltip" class="absolute left-2 top-1/2 transform -translate-y-1/2 mt-5 p-1 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
-            <h1 class="text-sm text-green-500 whitespace-nowrap">{ message }</h1>
-        </div>
-    </div>
-     } else {
-    <div class="relative inline-flex items-center">
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-        
-        <div x-show="showTooltip" class="absolute left-2 top-1/2 transform -translate-y-1/2 mt-5 p-1 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
-            <h1 class="text-sm text-red-500 whitespace-nowrap">{ message }</h1>
-        </div>
-    </div>
-        }
-   </span>
+	<span
+		x-data="{ showTooltip: false }"
+		@mouseover="showTooltip = true"
+		@mouseout="showTooltip = false"
+		class="relative flex items-center"
+		x-bind:title="showTooltip ? '' : ''"
+	>
+		if healthOk {
+			<div class="relative inline-flex items-center">
+				<span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+				<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+				<div x-show="showTooltip" class="absolute left-2 top-1/2 transform -translate-y-1/2 mt-5 p-1 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
+					<h1 class="text-sm text-green-500 whitespace-nowrap">{ message }</h1>
+				</div>
+			</div>
+		} else {
+			<div class="relative inline-flex items-center">
+				<span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+				<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+				<div x-show="showTooltip" class="absolute left-2 top-1/2 transform -translate-y-1/2 mt-5 p-1 bg-white text-center rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg">
+					<h1 class="text-sm text-red-500 whitespace-nowrap">{ message }</h1>
+				</div>
+			</div>
+		}
+	</span>
 }

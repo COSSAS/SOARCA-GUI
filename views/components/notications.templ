@@ -1,21 +1,20 @@
 package components
 
-
 templ TitledWarningNofication(title string, message string) {
-    <div role="alert">
-        <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
-            { title }
-        </div>
-        <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
-            <p>{ message } </p>
-        </div>
-    </div>
+	<div role="alert">
+		<div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+			{ title }
+		</div>
+		<div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+			<p>{ message } </p>
+		</div>
+	</div>
 }
 
 templ WarningNofication(message string) {
-    <div role="alert">
-        <div class="bg-red-100 px-6 py-3 mx-2 my-4 rounded-full text-sm flex items-center mx-auto max-w-lg">
-            <span class="text-red-600"> { message } </span>
-       </div>
-    </div>
+	<div role="alert">
+		<div class="bg-red-100 px-6 py-3 mx-2 my-4 rounded-full text-sm flex items-center mx-auto max-w-lg">
+			<span class="text-red-600">{ message } </span>
+		</div>
+	</div>
 }

@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"soarca-gui/utils"
-	"soarca-gui/views"
 	"soarca-gui/views/components"
+	dashboard "soarca-gui/views/dashboard/home"
 	"soarca-gui/views/dashboard/reporting"
 	"soarca-gui/views/layouts"
 
@@ -19,7 +19,7 @@ func ErrorPage(context *gin.Context) {
 }
 
 func HomeDashboard(context *gin.Context) {
-	render := utils.NewTempl(context, http.StatusOK, views.Home(nil))
+	render := utils.NewTempl(context, http.StatusOK, dashboard.Home(nil))
 	context.Render(http.StatusOK, render)
 }
 
