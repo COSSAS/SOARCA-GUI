@@ -14,6 +14,7 @@ swaggerdocs/*
 test/cacao/flatfile-db-example.json
 test/routes/__debug_bin2988553005
 
+node_modules/*
 
 docs/public
 docs/resources/
