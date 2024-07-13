@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"soarca-gui/utils"
-	"soarca-gui/views/components"
+	"soarca-gui/views/components/miscellaneous"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func NewStatusHandler(host string) statusHandler {
 
 func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
 	response, err := s.getPongFromStatus()
-	indicatorData := components.HealthIndicatorData{Loaded: true}
+	indicatorData := miscellaneous.HealthIndicatorData{Loaded: true}
 
 	switch {
 	case err != nil:
@@ -39,7 +39,7 @@ func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
 		indicatorData.Message = "wrong msg backend"
 	}
 
-	render := utils.NewTempl(context, http.StatusOK, components.HealthIndicator(indicatorData))
+	render := utils.NewTempl(context, http.StatusOK, miscellaneous.HealthIndicator(indicatorData))
 	context.Render(http.StatusOK, render)
 }
 
