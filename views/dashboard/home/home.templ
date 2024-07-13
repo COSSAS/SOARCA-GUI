@@ -161,7 +161,7 @@ templ banner() {
 }
 
 templ Home(comp templ.Component) {
-	@layouts.DashboardLayout("SOARCA-GUI", "", "") {
+	@layouts.DashboardLayout() {
 		@banner()
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
 			@card.Card(card.WithHeight24())

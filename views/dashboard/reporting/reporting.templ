@@ -5,12 +5,11 @@ import (
 	"soarca-gui/views/layouts"
 )
 
-type report struct{
-    ExecutionID string
-    PlaybookID string
-    
-    Status int
+type report struct {
+	ExecutionID string
+	PlaybookID  string
 
+	Status int
 }
 
 var initialCards = []components.ReportingCardData{
@@ -19,13 +18,11 @@ var initialCards = []components.ReportingCardData{
 	{Loaded: false, ID: "3"}}
 
 templ ReportingIndex() {
-	@layouts.DashboardLayout("SOARCA-GUI", "", "") {
+	@layouts.DashboardLayout() {
 		@ReportingBase()
 		@ReportList()
 	}
 }
-
-
 
 templ ReportList() {
 	<div class="flex flex-col">

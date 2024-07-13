@@ -6,15 +6,18 @@ import (
 )
 
 const (
-	version = "v0.1"
+	version          = "v0.1"
+	title            = "SOARCA-GUI"
+	dashboardPath    = "/dashboard"
+	documentationUrl = "https://cossas.github.io/SOARCA/docs"
 )
 
-templ DashboardLayout(title string, version string, homelink string) {
+templ DashboardLayout() {
 	@BaseLayout() {
 		<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<body class="bg-blue-50 font-family-sans-serif flex">
-			@navbar.Navsidebar(title, version, homelink)
+			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl)
 			<div class="w-full flex flex-col h-screen overflow-y-hidden">
 				@headbar.HeaderBar()
 				<div class="w-full overflow-x-hidden border-t flex flex-col">

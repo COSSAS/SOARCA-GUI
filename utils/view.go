@@ -29,6 +29,7 @@ func Class(class string) func(*templ.Attributes) {
 	}
 }
 
+// Function provides handy function for settings icons. https://feathericons.com/ naming is used
 func Icon(iconName string) func(*templ.Attributes) {
 	return func(attrs *templ.Attributes) {
 		attr := *attrs

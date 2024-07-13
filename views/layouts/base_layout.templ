@@ -1,7 +1,9 @@
 package layouts
 
 const (
-	appTitle = "SOARCA-GUI"
+	appTitle    = "SOARCA-GUI"
+	description = "SOARCA-GUI dashboard for interacting with SOARCA"
+	content     = ""
 )
 
 templ Head(title string, description string, content string) {
@@ -28,4 +30,5 @@ templ BaseLayout() {
 	<script>
         feather.replace();
     </script>
+	<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 }

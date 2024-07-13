@@ -9,7 +9,6 @@ type link struct {
 }
 
 const (
-	homeLink                = "/dashboard"
 	defaultLinkInputClasses = "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
 )
 
@@ -31,7 +30,7 @@ templ renderLinks(links []link) {
 	}
 }
 
-templ Navsidebar(title string, version string, documentation_url string) {
+templ Navsidebar(title string, homeLink string, version string, documentationUrl string) {
 	<aside class="relative bg-blue-600 dark:bg-blue-950 h-screen w-64 hidden sm:block shadow-xl">
 		<div class="p-6">
 			<a href={ templ.URL(homeLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
@@ -44,10 +43,12 @@ templ Navsidebar(title string, version string, documentation_url string) {
 		<nav class="text-white text-base font-semibold pt-3">
 			@renderLinks(links)
 		</nav>
-		<a href={ templ.URL(documentation_url) } class="absolute w-full bg-blue-700 bottom-0 active-nav-link text-white flex items-center justify-center py-4">
-			<i class="fas fa-arrow-circle-up mr-3"></i>
-			Documentation
-			<span style="font-style: italic;">{ version }</span>
+		<a href={ templ.URL(documentationUrl) } class="absolute w-full bg-blue-700 bottom-0 active-nav-link text-white flex flex-col items-center justify-center py-4">
+			<span class="flex items-center">
+				<i { utils.CreateAttrs("mr-3","", utils.Icon("book"))... }></i>
+				Documentation
+			</span>
+			<span class="break-normal italic">GUI Version: { version }</span>
 		</a>
 	</aside>
 }
