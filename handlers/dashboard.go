@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"soarca-gui/utils"
-	"soarca-gui/views/components"
+	"soarca-gui/views/components/cards"
 	dashboard "soarca-gui/views/dashboard/home"
 	"soarca-gui/views/dashboard/reporting"
 	"soarca-gui/views/layouts"
@@ -32,15 +32,14 @@ func ReportingDashboard(context *gin.Context) {
 
 func ReportingCard(context *gin.Context) {
 	id := context.Param("id")
-	fmt.Println(id)
-	updatedCard := components.ReportingCardData{
+	updatedCard := cards.ReportingCardData{
 		Loaded: true,
 		ID:     fmt.Sprint(id),
 		Value:  10,
 		Name:   "Executed Playbooks",
 	}
 
-	render := utils.NewTempl(context, http.StatusOK, components.ReportingCard(updatedCard))
+	render := utils.NewTempl(context, http.StatusOK, cards.ReportingCard(updatedCard))
 
 	context.Render(http.StatusOK, render)
 }
