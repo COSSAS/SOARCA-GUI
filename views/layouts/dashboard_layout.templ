@@ -1,25 +1,57 @@
 package layouts
 
 import (
+	"soarca-gui/utils"
 	"soarca-gui/views/components/headbar"
 	"soarca-gui/views/components/navbar"
 )
 
 const (
-	version          = "v0.1"
-	title            = "SOARCA-GUI"
-	dashboardPath    = "/dashboard"
-	documentationUrl = "https://cossas.github.io/SOARCA/docs"
+	version                 = "v0.1"
+	title                   = "SOARCA-GUI"
+	dashboardPath           = "/dashboard"
+	documentationUrl        = "https://cossas.github.io/SOARCA/docs"
+	defaultLinkInputClasses = "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
 )
+
+type link struct {
+	Name string
+	Href string
+	Icon string //https://feathericons.com/
+}
+
+var navBarlinks = []link{
+	{Name: "Reporting", Href: "/reporting", Icon: "activity"},
+	{Name: "Settings", Href: "/settings", Icon: "settings"},
+}
+
+var headBarlinks = []link{
+	{Name: "Account", Href: "/Account", Icon: "activity"},
+}
+
+templ linkWithIcon(link link) {
+	<a href={ templ.URL(link.Href) } { utils.CreateAttrs(defaultLinkInputClasses, "")... }>
+		<i { utils.CreateAttrs("mr-3","", utils.Icon(link.Icon))... }></i> { link.Name }
+	</a>
+}
+
+templ renderLinks(links []link) {
+	for _, link := range links {
+		@linkWithIcon(link)
+	}
+}
 
 templ DashboardLayout() {
 	@BaseLayout() {
 		<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<body class="bg-blue-50 font-family-sans-serif flex">
-			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl)
+			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl) {
+				@renderLinks(navBarlinks)
+			}
 			<div class="w-full flex flex-col h-screen overflow-y-hidden">
 				@headbar.HeaderBar()
+				// @headbar.HeadBarMini()
 				<div class="w-full overflow-x-hidden border-t flex flex-col">
 					<main class="w-full flex-grow px-4 pt-2">
 						{ children... }

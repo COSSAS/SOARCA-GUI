@@ -2,34 +2,9 @@ package navbar
 
 import "soarca-gui/utils"
 
-type link struct {
-	Name string
-	Href string
-	Icon string
-}
-
 const (
-	defaultLinkInputClasses = "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
 	soarcaLogoUrlPath = "/public/assets/icons/soarca-logo.svg"
 )
-
-var links = []link{
-
-	{Name: "Reporting", Href: "/reporting", Icon: "activity"},
-	{Name: "Settings", Href: "/settings", Icon: "settings"},
-}
-
-templ linkWithIcon(link link) {
-	<a href={ templ.URL(link.Href) } { utils.CreateAttrs(defaultLinkInputClasses, "")... }>
-		<i { utils.CreateAttrs("mr-3","", utils.Icon(link.Icon))... }></i> { link.Name }
-	</a>
-}
-
-templ renderLinks(links []link) {
-	for _, link := range links {
-		@linkWithIcon(link)
-	}
-}
 
 templ Navsidebar(title string, homeLink string, version string, documentationUrl string) {
 	<aside class="relative bg-blue-600 dark:bg-blue-950 h-screen w-64 hidden sm:block shadow-xl">
@@ -42,7 +17,7 @@ templ Navsidebar(title string, homeLink string, version string, documentationUrl
 			</button>
 		</div>
 		<nav class="text-white text-base font-semibold pt-3">
-			@renderLinks(links)
+			{ children... }
 		</nav>
 		<a href={ templ.URL(documentationUrl) } class="absolute w-full bg-blue-700 bottom-0 active-nav-link text-white flex flex-col items-center justify-center py-4">
 			<span class="flex items-center">
