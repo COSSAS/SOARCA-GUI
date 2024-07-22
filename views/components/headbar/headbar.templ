@@ -24,7 +24,6 @@ templ HeaderBar() {
 			</div>
 		</div>
 	</header>
-	
 	<!-- Mobile Header -->
 	<header x-data="{ isOpen: false }" class="w-full bg-blue-600 bg-sidebar py-5 px-6 sm:hidden">
 		<div class="flex items-center justify-between">
@@ -34,13 +33,10 @@ templ HeaderBar() {
 				<i x-show="isOpen" { utils.CreateAttrs("mr-3","", utils.Icon("x-circle"))... }></i>
 			</button>
 		</div>
-
 		<nav :class="isOpen ? 'flex': 'hidden'" class="flex flex-col pt-4">
 			<a href="#" class="block px-4 py-2 account-link hover:text-white">Account</a>
 			<a href="#" class="block px-4 py-2 account-link hover:text-white">Settings</a>
 			<a href="#" class="block px-4 py-2 account-link hover:text-white">Sign Out</a>
 		</nav>
-		<!-- <button class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
-
 	</header>
 }
