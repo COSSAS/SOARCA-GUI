@@ -3,41 +3,56 @@ package layouts
 import (
 	"soarca-gui/utils"
 	"soarca-gui/views/components/headbar"
+	"soarca-gui/views/components/icons"
 	"soarca-gui/views/components/navbar"
 )
 
 const (
-	version                 = "v0.1"
-	title                   = "SOARCA-GUI"
-	dashboardPath           = "/dashboard"
-	documentationUrl        = "https://cossas.github.io/SOARCA/docs"
-	defaultLinkInputClasses = "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
+	version          = "v0.1"
+	title            = "SOARCA-GUI"
+	dashboardPath    = "/dashboard"
+	documentationUrl = "https://cossas.github.io/SOARCA/docs"
 )
+
+type icon struct {
+	name string
+	css  string
+}
 
 type link struct {
 	Name string
 	Href string
-	Icon string //https://feathericons.com/
+	Icon icon
 }
 
 var navBarlinks = []link{
-	{Name: "Reporting", Href: "/reporting", Icon: "activity"},
-	{Name: "Settings", Href: "/settings", Icon: "settings"},
+	{Name: "Reporting", Href: "/reporting", Icon: icon{name: "activity", css: "mr-3"}},
+	{Name: "Settings", Href: "/settings", Icon: icon{name: "activity", css: "mr-3"}},
 }
 
 var headBarlinks = []link{
-	{Name: "Account", Href: "/Account", Icon: "activity"},
+	{Name: "Account", Href: "/account"},
+	{Name: "Settings", Href: "/settings"},
 }
 
-templ linkWithIcon(link link) {
-	<a href={ templ.URL(link.Href) } { utils.CreateAttrs(defaultLinkInputClasses, "")... }>
-		<i { utils.CreateAttrs("mr-3","", utils.Icon(link.Icon))... }></i> { link.Name }
+templ formatLink(link link, css string) {
+	<a href={ templ.URL(link.Href) } { utils.CreateClassAttrs(css)... }>
+		{ children... }
+		{ link.Name }
 	</a>
 }
 
-templ renderLinks(links []link) {
+templ formatWithIcon(name string, style string) {
+	@icons.NewIcon(name).InsertIcon(style)
+}
+
+templ renderLinks(links []link, css string) {
 	for _, link := range links {
-		@linkWithIcon(link)
+		@formatLink(link, css) {
+			if link.Icon != (icon{}) {
+				@formatWithIcon(link.Icon.name, link.Icon.css)
+			}
+		}
 	}
 }
 
@@ -47,11 +62,15 @@ templ DashboardLayout() {
 		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<body class="bg-blue-50 font-family-sans-serif flex">
 			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl) {
-				@renderLinks(navBarlinks)
+				@renderLinks(navBarlinks, "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item")
 			}
 			<div class="w-full flex flex-col h-screen overflow-y-hidden">
-				@headbar.HeaderBar()
-				// @headbar.HeadBarMini()
+				@headbar.DesktopHeaderBar() {
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-blue-600")
+				}
+				@headbar.MobileHeaderBar() {
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg hover:text-white")
+				}
 				<div class="w-full overflow-x-hidden border-t flex flex-col">
 					<main class="w-full flex-grow px-4 pt-2">
 						{ children... }

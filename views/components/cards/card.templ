@@ -2,10 +2,10 @@ package cards
 
 import "soarca-gui/utils"
 
-const cardBaseClass = "p-2 rounded-lg bg-white border-gray-100 shadow-lg dark:bg-gray-800"
+const cardBaseCSS = "p-2 rounded-lg bg-white border-gray-100 shadow-lg dark:bg-gray-800"
 
 templ Card(opts ...func(*templ.Attributes)) {
-	<div { utils.CreateAttrs(cardBaseClass, "", opts...)... }>
+	<div { utils.CreateClassAttrs(cardBaseCSS, opts...)... }>
 		{ children... }
 	</div>
 }

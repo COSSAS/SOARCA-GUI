@@ -1,6 +1,6 @@
 package navbar
 
-import "soarca-gui/utils"
+import "soarca-gui/views/components/icons"
 
 const (
 	soarcaLogoUrlPath = "/public/assets/icons/soarca-logo.svg"
@@ -21,7 +21,7 @@ templ Navsidebar(title string, homeLink string, version string, documentationUrl
 		</nav>
 		<a href={ templ.URL(documentationUrl) } class="absolute w-full bg-blue-700 bottom-0 active-nav-link text-white flex flex-col items-center justify-center py-4">
 			<span class="flex items-center">
-				<i { utils.CreateAttrs("mr-3","", utils.Icon("book"))... }></i>
+				@icons.NewIcon("book").InsertIcon("mr-3")
 				Documentation
 			</span>
 			<span class="break-normal italic">GUI Version: { version }</span>

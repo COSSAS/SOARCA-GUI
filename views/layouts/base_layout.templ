@@ -1,5 +1,7 @@
 package layouts
 
+import "soarca-gui/views/components/icons"
+
 const (
 	appTitle    = "SOARCA-GUI"
 	description = "SOARCA-GUI dashboard for interacting with SOARCA"
@@ -27,8 +29,5 @@ templ BaseLayout() {
 		@Head(appTitle, "", "")
 		{ children... }
 	</html>
-	<script>
-        feather.replace();
-    </script>
-	<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+	@icons.LoadIcons()
 }
