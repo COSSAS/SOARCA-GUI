@@ -26,12 +26,13 @@ templ DesktopHeaderBar() {
 	</header>
 }
 
-templ MobileHeaderBar() {
+templ MobileHeaderBar(string homePageLink) {
 	<header x-data="{ isOpen: false }" class="w-full bg-blue-600 bg-sidebar py-5 px-6 sm:hidden">
 		<div class="flex items-center justify-between">
-			<a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">SOARCA</a>
+			<a href={ templ.URL(homePageLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">SOARCA</a>
 			<button @click="isOpen = !isOpen" class="text-white text-3xl focus:outline-none">
-				@icons.NewIcon("more-horizontal").InsertIcon("mr-3", utils.WithXdata("!open"))
+				@icons.NewIcon("more-horizontal").InsertIcon("mr-3", utils.WithXshow("!isOpen"))
+				@icons.NewIcon("x").InsertIcon("mr-3", utils.WithXshow("isOpen"))
 				// @icons.InserIcon()
 			</button>
 		</div>

@@ -29,7 +29,11 @@ func Merge(a, b string) string {
 }
 
 func WithXdata(value string) func(*templ.Attributes) {
-	return newAttribute("x-data", value)
+	return NewAttribute("x-data", value)
+}
+
+func WithXshow(value string) func(*templ.Attributes) {
+	return NewAttribute("x-show", value)
 }
 
 func addToAttribute(atrributeName string, class string) func(*templ.Attributes) {
@@ -40,7 +44,7 @@ func addToAttribute(atrributeName string, class string) func(*templ.Attributes) 
 	}
 }
 
-func newAttribute(key string, value string) func(*templ.Attributes) {
+func NewAttribute(key string, value string) func(*templ.Attributes) {
 	return func(attrs *templ.Attributes) {
 		attr := *attrs
 		attr[key] = value

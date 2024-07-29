@@ -27,7 +27,7 @@ type link struct {
 
 var navBarlinks = []link{
 	{Name: "Reporting", Href: "/reporting", Icon: icon{name: "activity", css: "mr-3"}},
-	{Name: "Settings", Href: "/settings", Icon: icon{name: "activity", css: "mr-3"}},
+	{Name: "Settings", Href: "/settings", Icon: icon{name: "settings", css: "mr-3"}},
 }
 
 var headBarlinks = []link{
@@ -68,8 +68,8 @@ templ DashboardLayout() {
 				@headbar.DesktopHeaderBar() {
 					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-blue-600")
 				}
-				@headbar.MobileHeaderBar() {
-					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg hover:text-white")
+				@headbar.MobileHeaderBar(dashboardPath) {
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg  hover:bg-blue-800 hover:text-white")
 				}
 				<div class="w-full overflow-x-hidden border-t flex flex-col">
 					<main class="w-full flex-grow px-4 pt-2">
