@@ -5,13 +5,10 @@ import (
 	"soarca-gui/views/layouts"
 )
 
-
-const (	
-	homeLink = "/"
+const (
+	homeLink          = "/"
 	soarcaLogoUrlPath = "/public/assets/icons/soarca-logo.svg"
 )
-
-
 
 templ LoginIndex() {
 	@LoginBaseLayout() {
@@ -79,7 +76,7 @@ templ LoginForm() {
 		hx-target="#extra-information"
 		hx-swap="innerHTML"
 	>
-		<label name="email" type="email" class="font-semibold text-sm text-gray-600 pb-1 block">E-mail</label>
+		<label name="email" type="email" class="border-none font-semibold text-sm text-gray-600 pb-1 block">E-mail</label>
 		<input
 			id="email"
 			name="email"
@@ -87,7 +84,7 @@ templ LoginForm() {
 			required
 			class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
 		/>
-		<label name="password" type="password" class="font-semibold text-sm text-gray-600 pb-1 block">Password</label>
+		<label name="password" type="password" class="border-none font-semibold text-sm text-gray-600 pb-1 block">Password</label>
 		<input
 			id="password"
 			name="password"
