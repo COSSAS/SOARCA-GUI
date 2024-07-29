@@ -1,7 +1,8 @@
 package layouts
 
 const (
-	homePageLink = "/dashboard"
+	homePageLink      = "/dashboard"
+	soarcaLogoUrlPath = "/public/assets/icons/soarca-logo.svg"
 )
 
 templ Error404() {
@@ -9,8 +10,8 @@ templ Error404() {
 		<body class="min-h-screen bg-blue-50 dark:bg-slate-800 flex items-center justify-center font-family-sans-serif">
 			<main class="container flex items-center min-h-screen px-6 py-12 mx-auto">
 				<div>
-					<a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
-						<img src="https://github.com/COSSAS/SOARCA/raw/development/img/soarca-logo.svg" class="w-30 py-3 md:py-0 g-image"/>
+					<a href={ templ.URL(homePageLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
+						<img src={ soarcaLogoUrlPath } class="w-30 py-3 md:py-0 g-image"/>
 					</a>
 					<p class="text-sm font-medium text-blue-500 dark:text-blue-400">404 error</p>
 					<h1 class="mt-3 text-2xl font-semibold text-gray-800 dark:text-white md:text-3xl">We can’t find that page</h1>
