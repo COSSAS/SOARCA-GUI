@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"soarca-gui/routes"
-	"soarca-gui/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -23,7 +22,6 @@ func main() {
 	if errenv != nil {
 		fmt.Println("Failed to read env variable, but will continue")
 	}
-	fmt.Println(utils.GetEnv("SOARCA_URI", "http://localhost:8080"))
 
 	app := gin.Default()
 	routes.Setup(app)
