@@ -3,7 +3,7 @@
 
 BINARY_NAME = soarca-gui
 DIRECTORY = $(sort $(dir $(wildcard ./test/*/)))
-VERSION = v.0.1#$(shell git describe --tags --dirty)
+VERSION = $(shell git describe --tags --dirty)
 BUILDTIME := $(shell  date '+%Y-%m-%dT%T%z')
 
 GOLDFLAGS += -X main.Version=$(VERSION)
