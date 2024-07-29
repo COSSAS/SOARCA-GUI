@@ -1,11 +1,19 @@
 package table
 
+import "soarca-gui/utils"
+
+const (
+	theadBaseClass = "bg-gray-50 dark:bg-gray-700"
+	thBaseClass    = "p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+	tdBaseClass    = "px-5 py-4 text-sm whitespace-nowrap"
+)
+
 templ Table() {
 	<div class="flex flex-col border rounded-md">
 		<div class="overflow-x-auto">
 			<div class="inline-block min-w-full">
 				<div class="overflow-hidden">
-					<table class="min-w-full divide-y">
+					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
 						{ children... }
 					</table>
 				</div>
@@ -15,7 +23,7 @@ templ Table() {
 }
 
 templ Header(opts ...func(*templ.Attributes)) {
-	<thead { utils.CreateAttrs("", "", opts...)... }>
+	<thead { utils.CreateClassAttrs(theadBaseClass,  opts...)... }>
 		<tr>
 			{ children... }
 		</tr>
@@ -23,7 +31,7 @@ templ Header(opts ...func(*templ.Attributes)) {
 }
 
 templ Body(opts ...func(*templ.Attributes)) {
-	<tbody { utils.CreateAttrs("divide-y", "", opts...)... }>
+	<tbody { utils.CreateClassAttrs("divide-y", opts...)... }>
 		{ children... }
 	</tbody>
 }
@@ -36,15 +44,10 @@ templ Footer(opts ...func(*templ.Attributes)) {
 	</tfoot>
 }
 
-const (
-	thBaseClass = "px-5 py-3 text-xs font-medium uppercase"
-	tdBaseClass = "px-5 py-4 text-sm whitespace-nowrap"
-)
-
 func Td(opts ...func(*templ.Attributes)) templ.Attributes {
-	return utils.CreateAttrs(tdBaseClass, "", opts...)
+	return utils.CreateClassAttrs(tdBaseClass, opts...)
 }
 
 func Th(opts ...func(*templ.Attributes)) templ.Attributes {
-	return utils.CreateAttrs(thBaseClass, "", opts...)
+	return utils.CreateClassAttrs(thBaseClass, opts...)
 }

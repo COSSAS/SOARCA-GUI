@@ -1,7 +1,9 @@
 package reporting
 
 import (
+	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
+	"soarca-gui/views/components/table"
 	"soarca-gui/views/layouts"
 )
 
@@ -26,8 +28,14 @@ templ ReportingIndex() {
 }
 
 templ ReportingListTile() {
-	@cards.Card() {
-		test
+	@cards.Card(utils.Class("p-4")) {
+		<div class="items-center justify-between lg:flex">
+			<div class="mb-4 lg:mb-0">
+				<h3 class="mb-2 text-xl text-gray-900 dark:text-white">Current Reports</h3>
+				<span class="text-base font-normal text-gray-500 dark:text-gray-400">Reports from API</span>
+			</div>
+		</div>
+		@ReportList2()
 	}
 }
 
@@ -35,10 +43,32 @@ templ banner() {
 	<div class="mx-auto">
 		<div class="flex items-center justify-between mb-2 h-20 rounded-lg bg-gradient-to-r from-blue-600 to-fuchsia-500 px-8 text-white shadow-lg">
 			<div class="align-middle lg:my-8 lg:w-1/2">
-				<h1 class="text-2xl dark:text-white">Reporting</h1>
+				<h1 class="text-2xl  dark:text-white">Reporting</h1>
 			</div>
 		</div>
 	</div>
+}
+
+templ ReportList2() {
+	@table.Table() {
+		@table.Header() {
+			<th { table.Th()... }>
+				ID
+			</th>
+			<th { table.Th()... }>
+				Date & Time
+			</th>
+			<th { table.Th()... }>
+				Status
+			</th>
+			<th { table.Th()... }>
+				Type
+			</th>
+			<th { table.Th()... }>
+				Link
+			</th>
+		}
+	}
 }
 
 templ ReportList() {
