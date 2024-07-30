@@ -61,3 +61,26 @@ func (s *SoarcaBackend) GetReportings() ([]models.PlaybookExecutionReport, error
 	}
 	return reportings, nil
 }
+
+func (s *SoarcaBackend) GetReportingById(Id string) (models.PlaybookExecutionReport, error) {
+	response, err := http.Get(fmt.Sprintf("%s%s/%s", s.Host, reportingPath, Id))
+	if err != nil {
+		return models.PlaybookExecutionReport{}, fmt.Errorf("failed to make GET request: %w", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return models.PlaybookExecutionReport{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return models.PlaybookExecutionReport{}, fmt.Errorf("failed to read response body: %w", err)
+	}
+	var reporting models.PlaybookExecutionReport
+
+	err = json.Unmarshal(body, &reporting)
+	if err != nil {
+		return models.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
+	}
+	return reporting, nil
+}
