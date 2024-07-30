@@ -12,7 +12,7 @@ type PlaybookExecutionReport struct {
 	PlaybookId      string                         `bson:"playbook_id" json:"playbook_id"`
 	Started         time.Time                      `bson:"started" json:"started"`
 	Ended           time.Time                      `bson:"ended" json:"ended"`
-	Status          string                         `bson:"status" json:"status"`
+	Status          int                            `bson:"status" json:"status"`
 	StatusText      string                         `bson:"status_text" json:"status_text"`
 	StepResults     map[string]StepExecutionReport `bson:"step_results" json:"step_results"`
 	RequestInterval int                            `bson:"request_interval" json:"request_interval"`

@@ -1,30 +1,25 @@
 package handlers
 
 import (
-	"fmt"
-	"io"
 	"net/http"
 
+	"soarca-gui/backend"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/miscellaneous"
 
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	statusPingPath = "/status/ping"
-)
-
 type statusHandler struct {
-	Host string
+	backend backend.Backend
 }
 
-func NewStatusHandler(host string) statusHandler {
-	return statusHandler{Host: host}
+func NewStatusHandler(backend backend.Backend) statusHandler {
+	return statusHandler{backend: backend}
 }
 
 func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
-	response, err := s.getPongFromStatus()
+	response, err := s.backend.GetPongFromStatus()
 	indicatorData := miscellaneous.HealthIndicatorData{Loaded: true}
 
 	switch {
@@ -41,22 +36,4 @@ func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
 
 	render := utils.NewTempl(context, http.StatusOK, miscellaneous.HealthIndicator(indicatorData))
 	context.Render(http.StatusOK, render)
-}
-
-func (s *statusHandler) getPongFromStatus() (string, error) {
-	response, err := http.Get(fmt.Sprintf("%s%s", s.Host, statusPingPath))
-	if err != nil {
-		return "", fmt.Errorf("failed to make GET request: %w", err)
-	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected status code: %d", response.StatusCode)
-	}
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return "", fmt.Errorf("failed to read response body: %w", err)
-	}
-
-	return string(body), nil
 }

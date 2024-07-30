@@ -3,6 +3,8 @@ package routes
 import (
 	"net/http"
 
+	"soarca-gui/backend"
+	s_backend "soarca-gui/backend/soarca"
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
@@ -16,11 +18,12 @@ func Setup(app *gin.Engine) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
+	backend := s_backend.NewSoarcaBackend(utils.GetEnv("SOARCA_URI", "http://localhost:8080"))
 	publicRoutes := app.Group("/")
 
 	PublicRoutes(publicRoutes)
 	Reporting(publicRoutes)
-	StatusGroup(publicRoutes)
+	StatusGroup(backend, publicRoutes)
 	SettingsRouter(publicRoutes)
 }
 
@@ -46,8 +49,8 @@ func Reporting(app *gin.RouterGroup) {
 	}
 }
 
-func StatusGroup(app *gin.RouterGroup) {
-	statusHandler := handlers.NewStatusHandler(utils.GetEnv("SOARCA_URI", "http://localhost:8080"))
+func StatusGroup(backend backend.Backend, app *gin.RouterGroup) {
+	statusHandler := handlers.NewStatusHandler(backend)
 
 	statusRoute := app.Group("/status")
 	{
