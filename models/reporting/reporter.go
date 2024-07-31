@@ -1,4 +1,4 @@
-package models
+package reporting
 
 import (
 	"time"
@@ -6,13 +6,21 @@ import (
 	"soarca-gui/models/cacao"
 )
 
+type ReportingRow struct {
+	ExecutionID string
+	StartTime   string
+	EndTime     string
+	Status      string
+	Link        string
+}
+
 type PlaybookExecutionReport struct {
 	Type            string                         `bson:"type" json:"type"`
 	ExecutionId     string                         `bson:"execution_id" json:"execution_id"`
 	PlaybookId      string                         `bson:"playbook_id" json:"playbook_id"`
 	Started         time.Time                      `bson:"started" json:"started"`
 	Ended           time.Time                      `bson:"ended" json:"ended"`
-	Status          int                            `bson:"status" json:"status"`
+	Status          string                         `bson:"status" json:"status"`
 	StatusText      string                         `bson:"status_text" json:"status_text"`
 	StepResults     map[string]StepExecutionReport `bson:"step_results" json:"step_results"`
 	RequestInterval int                            `bson:"request_interval" json:"request_interval"`

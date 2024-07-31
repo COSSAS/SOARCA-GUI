@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"soarca-gui/models"
+	"soarca-gui/models/reporting"
 )
 
 const (
@@ -40,47 +40,47 @@ func (s *SoarcaBackend) GetPongFromStatus() (string, error) {
 	return string(body), nil
 }
 
-func (s *SoarcaBackend) GetReportings() ([]models.PlaybookExecutionReport, error) {
+func (s *SoarcaBackend) GetReportings() ([]reporting.PlaybookExecutionReport, error) {
 	response, err := http.Get(fmt.Sprintf("%s%s", s.Host, reportingPath))
 	if err != nil {
-		return []models.PlaybookExecutionReport{}, fmt.Errorf("failed to make GET request: %w", err)
+		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to make GET request: %w", err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return []models.PlaybookExecutionReport{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
+		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return []models.PlaybookExecutionReport{}, fmt.Errorf("failed to read response body: %w", err)
+		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to read response body: %w", err)
 	}
-	var reportings []models.PlaybookExecutionReport
+	var reportings []reporting.PlaybookExecutionReport
 	err = json.Unmarshal(body, &reportings)
 	if err != nil {
-		return []models.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
+		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
 	}
 	return reportings, nil
 }
 
-func (s *SoarcaBackend) GetReportingById(Id string) (models.PlaybookExecutionReport, error) {
+func (s *SoarcaBackend) GetReportingById(Id string) (reporting.PlaybookExecutionReport, error) {
 	response, err := http.Get(fmt.Sprintf("%s%s/%s", s.Host, reportingPath, Id))
 	if err != nil {
-		return models.PlaybookExecutionReport{}, fmt.Errorf("failed to make GET request: %w", err)
+		return reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to make GET request: %w", err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return models.PlaybookExecutionReport{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
+		return reporting.PlaybookExecutionReport{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return models.PlaybookExecutionReport{}, fmt.Errorf("failed to read response body: %w", err)
+		return reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to read response body: %w", err)
 	}
-	var reporting models.PlaybookExecutionReport
+	var parsedReporting reporting.PlaybookExecutionReport
 
-	err = json.Unmarshal(body, &reporting)
+	err = json.Unmarshal(body, &parsedReporting)
 	if err != nil {
-		return models.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
+		return reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
 	}
-	return reporting, nil
+	return parsedReporting, nil
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"soarca-gui/models"
+	"soarca-gui/models/reporting"
 	utils "soarca-gui/utils"
 )
 
@@ -21,8 +21,8 @@ func NewReportingHandler(host string) reportingHandler {
 	return reportingHandler{Host: host}
 }
 
-func (r *reportingHandler) getReports() ([]models.PlaybookExecutionReport, error) {
-	var response []models.PlaybookExecutionReport
+func (r *reportingHandler) getReports() ([]reporting.PlaybookExecutionReport, error) {
+	var response []reporting.PlaybookExecutionReport
 	url := fmt.Sprintf("%s%s", r.Host, reportingApiPath)
 
 	reports, err := utils.MakeJsonRequest(url, http.MethodGet, nil, response)
