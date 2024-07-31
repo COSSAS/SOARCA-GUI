@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	statusPingPath = "/status/ping"
-	reportingPath  = "/reporter"
+	statusPingPath     = "/status/ping"
+	reportingPath      = "/reporter"
+	reportingApiPathId = "/reporter/:id"
 )
 
 type SoarcaBackend struct {
