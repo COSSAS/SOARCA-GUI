@@ -47,7 +47,8 @@ func ReportingRoutes(backend backend.Backend, app *gin.RouterGroup) {
 	reportingRoute := app.Group("/reporting")
 	{
 		reportingRoute.GET("/", reportingHandlers.ReportingIndexHandler)
-		reportingRoute.GET("/reportingcard/:id", reportingHandlers.ReportingCardHandler)
+		reportingRoute.GET("/card/:id", reportingHandlers.ReportingCardHandler)
+		reportingRoute.GET("/table/", reportingHandlers.ReportingTableCardHandler)
 	}
 }
 

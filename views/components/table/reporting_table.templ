@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	reportingDataEndpoint = "/status/indicator/card"
+	reportingDataEndpoint = "/reporting/table"
 )
 
 type ReportingTableMeta struct {
-	Loaded bool
+	Loaded   bool
+	DataRows []ReportingDataTableRow
 }
 
 var headers = []string{"Execution ID", "Start Time", "End Time", "Status", "Link"}
@@ -24,7 +25,7 @@ type ReportingDataTableRow struct {
 	Link        string
 }
 
-templ LoadReportingTableCard(data ReportingTableMeta) {
+templ LoadReportingTableBody(data ReportingTableMeta) {
 	if !data.Loaded {
 		<div
 			hx-get={ string(templ.URL(fmt.Sprintf(reportingDataEndpoint))) }
@@ -32,6 +33,9 @@ templ LoadReportingTableCard(data ReportingTableMeta) {
 			hx-swap="outerHTML"
 			class="relative"
 		></div>
+		@Body()
+	} else {
+		@tableBody(data.DataRows)
 	}
 }
 
@@ -43,11 +47,18 @@ templ ReportingTableCard() {
 				<span class="text-base font-normal text-gray-500 dark:text-gray-400">Reports from API</span>
 			</div>
 		</div>
-		@ReportList2()
+		@FormatTable()
 	}
 }
 
-templ ReportingTableHeaders() {
+templ FormatTable() {
+	@Table() {
+		@reportingTableHeaders()
+		@LoadReportingTableBody(ReportingTableMeta{Loaded: false})
+	}
+}
+
+templ reportingTableHeaders() {
 	@Header() {
 		for _, header := range headers {
 			<th { Th()... }>
@@ -57,7 +68,7 @@ templ ReportingTableHeaders() {
 	}
 }
 
-templ ReportingTableDataRow(row ReportingDataTableRow) {
+templ reportingTableDataRow(row ReportingDataTableRow) {
 	<td { Td()... }>
 		{ row.ExecutionID }
 	</td>
@@ -72,12 +83,8 @@ templ ReportingTableDataRow(row ReportingDataTableRow) {
 	</td>
 }
 
-// templ tableBody(rows []reporting_models.ReportingRow) {
-// }
-templ ReportList2() {
-	@Table() {
-		@ReportingTableHeaders()
-		@Body() {
-		}
+templ tableBody(rows []ReportingDataTableRow) {
+	for _, row := range rows {
+		@reportingTableDataRow(row)
 	}
 }

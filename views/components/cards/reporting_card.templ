@@ -2,6 +2,10 @@ package cards
 
 import "fmt"
 
+const (
+	reportingMetaCardEndpoint = "/reporting/card/"
+)
+
 type ReportingCardData struct {
 	Loaded bool
 	Name   string
@@ -69,7 +73,7 @@ templ reportingCardUnkownComponent() {
 templ LoadReportingCard(data ReportingCardData) {
 	if !data.Loaded {
 		<div
-			hx-get={ string(templ.URL(fmt.Sprintf("/reporting/reportingcard/%s", data.ID))) }
+			hx-get={ string(templ.URL(fmt.Sprintf(reportingMetaCardEndpoint+"%s", data.ID))) }
 			hx-trigger="load"
 			hx-swap="outerHTML"
 			class="relative"
