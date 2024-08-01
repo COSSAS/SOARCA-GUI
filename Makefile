@@ -1,8 +1,18 @@
 .PHONY: dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean
 
+
+BINARY_NAME = soarca-gui
+DIRECTORY = $(sort $(dir $(wildcard ./test/*/)))
+VERSION = $(shell git describe --tags --dirty)
+BUILDTIME := $(shell  date '+%Y-%m-%dT%T%z')
+
+GOLDFLAGS += -X main.Version=$(VERSION)
+GOLDFLAGS += -X main.Buildtime=$(BUILDTIME)
+GOFLAGS = -ldflags "$(GOLDFLAGS)"
 #-----------------------------------------------------
 # DEV
 #-----------------------------------------------------
+
 
 dev:
 	@make -j dev-templ dev-tailwind dev-server 
@@ -37,6 +47,8 @@ dev-templ:
 
 dev-tailwind:
 	@make ARGS="--watch" build-tailwind
+
+
 #-----------------------------------------------------
 # BUILD
 #-----------------------------------------------------
@@ -44,7 +56,14 @@ dev-tailwind:
 build:  build-templ build-tailwind build-server
 
 build-server:
-	@go build -o bin/server ./server/main.go
+	echo "Compiling for every OS and Platform"
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-linux-amd64 $(GOFLAGS) ./server/main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/${BINARY_NAME}-${VERSION}-darwin-arm64 $(GOFLAGS) ./server/main.go
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-windows-amd64 $(GOFLAGS) ./server/main.go
+
+
+docker: 
+	docker build --no-cache -t soarca-gui:${VERSION} --build-arg="VERSION=${VERSION}" .
 
 build-templ:
 	@templ generate
@@ -56,8 +75,11 @@ lint: build-templ
 	GOFLAGS=-buildvcs=false golangci-lint run --timeout 5m0s -v
 
 clean:
-	find . -type f -name '*_templ.go' -exec rm -f {} \;
+	rm -rf build/soarca* build/main
+	rm -rf bin/*
+	find . -type f -name "*_templ.go" -delete
 	
-
+run: docker
+	GIT_VERSION=${VERSION} docker compose up --build --force-recreate -d
 
 .DEFAULT_GOAL := dev  
