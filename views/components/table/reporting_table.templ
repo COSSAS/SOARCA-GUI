@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
+	"soarca-gui/views/components/icons"
+	"soarca-gui/views/components/miscellaneous"
 )
 
 const (
@@ -15,27 +17,61 @@ type ReportingTableMeta struct {
 	DataRows []ReportingDataTableRow
 }
 
-var headers = []string{"Execution ID", "Start Time", "End Time", "Status", "Link"}
+var headers = []string{"Execution ID", "Start Time", "End Time", "Status"}
 
 type ReportingDataTableRow struct {
 	ExecutionID string
 	StartTime   string
 	EndTime     string
 	Status      string
-	Link        string
+}
+
+var testData = []ReportingDataTableRow{
+	{
+		ExecutionID: "exec_001",
+		StartTime:   "2024-08-01T08:00:00Z",
+		EndTime:     "2024-08-01T08:30:00Z",
+		Status:      "successfully_executed",
+	},
+	{
+		ExecutionID: "exec_002",
+		StartTime:   "2024-08-01T09:00:00Z",
+		EndTime:     "2024-08-01T09:45:00Z",
+		Status:      "Failed",
+	},
+	{
+		ExecutionID: "exec_003",
+		StartTime:   "2024-08-01T10:00:00Z",
+		EndTime:     "2024-08-01T10:20:00Z",
+		Status:      "Running",
+	},
+	{
+		ExecutionID: "exec_004",
+		StartTime:   "2024-08-01T11:00:00Z",
+		EndTime:     "2024-08-01T11:30:00Z",
+		Status:      "Completed",
+	},
+	{
+		ExecutionID: "exec_005",
+		StartTime:   "2024-08-01T12:00:00Z",
+		EndTime:     "2024-08-01T12:10:00Z",
+		Status:      "Cancelled",
+	},
 }
 
 templ LoadReportingTableBody(data ReportingTableMeta) {
 	if !data.Loaded {
-		<div
-			hx-get={ string(templ.URL(fmt.Sprintf(reportingDataEndpoint))) }
-			hx-trigger="load"
-			hx-swap="outerHTML"
-			class="relative"
-		></div>
-		@Body()
+		@Body() {
+			<tr
+				hx-get={ string(templ.URL(fmt.Sprintf(reportingDataEndpoint))) }
+				hx-trigger="load"
+				hx-swap="outerHTML"
+				class="relative"
+			></tr>
+		}
 	} else {
-		@tableBody(data.DataRows)
+		@tableRows(data.DataRows)
+		@icons.LoadIcons()
 	}
 }
 
@@ -79,12 +115,26 @@ templ reportingTableDataRow(row ReportingDataTableRow) {
 		{ row.EndTime }
 	</td>
 	<td { Td()... }>
-		{ row.Link }
+		@statusTag(row.Status)
 	</td>
 }
 
-templ tableBody(rows []ReportingDataTableRow) {
+templ statusTag(status string) {
+	switch status {
+		case "successfully_executed":
+			@miscellaneous.TagSucces("Success")
+		case "failed":
+			@miscellaneous.TagFailed("Failed")
+		case "ongoing":
+			@miscellaneous.TagOngoing("Ongoing")
+		default:
+	}
+}
+
+templ tableRows(rows []ReportingDataTableRow) {
 	for _, row := range rows {
-		@reportingTableDataRow(row)
+		<tr>
+			@reportingTableDataRow(row)
+		</tr>
 	}
 }

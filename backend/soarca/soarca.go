@@ -60,6 +60,7 @@ func (s *SoarcaBackend) GetReportings() ([]reporting.PlaybookExecutionReport, er
 	if err != nil {
 		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
 	}
+	fmt.Printf("%+v\n", reportings[0])
 	return reportings, nil
 }
 

@@ -15,9 +15,15 @@ func NewIcon(name string) *Icon {
 		height:   "24"}
 }
 
-func (i *Icon) setSize(size string) {
+func (i *Icon) SetSize(size string) *Icon {
 	i.width = size
 	i.height = size
+	return i
+
+}
+
+func (i *Icon) GetIcon() *Icon {
+	return i
 }
 
 // Function provides handy function for settings icons. https://feathericons.com/ naming is used

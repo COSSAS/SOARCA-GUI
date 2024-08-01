@@ -63,7 +63,7 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 			ExecutionID: report.ExecutionId,
 			StartTime:   report.Started.String(),
 			EndTime:     report.Ended.String(),
-			Link:        "",
+			Status:      report.Status,
 		}
 		rows = append(rows, row)
 	}

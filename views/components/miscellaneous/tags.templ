@@ -1,0 +1,35 @@
+package miscellaneous
+
+import (
+	"soarca-gui/utils"
+	"soarca-gui/views/components/icons"
+)
+
+const baseClassTag = "inline-flex items-center px-3 py-1 rounded-full gap-x-2"
+
+templ Tag(opts ...func(*templ.Attributes)) {
+	<div { utils.CreateClassAttrs(baseClassTag, opts...)... }>
+		{ children... }
+	</div>
+}
+
+templ TagSucces(text string) {
+	@Tag(utils.Class("text-emerald-500 bg-emerald-100/60 dark:bg-gray-800")) {
+		@icons.NewIcon("check").SetSize("12").InsertIcon("")
+		<h2 class="text-sm font-normal">{ text } </h2>
+	}
+}
+
+templ TagFailed(text string) {
+	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-gray-800")) {
+		@icons.NewIcon("x").SetSize("12").InsertIcon("")
+		<h2 class="text-sm font-normal">{ text } </h2>
+	}
+}
+
+templ TagOngoing(text string) {
+	@Tag(utils.Class("text-orange-500 rounded-full gap-x-2 bg-orange-100/60 dark:bg-gray-800")) {
+		@icons.NewIcon("loader").SetSize("12").InsertIcon("")
+		<h2 class="text-sm font-normal">{ text } </h2>
+	}
+}
