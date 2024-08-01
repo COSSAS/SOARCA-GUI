@@ -1,0 +1,83 @@
+package table
+
+import (
+	"fmt"
+	"soarca-gui/utils"
+	"soarca-gui/views/components/cards"
+)
+
+const (
+	reportingDataEndpoint = "/status/indicator/card"
+)
+
+type ReportingTableMeta struct {
+	Loaded bool
+}
+
+var headers = []string{"Execution ID", "Start Time", "End Time", "Status", "Link"}
+
+type ReportingDataTableRow struct {
+	ExecutionID string
+	StartTime   string
+	EndTime     string
+	Status      string
+	Link        string
+}
+
+templ LoadReportingTableCard(data ReportingTableMeta) {
+	if !data.Loaded {
+		<div
+			hx-get={ string(templ.URL(fmt.Sprintf(reportingDataEndpoint))) }
+			hx-trigger="load"
+			hx-swap="outerHTML"
+			class="relative"
+		></div>
+	}
+}
+
+templ ReportingTableCard() {
+	@cards.Card(utils.Class("p-4")) {
+		<div class="items-center justify-between lg:flex">
+			<div class="mb-4 lg:mb-0">
+				<h3 class="mb-2 text-xl text-gray-900 dark:text-white">Current Reports</h3>
+				<span class="text-base font-normal text-gray-500 dark:text-gray-400">Reports from API</span>
+			</div>
+		</div>
+		@ReportList2()
+	}
+}
+
+templ ReportingTableHeaders() {
+	@Header() {
+		for _, header := range headers {
+			<th { Th()... }>
+				{ header }
+			</th>
+		}
+	}
+}
+
+templ ReportingTableDataRow(row ReportingDataTableRow) {
+	<td { Td()... }>
+		{ row.ExecutionID }
+	</td>
+	<td { Td()... }>
+		{ row.StartTime }
+	</td>
+	<td { Td()... }>
+		{ row.EndTime }
+	</td>
+	<td { Td()... }>
+		{ row.Link }
+	</td>
+}
+
+// templ tableBody(rows []reporting_models.ReportingRow) {
+// }
+templ ReportList2() {
+	@Table() {
+		@ReportingTableHeaders()
+		@Body() {
+		}
+	}
+}

@@ -1,44 +1,21 @@
 package reporting
 
 import (
-	reporting_models "soarca-gui/models/reporting"
-	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
 	"soarca-gui/views/components/table"
 	"soarca-gui/views/layouts"
 )
-
-type report struct {
-	ExecutionID string
-	PlaybookID  string
-
-	Status int
-}
 
 var initialCards = []cards.ReportingCardData{
 	{Loaded: false, ID: "1"},
 	{Loaded: false, ID: "2"},
 	{Loaded: false, ID: "3"}}
 
-var headers = []string{"Execution ID", "Start Time", "End Time", "Status", "Link"}
-
 templ ReportingIndex() {
 	@layouts.DashboardLayout() {
 		@banner()
 		@ReportingBase()
-		@ReportingListTile()
-	}
-}
-
-templ ReportingListTile() {
-	@cards.Card(utils.Class("p-4")) {
-		<div class="items-center justify-between lg:flex">
-			<div class="mb-4 lg:mb-0">
-				<h3 class="mb-2 text-xl text-gray-900 dark:text-white">Current Reports</h3>
-				<span class="text-base font-normal text-gray-500 dark:text-gray-400">Reports from API</span>
-			</div>
-		</div>
-		@ReportList2()
+		@table.ReportList2()
 	}
 }
 
@@ -50,41 +27,6 @@ templ banner() {
 			</div>
 		</div>
 	</div>
-}
-
-templ tableHeaders() {
-	@table.Header() {
-		for _, header := range headers {
-			<th { table.Th()... }>
-				{ header }
-			</th>
-		}
-	}
-}
-
-templ tableRow(row reporting_models.ReportingRow) {
-	<td { table.Td()... }>
-		{ row.ExecutionID }
-	</td>
-	<td { table.Td()... }>
-		{ row.StartTime }
-	</td>
-	<td { table.Td()... }>
-		{ row.EndTime }
-	</td>
-	<td { table.Td()... }>
-		{ row.Link }
-	</td>
-}
-
-// templ tableBody(rows []reporting_models.ReportingRow) {
-// }
-templ ReportList2() {
-	@table.Table() {
-		@tableHeaders()
-		@table.Body() {
-		}
-	}
 }
 
 templ ReportList() {

@@ -6,14 +6,6 @@ import (
 	"soarca-gui/models/cacao"
 )
 
-type ReportingRow struct {
-	ExecutionID string
-	StartTime   string
-	EndTime     string
-	Status      string
-	Link        string
-}
-
 type PlaybookExecutionReport struct {
 	Type            string                         `bson:"type" json:"type"`
 	ExecutionId     string                         `bson:"execution_id" json:"execution_id"`

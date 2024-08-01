@@ -22,9 +22,9 @@ func Setup(app *gin.Engine) {
 	publicRoutes := app.Group("/")
 
 	PublicRoutes(publicRoutes)
-	Reporting(publicRoutes)
-	StatusGroup(backend, publicRoutes)
-	SettingsRouter(publicRoutes)
+	ReportingRoutes(backend, publicRoutes)
+	StatusRoutes(backend, publicRoutes)
+	SettingsRoutes(publicRoutes)
 }
 
 func PublicRoutes(app *gin.RouterGroup) {
@@ -41,24 +41,26 @@ func PublicRoutes(app *gin.RouterGroup) {
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
-func Reporting(app *gin.RouterGroup) {
+func ReportingRoutes(backend backend.Backend, app *gin.RouterGroup) {
+	reportingHandlers := handlers.NewReportingHandler(backend)
+
 	reportingRoute := app.Group("/reporting")
 	{
-		reportingRoute.GET("/", handlers.ReportingDashboard)
-		reportingRoute.GET("/reportingcard/:id", handlers.ReportingCard)
+		reportingRoute.GET("/", reportingHandlers.ReportingIndexHandler)
+		reportingRoute.GET("/reportingcard/:id", reportingHandlers.ReportingCardHandler)
 	}
 }
 
-func StatusGroup(backend backend.Backend, app *gin.RouterGroup) {
-	statusHandler := handlers.NewStatusHandler(backend)
+func StatusRoutes(backend backend.Backend, app *gin.RouterGroup) {
+	statusHandlers := handlers.NewStatusHandler(backend)
 
 	statusRoute := app.Group("/status")
 	{
-		statusRoute.GET("/indicator/card", statusHandler.HealthComponentHandler)
+		statusRoute.GET("/indicator/card", statusHandlers.HealthComponentHandler)
 	}
 }
 
-func SettingsRouter(app *gin.RouterGroup) {
+func SettingsRoutes(app *gin.RouterGroup) {
 	reportingRoute := app.Group("/settings")
 	{
 		reportingRoute.GET("/", handlers.SettingsDashboard)
