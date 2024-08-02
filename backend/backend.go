@@ -1,9 +1,12 @@
 package backend
 
-import "soarca-gui/models/reporting"
+import "soarca-gui/models/reporter"
 
-type Backend interface {
-	GetReports() ([]reporting.PlaybookExecutionReport, error)
-	GetReportsById(string) (reporting.PlaybookExecutionReport, error)
+type Report interface {
+	GetReports() ([]reporter.PlaybookExecutionReport, error)
+	GetReportsById(string) (reporter.PlaybookExecutionReport, error)
+}
+
+type Status interface {
 	GetPongFromStatus() (string, error)
 }

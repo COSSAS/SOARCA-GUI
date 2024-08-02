@@ -11,15 +11,15 @@ import (
 )
 
 type statusHandler struct {
-	backend backend.Backend
+	status backend.Status
 }
 
-func NewStatusHandler(backend backend.Backend) statusHandler {
-	return statusHandler{backend: backend}
+func NewStatusHandler(backend backend.Status) statusHandler {
+	return statusHandler{status: backend}
 }
 
 func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
-	response, err := s.backend.GetPongFromStatus()
+	response, err := s.status.GetPongFromStatus()
 	indicatorData := miscellaneous.HealthIndicatorData{Loaded: true}
 
 	switch {

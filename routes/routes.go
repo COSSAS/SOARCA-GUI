@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"soarca-gui/backend"
-	soarca "soarca-gui/backend/soarca"
+	"soarca-gui/backend/soarca"
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
@@ -18,12 +18,14 @@ func Setup(app *gin.Engine) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
-	backend := soarca.New(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
+	reporter := soarca.NewReporter(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
+	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
+
 	publicRoutes := app.Group("/")
 
 	PublicRoutes(publicRoutes)
-	ReportingRoutes(backend, publicRoutes)
-	StatusRoutes(backend, publicRoutes)
+	ReportingRoutes(reporter, publicRoutes)
+	StatusRoutes(status, publicRoutes)
 	SettingsRoutes(publicRoutes)
 }
 
@@ -41,7 +43,7 @@ func PublicRoutes(app *gin.RouterGroup) {
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
-func ReportingRoutes(backend backend.Backend, app *gin.RouterGroup) {
+func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {
 	reportingHandlers := handlers.NewReportingHandler(backend)
 
 	reportingRoute := app.Group("/reporting")
@@ -52,7 +54,7 @@ func ReportingRoutes(backend backend.Backend, app *gin.RouterGroup) {
 	}
 }
 
-func StatusRoutes(backend backend.Backend, app *gin.RouterGroup) {
+func StatusRoutes(backend backend.Status, app *gin.RouterGroup) {
 	statusHandlers := handlers.NewStatusHandler(backend)
 
 	statusRoute := app.Group("/status")

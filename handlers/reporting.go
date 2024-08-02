@@ -14,11 +14,11 @@ import (
 )
 
 type reportingHandler struct {
-	backend backend.Backend
+	reporter backend.Report
 }
 
-func NewReportingHandler(backend backend.Backend) reportingHandler {
-	return reportingHandler{backend: backend}
+func NewReportingHandler(backend backend.Report) reportingHandler {
+	return reportingHandler{reporter: backend}
 }
 
 func ReportingDashboardHandler(context *gin.Context) {
@@ -49,7 +49,7 @@ func (r *reportingHandler) ReportingIndexHandler(context *gin.Context) {
 }
 
 func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
-	reports, _ := r.backend.GetReports()
+	reports, _ := r.reporter.GetReports()
 	var rows []table.ReportingDataTableRow
 
 	for _, report := range reports {
