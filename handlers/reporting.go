@@ -13,11 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	reportingApiPath   = "/reporter"
-	reportingApiPathId = "/reporter/:id"
-)
-
 type reportingHandler struct {
 	backend backend.Backend
 }
@@ -55,14 +50,14 @@ func (r *reportingHandler) ReportingIndexHandler(context *gin.Context) {
 
 func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 	reports, _ := r.backend.GetReportings()
-
 	var rows []table.ReportingDataTableRow
 
 	for _, report := range reports {
+
 		row := table.ReportingDataTableRow{
 			ExecutionID: report.ExecutionId,
-			StartTime:   report.Started.String(),
-			EndTime:     report.Ended.String(),
+			StartTime:   report.Started,
+			Duration:    report.Ended.Sub(report.Started),
 			Status:      report.Status,
 		}
 		rows = append(rows, row)
@@ -75,7 +70,3 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 	render := utils.NewTempl(context, http.StatusOK, table.LoadReportingTableBody(formatedTable))
 	context.Render(http.StatusOK, render)
 }
-
-// func (r *reportingHandler) GetReportsHandler() ([]reporting.PlaybookExecutionReport, error) {
-// 	return []reporting.PlaybookExecutionReport{}, nil
-// }

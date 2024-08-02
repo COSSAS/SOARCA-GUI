@@ -6,6 +6,7 @@ import (
 	"soarca-gui/views/components/cards"
 	"soarca-gui/views/components/icons"
 	"soarca-gui/views/components/miscellaneous"
+	"time"
 )
 
 const (
@@ -17,46 +18,13 @@ type ReportingTableMeta struct {
 	DataRows []ReportingDataTableRow
 }
 
-var headers = []string{"Execution ID", "Start Time", "End Time", "Status"}
+var headers = []string{"Execution ID", "Start Time", "Execution Duration", "Status"}
 
 type ReportingDataTableRow struct {
 	ExecutionID string
-	StartTime   string
-	EndTime     string
+	StartTime   time.Time
+	Duration    time.Duration
 	Status      string
-}
-
-var testData = []ReportingDataTableRow{
-	{
-		ExecutionID: "exec_001",
-		StartTime:   "2024-08-01T08:00:00Z",
-		EndTime:     "2024-08-01T08:30:00Z",
-		Status:      "successfully_executed",
-	},
-	{
-		ExecutionID: "exec_002",
-		StartTime:   "2024-08-01T09:00:00Z",
-		EndTime:     "2024-08-01T09:45:00Z",
-		Status:      "Failed",
-	},
-	{
-		ExecutionID: "exec_003",
-		StartTime:   "2024-08-01T10:00:00Z",
-		EndTime:     "2024-08-01T10:20:00Z",
-		Status:      "Running",
-	},
-	{
-		ExecutionID: "exec_004",
-		StartTime:   "2024-08-01T11:00:00Z",
-		EndTime:     "2024-08-01T11:30:00Z",
-		Status:      "Completed",
-	},
-	{
-		ExecutionID: "exec_005",
-		StartTime:   "2024-08-01T12:00:00Z",
-		EndTime:     "2024-08-01T12:10:00Z",
-		Status:      "Cancelled",
-	},
 }
 
 templ LoadReportingTableBody(data ReportingTableMeta) {
@@ -109,14 +77,22 @@ templ reportingTableDataRow(row ReportingDataTableRow) {
 		{ row.ExecutionID }
 	</td>
 	<td { Td()... }>
-		{ row.StartTime }
+		{ row.StartTime.Format(time.ANSIC) }
 	</td>
 	<td { Td()... }>
-		{ row.EndTime }
+		{  formatDuration(row.Duration) }
 	</td>
 	<td { Td()... }>
 		@statusTag(row.Status)
 	</td>
+}
+
+func formatDuration(duration time.Duration) string {
+	if duration.Seconds() >= 0 {
+		return duration.Round(time.Millisecond).String()
+	} else {
+		return ""
+	}
 }
 
 templ statusTag(status string) {
@@ -127,6 +103,14 @@ templ statusTag(status string) {
 			@miscellaneous.TagFailed("Failed")
 		case "ongoing":
 			@miscellaneous.TagOngoing("Ongoing")
+		case "server_side_error":
+			@miscellaneous.TagServerSideError("Server Error")
+		case "client_side_error":
+			@miscellaneous.TagClientSideError("Client error")
+		case "timeout_error":
+			@miscellaneous.TagClientTimeOut("Timeout error")
+		case "exception_condition_error":
+			@miscellaneous.TagOngoing("Exception")
 		default:
 	}
 }
