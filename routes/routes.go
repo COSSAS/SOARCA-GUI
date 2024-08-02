@@ -18,7 +18,7 @@ func Setup(app *gin.Engine) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
-	reporter := soarca.NewReporter(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
+	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
 	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
 
 	publicRoutes := app.Group("/")

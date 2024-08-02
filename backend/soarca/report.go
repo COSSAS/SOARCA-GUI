@@ -18,7 +18,7 @@ type Report struct {
 	client http.Client
 }
 
-func NewReporter(host string, client http.Client) *Report {
+func NewReport(host string, client http.Client) *Report {
 	return &Report{Host: host, client: client}
 }
 

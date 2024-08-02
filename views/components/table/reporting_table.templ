@@ -5,7 +5,7 @@ import (
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
 	"soarca-gui/views/components/icons"
-	"soarca-gui/views/components/miscellaneous"
+	"soarca-gui/views/components/indicators"
 	"time"
 )
 
@@ -98,19 +98,19 @@ func formatDuration(duration time.Duration) string {
 templ statusTag(status string) {
 	switch status {
 		case "successfully_executed":
-			@miscellaneous.TagSucces("Success")
+			@indicators.TagSucces("Success")
 		case "failed":
-			@miscellaneous.TagFailed("Failed")
+			@indicators.TagFailed("Failed")
 		case "ongoing":
-			@miscellaneous.TagOngoing("Ongoing")
+			@indicators.TagOngoing("Ongoing")
 		case "server_side_error":
-			@miscellaneous.TagServerSideError("Server Error")
+			@indicators.TagServerSideError("Server Error")
 		case "client_side_error":
-			@miscellaneous.TagClientSideError("Client error")
+			@indicators.TagClientSideError("Client error")
 		case "timeout_error":
-			@miscellaneous.TagClientTimeOut("Timeout error")
+			@indicators.TagClientTimeOut("Timeout error")
 		case "exception_condition_error":
-			@miscellaneous.TagOngoing("Exception")
+			@indicators.TagOngoing("Exception")
 		default:
 	}
 }

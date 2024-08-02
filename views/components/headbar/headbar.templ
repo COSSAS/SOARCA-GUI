@@ -3,13 +3,13 @@ package headbar
 import (
 	"soarca-gui/utils"
 	"soarca-gui/views/components/icons"
-	components "soarca-gui/views/components/miscellaneous"
+	"soarca-gui/views/components/indicators"
 )
 
 //	"soarca-gui/views/components/icons"
 templ DesktopHeaderBar() {
 	<header class="w-full items-center bg-slate-50 py-2 px-6 hidden sm:flex">
-		@components.HealthIndicator(components.HealthIndicatorData{Loaded: false})
+		@indicators.HealthIndicator(indicators.HealthIndicatorData{Loaded: false})
 		<div class="w-1/2"></div>
 		<div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
 			<button
