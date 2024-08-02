@@ -31,7 +31,11 @@ func MockHTTPJsonServer(responseBody RequestBody) *httptest.Server {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(responseBody)
+		err = json.NewEncoder(w).Encode(responseBody)
+		if err != nil {
+			http.Error(w, "failed encodinging", http.StatusBadRequest)
+			return
+		}
 	}))
 
 	return testServer
