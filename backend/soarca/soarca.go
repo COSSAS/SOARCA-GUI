@@ -10,30 +10,24 @@ import (
 )
 
 const (
-	statusPingPath     = "/status/ping"
-	reportingPath      = "/reporter"
-	reportingApiPathId = "/reporter/:id"
+	statusPingPath    = "/status/ping"
+	reporterPath      = "/reporter"
+	reporterApiPathId = "/reporter/:id"
 )
 
-type SoarcaBackend struct {
-	Host string
+type Soarca struct {
+	Host   string
+	client http.Client
 }
 
-func NewSoarcaBackend(host string) *SoarcaBackend {
-	return &SoarcaBackend{Host: host}
+func New(host string, client http.Client) *Soarca {
+	return &Soarca{Host: host, client: client}
 }
 
-func (s *SoarcaBackend) GetPongFromStatus() (string, error) {
-	response, err := http.Get(fmt.Sprintf("%s%s", s.Host, statusPingPath))
-	if err != nil {
-		return "", fmt.Errorf("failed to make GET request: %w", err)
-	}
-	defer response.Body.Close()
+func (soarca *Soarca) GetPongFromStatus() (string, error) {
+	url := fmt.Sprintf("%s%s", soarca.Host, statusPingPath)
 
-	if response.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected status code: %d", response.StatusCode)
-	}
-	body, err := io.ReadAll(response.Body)
+	body, err := soarca.fetch(url)
 	if err != nil {
 		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
@@ -41,48 +35,59 @@ func (s *SoarcaBackend) GetPongFromStatus() (string, error) {
 	return string(body), nil
 }
 
-func (s *SoarcaBackend) GetReportings() ([]reporting.PlaybookExecutionReport, error) {
-	response, err := http.Get(fmt.Sprintf("%s%s", s.Host, reportingPath))
-	if err != nil {
-		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to make GET request: %w", err)
-	}
-	defer response.Body.Close()
+func (soarca *Soarca) GetReports() ([]reporting.PlaybookExecutionReport, error) {
+	url := fmt.Sprintf("%s%s", soarca.Host, reporterPath)
 
-	if response.StatusCode != http.StatusOK {
-		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
-	}
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to read response body: %w", err)
-	}
 	var reportings []reporting.PlaybookExecutionReport
-	err = json.Unmarshal(body, &reportings)
+	err := soarca.fetchToJson(url, &reportings)
 	if err != nil {
-		return []reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
+		return nil, err
 	}
-	fmt.Printf("%+v\n", reportings[0])
+
 	return reportings, nil
 }
 
-func (s *SoarcaBackend) GetReportingById(Id string) (reporting.PlaybookExecutionReport, error) {
-	response, err := http.Get(fmt.Sprintf("%s%s/%s", s.Host, reportingPath, Id))
+func (soarca *Soarca) GetReportsById(Id string) (reporting.PlaybookExecutionReport, error) {
+	url := fmt.Sprintf("%s%s/%s", soarca.Host, reporterApiPathId, Id)
+	var report reporting.PlaybookExecutionReport
+
+	err := soarca.fetchToJson(url, &report)
 	if err != nil {
-		return reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to make GET request: %w", err)
+		return reporting.PlaybookExecutionReport{}, err
+	}
+	return report, nil
+}
+
+func (soarca *Soarca) fetchToJson(url string, target interface{}) error {
+	body, err := soarca.fetch(url)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(body, target)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal JSON object: %w", err)
+	}
+	return nil
+}
+
+func (soarca *Soarca) fetch(url string) ([]byte, error) {
+	response, err := soarca.client.Get(url)
+	if err != nil {
+		return []byte{}, fmt.Errorf("failed to make GET request: %w", err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return reporting.PlaybookExecutionReport{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
+		return []byte{}, fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
+
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to read response body: %w", err)
+		return []byte{}, fmt.Errorf("failed to read response body: %w", err)
 	}
-	var parsedReporting reporting.PlaybookExecutionReport
 
-	err = json.Unmarshal(body, &parsedReporting)
-	if err != nil {
-		return reporting.PlaybookExecutionReport{}, fmt.Errorf("failed to marshall json object: %w", err)
+	if len(body) == 0 {
+		return []byte{}, fmt.Errorf("empty response body")
 	}
-	return parsedReporting, nil
+	return body, nil
 }

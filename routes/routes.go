@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"soarca-gui/backend"
-	s_backend "soarca-gui/backend/soarca"
+	soarca "soarca-gui/backend/soarca"
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
@@ -18,7 +18,7 @@ func Setup(app *gin.Engine) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
-	backend := s_backend.NewSoarcaBackend(utils.GetEnv("SOARCA_URI", "http://localhost:8080"))
+	backend := soarca.New(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
 	publicRoutes := app.Group("/")
 
 	PublicRoutes(publicRoutes)

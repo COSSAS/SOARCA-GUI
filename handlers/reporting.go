@@ -49,7 +49,7 @@ func (r *reportingHandler) ReportingIndexHandler(context *gin.Context) {
 }
 
 func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
-	reports, _ := r.backend.GetReportings()
+	reports, _ := r.backend.GetReports()
 	var rows []table.ReportingDataTableRow
 
 	for _, report := range reports {
