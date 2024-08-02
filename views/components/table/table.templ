@@ -1,0 +1,53 @@
+package table
+
+import "soarca-gui/utils"
+
+const (
+	theadBaseClass = "bg-gray-50 dark:bg-gray-700"
+	thBaseClass    = "p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+	tdBaseClass    = "p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white"
+)
+
+templ Table() {
+	<div class="flex flex-col border rounded-md">
+		<div class="overflow-x-auto">
+			<div class="inline-block min-w-full">
+				<div class="overflow-hidden">
+					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+						{ children... }
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ Header(opts ...func(*templ.Attributes)) {
+	<thead { utils.CreateClassAttrs(theadBaseClass,  opts...)... }>
+		<tr>
+			{ children... }
+		</tr>
+	</thead>
+}
+
+templ Body(opts ...func(*templ.Attributes)) {
+	<tbody { utils.CreateClassAttrs("divide-y", opts...)... }>
+		{ children... }
+	</tbody>
+}
+
+templ Footer(opts ...func(*templ.Attributes)) {
+	<tfoot>
+		<tr>
+			{ children... }
+		</tr>
+	</tfoot>
+}
+
+func Td(opts ...func(*templ.Attributes)) templ.Attributes {
+	return utils.CreateClassAttrs(tdBaseClass, opts...)
+}
+
+func Th(opts ...func(*templ.Attributes)) templ.Attributes {
+	return utils.CreateClassAttrs(thBaseClass, opts...)
+}

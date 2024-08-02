@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"soarca-gui/routes"
+	"soarca-gui/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -26,7 +27,10 @@ func main() {
 	app := gin.Default()
 	routes.Setup(app)
 
-	err := app.Run(":8081")
+	listeningPort := utils.GetEnv("PORT", "8081")
+	url := fmt.Sprintf("localhost:%s", listeningPort)
+	fmt.Printf("application running in %s at %s\n", listeningPort, url)
+	err := app.Run(url)
 	if err != nil {
 		fmt.Println("failed to start server")
 	}

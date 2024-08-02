@@ -1,10 +1,15 @@
 package headbar
 
-import "soarca-gui/views/components"
+import (
+	"soarca-gui/utils"
+	"soarca-gui/views/components/icons"
+	"soarca-gui/views/components/indicators"
+)
 
-templ HeaderBar() {
-	<header class="w-full items-center bg-slate-50 py-2 px-6 sm:flex">
-		@components.HealthIndicator(components.HealthIndicatorData{Loaded: false})
+//	"soarca-gui/views/components/icons"
+templ DesktopHeaderBar() {
+	<header class="w-full items-center bg-slate-50 py-2 px-6 hidden sm:flex">
+		@indicators.HealthIndicator(indicators.HealthIndicatorData{Loaded: false})
 		<div class="w-1/2"></div>
 		<div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
 			<button
@@ -15,10 +20,23 @@ templ HeaderBar() {
 			</button>
 			<button x-show="isOpen" @click="isOpen = false" class="h-full w-full fixed inset-0 cursor-default"></button>
 			<div x-show="isOpen" class="absolute w-32 bg-white rounded-lg shadow-lg py-2 mt-16 z-50">
-				<a href="#" class="block px-4 py-2 account-link hover:text-blue-600">Account</a>
-				<a href="#" class="block px-4 py-2 account-link hover:text-blue-600">Settings</a>
-				<a href="#" class="block px-4 py-2 account-link hover:text-blue-600">Sign Out</a>
+				{ children... }
 			</div>
 		</div>
+	</header>
+}
+
+templ MobileHeaderBar(homePageLink string) {
+	<header x-data="{ isOpen: false }" class="w-full bg-blue-600 bg-sidebar py-5 px-6 sm:hidden">
+		<div class="flex items-center justify-between">
+			<a href={ templ.URL(homePageLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">SOARCA</a>
+			<button @click="isOpen = !isOpen" class="text-white text-3xl focus:outline-none">
+				@icons.NewIcon("more-horizontal").InsertIcon("mr-3", utils.WithXshow("!isOpen"))
+				@icons.NewIcon("x").InsertIcon("mr-3", utils.WithXshow("isOpen"))
+			</button>
+		</div>
+		<nav :class="isOpen ? 'flex': 'hidden'" class="flex flex-col pt-4">
+			{ children... }
+		</nav>
 	</header>
 }

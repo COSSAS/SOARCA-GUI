@@ -1,0 +1,124 @@
+package table
+
+import (
+	"fmt"
+	"soarca-gui/utils"
+	"soarca-gui/views/components/cards"
+	"soarca-gui/views/components/icons"
+	"soarca-gui/views/components/indicators"
+	"time"
+)
+
+const (
+	reportingDataEndpoint = "/reporting/table"
+)
+
+type ReportingTableMeta struct {
+	Loaded   bool
+	DataRows []ReportingDataTableRow
+}
+
+var headers = []string{"Execution ID", "Start Time", "Execution Duration", "Status"}
+
+type ReportingDataTableRow struct {
+	ExecutionID string
+	StartTime   time.Time
+	Duration    time.Duration
+	Status      string
+}
+
+templ LoadReportingTableBody(data ReportingTableMeta) {
+	if !data.Loaded {
+		@Body() {
+			<tr
+				hx-get={ string(templ.URL(fmt.Sprintf(reportingDataEndpoint))) }
+				hx-trigger="load"
+				hx-swap="outerHTML"
+				class="relative"
+			></tr>
+		}
+	} else {
+		@tableRows(data.DataRows)
+		@icons.LoadIcons()
+	}
+}
+
+templ ReportingTableCard() {
+	@cards.Card(utils.Class("p-4")) {
+		<div class="items-center justify-between lg:flex">
+			<div class="mb-4 lg:mb-0">
+				<h3 class="mb-2 text-xl text-gray-900 dark:text-white">Current Reports</h3>
+				<span class="text-base font-normal text-gray-500 dark:text-gray-400">Reports from API</span>
+			</div>
+		</div>
+		@FormatTable()
+	}
+}
+
+templ FormatTable() {
+	@Table() {
+		@reportingTableHeaders()
+		@LoadReportingTableBody(ReportingTableMeta{Loaded: false})
+	}
+}
+
+templ reportingTableHeaders() {
+	@Header() {
+		for _, header := range headers {
+			<th { Th()... }>
+				{ header }
+			</th>
+		}
+	}
+}
+
+templ reportingTableDataRow(row ReportingDataTableRow) {
+	<td { Td()... }>
+		{ row.ExecutionID }
+	</td>
+	<td { Td()... }>
+		{ row.StartTime.Format(time.ANSIC) }
+	</td>
+	<td { Td()... }>
+		{  formatDuration(row.Duration) }
+	</td>
+	<td { Td()... }>
+		@statusTag(row.Status)
+	</td>
+}
+
+func formatDuration(duration time.Duration) string {
+	if duration.Seconds() >= 0 {
+		return duration.Round(time.Millisecond).String()
+	} else {
+		return ""
+	}
+}
+
+templ statusTag(status string) {
+	switch status {
+		case "successfully_executed":
+			@indicators.TagSucces("Success")
+		case "failed":
+			@indicators.TagFailed("Failed")
+		case "ongoing":
+			@indicators.TagOngoing("Ongoing")
+		case "server_side_error":
+			@indicators.TagServerSideError("Server Error")
+		case "client_side_error":
+			@indicators.TagClientSideError("Client error")
+		case "timeout_error":
+			@indicators.TagClientTimeOut("Timeout error")
+		case "exception_condition_error":
+			@indicators.TagOngoing("Exception")
+		default:
+	}
+}
+
+templ tableRows(rows []ReportingDataTableRow) {
+	for _, row := range rows {
+		<tr>
+			@reportingTableDataRow(row)
+		</tr>
+	}
+}

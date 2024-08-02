@@ -1,0 +1,47 @@
+package icons
+
+import "soarca-gui/utils"
+
+type Icon struct {
+	iconName string
+	width    string
+	height   string
+}
+
+func NewIcon(name string) *Icon {
+	return &Icon{
+		iconName: name,
+		width:    "24",
+		height:   "24"}
+}
+
+func (i *Icon) SetSize(size string) *Icon {
+	i.width = size
+	i.height = size
+	return i
+
+}
+
+func (i *Icon) GetIcon() *Icon {
+	return i
+}
+
+// Function provides handy function for settings icons. https://feathericons.com/ naming is used
+func (i *Icon) setIconAttributes() func(*templ.Attributes) {
+	return func(attrs *templ.Attributes) {
+		attr := *attrs
+		attr["data-feather"] = i.iconName
+		attr["width"] = i.width
+		attr["height"] = i.height
+	}
+}
+
+templ (i *Icon) InsertIcon(baseClass string, opts ...func(*templ.Attributes)) {
+	<i { utils.CreateClassAttrs(baseClass, append(opts, i.setIconAttributes())...)... }></i>
+}
+
+templ LoadIcons() {
+	<script>
+        feather.replace();
+    </script>
+}

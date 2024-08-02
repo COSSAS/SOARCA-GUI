@@ -3,6 +3,8 @@ package routes
 import (
 	"net/http"
 
+	"soarca-gui/backend"
+	"soarca-gui/backend/soarca"
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
@@ -16,12 +18,15 @@ func Setup(app *gin.Engine) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
+	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
+	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), http.Client{})
+
 	publicRoutes := app.Group("/")
 
 	PublicRoutes(publicRoutes)
-	Reporting(publicRoutes)
-	StatusGroup(publicRoutes)
-	SettingsRouter(publicRoutes)
+	ReportingRoutes(reporter, publicRoutes)
+	StatusRoutes(status, publicRoutes)
+	SettingsRoutes(publicRoutes)
 }
 
 func PublicRoutes(app *gin.RouterGroup) {
@@ -38,24 +43,27 @@ func PublicRoutes(app *gin.RouterGroup) {
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
-func Reporting(app *gin.RouterGroup) {
+func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {
+	reportingHandlers := handlers.NewReportingHandler(backend)
+
 	reportingRoute := app.Group("/reporting")
 	{
-		reportingRoute.GET("/", handlers.ReportingDashboard)
-		reportingRoute.GET("/reportingcard/:id", handlers.ReportingCard)
+		reportingRoute.GET("/", reportingHandlers.ReportingIndexHandler)
+		reportingRoute.GET("/card/:id", reportingHandlers.ReportingCardHandler)
+		reportingRoute.GET("/table/", reportingHandlers.ReportingTableCardHandler)
 	}
 }
 
-func StatusGroup(app *gin.RouterGroup) {
-	statusHandler := handlers.NewStatusHandler(utils.GetEnv("SOARCA_URI", "http://localhost:8080"))
+func StatusRoutes(backend backend.Status, app *gin.RouterGroup) {
+	statusHandlers := handlers.NewStatusHandler(backend)
 
 	statusRoute := app.Group("/status")
 	{
-		statusRoute.GET("/indicator/card", statusHandler.HealthComponentHandler)
+		statusRoute.GET("/indicator/card", statusHandlers.HealthComponentHandler)
 	}
 }
 
-func SettingsRouter(app *gin.RouterGroup) {
+func SettingsRoutes(app *gin.RouterGroup) {
 	reportingRoute := app.Group("/settings")
 	{
 		reportingRoute.GET("/", handlers.SettingsDashboard)

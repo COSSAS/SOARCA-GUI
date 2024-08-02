@@ -1,20 +1,76 @@
 package layouts
 
 import (
+	"soarca-gui/utils"
 	"soarca-gui/views/components/headbar"
+	"soarca-gui/views/components/icons"
 	"soarca-gui/views/components/navbar"
 )
 
 const (
-	version = "v0.1"
+	version          = "v0.1"
+	title            = "SOARCA-GUI"
+	dashboardPath    = "/dashboard"
+	documentationUrl = "https://cossas.github.io/SOARCA/docs"
 )
 
-templ DashboardLayout(title string, version string, homelink string) {
+type icon struct {
+	name string
+	css  string
+}
+
+type link struct {
+	Name string
+	Href string
+	Icon icon
+}
+
+var navBarlinks = []link{
+	{Name: "Reporting", Href: "/reporting", Icon: icon{name: "activity", css: "mr-3"}},
+	{Name: "Settings", Href: "/settings", Icon: icon{name: "settings", css: "mr-3"}},
+}
+
+var headBarlinks = []link{
+	{Name: "Account", Href: "/account"},
+	{Name: "Settings", Href: "/settings"},
+}
+
+templ formatLink(link link, css string) {
+	<a href={ templ.URL(link.Href) } { utils.CreateClassAttrs(css)... }>
+		{ children... }
+		{ link.Name }
+	</a>
+}
+
+templ formatWithIcon(name string, style string) {
+	@icons.NewIcon(name).InsertIcon(style)
+}
+
+templ renderLinks(links []link, css string) {
+	for _, link := range links {
+		@formatLink(link, css) {
+			if link.Icon != (icon{}) {
+				@formatWithIcon(link.Icon.name, link.Icon.css)
+			}
+		}
+	}
+}
+
+templ DashboardLayout() {
 	@BaseLayout() {
+		<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<body class="bg-blue-50 font-family-sans-serif flex">
-			@navbar.Navsidebar(title, version, homelink)
+			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl) {
+				@renderLinks(navBarlinks, "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item")
+			}
 			<div class="w-full flex flex-col h-screen overflow-y-hidden">
-				@headbar.HeaderBar()
+				@headbar.DesktopHeaderBar() {
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-blue-600")
+				}
+				@headbar.MobileHeaderBar(dashboardPath) {
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg  hover:bg-blue-800 hover:text-white")
+				}
 				<div class="w-full overflow-x-hidden border-t flex flex-col">
 					<main class="w-full flex-grow px-4 pt-2">
 						{ children... }

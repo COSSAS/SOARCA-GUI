@@ -1,8 +1,13 @@
 package authviews
 
 import (
-	"soarca-gui/views/components"
+	"soarca-gui/views/components/notifications"
 	"soarca-gui/views/layouts"
+)
+
+const (
+	homeLink          = "/"
+	soarcaLogoUrlPath = "/public/assets/icons/soarca-logo.svg"
 )
 
 templ LoginIndex() {
@@ -15,8 +20,8 @@ templ LoginBaseLayout() {
 	@layouts.BaseLayout() {
 		<body class="min-h-screen bg-gray-100 dark:bg-slate-800 flex flex-col justify-center sm:py-12 font-family-sans-serif">
 			<div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-				<a href="index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
-					<img src="https://github.com/COSSAS/SOARCA/raw/development/img/soarca-logo.svg" class="w-30 py-3 md:py-0 g-image"/>
+				<a href={ templ.URL(homeLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
+					<img src={ soarcaLogoUrlPath } class="w-30 py-3 md:py-0 g-image"/>
 				</a>
 				<div class="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
 					<div id="extra-information" class="px-5 py-7">
@@ -71,7 +76,7 @@ templ LoginForm() {
 		hx-target="#extra-information"
 		hx-swap="innerHTML"
 	>
-		<label name="email" type="email" class="font-semibold text-sm text-gray-600 pb-1 block">E-mail</label>
+		<label name="email" type="email" class="border-none font-semibold text-sm text-gray-600 pb-1 block">E-mail</label>
 		<input
 			id="email"
 			name="email"
@@ -79,7 +84,7 @@ templ LoginForm() {
 			required
 			class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
 		/>
-		<label name="password" type="password" class="font-semibold text-sm text-gray-600 pb-1 block">Password</label>
+		<label name="password" type="password" class="border-none font-semibold text-sm text-gray-600 pb-1 block">Password</label>
 		<input
 			id="password"
 			name="password"
@@ -98,6 +103,6 @@ templ LoginForm() {
 
 templ AuthErrorCmp(errors []error) {
 	for _, err := range errors {
-		@components.WarningNofication(err.Error())
+		@notifications.WarningNofication(err.Error())
 	}
 }

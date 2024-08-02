@@ -12,7 +12,7 @@ services:
       - mongodb_data_container:/data/db
 
   soarca:
-    image: cossas/soarca:1.0.0-42-g8b62b16
+    image: cossas/soarca:development
     container_name: soarca_server
     environment:
       PORT: 8080

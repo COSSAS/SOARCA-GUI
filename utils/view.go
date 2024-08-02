@@ -6,9 +6,9 @@ import (
 	"github.com/a-h/templ"
 )
 
-func CreateAttrs(baseClass string, defaultClass string, opts ...func(*templ.Attributes)) templ.Attributes {
+func BaseAttributes(atrributeName string, class string, opts ...func(*templ.Attributes)) templ.Attributes {
 	attrs := templ.Attributes{
-		"class": baseClass + " " + defaultClass,
+		atrributeName: class + " ",
 	}
 	for _, o := range opts {
 		o(&attrs)
@@ -16,14 +16,37 @@ func CreateAttrs(baseClass string, defaultClass string, opts ...func(*templ.Attr
 	return attrs
 }
 
+func CreateClassAttrs(baseClass string, opts ...func(*templ.Attributes)) templ.Attributes {
+	return BaseAttributes("class", baseClass, opts...)
+}
+
+func Class(class string) func(*templ.Attributes) {
+	return addToAttribute("class", class)
+}
+
 func Merge(a, b string) string {
 	return fmt.Sprintf("%s %s", a, b)
 }
 
-func Class(class string) func(*templ.Attributes) {
+func WithXdata(value string) func(*templ.Attributes) {
+	return NewAttribute("x-data", value)
+}
+
+func WithXshow(value string) func(*templ.Attributes) {
+	return NewAttribute("x-show", value)
+}
+
+func addToAttribute(atrributeName string, class string) func(*templ.Attributes) {
 	return func(attrs *templ.Attributes) {
 		attr := *attrs
-		class := attr["class"].(string) + " " + class
-		attr["class"] = class
+		class := attr[atrributeName].(string) + " " + class
+		attr[atrributeName] = class
+	}
+}
+
+func NewAttribute(key string, value string) func(*templ.Attributes) {
+	return func(attrs *templ.Attributes) {
+		attr := *attrs
+		attr[key] = value
 	}
 }
