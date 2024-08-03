@@ -71,7 +71,7 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 	context.Render(http.StatusOK, render)
 }
 
-// func (r *reportingHandler) ReportingDetailModalHandler(context *gin.Context) {
-// 	render := utils.NewTempl(context, http.StatusOK, )
-// 	context.Render(http.StatusOK, render)
-// }
+func (r *reportingHandler) ReportingDetailModalHandler(context *gin.Context) {
+	render := utils.NewTempl(context, http.StatusOK)
+	context.Render(http.StatusOK, render)
+}
