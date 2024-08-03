@@ -14,8 +14,7 @@ var initialCards = []cards.ReportingCardData{
 templ ReportingIndex() {
 	@layouts.DashboardLayout() {
 		@banner()
-		@ReportingBase()
-		//@ReportList()
+		@reportingMetricCards()
 		@table.ReportingTableCard()
 	}
 }
@@ -31,11 +30,11 @@ templ banner() {
 }
 
 
-templ ReportingBase() {
+templ reportingMetricCards() {
 	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-2 mb-2">
 		// <div class="grid lg:gap-8  pb-2 pt-1">
 		for _, card := range initialCards {
-			@cards.LoadReportingCard(card)
+			@cards.ReportingMetricCard(card)
 		}
 	</div>
 }

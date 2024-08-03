@@ -36,7 +36,7 @@ func (r *reportingHandler) ReportingCardHandler(context *gin.Context) {
 		Name:   "Executed Playbooks",
 	}
 
-	render := utils.NewTempl(context, http.StatusOK, cards.LoadReportingCard(updatedCard))
+	render := utils.NewTempl(context, http.StatusOK, cards.ReportingMetricCard(updatedCard))
 
 	context.Render(http.StatusOK, render)
 }
