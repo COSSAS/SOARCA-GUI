@@ -7,6 +7,7 @@ import (
 	"soarca-gui/backend"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
+	"soarca-gui/views/components/modals"
 	"soarca-gui/views/components/table"
 	"soarca-gui/views/dashboard/reporting"
 
@@ -72,6 +73,6 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 }
 
 func (r *reportingHandler) ReportingDetailModalHandler(context *gin.Context) {
-	render := utils.NewTempl(context, http.StatusOK)
+	render := utils.NewTempl(context, http.StatusOK, modals.ReportingModal())
 	context.Render(http.StatusOK, render)
 }

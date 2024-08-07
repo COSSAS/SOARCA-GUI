@@ -2,6 +2,7 @@ package reporting
 
 import (
 	"soarca-gui/views/components/cards"
+	"soarca-gui/views/components/modals"
 	"soarca-gui/views/components/table"
 	"soarca-gui/views/layouts"
 )
@@ -16,6 +17,7 @@ templ ReportingIndex() {
 		@banner()
 		@reportingMetricCards()
 		@table.ReportingTableCard()
+		@modals.ReportingModal()
 	}
 }
 
@@ -28,7 +30,6 @@ templ banner() {
 		</div>
 	</div>
 }
-
 
 templ reportingMetricCards() {
 	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-2 mb-2">
