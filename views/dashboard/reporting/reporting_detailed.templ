@@ -5,82 +5,94 @@ import "soarca-gui/views/layouts"
 templ ReportinDetailedView(json string) {
 	<!-- Card Container -->
 	@layouts.DashboardLayout() {
-		<div class="bg-white shadow-md rounded-lg p-6 mb-6">
-			<!-- Status Text -->
-			<div class="mb-6">
-				<p class="text-lg font-semibold text-gray-700 mb-4">
-					this playbook is currently being executed
-				</p>
-				<p class="text-sm text-gray-600 mb-2">
-					Execution ID: e02a8f80-54f6-11ef-b717-902e16be1bf5
-				</p>
-				<p class="text-sm text-gray-600 mb-2">
-					Playbook ID: playbook--300270f9-0e64-42c8-93cc-0927edbe3ae7
-				</p>
-				<p class="text-sm text-gray-600 mb-2">
-					Started: 2024-08-07T21:54:37.134987607+02:00
-				</p>
-				<p class="text-sm text-gray-600 mb-2">
-					Ended: 2024-08-07T21:55:17.17541034+02:00
-				</p>
-				<p class="text-sm text-gray-600 mb-2">
-					Status: successfully_executed
-				</p>
-				<p class="text-sm text-gray-600 mb-4">
-					Status Text: playbook execution completed successfully
-				</p>
-			</div>
-			<!-- Step Result 1 -->
-			<div class="bg-gray-50 border rounded-lg p-4 mb-4">
-				<p class="text-md font-semibold text-gray-800">
-					Name: Action 1
-				</p>
-				<p class="text-sm text-gray-600">
-					Execution ID: e02a8f80-54f6-11ec-b7d6-13a49d4933e8
-				</p>
-				<p class="text-sm font-semibold text-green-600">
-					Result: Success
-				</p>
-				<p class="text-sm text-gray-600">
-					Details: The action completed successfully.
-				</p>
-				<p class="text-sm text-gray-600">
-					Status Text: action 1 is currently in progress
-				</p>
-				<p class="text-sm text-gray-600">
-					Commands: start, stop, reset
-				</p>
-			</div>
-			<!-- Step Result 2 -->
-			<div class="bg-gray-50 border rounded-lg p-4 mb-4">
-				<p class="text-md font-semibold text-gray-800">
-					Name: Action 2
-				</p>
-				<p class="text-sm text-gray-600">
-					Execution ID: f13b9c90-54f6-11ec-b7d6-13a49d4933e9
-				</p>
-				<p class="text-sm font-semibold text-red-600">
-					Result: Failed
-				</p>
-				<p class="text-sm text-gray-600">
-					Details: The action encountered an error.
-				</p>
-				<p class="text-sm text-gray-600">
-					Variable: var2_value
-				</p>
-				<div class="bg-gray-100 p-2 rounded-lg mt-2 overflow-x-auto">
-					<pre class="text-xs bg-gray-200 p-2 rounded-md">
-						<code class="language-json">
-							{ json }
-						</code>
-					</pre>
+		<div class="max-w-4xl mx-auto">
+			<!-- Card Container -->
+			<div class="relative bg-white shadow-md rounded-lg p-6 mb-6">
+				<!-- Loading Indicator -->
+				<div class="absolute top-0 right-0 p-6">
+					<svg class="w-6 h-6 text-blue-600 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6h2zm16 0a8 8 0 01-8 8v-2a6 6 0 006-6h2zm-8-8a8 8 0 018 8h-2a6 6 0 00-6-6V4zm-4 8a8 8 0 01-8-8h2a6 6 0 006 6v2z"></path>
+					</svg>
 				</div>
-				<p class="text-sm text-gray-600">
-					Status Text: action 2 has failed
-				</p>
-				<p class="text-sm text-gray-600">
-					Commands: retry, ignore
-				</p>
+				<!-- Status Text -->
+				<div class="mb-6">
+					<p class="text-lg font-semibold text-gray-700 mb-4">
+						this playbook is currently being executed
+					</p>
+					<p class="text-sm text-gray-600 mb-1">
+						Execution ID: e02a8f80-54f6-11ef-b717-902e16be1bf5
+					</p>
+					<p class="text-sm text-gray-600 mb-1">
+						Playbook ID: playbook--300270f9-0e64-42c8-93cc-0927edbe3ae7
+					</p>
+					<p class="text-sm text-gray-600 mb-1">
+						Started: 2024-08-07T21:54:37.134987607+02:00
+					</p>
+					<p class="text-sm text-gray-600 mb-1">
+						Ended: 2024-08-07T21:55:17.17541034+02:00
+					</p>
+					<p class="text-sm text-gray-600 mb-1">
+						Status: successfully_executed
+					</p>
+					<p class="text-sm text-gray-600 mb-4">
+						Status Text: playbook execution completed successfully
+					</p>
+				</div>
+				<!-- Step Result 1 -->
+				<div class="bg-blue-200 p-4 rounded-lg">
+					<div class="bg-gray-50 border rounded-lg p-4 mb-4">
+						<p class="text-md font-semibold text-gray-800">
+							Name: Action 1
+						</p>
+						<p class="text-sm text-gray-600">
+							Execution ID: e02a8f80-54f6-11ec-b7d6-13a49d4933e8
+						</p>
+						<p class="text-sm font-semibold text-green-600">
+							Result: Success
+						</p>
+						<p class="text-sm text-gray-600">
+							Details: The action completed successfully.
+						</p>
+						<p class="text-sm text-gray-600">
+							Status Text: action 1 is currently in progress
+						</p>
+						<p class="text-sm text-gray-600">
+							Commands: start, stop, reset
+						</p>
+					</div>
+					<!-- Step Result 2 -->
+					<div class="bg-gray-50 border rounded-lg p-4 mb-4">
+						<p class="text-md font-semibold text-gray-800">
+							Name: Action 2
+						</p>
+						<p class="text-sm text-gray-600">
+							Execution ID: f13b9c90-54f6-11ec-b7d6-13a49d4933e9
+						</p>
+						<p class="text-sm font-semibold text-red-600">
+							Result: Failed
+						</p>
+						<p class="text-sm text-gray-600">
+							Details: The action encountered an error.
+						</p>
+						<p class="text-sm text-gray-600">
+							Variable: var2_value
+						</p>
+						<div class="bg-gray-100 p-2 rounded-lg mt-2 overflow-x-auto">
+							<pre class="text-xs bg-gray-200 p-2 rounded-md">
+								<code class="language-json">
+									{ json }
+								</code>
+							</pre>
+						</div>
+						<p class="text-sm text-gray-600">
+							Status Text: action 2 has failed
+						</p>
+						<p class="text-sm text-gray-600">
+							Commands: retry, ignore
+						</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	}
