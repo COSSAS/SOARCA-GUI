@@ -51,7 +51,7 @@ func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {
 		reportingRoute.GET("/", reportingHandlers.ReportingIndexHandler)
 		reportingRoute.GET("/card/:id", reportingHandlers.ReportingCardHandler)
 		reportingRoute.GET("/table/", reportingHandlers.ReportingTableCardHandler)
-		reportingRoute.GET("/modalview/:id", reportingHandlers.ReportingTableCardHandler)
+		reportingRoute.GET("/:id", reportingHandlers.ReportingDetailView)
 	}
 }
 

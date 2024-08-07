@@ -1,13 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"soarca-gui/backend"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
-	"soarca-gui/views/components/modals"
 	"soarca-gui/views/components/table"
 	"soarca-gui/views/dashboard/reporting"
 
@@ -72,7 +72,18 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 	context.Render(http.StatusOK, render)
 }
 
-func (r *reportingHandler) ReportingDetailModalHandler(context *gin.Context) {
-	render := utils.NewTempl(context, http.StatusOK, modals.ReportingModal())
+func (r *reportingHandler) ReportingDetailView(context *gin.Context) {
+
+	data := map[string]interface{}{
+		"name":   "Jane Doe",
+		"age":    28,
+		"email":  "jane.doe@example.com",
+		"active": true,
+	}
+
+	// Marshal the data to a JSON string with indentation
+	indentedJSON, _ := json.MarshalIndent(data, "", "  ")
+
+	render := utils.NewTempl(context, http.StatusOK, reporting.ReportinDetailedView(string(indentedJSON)))
 	context.Render(http.StatusOK, render)
 }
