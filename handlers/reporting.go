@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -73,17 +72,14 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 }
 
 func (r *reportingHandler) ReportingDetailView(context *gin.Context) {
+	id := context.Param("id")
 
-	data := map[string]interface{}{
-		"name":   "Jane Doe",
-		"age":    28,
-		"email":  "jane.doe@example.com",
-		"active": true,
+	foundReport, error := r.reporter.GetReportsById(id)
+	fmt.Println(foundReport)
+	if error != nil {
+		fmt.Errorf("error not found")
 	}
 
-	// Marshal the data to a JSON string with indentation
-	indentedJSON, _ := json.MarshalIndent(data, "", "  ")
-
-	render := utils.NewTempl(context, http.StatusOK, reporting.ReportinDetailedView(string(indentedJSON)))
+	render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView(foundReport))
 	context.Render(http.StatusOK, render)
 }

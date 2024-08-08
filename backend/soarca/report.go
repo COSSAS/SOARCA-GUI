@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	statusPingPath    = "/status/ping"
-	reporterPath      = "/reporter"
-	reporterApiPathId = "/reporter/:id"
+	statusPingPath = "/status/ping"
+	reporterPath   = "/reporter"
 )
 
 type Report struct {
@@ -35,7 +34,7 @@ func (report *Report) GetReports() ([]reporter.PlaybookExecutionReport, error) {
 }
 
 func (report *Report) GetReportsById(Id string) (reporter.PlaybookExecutionReport, error) {
-	url := fmt.Sprintf("%s%s/%s", report.Host, reporterApiPathId, Id)
+	url := fmt.Sprintf("%s%s/%s", report.Host, reporterPath, Id)
 	var returnReport reporter.PlaybookExecutionReport
 
 	err := fetchToJson(report.client, url, &returnReport)

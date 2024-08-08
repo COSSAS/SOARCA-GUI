@@ -1,0 +1,21 @@
+package indicators
+
+templ ReportingStatusTag(status string) {
+	switch status {
+		case "successfully_executed":
+			@TagSucces("Success")
+		case "failed":
+			@TagFailed("Failed")
+		case "ongoing":
+			@TagOngoing("Ongoing")
+		case "server_side_error":
+			@TagServerSideError("Server Error")
+		case "client_side_error":
+			@TagClientSideError("Client error")
+		case "timeout_error":
+			@TagClientTimeOut("Timeout error")
+		case "exception_condition_error":
+			@TagOngoing("Exception")
+		default:
+	}
+}

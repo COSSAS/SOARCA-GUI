@@ -83,7 +83,7 @@ templ reportingTableDataRow(row ReportingDataTableRow) {
 		{  formatDuration(row.Duration) }
 	</td>
 	<td { Td()... }>
-		@statusTag(row.Status)
+		@indicators.ReportingStatusTag(row.Status)
 	</td>
 }
 
@@ -92,26 +92,6 @@ func formatDuration(duration time.Duration) string {
 		return duration.Round(time.Millisecond).String()
 	} else {
 		return ""
-	}
-}
-
-templ statusTag(status string) {
-	switch status {
-		case "successfully_executed":
-			@indicators.TagSucces("Success")
-		case "failed":
-			@indicators.TagFailed("Failed")
-		case "ongoing":
-			@indicators.TagOngoing("Ongoing")
-		case "server_side_error":
-			@indicators.TagServerSideError("Server Error")
-		case "client_side_error":
-			@indicators.TagClientSideError("Client error")
-		case "timeout_error":
-			@indicators.TagClientTimeOut("Timeout error")
-		case "exception_condition_error":
-			@indicators.TagOngoing("Exception")
-		default:
 	}
 }
 
