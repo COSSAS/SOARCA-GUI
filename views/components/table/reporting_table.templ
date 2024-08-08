@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	reportingDataEndpoint = "/reporting/table"
+	reportingDataEndpoint         = "/reporting/table"
+	reportingDetailedViewEndpoint = "/reporting/"
 )
 
 type ReportingTableMeta struct {
@@ -74,7 +75,7 @@ templ reportingTableHeaders() {
 
 templ reportingTableDataRow(row ReportingDataTableRow) {
 	<td { Td()... }>
-		{ row.ExecutionID }
+		<a href={ templ.URL(fmt.Sprintf("%s%s", reportingDetailedViewEndpoint, row.ExecutionID)) } class="text-blue-800 hover:text-blue-400">{ row.ExecutionID } </a>
 	</td>
 	<td { Td()... }>
 		{ row.StartTime.Format(time.ANSIC) }
