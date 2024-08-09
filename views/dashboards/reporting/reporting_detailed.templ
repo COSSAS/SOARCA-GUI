@@ -18,8 +18,8 @@ templ ReportingDetailedView(executionReport reporter.PlaybookExecutionReport) {
 		@headersection() {
 		}
 		@section() {
-			@generalPlaybookCardInfo(executionReport)
-			@actionStepResultsCards(executionReport.StepResults)
+			@playbookInfoCard(executionReport)
+			@actionStepInfoCards(executionReport.StepResults)
 		}
 	}
 }
@@ -39,13 +39,13 @@ templ headersection() {
 
 templ section() {
 	<div class="max-w-4xl mx-auto">
-		@cards.Card(utils.Class("relative bg-white shadow-md rounded-lg p-6 mb-6")) {
+		@cards.Card(utils.Class("relative shadow-md rounded-lg p-6 mb-6")) {
 			{ children... }
 		}
 	</div>
 }
 
-templ generalPlaybookCardInfo(executionReport reporter.PlaybookExecutionReport) {
+templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 	@statusIndicator(executionReport.Status)
 	<span class="text-md font-bold text-gray-800 mb-8">Playbook:</span>
 	<span>{ "remove malware" }</span>
@@ -110,7 +110,7 @@ templ expander() {
 	</div>
 }
 
-templ expandStepResultCard(stepResults reporter.StepExecutionReport) {
+templ expandActionInfoCard(stepResults reporter.StepExecutionReport) {
 	<div class="mb-6">
 		<div class="bg-gray-100 p-2 rounded-lg mt-2 overflow-x-auto">
 			for name, stepResult := range stepResults.Variables {
@@ -141,8 +141,8 @@ templ formatCacaoVariables(name string, result cacao.Variable) {
 	</div>
 }
 
-templ actionStepResultCard(executionId string, stepResult reporter.StepExecutionReport) {
-	<div class="relative bg-gray-50 border rounded-lg p-4 mb-4">
+templ actionStepInfoCard(executionId string, stepResult reporter.StepExecutionReport) {
+	<div class="relative bg-gray-100 border rounded-lg p-4 mb-4">
 		@statusIndicator(stepResult.Status)
 		<span class="text-md font-bold text-gray-800 mb-8">Action Name:</span>
 		<span>{ executionId }</span>
@@ -176,7 +176,7 @@ templ actionStepResultCard(executionId string, stepResult reporter.StepExecution
 	</div>
 }
 
-templ actionStepResultsCards(stepResults map[string]reporter.StepExecutionReport) {
+templ actionStepInfoCards(stepResults map[string]reporter.StepExecutionReport) {
 	@cards.Card(utils.Class("bg-blue-200 p-4 rounded-lg")) {
 		<span class="inline-flex items-center">
 			@icons.NewIcon("zap").SetSize("12").InsertIcon("text-blue-600 ")
@@ -185,9 +185,9 @@ templ actionStepResultsCards(stepResults map[string]reporter.StepExecutionReport
 			</p>
 		</span>
 		for executionId, stepResult := range stepResults {
-			@actionStepResultCard(executionId, stepResult) {
+			@actionStepInfoCard(executionId, stepResult) {
 				@expander() {
-					@expandStepResultCard(stepResult)
+					@expandActionInfoCard(stepResult)
 				}
 			}
 		}
@@ -195,9 +195,7 @@ templ actionStepResultsCards(stepResults map[string]reporter.StepExecutionReport
 }
 
 func prettyPrint(data string) []byte {
-
 	var prettyJSON map[string]interface{}
-
 	if err := json.Unmarshal([]byte(data), &prettyJSON); err != nil {
 		return []byte(fmt.Sprintf("Failed to generate JSON: %s", err))
 	}
@@ -205,7 +203,6 @@ func prettyPrint(data string) []byte {
 	if err != nil {
 		return []byte(fmt.Sprintf("Failed to generate JSON: %s", err))
 	}
-
 	return returnString
 }
 
