@@ -15,8 +15,7 @@ import (
 
 templ ReportingDetailedView(executionReport reporter.PlaybookExecutionReport) {
 	@layouts.DashboardLayout() {
-		@headersection() {
-		}
+		@headersection()
 		@section() {
 			@playbookInfoCard(executionReport)
 			@actionStepInfoCards(executionReport.StepResults)
@@ -79,7 +78,7 @@ templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 }
 
 templ statusIndicator(status string) {
-	<div class="absolute top-0 right-0 p-2">
+	<div class="absolute top-0 right-0  p-2 pr-4">
 		@indicators.ReportingStatusTag(status)
 	</div>
 }
