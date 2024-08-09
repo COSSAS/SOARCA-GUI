@@ -3,12 +3,13 @@ package reporting
 import (
 	"encoding/json"
 	"fmt"
+	"soarca-gui/models/cacao"
 	"soarca-gui/models/reporter"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
+	"soarca-gui/views/components/icons"
 	"soarca-gui/views/components/indicators"
 	"soarca-gui/views/layouts"
-	"strings"
 	"time"
 )
 
@@ -109,15 +110,34 @@ templ expander() {
 	</div>
 }
 
-templ expandStepResultCard(stepResult reporter.StepExecutionReport) {
+templ expandStepResultCard(stepResults reporter.StepExecutionReport) {
 	<div class="mb-6">
 		<div class="bg-gray-100 p-2 rounded-lg mt-2 overflow-x-auto">
-			<pre class="text-xs bg-gray-200 p-2 rounded-md">
-				<code class="language-json">
-					{ formatVariable(stepResult) }
-				</code>
-			</pre>
+			for name, stepResult := range stepResults.Variables {
+				@formatCacaoVariables(name, stepResult)
+			}
 		</div>
+	</div>
+}
+
+templ formatCacaoVariables(name string, result cacao.Variable) {
+	<div class="mb-6">
+		<span class="text-md font-semi-bold text-gray-800 mb-8">Name:</span>
+		<span>{ name }</span>
+		<hr class="mt-2"/>
+		<table class="table-auto text-sm text-gray-600">
+			<tbody>
+				<tr>
+					<th class="font-semibold text-left pr-4">Type:</th>
+					<td>{ result.Type }</td>
+				</tr>
+			</tbody>
+		</table>
+		<pre class="text-xs bg-gray-200 p-2 rounded-md">
+			<code class="language-json">
+				{ string(prettyPrint(result.Value)) }
+			</code>
+		</pre>
 	</div>
 }
 
@@ -158,25 +178,35 @@ templ actionStepResultCard(executionId string, stepResult reporter.StepExecution
 
 templ actionStepResultsCards(stepResults map[string]reporter.StepExecutionReport) {
 	@cards.Card(utils.Class("bg-blue-200 p-4 rounded-lg")) {
-		<p class="text-sm text-blue-600 mb-2">Found: { fmt.Sprint(len(stepResults)) } actions </p>
-		for executionId, _ := range stepResults {
-			@actionStepResultCard(executionId, stepResults[executionId]) {
+		<span class="inline-flex items-center">
+			@icons.NewIcon("zap").SetSize("12").InsertIcon("text-blue-600 ")
+			<p class="text-sm text-blue-600 mb-1 ml-1">
+				Found: { fmt.Sprint(len(stepResults)) } actions 
+			</p>
+		</span>
+		for executionId, stepResult := range stepResults {
+			@actionStepResultCard(executionId, stepResult) {
 				@expander() {
-					@expandStepResultCard(stepResults[executionId])
+					@expandStepResultCard(stepResult)
 				}
 			}
 		}
 	}
 }
 
-func formatVariable(stepResult reporter.StepExecutionReport) string {
+func prettyPrint(data string) []byte {
 
-	indentedJSON, err := json.MarshalIndent(stepResult.Variables, "", "  ")
-	if err != nil {
-		return "failed to parse variable correctly for step action"
+	var prettyJSON map[string]interface{}
+
+	if err := json.Unmarshal([]byte(data), &prettyJSON); err != nil {
+		return []byte(fmt.Sprintf("Failed to generate JSON: %s", err))
 	}
-	formattedJSON := strings.ReplaceAll(string(indentedJSON), "\\n", "")
-	return formattedJSON
+	returnString, err := json.MarshalIndent(prettyJSON, "", "  ")
+	if err != nil {
+		return []byte(fmt.Sprintf("Failed to generate JSON: %s", err))
+	}
+
+	return returnString
 }
 
 func formatDuration(t1 time.Time, t2 time.Time) string {

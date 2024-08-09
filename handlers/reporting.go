@@ -8,7 +8,7 @@ import (
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
 	"soarca-gui/views/components/table"
-	"soarca-gui/views/dashboard/reporting"
+	"soarca-gui/views/dashboards/reporting"
 
 	"github.com/gin-gonic/gin"
 )
