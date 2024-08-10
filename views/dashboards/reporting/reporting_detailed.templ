@@ -16,7 +16,7 @@ import (
 templ ReportingDetailedView(executionReport reporter.PlaybookExecutionReport) {
 	@layouts.DashboardLayout() {
 		@headersection()
-		@section() {
+		@section(executionReport) {
 			@playbookInfoCard(executionReport)
 			@actionStepInfoCards(executionReport.StepResults)
 		}
@@ -36,9 +36,9 @@ templ headersection() {
 	</div>
 }
 
-templ section() {
+templ section(executionReport reporter.PlaybookExecutionReport) {
 	<div class="max-w-4xl mx-auto">
-		@cards.Card(utils.Class("relative shadow-md rounded-lg p-6 mb-6")) {
+		@cards.Card(utils.Class("relative shadow-lg rounded-lg p-6 mb-6"), indicators.ReportingShadowColorStatus(executionReport.Status)) {
 			{ children... }
 		}
 	</div>
@@ -109,11 +109,32 @@ templ expander() {
 	</div>
 }
 
+templ alertNoVariable() {
+	<div class="relative w-full overflow-hidden rounded-lg border border-amber-500 bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300" role="alert">
+		<div class="flex w-full items-center gap-2 bg-amber-500/10 p-2">
+			<div class="bg-amber-500/15 text-amber-500 rounded-full p-1" aria-hidden="true">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+					<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
+				</svg>
+			</div>
+			<div class="flex w-full flex-col items-center justify-between gap-2 ml-2 sm:flex-row">
+				<div>
+					<h3 class="text-sm font-semibold text-amber-500">No Cacao Variables found</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
 templ expandActionInfoCard(stepResults reporter.StepExecutionReport) {
 	<div class="mb-6">
 		<div class="bg-gray-100 p-2 rounded-lg mt-2 overflow-x-auto">
-			for name, stepResult := range stepResults.Variables {
-				@formatCacaoVariables(name, stepResult)
+			if len(stepResults.Variables ) > 0 {
+				for name, stepResult := range stepResults.Variables {
+					@formatCacaoVariables(name, stepResult)
+				}
+			} else {
+				@alertNoVariable()
 			}
 		</div>
 	</div>
@@ -141,7 +162,7 @@ templ formatCacaoVariables(name string, result cacao.Variable) {
 }
 
 templ actionStepInfoCard(executionId string, stepResult reporter.StepExecutionReport) {
-	<div class="relative bg-gray-100 border rounded-lg p-4 mb-4">
+	<div { utils.CreateClassAttrs("relative border bg-gray-50 rounded-lg p-4 mb-4 ", indicators.ReportingBorderColorStatus(stepResult.Status))... }>
 		@statusIndicator(stepResult.Status)
 		<span class="text-md font-bold text-gray-800 mb-8">Action Name:</span>
 		<span>{ executionId }</span>
@@ -183,14 +204,56 @@ templ actionStepInfoCards(stepResults map[string]reporter.StepExecutionReport) {
 				Found: { fmt.Sprint(len(stepResults)) } actions 
 			</p>
 		</span>
+		@viewSelector(timelineView(stepResults), detailedView(stepResults))
+	}
+}
+
+templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
+	<ol class="relative border-s border-gray-200 dark:border-gray-700">
 		for executionId, stepResult := range stepResults {
-			@actionStepInfoCard(executionId, stepResult) {
-				@expander() {
-					@expandActionInfoCard(stepResult)
-				}
+			<li class="mb-5 ms-6">
+				<span class="absolute flex items-center justify-center w-6 h-6 rounded-full -start-3 ring-8 ring-white bg-white">
+					@indicators.ReportingStatusNoText(stepResult.Status)
+				</span>
+				<h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{ executionId }</h3>
+				<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Started: { stepResult.Started.Format(time.ANSIC) }</time>
+				<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Ended: { stepResult.Ended.Format(time.ANSIC) }</time>
+			</li>
+		}
+	</ol>
+}
+
+templ detailedView(stepResults map[string]reporter.StepExecutionReport) {
+	for executionId, stepResult := range stepResults {
+		@actionStepInfoCard(executionId, stepResult) {
+			@expander() {
+				@expandActionInfoCard(stepResult)
 			}
 		}
 	}
+}
+
+templ viewSelector(timeline templ.Component, detailed templ.Component) {
+	<div x-data="{ selectedTab: 'timeline' }" class="w-full">
+		<div @keydown.right.prevent="$focus.wrap().next()" @keydown.left.prevent="$focus.wrap().previous()" class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist" aria-label="tab options">
+			<button @click="selectedTab = 'timeline'" :aria-selected="selectedTab === 'timeline'" :tabindex="selectedTab === 'timeline' ? '0' : '-1'" :class="selectedTab === 'timeline' ? 'font-bold text-blue-700 border-b-2 border-blue-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="flex h-min items-center gap-2 px-4 py-2 text-sm" type="button" role="tab" aria-controls="tabpanelTimeline">
+				@icons.NewIcon("bar-chart").InsertIcon("")
+				Timeline View
+			</button>
+			<button @click="selectedTab = 'detailed'" :aria-selected="selectedTab === 'detailed'" :tabindex="selectedTab === 'detailed' ? '0' : '-1'" :class="selectedTab === 'detailed' ? 'font-bold text-blue-700 border-b-2 border-blue-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="flex h-min items-center gap-2 px-4 py-2 text-sm" type="button" role="tab" aria-controls="tabpanelDetailed">
+				@icons.NewIcon("info").InsertIcon("")
+				Detailed View
+			</button>
+		</div>
+		<div class="px-2 py-4 text-slate-700 dark:text-slate-300">
+			<div x-show="selectedTab === 'timeline'" id="tabpanelTimeline" role="tabpanel" aria-label="timeline">
+				@timeline
+			</div>
+			<div x-show="selectedTab === 'detailed'" id="tabpanelDetailed" role="tabpanel" aria-label="detailed">
+				@detailed
+			</div>
+		</div>
+	</div>
 }
 
 func prettyPrint(data string) []byte {
@@ -207,9 +270,9 @@ func prettyPrint(data string) []byte {
 
 func formatDuration(t1 time.Time, t2 time.Time) string {
 
-	duration := t1.Sub(t2)
+	duration := t2.Sub(t1)
 
-	if duration.Seconds() >= 0 {
+	if duration.Milliseconds() >= 0 {
 		return duration.Round(time.Millisecond).String()
 	} else {
 		return ""

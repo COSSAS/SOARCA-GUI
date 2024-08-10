@@ -89,7 +89,7 @@ templ reportingTableDataRow(row ReportingDataTableRow) {
 }
 
 func formatDuration(duration time.Duration) string {
-	if duration.Seconds() >= 0 {
+	if duration.Milliseconds() >= 0 {
 		return duration.Round(time.Millisecond).String()
 	} else {
 		return ""

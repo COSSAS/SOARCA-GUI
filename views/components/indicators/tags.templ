@@ -13,58 +13,62 @@ templ Tag(opts ...func(*templ.Attributes)) {
 	</div>
 }
 
-templ TagSucces(text string) {
+templ TagSucces() {
 	@Tag(utils.Class("text-emerald-500 bg-emerald-100/60 dark:bg-emerald-800")) {
 		@icons.NewIcon("check").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
 }
 
-templ TagFailed(text string) {
+templ TagFailed() {
 	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-red-800")) {
 		@icons.NewIcon("x").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
 }
 
-templ TagOngoing(text string) {
+templ TagOngoing() {
 	@Tag(utils.Class("text-orange-500 rounded-full gap-x-2 bg-orange-100/60 dark:bg-orange-800")) {
 		@icons.NewIcon("loader").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
 }
 
-templ TagServerSideError(text string) {
+templ TagServerSideError() {
 	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-red-800")) {
 		@icons.NewIcon("server").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
 }
 
-templ TagClientSideError(text string) {
+templ TagClientSideError() {
 	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-red-800")) {
 		@icons.NewIcon("monitor").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
 }
 
-templ TagClientTimeOut(text string) {
+templ TagClientTimeOut() {
 	@Tag(utils.Class("text-amber-500 rounded-full gap-x-2 bg-amber-100/60 dark:bg-amber-800")) {
 		@icons.NewIcon("x-circle").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
 }
 
-templ TagException(text string) {
+templ TagException() {
 	@Tag(utils.Class("text-purple-500 rounded-full gap-x-2 bg-purple-100/60 dark:bg-purple-800")) {
 		@icons.NewIcon("alert-triangle").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
 }
 
-templ TagUnkown(text string) {
+templ TagUnkown() {
 	@Tag(utils.Class("text-gray-500 rounded-full gap-x-2 bg-gray-100/60 dark:bg-gray-800")) {
 		@icons.NewIcon("square").SetSize("12").InsertIcon("")
-		<h2 class="text-sm font-normal">{ text } </h2>
+		{ children... }
 	}
+}
+
+templ WithString(text string) {
+	<h2 class="text-sm font-normal">{ text } </h2>
 }

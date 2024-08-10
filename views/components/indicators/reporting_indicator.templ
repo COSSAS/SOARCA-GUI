@@ -1,21 +1,101 @@
 package indicators
 
+import "soarca-gui/utils"
+
 templ ReportingStatusTag(status string) {
 	switch status {
 		case "successfully_executed":
-			@TagSucces("Success")
+			@TagSucces() {
+				@WithString("succes")
+			}
 		case "failed":
-			@TagFailed("Failed")
+			@TagFailed() {
+				@WithString("failed")
+			}
 		case "ongoing":
-			@TagOngoing("Ongoing")
+			@TagOngoing() {
+				@WithString("Ongoing")
+			}
 		case "server_side_error":
-			@TagServerSideError("Server Error")
+			@TagServerSideError() {
+				@WithString("Server Error")
+			}
 		case "client_side_error":
-			@TagClientSideError("Client error")
+			@TagClientSideError() {
+				@WithString("Client error")
+			}
 		case "timeout_error":
-			@TagClientTimeOut("Timeout error")
+			@TagClientTimeOut() {
+				@WithString("Timeout error")
+			}
 		case "exception_condition_error":
-			@TagOngoing("Exception")
+			@TagOngoing() {
+				@WithString("Exception")
+			}
 		default:
+	}
+}
+
+templ ReportingStatusNoText(status string) {
+	switch status {
+		case "successfully_executed":
+			@TagSucces()
+		case "failed":
+			@TagFailed()
+		case "ongoing":
+			@TagOngoing()
+		case "server_side_error":
+			@TagServerSideError()
+		case "client_side_error":
+			@TagClientSideError()
+		case "timeout_error":
+			@TagClientTimeOut()
+		case "exception_condition_error":
+			@TagOngoing()
+		default:
+	}
+}
+
+func ReportingBorderColorStatus(status string) func(*templ.Attributes) {
+
+	switch status {
+	case "successfully_executed":
+		return utils.Class("border-emerald-500")
+	case "failed":
+		return utils.Class("border-red-500")
+	case "ongoing":
+		return utils.Class("border-orange-500")
+	case "server_side_error":
+		return utils.Class("border-red-500")
+	case "client_side_error":
+		return utils.Class("border-red-500")
+	case "timeout_error":
+		return utils.Class("border-amber-500")
+	case "exception_condition_error":
+		return utils.Class("border-purple-500")
+	default:
+		return utils.Class("")
+	}
+}
+
+func ReportingShadowColorStatus(status string) func(*templ.Attributes) {
+
+	switch status {
+	case "successfully_executed":
+		return utils.Class("shadow-emerald-200")
+	case "failed":
+		return utils.Class("shadow-red-200")
+	case "ongoing":
+		return utils.Class("shadow-orange-200")
+	case "server_side_error":
+		return utils.Class("shadow-red-200")
+	case "client_side_error":
+		return utils.Class("shadow-red-200")
+	case "timeout_error":
+		return utils.Class("shadow-amber-200")
+	case "exception_condition_error":
+		return utils.Class("shadow-purple-200")
+	default:
+		return utils.Class("")
 	}
 }
