@@ -101,7 +101,7 @@ templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 }
 
 templ statusIndicator(status string) {
-	<div class="absolute top-0 right-0  p-2 pr-4">
+	<div class="absolute top-0 right-0 p-2 pr-4">
 		@indicators.ReportingStatusTag(status)
 	</div>
 }
@@ -160,7 +160,7 @@ templ formatCacaoVariables(name string, result cacao.Variable) {
 			</tbody>
 		</table>
 		<pre class="text-xs bg-gray-200 p-2 rounded-md">
-			<code class="language-json">
+			<code class="rounded-lg no-shadow language-json">
 				{ string(prettyPrint(result.Value)) }
 			</code>
 		</pre>

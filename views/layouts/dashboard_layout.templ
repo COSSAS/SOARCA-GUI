@@ -58,8 +58,6 @@ templ renderLinks(links []link, css string) {
 
 templ DashboardLayout() {
 	@BaseLayout() {
-		<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
-		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		<body class="bg-blue-50 font-family-sans-serif flex">
 			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl) {
 				@renderLinks(navBarlinks, "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item")
@@ -77,6 +75,9 @@ templ DashboardLayout() {
 					</main>
 				</div>
 			</div>
+			<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<script src="/public/vendor/prism.js"></script>
 		</body>
 	}
 }
