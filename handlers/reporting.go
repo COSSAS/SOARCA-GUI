@@ -77,13 +77,13 @@ func (r *reportingHandler) ReportingDetailedView(context *gin.Context) {
 	errs := utils.Errors{}
 
 	foundReport, err := r.reporter.GetReportsById(id)
+	if foundReport.ExecutionId == "" {
+		errs.Add("backend", errors.New("no Report found for ID"))
+	}
 	if err != nil {
 		errs.Add("backend", err)
 	}
 
-	if foundReport.ExecutionId == "" {
-		errs.Add("backend", errors.New("no Report found for ID"))
-	}
 	if errs.Any() {
 		render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView404(errs))
 		context.Render(http.StatusNotFound, render)
