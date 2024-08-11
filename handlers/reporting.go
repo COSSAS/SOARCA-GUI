@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -73,18 +74,18 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 
 func (r *reportingHandler) ReportingDetailedView(context *gin.Context) {
 	id := context.Param("id")
-	errors := utils.Errors{}
+	errs := utils.Errors{}
 
 	foundReport, err := r.reporter.GetReportsById(id)
 	if err != nil {
-		errors.Add("backend", err.Error())
+		errs.Add("backend", err)
 	}
 
 	if foundReport.ExecutionId == "" {
-		errors.Add("backend", "no Report found for ID")
+		errs.Add("backend", errors.New("no Report found for ID"))
 	}
-	if errors.Any() {
-		render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView404(errors))
+	if errs.Any() {
+		render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView404(errs))
 		context.Render(http.StatusNotFound, render)
 		return
 	}

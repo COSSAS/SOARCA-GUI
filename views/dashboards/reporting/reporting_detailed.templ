@@ -39,7 +39,7 @@ templ section404(errors utils.Errors) {
 			<hr class="mt-2"/>
 			for _, err := range errors.Get("backend") {
 				<div class="mt-2">
-					@alerts.ErrorAlert(err)
+					@alerts.ErrorAlert(err.Error())
 				</div>
 			}
 		}

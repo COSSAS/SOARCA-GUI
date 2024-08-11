@@ -1,19 +1,19 @@
 package utils
 
-type Errors map[string][]string
+type Errors map[string][]error
 
 func (e Errors) Any() bool {
 	return len(e) > 0
 }
 
-func (e Errors) Add(field string, msg string) {
+func (e Errors) Add(field string, msg error) {
 	if _, ok := e[field]; !ok {
-		e[field] = []string{}
+		e[field] = []error{}
 	}
 	e[field] = append(e[field], msg)
 }
 
-func (e Errors) Get(field string) []string {
+func (e Errors) Get(field string) []error {
 	return e[field]
 }
 
