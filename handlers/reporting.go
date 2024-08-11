@@ -71,7 +71,7 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 	context.Render(http.StatusOK, render)
 }
 
-func (r *reportingHandler) ReportingDetailView(context *gin.Context) {
+func (r *reportingHandler) ReportingDetailedView(context *gin.Context) {
 	id := context.Param("id")
 	errors := utils.Errors{}
 
