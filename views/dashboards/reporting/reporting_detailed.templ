@@ -70,13 +70,13 @@ templ section(executionReport reporter.PlaybookExecutionReport) {
 templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 	@statusIndicator(executionReport.Status)
 	<span class="text-md font-bold text-gray-800 mb-8">Playbook:</span>
-	<span>{ "remove malware" }</span>
+	<span>{ executionReport.ExecutionId }</span>
 	<hr class="mt-2"/>
 	<div class="mb-6">
 		<table class="table-auto text-sm text-gray-600">
 			<tbody>
 				<tr>
-					<th class="font-semibold text-left pr-4">Playbook Execution ID:</th>
+					<th class="font-semibold text-left pr-4">Execution ID:</th>
 					<td>{ executionReport.ExecutionId }</td>
 				</tr>
 				<tr>
@@ -188,6 +188,10 @@ templ actionStepInfoCard(executionId string, stepResult reporter.StepExecutionRe
 					<td>{ stepResult.Ended.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
+					<th class="font-semibold text-left pr-4">Duration:</th>
+					<td>{ formatDuration(stepResult.Started, stepResult.Ended) }</td>
+				</tr>
+				<tr>
 					<th class="font-semibold text-left pr-4">Status:</th>
 					<td>{ stepResult.StatusText }</td>
 				</tr>
@@ -224,7 +228,7 @@ templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 					</span>
 					<h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{ executionId }</h3>
 					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Started: { stepResult.Started.Format(time.ANSIC) }</time>
-					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Ended: { stepResult.Ended.Format(time.ANSIC) }</time>
+					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Duration: {  formatDuration(stepResult.Started, stepResult.Ended) }</time>
 				</li>
 			}
 		</ol>
