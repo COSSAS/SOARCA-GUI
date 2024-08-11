@@ -73,13 +73,21 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 
 func (r *reportingHandler) ReportingDetailView(context *gin.Context) {
 	id := context.Param("id")
+	errors := utils.Errors{}
 
-	foundReport, error := r.reporter.GetReportsById(id)
-	fmt.Println(foundReport)
-	if error != nil {
-		fmt.Errorf("error not found")
+	foundReport, err := r.reporter.GetReportsById(id)
+	if err != nil {
+		errors.Add("backend", err.Error())
 	}
 
+	if foundReport.ExecutionId == "" {
+		errors.Add("backend", "no Report found for ID")
+	}
+	if errors.Any() {
+		render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView404(errors))
+		context.Render(http.StatusNotFound, render)
+		return
+	}
 	render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView(foundReport))
 	context.Render(http.StatusOK, render)
 }
