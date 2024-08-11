@@ -1,7 +1,5 @@
 package indicators
 
-import "soarca-gui/utils"
-
 templ ReportingStatusTag(status string) {
 	switch status {
 		case "successfully_executed":
@@ -36,7 +34,7 @@ templ ReportingStatusTag(status string) {
 	}
 }
 
-templ ReportingStatusNoText(status string) {
+templ ReportingStatusTagNoText(status string) {
 	switch status {
 		case "successfully_executed":
 			@TagSucces()
@@ -53,49 +51,5 @@ templ ReportingStatusNoText(status string) {
 		case "exception_condition_error":
 			@TagOngoing()
 		default:
-	}
-}
-
-func ReportingBorderColorStatus(status string) func(*templ.Attributes) {
-
-	switch status {
-	case "successfully_executed":
-		return utils.Class("border-emerald-500")
-	case "failed":
-		return utils.Class("border-red-500")
-	case "ongoing":
-		return utils.Class("border-orange-500")
-	case "server_side_error":
-		return utils.Class("border-red-500")
-	case "client_side_error":
-		return utils.Class("border-red-500")
-	case "timeout_error":
-		return utils.Class("border-amber-500")
-	case "exception_condition_error":
-		return utils.Class("border-purple-500")
-	default:
-		return utils.Class("")
-	}
-}
-
-func ReportingShadowColorStatus(status string) func(*templ.Attributes) {
-
-	switch status {
-	case "successfully_executed":
-		return utils.Class("shadow-emerald-200")
-	case "failed":
-		return utils.Class("shadow-red-200")
-	case "ongoing":
-		return utils.Class("shadow-orange-200")
-	case "server_side_error":
-		return utils.Class("shadow-red-200")
-	case "client_side_error":
-		return utils.Class("shadow-red-200")
-	case "timeout_error":
-		return utils.Class("shadow-amber-200")
-	case "exception_condition_error":
-		return utils.Class("shadow-purple-200")
-	default:
-		return utils.Class("")
 	}
 }

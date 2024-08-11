@@ -61,7 +61,7 @@ templ headersection() {
 
 templ section(executionReport reporter.PlaybookExecutionReport) {
 	<div class="max-w-4xl mx-auto">
-		@cards.Card(utils.Class("relative shadow-lg rounded-lg p-6 mb-6"), indicators.ReportingShadowColorStatus(executionReport.Status)) {
+		@cards.Card(utils.Class("relative shadow-lg rounded-lg p-6 mb-6"), reportingShadowColorStatus(executionReport.Status)) {
 			{ children... }
 		}
 	</div>
@@ -168,7 +168,7 @@ templ formatCacaoVariables(name string, result cacao.Variable) {
 }
 
 templ actionStepInfoCard(executionId string, stepResult reporter.StepExecutionReport) {
-	<div { utils.CreateClassAttrs("relative border bg-gray-50 rounded-lg p-4 mb-4", indicators.ReportingBorderColorStatus(stepResult.Status))... }>
+	<div { utils.CreateClassAttrs("relative border bg-gray-50 rounded-lg p-4 mb-4", reportingBorderColorStatus(stepResult.Status))... }>
 		@statusIndicator(stepResult.Status)
 		<span class="text-md font-bold text-gray-800 mb-8">Action Name:</span>
 		<span>{ executionId }</span>
@@ -220,7 +220,7 @@ templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 			for executionId, stepResult := range stepResults {
 				<li class="mb-5 ms-6">
 					<span class="absolute flex items-center justify-center w-6 h-6 rounded-full -start-3 ring-8 ring-white bg-white">
-						@indicators.ReportingStatusNoText(stepResult.Status)
+						@indicators.ReportingStatusTagNoText(stepResult.Status)
 					</span>
 					<h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{ executionId }</h3>
 					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Started: { stepResult.Started.Format(time.ANSIC) }</time>
@@ -286,4 +286,48 @@ func formatDuration(t1 time.Time, t2 time.Time) string {
 		return ""
 	}
 
+}
+
+func reportingBorderColorStatus(status string) func(*templ.Attributes) {
+
+	switch status {
+	case "successfully_executed":
+		return utils.Class("border-emerald-500")
+	case "failed":
+		return utils.Class("border-red-500")
+	case "ongoing":
+		return utils.Class("border-orange-500")
+	case "server_side_error":
+		return utils.Class("border-red-500")
+	case "client_side_error":
+		return utils.Class("border-red-500")
+	case "timeout_error":
+		return utils.Class("border-amber-500")
+	case "exception_condition_error":
+		return utils.Class("border-purple-500")
+	default:
+		return utils.Class("")
+	}
+}
+
+func reportingShadowColorStatus(status string) func(*templ.Attributes) {
+
+	switch status {
+	case "successfully_executed":
+		return utils.Class("shadow-emerald-200")
+	case "failed":
+		return utils.Class("shadow-red-200")
+	case "ongoing":
+		return utils.Class("shadow-orange-200")
+	case "server_side_error":
+		return utils.Class("shadow-red-200")
+	case "client_side_error":
+		return utils.Class("shadow-red-200")
+	case "timeout_error":
+		return utils.Class("shadow-amber-200")
+	case "exception_condition_error":
+		return utils.Class("shadow-purple-200")
+	default:
+		return utils.Class("")
+	}
 }
