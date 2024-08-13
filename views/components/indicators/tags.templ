@@ -29,7 +29,7 @@ templ TagFailed() {
 
 templ TagOngoing() {
 	@Tag(utils.Class("text-orange-500 rounded-full gap-x-2 bg-orange-100/60 dark:bg-orange-800")) {
-		@icons.NewIcon("loader").SetSize("12").InsertIcon("")
+		@icons.NewIcon("loader").SetSize("12").InsertIcon("animate-spin ")
 		{ children... }
 	}
 }

@@ -1,7 +1,5 @@
 package layouts
 
-import "soarca-gui/views/components/icons"
-
 const (
 	appTitle    = "SOARCA-GUI"
 	description = "SOARCA-GUI dashboard for interacting with SOARCA"
@@ -30,5 +28,4 @@ templ BaseLayout() {
 		@Head(appTitle, "", "")
 		{ children... }
 	</html>
-	@icons.LoadIcons()
 }

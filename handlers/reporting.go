@@ -63,12 +63,8 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 		}
 		rows = append(rows, row)
 	}
-	formatedTable := table.ReportingTableMeta{
-		Loaded:   true,
-		DataRows: rows,
-	}
 
-	render := utils.NewTempl(context, http.StatusOK, table.LoadReportingTableBody(formatedTable))
+	render := utils.NewTempl(context, http.StatusOK, table.TableRows(rows))
 	context.Render(http.StatusOK, render)
 }
 

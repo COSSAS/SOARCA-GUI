@@ -38,16 +38,7 @@ templ reportingCardKownComponent(data ReportingCardData) {
 }
 
 templ reportingCardUnkownComponent() {
-	@Card() {
-		<div class="absolute inset-0 rounded-2xl bg-white bg-opacity-60 z-10 h-full w-full flex items-center justify-center">
-			<div class="flex items-center">
-				<svg class="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-					<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-				</svg>
-				<!-- end loading icon -->
-			</div>
-		</div>
+	@UnkownCard() {
 		<div class="space-y-2">
 			<div
 				class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400"
@@ -57,15 +48,22 @@ templ reportingCardUnkownComponent() {
 			<div class="text-3xl dark:text-gray-100">
 				-
 			</div>
-			// <div class="flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium text-green-600">
-			//     <span>32k increase</span>
-			//     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-			//         aria-hidden="true">
-			//         <path fill-rule="evenodd"
-			//             d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
-			//             clip-rule="evenodd"></path>
-			//     </svg>
-			// </div>
+			<div class="flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium text-green-600">
+				<span>32k increase</span>
+				<svg
+					class="w-4 h-4"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 20 20"
+					fill="currentColor"
+					aria-hidden="true"
+				>
+					<path
+						fill-rule="evenodd"
+						d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+						clip-rule="evenodd"
+					></path>
+				</svg>
+			</div>
 		</div>
 	}
 }
@@ -74,7 +72,7 @@ templ ReportingMetricCard(data ReportingCardData) {
 	if !data.Loaded {
 		<div
 			hx-get={ string(templ.URL(fmt.Sprintf(reportingMetaCardEndpoint+"%s", data.ID))) }
-			hx-trigger="load"
+			hx-trigger="load, every"
 			hx-swap="outerHTML"
 			class="relative"
 		>
