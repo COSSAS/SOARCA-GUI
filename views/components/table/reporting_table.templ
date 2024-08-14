@@ -38,11 +38,11 @@ templ loadReportingTableBody() {
 		hx-on::after-request="feather.replace()"
 	></div>
 	<tbody class="relative divide-y" id="reportingtable">
-		@emptyRow()
+		@EmptyRow()
 	</tbody>
 }
 
-templ emptyRow() {
+templ EmptyRow() {
 	@TdFullRow() {
 		<div class="relative h-full w-full">
 			<div class="absolute inset-0 rounded-2xl bg-white bg-opacity-60 z-10 h-full w-full flex items-center justify-center">
@@ -81,7 +81,7 @@ templ FormatTable() {
 templ reportingTableHeaders() {
 	@Header() {
 		for _, header := range headers {
-			@Th(){
+			@Th() {
 				{ header }
 			}
 		}
@@ -89,16 +89,16 @@ templ reportingTableHeaders() {
 }
 
 templ reportingTableDataRow(row ReportingDataTableRow) {
-	@Td(){
+	@Td() {
 		<a href={ templ.URL(fmt.Sprintf("%s%s", reportingDetailedViewEndpoint, row.ExecutionID)) } class="text-blue-800 hover:text-blue-400">{ row.ExecutionID } </a>
 	}
-	@Td(){
+	@Td() {
 		{ row.StartTime.Format(time.ANSIC) }
 	}
-	@Td(){
+	@Td() {
 		{  formatDuration(row.Duration) }
 	}
-	@Td(){
+	@Td() {
 		@indicators.ReportingStatusTag(row.Status)
 	}
 }

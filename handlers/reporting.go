@@ -80,7 +80,7 @@ func (r *reportingHandler) ReportingDetailedView(context *gin.Context) {
 
 	foundReport, err := r.reporter.GetReportsById(id)
 	if foundReport.ExecutionId == "" {
-		errs.Add("backend", errors.New("no Report found for ID"))
+		errs.Add("backend", errors.New("no report found for ID"))
 	}
 	if err != nil {
 		errs.Add("backend", err)

@@ -37,9 +37,9 @@ templ section404(errors utils.Errors) {
 			<span class="text-md font-bold text-gray-800 mb-8">Not Found: </span>
 			<span>error occured</span>
 			<hr class="mt-2"/>
-			for _, err := range errors.Get("backend") {
+			if errors.Has("backend") {
 				<div class="mt-2">
-					@alerts.ErrorAlert(err.Error())
+					@alerts.ErrorAlert(errors.Get("backend").Error())
 				</div>
 			}
 		}
