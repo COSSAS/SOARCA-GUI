@@ -64,6 +64,12 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 		rows = append(rows, row)
 	}
 
+	if len(rows) <= 0 {
+		render := utils.NewTempl(context, http.StatusOK, table.EmptyRow())
+		context.Render(http.StatusNotFound, render)
+		return
+	}
+
 	render := utils.NewTempl(context, http.StatusOK, table.TableRows(rows))
 	context.Render(http.StatusOK, render)
 }
