@@ -1,6 +1,7 @@
 package reporting
 
 import (
+	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
 	"soarca-gui/views/components/table"
 	"soarca-gui/views/layouts"
@@ -20,17 +21,21 @@ templ ReportingIndex() {
 }
 
 templ banner() {
-	<div class="mx-auto">
-		<div class="flex items-center justify-between mb-2 h-20 rounded-lg bg-gradient-to-r from-blue-600 to-fuchsia-500 px-8 text-white shadow-lg">
-			<div class="align-middle lg:my-8 lg:w-1/2">
-				<h1 class="text-2xl  dark:text-white">Reporting</h1>
-			</div>
+	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 mb-2")) {
+		<div class="h-10 flex items-center">
+			<button onclick="history.back()" class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-4 rtl:rotate-180">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"></path>
+				</svg>
+				<span>Go back</span>
+			</button>
+			<h1 class="ml-3 text-2xl text-bold text-white">Reporting</h1>
 		</div>
-	</div>
+	}
 }
 
 templ reportingMetricCards() {
-	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-2 mb-2">
+	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-2">
 		// <div class="grid lg:gap-8  pb-2 pt-1">
 		for _, card := range initialCards {
 			@cards.ReportingMetricCard(card)

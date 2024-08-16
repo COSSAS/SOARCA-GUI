@@ -69,11 +69,11 @@ templ DashboardLayout() {
 				@headbar.MobileHeaderBar(dashboardPath) {
 					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg  hover:bg-blue-800 hover:text-white")
 				}
-				<div class="w-full overflow-x-hidden border-t flex flex-col">
-					<main class="w-full flex-grow px-4 pt-2">
+				<main class="h-full overflow-y-auto">
+					<div class="container px-6 mx-auto grid">
 						{ children... }
-					</main>
-				</div>
+					</div>
+				</main>
 			</div>
 			<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
