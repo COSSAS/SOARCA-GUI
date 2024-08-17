@@ -1,84 +1,83 @@
 package cards
 
-import "fmt"
+import (
+	"fmt"
+	"soarca-gui/views/components/icons"
+)
 
 const (
-	reportingMetaCardEndpoint = "/reporting/card/"
+	reportingMetricSectionEndpoint = "/reporting/metrics"
 )
 
 type ReportingCardData struct {
-	Loaded bool
-	Name   string
-	Value  int
-	ID     string
+	ID    string
+	Name  string
+	Value int
+	Color string
 }
 
-templ reportingCardKownComponent(data ReportingCardData) {
+var initialCards = []ReportingCardData{
+	{ID: "1"},
+	{ID: "2"},
+	{ID: "3"}}
+
+templ ReportingCard(card ReportingCardData) {
 	@Card() {
-		<div class="space-y-2">
-			<div
-				class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400"
-			>
-				<span>{ data.Name } </span>
-			</div>
-			<div class="text-3xl dark:text-gray-100">
-				{ fmt.Sprint(data.Value) }
-			</div>
-			// <div class="flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium text-green-600">
-			//     <span>32k increase</span>
-			//     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-			//         aria-hidden="true">
-			//         <path fill-rule="evenodd"
-			//             d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
-			//             clip-rule="evenodd"></path>
-			//     </svg>
-			// </div>
-		</div>
-	}
-}
-
-templ reportingCardUnkownComponent() {
-	@UnkownCard() {
-		<div class="space-y-2">
-			<div
-				class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400"
-			>
-				<span>unkown </span>
-			</div>
-			<div class="text-3xl dark:text-gray-100">
-				-
-			</div>
-			<div class="flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium text-green-600">
-				<span>32k increase</span>
-				<svg
-					class="w-4 h-4"
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 20 20"
-					fill="currentColor"
-					aria-hidden="true"
-				>
-					<path
-						fill-rule="evenodd"
-						d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
-						clip-rule="evenodd"
-					></path>
-				</svg>
+		<div class="col-span-12 sm:col-span-6 md:col-span-3">
+			<div class="flex flex-row bg-white shadow-sm rounded p-4">
+				<div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-blue-100 text-blue-600">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+				</div>
+				<div class="flex flex-col flex-grow ml-4">
+					<div class="text-sm text-gray-500">Executed Playbooks</div>
+					<div class="font-bold text-lg"></div>
+				</div>
 			</div>
 		</div>
 	}
 }
 
-templ ReportingMetricCard(data ReportingCardData) {
-	if !data.Loaded {
-		<div
-			hx-get={ string(templ.URL(fmt.Sprintf(reportingMetaCardEndpoint+"%s", data.ID))) }
-			hx-trigger="load, every"
-			hx-swap="outerHTML"
-			class="relative"
-		>
-			@reportingCardUnkownComponent()
+templ reportingCardUnkown(card ReportingCardData) {
+	@Card() {
+		<div class="col-span-12 sm:col-span-6 md:col-span-3">
+			<div class="flex flex-row bg-white shadow-sm rounded p-4">
+				<div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 text-red-600">
+					@icons.NewIcon("x").InsertIcon("")
+				</div>
+				<div class="flex flex-col flex-grow ml-4">
+					<div class="text-sm text-gray-500">Could not load</div>
+					<div class="font-bold text-lg">None</div>
+				</div>
+			</div>
 		</div>
-	} else {
-		@reportingCardKownComponent(data)
 	}
+}
+
+templ ReportingMetricCards() {
+	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+		for _, card := range initialCards {
+			@ReportingCard(card)
+		}
+	</div>
+}
+
+templ reportingUnkownCards() {
+	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+		for _, card := range initialCards {
+			@reportingCardUnkown(card)
+		}
+	</div>
+}
+
+templ ReportingMetricsSection() {
+	<div
+		hx-get={ string(templ.URL(fmt.Sprintf(reportingMetricSectionEndpoint))) }
+		hx-trigger="load, every 1s"
+		hx-swap="innerHTML"
+		hx-target="#reportingmetrics"
+		hx-on::after-request="feather.replace()"
+	></div>
+	<div id="reportingmetrics">
+		@reportingUnkownCards()
+	</div>
 }

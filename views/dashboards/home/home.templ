@@ -147,7 +147,7 @@ templ dummyActivity() {
 }
 
 templ headersection() {
-	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 mb-1")) {
+	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2")) {
 		<div class="h-10 flex items-center">
 			@icons.NewIcon("user").InsertIcon("ml-3 mr-3 text-white")
 			<h1 class="text-2xl text-bold text-white">Welcome 'some name' back to SOARCA</h1>
@@ -158,13 +158,13 @@ templ headersection() {
 templ Home(comp templ.Component) {
 	@layouts.DashboardLayout() {
 		@headersection()
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 			@card.Card(card.WithHeight24())
 			@card.Card(card.WithHeight24())
 			@card.Card(card.WithHeight24())
 			@card.Card(card.WithHeight24())
 		</div>
-		<div class="grid lg:grid-cols-2 sm:grid-cols-1 md:grid-cols-1 gap-2 mb-2">
+		<div class="grid lg:grid-cols-2 sm:grid-cols-1 md:grid-cols-1 gap-4 mb-2">
 			@card.Card() {
 				@dummyActivity()
 			}

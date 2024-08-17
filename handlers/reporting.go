@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"soarca-gui/backend"
@@ -22,30 +21,14 @@ func NewReportingHandler(backend backend.Report) reportingHandler {
 	return reportingHandler{reporter: backend}
 }
 
-func ReportingDashboardHandler(context *gin.Context) {
-	render := utils.NewTempl(context, http.StatusOK, reporting.ReportingIndex())
-
-	context.Render(http.StatusOK, render)
-}
-
-func (r *reportingHandler) ReportingCardHandler(context *gin.Context) {
-	id := context.Param("id")
-	updatedCard := cards.ReportingCardData{
-		Loaded: true,
-		ID:     fmt.Sprint(id),
-		Value:  10,
-		Name:   "Executed Playbooks",
-	}
-
-	render := utils.NewTempl(context, http.StatusOK, cards.ReportingMetricCard(updatedCard))
-
-	context.Render(http.StatusOK, render)
-}
-
 func (r *reportingHandler) ReportingIndexHandler(context *gin.Context) {
-	render := utils.NewTempl(context, http.StatusOK,
-		reporting.ReportingIndex())
+	render := utils.NewTempl(context, http.StatusOK, reporting.ReportingIndex())
+	context.Render(http.StatusOK, render)
+}
 
+func (r *reportingHandler) ReportingCardSectionHandler(context *gin.Context) {
+
+	render := utils.NewTempl(context, http.StatusOK, cards.ReportingMetricCards())
 	context.Render(http.StatusOK, render)
 }
 

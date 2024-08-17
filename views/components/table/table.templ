@@ -5,14 +5,14 @@ import "soarca-gui/utils"
 const (
 	tMainClass   = "w-full text-left text-sm text-slate-700 dark:text-slate-300"
 	tBodyClass   = "divide-y divide-slate-300 dark:divide-slate-700"
-	tHeaderClass = "border-b border-slate-300 bg-slate-100 text-sm text-black dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+	tHeaderClass = "bg-slate-200 border-b-2 border-slate-400 text-sm text-black dark:border-slate-700 dark:bg-slate-800 dark:text-white"
 	trBaseClass  = "even:bg-blue-700/5 dark:even:bg-blue-600/1"
 	tdBaseClass  = "p-4"
 	thBaseClass  = "p-4"
 )
 
 templ Table(opts ...func(*templ.Attributes)) {
-	<div class="overflow-hidden w-full overflow-x-auto rounded-lg border border-slate-300 dark:border-slate-700">
+	<div class="overflow-hidden w-full overflow-x-auto rounded-lg dark:border-slate-700">
 		<table { utils.CreateClassAttrs(tMainClass,  opts...)... }>
 			{ children... }
 		</table>

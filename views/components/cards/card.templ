@@ -11,8 +11,8 @@ templ Card(opts ...func(*templ.Attributes)) {
 }
 
 templ UnkownCard() {
-	@Card() {
-		<div class="absolute inset-0 rounded-2xl bg-white bg-opacity-60 z-10 h-full w-full flex items-center justify-center">
+	<div class="relative">
+		<div class="absolute inset-0 rounded-2xl bg-white bg-opacity-60 z-10 flex items-center justify-center">
 			<div class="flex items-center">
 				<svg class="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -20,8 +20,10 @@ templ UnkownCard() {
 				</svg>
 			</div>
 		</div>
-		{ children... }
-	}
+		<div class="relative z-0">
+			{ children... }
+		</div>
+	</div>
 }
 
 func WithShadow() func(*templ.Attributes) {

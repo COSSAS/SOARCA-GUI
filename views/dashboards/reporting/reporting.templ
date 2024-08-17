@@ -7,15 +7,10 @@ import (
 	"soarca-gui/views/layouts"
 )
 
-var initialCards = []cards.ReportingCardData{
-	{Loaded: false, ID: "1"},
-	{Loaded: false, ID: "2"},
-	{Loaded: false, ID: "3"}}
-
 templ ReportingIndex() {
 	@layouts.DashboardLayout() {
 		@banner()
-		@reportingMetricCards()
+		@cards.ReportingMetricsSection()
 		@table.ReportingTableCard()
 	}
 }
@@ -32,13 +27,4 @@ templ banner() {
 			<h1 class="ml-3 text-2xl text-bold text-white">Reporting</h1>
 		</div>
 	}
-}
-
-templ reportingMetricCards() {
-	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-		// <div class="grid lg:gap-8  pb-2 pt-1">
-		for _, card := range initialCards {
-			@cards.ReportingMetricCard(card)
-		}
-	</div>
 }
