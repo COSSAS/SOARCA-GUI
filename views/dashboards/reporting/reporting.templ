@@ -35,7 +35,7 @@ templ banner() {
 }
 
 templ reportingMetricCards() {
-	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-2">
+	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
 		// <div class="grid lg:gap-8  pb-2 pt-1">
 		for _, card := range initialCards {
 			@cards.ReportingMetricCard(card)
