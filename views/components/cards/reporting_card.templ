@@ -9,38 +9,76 @@ const (
 	reportingMetricSectionEndpoint = "/reporting/metrics"
 )
 
+type CardType int8
+
+const (
+	Succes CardType = iota
+	Failed
+	Ongoing
+)
+
 type ReportingCardData struct {
-	ID    string
-	Name  string
+	Type  CardType
 	Value int
-	Color string
 }
 
-var initialCards = []ReportingCardData{
-	{ID: "1"},
-	{ID: "2"},
-	{ID: "3"}}
+var reportingCards = []ReportingCardData{
+	{Type: Succes},
+	{Type: Ongoing},
+	{Type: Failed}}
 
-templ ReportingCard(card ReportingCardData) {
+templ executedPlaybooksCard(data ReportingCardData) {
 	@Card() {
 		<div class="col-span-12 sm:col-span-6 md:col-span-3">
 			<div class="flex flex-row bg-white shadow-sm rounded p-4">
 				<div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-blue-100 text-blue-600">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
 				</div>
 				<div class="flex flex-col flex-grow ml-4">
 					<div class="text-sm text-gray-500">Executed Playbooks</div>
-					<div class="font-bold text-lg"></div>
+					<div class="font-bold text-lg">{ fmt.Sprint(data.Value) }</div>
 				</div>
 			</div>
 		</div>
 	}
 }
 
-templ reportingCardUnkown(card ReportingCardData) {
+templ failedPlaybooksCard(data ReportingCardData) {
 	@Card() {
 		<div class="col-span-12 sm:col-span-6 md:col-span-3">
 			<div class="flex flex-row bg-white shadow-sm rounded p-4">
+				<div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 text-red-600">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+				</div>
+				<div class="flex flex-col flex-grow ml-4">
+					<div class="text-sm text-gray-500">Failed Playbooks</div>
+					<div class="font-bold text-lg">{ fmt.Sprint(data.Value) }</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ ongoingPlaybooksCard(data ReportingCardData) {
+	@Card() {
+		<div class="col-span-12 sm:col-span-6 md:col-span-3">
+			<div class="flex flex-row bg-white shadow-sm rounded p-4">
+				<div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-orange-600">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+				</div>
+				<div class="flex flex-col flex-grow ml-4">
+					<div class="text-sm text-gray-500">Ongoing Playbooks</div>
+					<div class="font-bold text-lg">{ fmt.Sprint(data.Value) }</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ reportingCardUnkown() {
+	@UnkownCard() {
+		<div class="col-span-12 sm:col-span-6 md:col-span-3">
+			<div class="flex flex-row bg-white shadow-sm rounded-lg p-4">
 				<div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 text-red-600">
 					@icons.NewIcon("x").InsertIcon("")
 				</div>
@@ -53,18 +91,27 @@ templ reportingCardUnkown(card ReportingCardData) {
 	}
 }
 
-templ ReportingMetricCards() {
+templ ReportingMetricCards(data []ReportingCardData) {
 	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-		for _, card := range initialCards {
-			@ReportingCard(card)
+		for _, cardData := range data {
+			switch cardData.Type {
+				case Succes:
+					@executedPlaybooksCard(cardData)
+				case Failed:
+					@failedPlaybooksCard(cardData)
+				case Ongoing:
+					@ongoingPlaybooksCard(cardData)
+				default:
+					@reportingCardUnkown()
+			}
 		}
 	</div>
 }
 
 templ reportingUnkownCards() {
 	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-		for _, card := range initialCards {
-			@reportingCardUnkown(card)
+		for range reportingCards {
+			@reportingCardUnkown()
 		}
 	</div>
 }
@@ -75,7 +122,6 @@ templ ReportingMetricsSection() {
 		hx-trigger="load, every 1s"
 		hx-swap="innerHTML"
 		hx-target="#reportingmetrics"
-		hx-on::after-request="feather.replace()"
 	></div>
 	<div id="reportingmetrics">
 		@reportingUnkownCards()

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"soarca-gui/backend"
+	"soarca-gui/models/reporter"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
 	"soarca-gui/views/components/table"
@@ -28,7 +29,17 @@ func (r *reportingHandler) ReportingIndexHandler(context *gin.Context) {
 
 func (r *reportingHandler) ReportingCardSectionHandler(context *gin.Context) {
 
-	render := utils.NewTempl(context, http.StatusOK, cards.ReportingMetricCards())
+	reports, _ := r.reporter.GetReports()
+	succesCount := countStatusType("successfully_executed", reports)
+	ongoingCount := countStatusType("ongoing", reports)
+	failedCount := countStatusType("failed", reports)
+
+	metrics := []cards.ReportingCardData{
+		cards.ReportingCardData{Type: cards.Succes, Value: succesCount},
+		cards.ReportingCardData{Type: cards.Ongoing, Value: ongoingCount},
+		cards.ReportingCardData{Type: cards.Failed, Value: failedCount},
+	}
+	render := utils.NewTempl(context, http.StatusOK, cards.ReportingMetricCards(metrics))
 	context.Render(http.StatusOK, render)
 }
 
@@ -76,4 +87,14 @@ func (r *reportingHandler) ReportingDetailedView(context *gin.Context) {
 	}
 	render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView(foundReport))
 	context.Render(http.StatusOK, render)
+}
+
+func countStatusType(status string, reports []reporter.PlaybookExecutionReport) int {
+	count := 0
+	for _, report := range reports {
+		if report.Status == status {
+			count++
+		}
+	}
+	return count
 }
