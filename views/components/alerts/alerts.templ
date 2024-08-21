@@ -67,6 +67,7 @@ templ InfoAlert(message string) {
 	}
 }
 
+//Function to cutt off strings  of a certain size
 func ellipsis(s string, maxLen int) string {
 	runes := []rune(s)
 	if len(runes) <= maxLen {
