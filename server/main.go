@@ -28,7 +28,7 @@ func main() {
 	routes.Setup(app)
 
 	listeningPort := utils.GetEnv("PORT", "8081")
-	url := fmt.Sprintf("localhost:%s", listeningPort)
+	url := fmt.Sprintf(":%s", listeningPort)
 	fmt.Printf("application running in %s at %s\n", listeningPort, url)
 	err := app.Run(url)
 	if err != nil {
