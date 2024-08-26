@@ -82,7 +82,7 @@ templ reportingCardUnkown() {
 				<div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 text-red-600">
 					@icons.NewIcon("x").InsertIcon("")
 				</div>
-				<div class="flex flex-col flex-grow ml-4">
+				<div class="flex flex-col max-sm:hidden flex-grow ml-4">
 					<div class="text-sm text-gray-500">Could not load</div>
 					<div class="font-bold text-lg">None</div>
 				</div>
@@ -92,7 +92,7 @@ templ reportingCardUnkown() {
 }
 
 templ ReportingMetricCards(data []ReportingCardData) {
-	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-0">
 		for _, cardData := range data {
 			switch cardData.Type {
 				case Succes:
@@ -109,7 +109,7 @@ templ ReportingMetricCards(data []ReportingCardData) {
 }
 
 templ reportingUnkownCards() {
-	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+	<div class="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-0">
 		for range reportingCards {
 			@reportingCardUnkown()
 		}

@@ -19,7 +19,7 @@ templ testcard() {
 			class="relative h-48 mx-4 -mt-6 overflow-hidden text-white shadow-lg bg-clip-border rounded-xl bg-blue-gray-500 shadow-blue-gray-500/40"
 		>
 			<img
-				src="https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+				src=""
 				alt="card-image"
 			/>
 		</div>
@@ -158,13 +158,13 @@ templ headersection() {
 templ Home(comp templ.Component) {
 	@layouts.DashboardLayout() {
 		@headersection()
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
 			@card.Card(card.WithHeight24())
 			@card.Card(card.WithHeight24())
 			@card.Card(card.WithHeight24())
 			@card.Card(card.WithHeight24())
 		</div>
-		<div class="grid lg:grid-cols-2 sm:grid-cols-1 md:grid-cols-1 gap-4 mb-2">
+		<div class="grid lg:grid-cols-2 sm:grid-cols-1 md:grid-cols-1">
 			@card.Card() {
 				@dummyActivity()
 			}
