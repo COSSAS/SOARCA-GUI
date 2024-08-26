@@ -29,7 +29,18 @@ func (r *reportingHandler) ReportingIndexHandler(context *gin.Context) {
 
 func (r *reportingHandler) ReportingCardSectionHandler(context *gin.Context) {
 
-	reports, _ := r.reporter.GetReports()
+	reports, err := r.reporter.GetReports()
+
+	if err != nil {
+		metrics := []cards.ReportingCardData{
+			cards.ReportingCardData{Type: cards.Unkown},
+			cards.ReportingCardData{Type: cards.Unkown},
+			cards.ReportingCardData{Type: cards.Unkown},
+		}
+		render := utils.NewTempl(context, http.StatusOK, cards.ReportingMetricCards(metrics))
+		context.Render(http.StatusInternalServerError, render)
+		return
+	}
 	succesCount := countStatusType("successfully_executed", reports)
 	ongoingCount := countStatusType("ongoing", reports)
 	failedCount := countStatusType("failed", reports)
