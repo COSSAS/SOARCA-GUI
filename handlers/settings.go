@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"soarca-gui/utils"
-	"soarca-gui/views/dashboard/settings"
+	"soarca-gui/views/dashboards/settings"
 
 	"github.com/gin-gonic/gin"
 )

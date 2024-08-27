@@ -1,7 +1,5 @@
 package layouts
 
-import "soarca-gui/views/components/icons"
-
 const (
 	appTitle    = "SOARCA-GUI"
 	description = "SOARCA-GUI dashboard for interacting with SOARCA"
@@ -17,6 +15,7 @@ templ Head(title string, description string, content string) {
 		<link rel="shortcut icon" href="/public/favicon.ico" type="image/x-icon"/>
 		<link rel="stylesheet" href="/public/styles.css"/>
 		<link rel="stylesheet" href="/public/template.css"/>
+		<link rel="stylesheet" href="/public/vendor/prism.css"/>
 		<script src="/public/vendor/htmx@1.9.6.js" defer></script>
 		<script src="/public/alpine@3.13.3.js" defer></script>
 		<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -29,5 +28,4 @@ templ BaseLayout() {
 		@Head(appTitle, "", "")
 		{ children... }
 	</html>
-	@icons.LoadIcons()
 }

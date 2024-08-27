@@ -3,22 +3,24 @@ package table
 import (
 	"fmt"
 	"soarca-gui/utils"
-	"soarca-gui/views/components/cards"
-	"soarca-gui/views/components/icons"
-	"soarca-gui/views/components/indicators"
 	"time"
+
+	"soarca-gui/views/components/cards"
+	"soarca-gui/views/components/indicators"
 )
 
 const (
-	reportingDataEndpoint = "/reporting/table"
+	reportingDataEndpoint         = "/reporting/table"
+	reportingDetailedViewEndpoint = "/reporting/detailed/"
+	htmxTrigger                   = "load, every 1s"
 )
+
+var headers = []string{"Execution ID", "Start Time", "Execution Duration", "Status"}
 
 type ReportingTableMeta struct {
 	Loaded   bool
 	DataRows []ReportingDataTableRow
 }
-
-var headers = []string{"Execution ID", "Start Time", "Execution Duration", "Status"}
 
 type ReportingDataTableRow struct {
 	ExecutionID string
@@ -27,19 +29,31 @@ type ReportingDataTableRow struct {
 	Status      string
 }
 
-templ LoadReportingTableBody(data ReportingTableMeta) {
-	if !data.Loaded {
-		@Body() {
-			<tr
-				hx-get={ string(templ.URL(fmt.Sprintf(reportingDataEndpoint))) }
-				hx-trigger="load"
-				hx-swap="outerHTML"
-				class="relative"
-			></tr>
-		}
-	} else {
-		@tableRows(data.DataRows)
-		@icons.LoadIcons()
+templ loadReportingTableBody() {
+	<div
+		hx-get={ string(templ.URL(fmt.Sprintf(reportingDataEndpoint))) }
+		hx-trigger="load, every 1s"
+		hx-swap="innerHTML"
+		hx-target="#reportingtable"
+		hx-on::after-request="feather.replace()"
+	></div>
+	<tbody class="relative divide-y" id="reportingtable">
+		@EmptyRow()
+	</tbody>
+}
+
+templ EmptyRow() {
+	@TdFullRow() {
+		<div class="relative h-full w-full">
+			<div class="absolute inset-0 rounded-2xl bg-white bg-opacity-60 z-10 h-full w-full flex items-center justify-center">
+				<div class="flex items-center">
+					<svg class="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+				</div>
+			</div>
+		</div>
 	}
 }
 
@@ -51,73 +65,55 @@ templ ReportingTableCard() {
 				<span class="text-base font-normal text-gray-500 dark:text-gray-400">Reports from API</span>
 			</div>
 		</div>
-		@FormatTable()
+		@FormatTable() {
+			@loadReportingTableBody()
+		}
 	}
 }
 
 templ FormatTable() {
 	@Table() {
 		@reportingTableHeaders()
-		@LoadReportingTableBody(ReportingTableMeta{Loaded: false})
+		{ children... }
 	}
 }
 
 templ reportingTableHeaders() {
 	@Header() {
 		for _, header := range headers {
-			<th { Th()... }>
+			@Th() {
 				{ header }
-			</th>
+			}
 		}
 	}
 }
 
 templ reportingTableDataRow(row ReportingDataTableRow) {
-	<td { Td()... }>
-		{ row.ExecutionID }
-	</td>
-	<td { Td()... }>
+	@Td() {
+		<a href={ templ.URL(fmt.Sprintf("%s%s", reportingDetailedViewEndpoint, row.ExecutionID)) } class="text-blue-800 hover:text-blue-400">{ row.ExecutionID } </a>
+	}
+	@Td() {
 		{ row.StartTime.Format(time.ANSIC) }
-	</td>
-	<td { Td()... }>
+	}
+	@Td() {
 		{  formatDuration(row.Duration) }
-	</td>
-	<td { Td()... }>
-		@statusTag(row.Status)
-	</td>
+	}
+	@Td() {
+		@indicators.ReportingStatusTag(row.Status)
+	}
 }
 
 func formatDuration(duration time.Duration) string {
-	if duration.Seconds() >= 0 {
+	if duration.Milliseconds() >= 0 {
 		return duration.Round(time.Millisecond).String()
 	} else {
 		return ""
 	}
 }
 
-templ statusTag(status string) {
-	switch status {
-		case "successfully_executed":
-			@indicators.TagSucces("Success")
-		case "failed":
-			@indicators.TagFailed("Failed")
-		case "ongoing":
-			@indicators.TagOngoing("Ongoing")
-		case "server_side_error":
-			@indicators.TagServerSideError("Server Error")
-		case "client_side_error":
-			@indicators.TagClientSideError("Client error")
-		case "timeout_error":
-			@indicators.TagClientTimeOut("Timeout error")
-		case "exception_condition_error":
-			@indicators.TagOngoing("Exception")
-		default:
-	}
-}
-
-templ tableRows(rows []ReportingDataTableRow) {
+templ TableRows(rows []ReportingDataTableRow) {
 	for _, row := range rows {
-		<tr>
+		<tr class="even:bg-blue-700/5 dark:even:bg-blue-600/10">
 			@reportingTableDataRow(row)
 		</tr>
 	}

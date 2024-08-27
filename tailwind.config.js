@@ -6,6 +6,11 @@ module.exports = {
 
 	darkMode: ['selector', '[data-mode="dark"]'],
 		// ...
+	theme: {
+		fontFamily: {
+		sans: ['Inter', 'sans-serif'],
+		}
+	},
 	  
 	plugins: [
         require('flowbite/plugin')

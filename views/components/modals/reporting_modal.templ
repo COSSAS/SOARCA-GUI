@@ -1,0 +1,16 @@
+package modals
+
+templ ReportingModal() {
+	@Modal() {
+		@Content() {
+			@Header()
+			@Content()
+		}
+	}
+}
+
+templ Content() {
+	<div id="reporting-model-content">
+		{ children... }
+	</div>
+}

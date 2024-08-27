@@ -3,27 +3,24 @@ package table
 import "soarca-gui/utils"
 
 const (
-	theadBaseClass = "bg-gray-50 dark:bg-gray-700"
-	thBaseClass    = "p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
-	tdBaseClass    = "p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white"
+	tMainClass   = "w-full text-left text-sm text-slate-700 dark:text-slate-300"
+	tBodyClass   = "divide-y divide-slate-300 dark:divide-slate-700"
+	tHeaderClass = "bg-slate-200 border-b-2 border-slate-400 text-sm text-black dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+	trBaseClass  = "even:bg-blue-700/5 dark:even:bg-blue-600/1"
+	tdBaseClass  = "p-4"
+	thBaseClass  = "p-4"
 )
 
-templ Table() {
-	<div class="flex flex-col border rounded-md">
-		<div class="overflow-x-auto">
-			<div class="inline-block min-w-full">
-				<div class="overflow-hidden">
-					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-						{ children... }
-					</table>
-				</div>
-			</div>
-		</div>
+templ Table(opts ...func(*templ.Attributes)) {
+	<div class="overflow-hidden w-full overflow-x-auto rounded-lg dark:border-slate-700">
+		<table { utils.CreateClassAttrs(tMainClass,  opts...)... }>
+			{ children... }
+		</table>
 	</div>
 }
 
 templ Header(opts ...func(*templ.Attributes)) {
-	<thead { utils.CreateClassAttrs(theadBaseClass,  opts...)... }>
+	<thead { utils.CreateClassAttrs(tHeaderClass,  opts...)... }>
 		<tr>
 			{ children... }
 		</tr>
@@ -31,9 +28,15 @@ templ Header(opts ...func(*templ.Attributes)) {
 }
 
 templ Body(opts ...func(*templ.Attributes)) {
-	<tbody { utils.CreateClassAttrs("divide-y", opts...)... }>
+	<tbody { utils.CreateClassAttrs(tBodyClass, opts...)... }>
 		{ children... }
 	</tbody>
+}
+
+templ TdFullRow() {
+	<td colspan="100%" class="p-4">
+		{ children... }
+	</td>
 }
 
 templ Footer(opts ...func(*templ.Attributes)) {
@@ -44,10 +47,14 @@ templ Footer(opts ...func(*templ.Attributes)) {
 	</tfoot>
 }
 
-func Td(opts ...func(*templ.Attributes)) templ.Attributes {
-	return utils.CreateClassAttrs(tdBaseClass, opts...)
+templ Td(opts ...func(*templ.Attributes)) {
+	<td { utils.CreateClassAttrs(tdBaseClass, opts...)... }>
+		{ children... }
+	</td>
 }
 
-func Th(opts ...func(*templ.Attributes)) templ.Attributes {
-	return utils.CreateClassAttrs(thBaseClass, opts...)
+templ Th(opts ...func(*templ.Attributes)) {
+	<th { utils.CreateClassAttrs(thBaseClass, opts...)... }>
+		{ children... }
+	</th>
 }
