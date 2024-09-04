@@ -65,8 +65,7 @@ templ section(executionReport reporter.PlaybookExecutionReport) {
 
 templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 	@statusIndicator(executionReport.Status)
-	<span class="text-md mb-8 font-bold text-gray-800">Playbook:</span>
-	<span>{ executionReport.ExecutionId }</span>
+	<span class="text-md font-bold text-gray-800 mb-8">{ executionReport.Name }</span>
 	<hr class="mt-2"/>
 	<div class="mb-6">
 		<table class="table-auto text-sm text-gray-600">
@@ -76,7 +75,11 @@ templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 					<td>{ executionReport.ExecutionId }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Started:</th>
+					<th class="font-semibold text-left pr-4">Description:</th>
+					<td>{ executionReport.Description }</td>
+				</tr>
+				<tr>
+					<th class="font-semibold text-left pr-4">Started:</th>
 					<td>{ executionReport.Started.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
@@ -163,20 +166,23 @@ templ formatCacaoVariables(name string, result cacao.Variable) {
 	</div>
 }
 
-templ actionStepInfoCard(executionId string, stepResult reporter.StepExecutionReport) {
+templ actionStepInfoCard(stepResult reporter.StepExecutionReport) {
 	<div { utils.CreateClassAttrs("relative border bg-gray-50 rounded-lg p-4 mb-4", reportingBorderColorStatus(stepResult.Status))... }>
 		@statusIndicator(stepResult.Status)
-		<span class="text-md mb-8 font-bold text-gray-800">Action Name:</span>
-		<span>{ executionId }</span>
+		<span class="text-md font-bold text-gray-800 mb-8">{ stepResult.Name }</span>
 		<hr class="mt-2"/>
 		<table class="table-auto text-sm text-gray-600">
 			<tbody>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Execution ID:</th>
-					<td>{ executionId }</td>
+					<th class="font-semibold text-left pr-4">Execution ID:</th>
+					<td>{ stepResult.ExecutionId }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Started:</th>
+					<th class="font-semibold text-left pr-4">Description:</th>
+					<td>{ stepResult.Description }</td>
+				</tr>
+				<tr>
+					<th class="font-semibold text-left pr-4">Started:</th>
 					<td>{ stepResult.Started.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
@@ -216,15 +222,15 @@ templ actionStepInfoCards(stepResults map[string]reporter.StepExecutionReport) {
 
 templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 	<div class="relative m-4">
-		<ol class="border-s border-gray-200 dark:border-gray-700">
-			for executionId, stepResult := range stepResults {
+		<ol class="border-s border-gray-200  dark:border-gray-700">
+			for _, stepResult := range stepResults {
 				<li class="mb-5 ms-6">
 					<span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-white ring-8 ring-white">
 						@indicators.ReportingStatusTagNoText(stepResult.Status)
 					</span>
-					<h3 class="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">{ executionId }</h3>
-					<time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Started: { stepResult.Started.Format(time.ANSIC) }</time>
-					<time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Duration: {  formatDuration(stepResult.Started, stepResult.Ended) }</time>
+					<h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{ stepResult.Name }</h3>
+					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Started: { stepResult.Started.Format(time.ANSIC) }</time>
+					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Duration: {  formatDuration(stepResult.Started, stepResult.Ended) }</time>
 				</li>
 			}
 		</ol>
@@ -232,8 +238,8 @@ templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 }
 
 templ detailedView(stepResults map[string]reporter.StepExecutionReport) {
-	for executionId, stepResult := range stepResults {
-		@actionStepInfoCard(executionId, stepResult) {
+	for _, stepResult := range stepResults {
+		@actionStepInfoCard(stepResult) {
 			@expander() {
 				@expandActionInfoCard(stepResult)
 			}

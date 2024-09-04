@@ -15,7 +15,7 @@ const (
 	htmxTrigger                   = "load, every 1s"
 )
 
-var headers = []string{"Execution ID", "Start Time", "Execution Duration", "Status"}
+var headers = []string{"Playbook Name", "Start Time", "Execution Duration", "Status"}
 
 type ReportingTableMeta struct {
 	Loaded   bool
@@ -24,6 +24,7 @@ type ReportingTableMeta struct {
 
 type ReportingDataTableRow struct {
 	ExecutionID string
+	Name        string
 	StartTime   time.Time
 	Duration    time.Duration
 	Status      string
@@ -90,7 +91,7 @@ templ reportingTableHeaders() {
 
 templ reportingTableDataRow(row ReportingDataTableRow) {
 	@Td() {
-		<a href={ templ.URL(fmt.Sprintf("%s%s", reportingDetailedViewEndpoint, row.ExecutionID)) } class="text-blue-800 hover:text-blue-400">{ row.ExecutionID } </a>
+		<a href={ templ.URL(fmt.Sprintf("%s%s", reportingDetailedViewEndpoint, row.ExecutionID)) } class="text-blue-800 hover:text-blue-400">{ row.Name } </a>
 	}
 	@Td() {
 		{ row.StartTime.Format(time.ANSIC) }

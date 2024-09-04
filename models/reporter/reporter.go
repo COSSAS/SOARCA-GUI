@@ -7,6 +7,8 @@ import (
 )
 
 type PlaybookExecutionReport struct {
+	Name            string                         `bson:"name" json:"name"`
+	Description     string                         `bson:"description" json:"description"`
 	Type            string                         `bson:"type" json:"type"`
 	ExecutionId     string                         `bson:"execution_id" json:"execution_id"`
 	PlaybookId      string                         `bson:"playbook_id" json:"playbook_id"`
@@ -19,6 +21,8 @@ type PlaybookExecutionReport struct {
 }
 
 type StepExecutionReport struct {
+	Name               string                    `bson:"name" json:"name"`
+	Description        string                    `bson:"description" json:"description"`
 	ExecutionId        string                    `bson:"execution_id" json:"execution_id"`
 	StepId             string                    `bson:"step_id" json:"step_id"`
 	Started            time.Time                 `bson:"started" json:"started"`
