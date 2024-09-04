@@ -61,6 +61,7 @@ func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
 	for _, report := range reports {
 
 		row := table.ReportingDataTableRow{
+			Name:        report.Name,
 			ExecutionID: report.ExecutionId,
 			StartTime:   report.Started,
 			Duration:    report.Ended.Sub(report.Started),
