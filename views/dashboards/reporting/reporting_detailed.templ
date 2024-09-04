@@ -65,8 +65,7 @@ templ section(executionReport reporter.PlaybookExecutionReport) {
 
 templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 	@statusIndicator(executionReport.Status)
-	<span class="text-md font-bold text-gray-800 mb-8">Playbook:</span>
-	<span>{ executionReport.ExecutionId }</span>
+	<span class="text-md font-bold text-gray-800 mb-8">{ executionReport.Name }</span>
 	<hr class="mt-2"/>
 	<div class="mb-6">
 		<table class="table-auto text-sm text-gray-600">
@@ -74,6 +73,10 @@ templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 				<tr>
 					<th class="font-semibold text-left pr-4">Execution ID:</th>
 					<td>{ executionReport.ExecutionId }</td>
+				</tr>
+				<tr>
+					<th class="font-semibold text-left pr-4">Description:</th>
+					<td>{ executionReport.Description }</td>
 				</tr>
 				<tr>
 					<th class="font-semibold text-left pr-4">Started:</th>
@@ -163,17 +166,20 @@ templ formatCacaoVariables(name string, result cacao.Variable) {
 	</div>
 }
 
-templ actionStepInfoCard(executionId string, stepResult reporter.StepExecutionReport) {
+templ actionStepInfoCard(stepResult reporter.StepExecutionReport) {
 	<div { utils.CreateClassAttrs("relative border bg-gray-50 rounded-lg p-4 mb-4", reportingBorderColorStatus(stepResult.Status))... }>
 		@statusIndicator(stepResult.Status)
-		<span class="text-md font-bold text-gray-800 mb-8">Action Name:</span>
-		<span>{ executionId }</span>
+		<span class="text-md font-bold text-gray-800 mb-8">{ stepResult.Name }</span>
 		<hr class="mt-2"/>
 		<table class="table-auto text-sm text-gray-600">
 			<tbody>
 				<tr>
 					<th class="font-semibold text-left pr-4">Execution ID:</th>
-					<td>{ executionId }</td>
+					<td>{ stepResult.ExecutionId }</td>
+				</tr>
+				<tr>
+					<th class="font-semibold text-left pr-4">Description:</th>
+					<td>{ stepResult.Description }</td>
 				</tr>
 				<tr>
 					<th class="font-semibold text-left pr-4">Started:</th>
@@ -217,12 +223,12 @@ templ actionStepInfoCards(stepResults map[string]reporter.StepExecutionReport) {
 templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 	<div class="relative m-4">
 		<ol class="border-s border-gray-200  dark:border-gray-700">
-			for executionId, stepResult := range stepResults {
+			for _, stepResult := range stepResults {
 				<li class="mb-5 ms-6">
 					<span class="absolute flex items-center justify-center w-6 h-6 rounded-full -start-3 ring-8 ring-white bg-white">
 						@indicators.ReportingStatusTagNoText(stepResult.Status)
 					</span>
-					<h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{ executionId }</h3>
+					<h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{ stepResult.Name }</h3>
 					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Started: { stepResult.Started.Format(time.ANSIC) }</time>
 					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Duration: {  formatDuration(stepResult.Started, stepResult.Ended) }</time>
 				</li>
@@ -232,8 +238,8 @@ templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 }
 
 templ detailedView(stepResults map[string]reporter.StepExecutionReport) {
-	for executionId, stepResult := range stepResults {
-		@actionStepInfoCard(executionId, stepResult) {
+	for _, stepResult := range stepResults {
+		@actionStepInfoCard(stepResult) {
 			@expander() {
 				@expandActionInfoCard(stepResult)
 			}
