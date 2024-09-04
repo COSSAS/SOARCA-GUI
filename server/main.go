@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"soarca-gui/internal/status"
 	"soarca-gui/routes"
 	"soarca-gui/utils"
 
@@ -11,18 +12,22 @@ import (
 )
 
 var (
-	Version   string
-	Buildtime string
+	Version   string = "dev"
+	Buildtime string = ""
+	isProd    bool   = false
 )
 
 // @title           SOARCA-GUI
 // @version         0.0.1
 func main() {
+	fmt.Println("Version: ", Version)
+	fmt.Println("Buildtime ", Buildtime)
 	errenv := godotenv.Load(".env")
 
 	if errenv != nil {
 		fmt.Println("Failed to read env variable, but will continue")
 	}
+	status.SetVersion(Version)
 
 	app := gin.Default()
 	routes.Setup(app)

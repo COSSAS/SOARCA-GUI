@@ -1,6 +1,9 @@
 package navbar
 
-import "soarca-gui/views/components/icons"
+import (
+	"soarca-gui/internal/status"
+	"soarca-gui/views/components/icons"
+)
 
 const (
 	soarcaLogoUrlPath = "/public/assets/icons/soarca-logo.svg"
@@ -24,7 +27,7 @@ templ Navsidebar(title string, homeLink string, version string, documentationUrl
 				@icons.NewIcon("book").InsertIcon("mr-3")
 				Documentation
 			</span>
-			<span class="break-normal italic">GUI Version: { version }</span>
+			<span class="text-xs break-normal italic">Version: { status.GetVersion() }</span>
 		</a>
 	</aside>
 }
