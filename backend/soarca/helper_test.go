@@ -29,7 +29,10 @@ func TestFetchToJson(t *testing.T) {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.Header().Set("Content-Type", "application/json")
 					w.WriteHeader(http.StatusOK)
-					json.NewEncoder(w).Encode(TestData{Name: "test", Value: 123})
+					err := json.NewEncoder(w).Encode(TestData{Name: "test", Value: 123})
+					if err != nil {
+						t.Fatalf("could not encode json: %v", err)
+					}
 				}))
 			},
 			expectedData: &TestData{Name: "test", Value: 123},
