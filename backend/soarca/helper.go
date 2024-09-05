@@ -9,9 +9,13 @@ import (
 	"time"
 )
 
+const (
+	timeout time.Duration = 500
+)
+
 func fetchToJson(client *http.Client, url string, target interface{}) error {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Millisecond)
 	defer cancel()
 
 	body, err := fetch(ctx, client, url)
