@@ -49,7 +49,10 @@ func TestFetchToJson(t *testing.T) {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.Header().Set("Content-Type", "application/json")
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte("{invalid json}"))
+					_, err := w.Write([]byte("Success"))
+					if err != nil {
+						t.Fatalf("Failed to write response: %v", err)
+					}
 				}))
 			},
 			expectedErrMsg: "failed to unmarshal JSON object",
@@ -120,7 +123,10 @@ func TestFetch(t *testing.T) {
 			setupServer: func() *httptest.Server {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte("Success"))
+					_, err := w.Write([]byte("Success"))
+					if err != nil {
+						t.Fatalf("Failed to write response: %v", err)
+					}
 				}))
 			},
 			expectedBody: "Success",
@@ -149,7 +155,10 @@ func TestFetch(t *testing.T) {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					time.Sleep(200 * time.Millisecond)
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte("Too late"))
+					_, err := w.Write([]byte("Too late"))
+					if err != nil {
+						t.Fatalf("Failed to write response: %v", err)
+					}
 				}))
 			},
 			expectedErrMsg: "context deadline exceeded",
