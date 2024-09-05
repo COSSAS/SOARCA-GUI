@@ -14,7 +14,6 @@ import (
 var (
 	Version   string = "dev"
 	Buildtime string = ""
-	isProd    bool   = false
 )
 
 // @title           SOARCA-GUI
