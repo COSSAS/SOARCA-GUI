@@ -79,6 +79,44 @@ templ DashboardLayout() {
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 			<script src="/public/vendor/prism.js"></script>
 			@icons.LoadIcons()
+			<script>
+// Get the theme toggle icons
+var themeToggleDarkIcon = document.getElementById("theme-toggle-dark-icon");
+var themeToggleLightIcon = document.getElementById("theme-toggle-light-icon");
+
+// Check and apply the theme based on local storage or system preference
+if (
+    localStorage.getItem("color-theme") === "dark" ||
+    (!localStorage.getItem("color-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
+) {
+    document.documentElement.classList.add("dark");
+    themeToggleLightIcon.classList.remove("hidden");
+    themeToggleDarkIcon.classList.add("hidden");
+} else {
+    document.documentElement.classList.remove("dark");
+    themeToggleLightIcon.classList.add("hidden");
+    themeToggleDarkIcon.classList.remove("hidden");
+}
+
+// Toggle the theme when the button is clicked
+var themeToggleBtn = document.getElementById("theme-toggle");
+
+themeToggleBtn.addEventListener("click", function () {
+    // Toggle the icons
+    themeToggleDarkIcon.classList.toggle("hidden");
+    themeToggleLightIcon.classList.toggle("hidden");
+
+    // Toggle the dark class and update local storage
+    if (document.documentElement.classList.contains("dark")) {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("color-theme", "light");
+    } else {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("color-theme", "dark");
+    }
+});
+
+</script>
 		</body>
 	}
 }
