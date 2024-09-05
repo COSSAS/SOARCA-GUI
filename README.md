@@ -2,7 +2,10 @@
 <a href="https://cossas-project.org/cossas-software/soarca"><img src="img/soarca-logo.svg"/>
 </div>
 
+
 # SOARCA-GUI
+
+[![Pipeline status](https://github.com/cossas/soarca-gui/actions/workflows/ci.yml/badge.svg?development)](https://github.com/COSSAS/SOARCA/actions)
 
 > [!WARNING]
 > SOARCA-GUI is still in development and features for the base version v0.1 are still being added.
