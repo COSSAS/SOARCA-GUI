@@ -1,4 +1,4 @@
-.PHONY: dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean
+.PHONY: dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean test
 
 
 BINARY_NAME = soarca-gui
@@ -81,5 +81,8 @@ clean:
 	
 run: docker
 	GIT_VERSION=${VERSION} docker compose up --build --force-recreate -d
+
+test: build-templ
+	go test ./... -v
 
 .DEFAULT_GOAL := dev  
