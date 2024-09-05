@@ -1,22 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	content: ["./**/*.templ","./node_modules/flowbite/**/*.js"],
-	// Disable Tailwind colors:
-	// theme: { colors: {} },
+	content: ["./**/*.templ", "./node_modules/flowbite/**/*.js"],
 
-	darkMode: ['selector', '[data-mode="dark"]'],
-		// ...
+	darkMode: ['class'],
 	theme: {
+	  extend: {
 		fontFamily: {
-		sans: ['Inter', 'sans-serif'],
-		}
+		  sans: ['Inter', 'sans-serif'],
+		},
+	  },
 	},
-	  
 	plugins: [
-        require('flowbite/plugin')
-    ],
-
-
-};
-
-
+	  require('flowbite/plugin')
+	],
+  };

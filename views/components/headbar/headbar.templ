@@ -6,9 +6,59 @@ import (
 	"soarca-gui/views/components/indicators"
 )
 
+templ themeButton() {
+	<div
+		x-data="{ 
+        darkMode: localStorage.getItem('color-theme') === 'dark' || 
+                 (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
+        themeLabel() {
+            return this.darkMode ? 'Dark Mode' : 'Light Mode';
+        }
+    }"
+		x-init="$watch('darkMode', value => {
+        document.documentElement.classList.toggle('dark', value);
+        localStorage.setItem('color-theme', value ? 'dark' : 'light');
+    })"
+		class="flex items-center justify-center space-x-2"
+	>
+		<input
+			id="theme-toggle-checkbox"
+			type="checkbox"
+			name="theme-toggle"
+			class="hidden"
+			x-model="darkMode"
+		/>
+		<button
+			id="theme-toggle"
+			@click="darkMode = !darkMode"
+			:class="darkMode ? 'bg-blue-600' : 'bg-neutral-200'"
+			class="relative inline-flex h-6 py-0.5 focus:outline-none rounded-full w-10"
+			x-cloak
+		>
+			<span
+				:class="darkMode ? 'translate-x-[18px]' : 'translate-x-0.5'"
+				class="w-5 h-5 duration-200 ease-in-out bg-white rounded-full shadow-md"
+			>
+				<svg class="fill-yellow-500 hidden dark:block absolute inset-0 w-3 h-3 m-auto" fill="currentColor" viewBox="0 0 20 20">
+					<path
+						d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+						fill-rule="evenodd"
+						clip-rule="evenodd"
+					></path>
+				</svg>
+				<!-- Light Mode SVG -->
+				<svg class="fill-violet-700 block dark:hidden absolute inset-0 w-3 h-3 m-auto" fill="currentColor" viewBox="0 0 20 20">
+					<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+				</svg>
+			</span>
+		</button>
+	</div>
+}
+
 templ DesktopHeaderBar() {
 	<header class="w-full items-center bg-slate-50 py-2 px-6 hidden sm:flex">
 		@indicators.HealthIndicator(indicators.HealthIndicatorData{Loaded: false})
+		@themeButton()
 		<div class="w-1/2"></div>
 		<div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
 			<button
