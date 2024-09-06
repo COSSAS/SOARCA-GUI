@@ -20,6 +20,7 @@ module.exports = {
 			'c-dark-slate-border': colors.slate[600],
 			'c-dark-slate-text': colors.slate[200],
 			'c-dark-slate-documentation-background': colors.slate[900],
+			'c-dark-background': colors.slate[600],
 			'c-dark-blue-background': colors.blue[950],
 			
 
