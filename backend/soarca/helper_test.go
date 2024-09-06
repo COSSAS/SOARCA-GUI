@@ -159,7 +159,7 @@ func TestFetchContextTimeout(t *testing.T) {
 	expectedErrMsg := "context deadline exceeded"
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(200 * time.Millisecond) // Simulate a delay to trigger context timeout
+		time.Sleep(200 * time.Millisecond)
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte("Too late"))
 		if err != nil {
@@ -169,7 +169,7 @@ func TestFetchContextTimeout(t *testing.T) {
 	defer server.Close()
 
 	client := server.Client()
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond) // Short timeout to trigger context timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
 	body, err := fetch(ctx, client, server.URL)
