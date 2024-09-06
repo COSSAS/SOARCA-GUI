@@ -2,7 +2,7 @@ package cards
 
 import "soarca-gui/utils"
 
-const cardBaseCSS = "p-2 m-2 rounded-lg bg-white border-gray-100 shadow-md dark:bg-gray-800"
+const cardBaseCSS = "p-2 m-2 rounded-lg bg-white border-gray-100 shadow-md dark:bg-c-dark-slate-navbar-background"
 
 templ Card(opts ...func(*templ.Attributes)) {
 	<div { utils.CreateClassAttrs(cardBaseCSS, opts...)... }>
