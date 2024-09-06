@@ -58,7 +58,7 @@ templ renderLinks(links []link, css string) {
 
 templ DashboardLayout() {
 	@BaseLayout() {
-		<body class="flex font-family-sans-serif bg-c-blue-light-background dark:bg-c-dark-background">
+		<body class="flex font-family-sans-serif bg-c-blue-light-background dark:bg-c-dark-slate-background">
 			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl) {
 				@renderLinks(navBarlinks, "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item")
 			}
