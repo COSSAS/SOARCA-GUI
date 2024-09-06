@@ -65,33 +65,33 @@ templ section(executionReport reporter.PlaybookExecutionReport) {
 
 templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 	@statusIndicator(executionReport.Status)
-	<span class="text-md font-bold text-gray-800 mb-8">{ executionReport.Name }</span>
+	<span class="text-md font-bold text-gray-800 dark:text-c-dark-slate-text mb-8">{ executionReport.Name }</span>
 	<hr class="mt-2"/>
 	<div class="mb-6">
 		<table class="table-auto text-sm text-gray-600">
 			<tbody>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Execution ID:</th>
+					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Execution ID:</th>
 					<td>{ executionReport.ExecutionId }</td>
 				</tr>
 				<tr>
-					<th class="font-semibold text-left pr-4">Description:</th>
+					<th class="font-semibold text-left pr-4 dark:text-c-dark-slate-text ">Description:</th>
 					<td>{ executionReport.Description }</td>
 				</tr>
 				<tr>
-					<th class="font-semibold text-left pr-4">Started:</th>
+					<th class="font-semibold text-left pr-4 dark:text-c-dark-slate-text ">Started:</th>
 					<td>{ executionReport.Started.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Ended:</th>
+					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Ended:</th>
 					<td>{ executionReport.Ended.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Duration:</th>
+					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Duration:</th>
 					<td>{ formatDuration(executionReport.Started, executionReport.Ended) }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Status:</th>
+					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Status:</th>
 					<td>{  executionReport.StatusText }</td>
 				</tr>
 			</tbody>
@@ -133,7 +133,7 @@ templ expander() {
 
 templ expandActionInfoCard(stepResults reporter.StepExecutionReport) {
 	<div class="mb-6">
-		<div class="mt-2 overflow-x-auto rounded-lg bg-gray-100 p-2">
+		<div class="mt-2 overflow-x-auto rounded-lg bg-gray-100 dark:bg-c-dark-slate-border p-2">
 			if len(stepResults.Variables ) > 0 {
 				for name, stepResult := range stepResults.Variables {
 					@formatCacaoVariables(name, stepResult)
@@ -147,7 +147,7 @@ templ expandActionInfoCard(stepResults reporter.StepExecutionReport) {
 
 templ formatCacaoVariables(name string, result cacao.Variable) {
 	<div class="mb-6">
-		<span class="text-md font-semi-bold mb-8 text-gray-800">Name:</span>
+		<span class="text-md font-semi-bold mb-8 dark:text-c-blue-light-backgroud text-gray-800">Name:</span>
 		<span>{ name }</span>
 		<hr class="mt-2"/>
 		<table class="table-auto text-sm text-gray-600">
@@ -167,9 +167,10 @@ templ formatCacaoVariables(name string, result cacao.Variable) {
 }
 
 templ actionStepInfoCard(stepResult reporter.StepExecutionReport) {
-	<div { utils.CreateClassAttrs("relative border bg-gray-50 rounded-lg p-4 mb-4", reportingBorderColorStatus(stepResult.Status))... }>
+	//default card messes with the reporting indicator at top right, so we have a custom card. 
+	<div { utils.CreateClassAttrs("relative border bg-gray-50 rounded-lg p-4 mb-4 dark:bg-c-dark-slate-navbar-background", reportingBorderColorStatus(stepResult.Status))... }>
 		@statusIndicator(stepResult.Status)
-		<span class="text-md font-bold text-gray-800 mb-8">{ stepResult.Name }</span>
+		<span class="text-md font-bold text-gray-800 dark:text-c-dark-slate-text mb-8">{ stepResult.Name }</span>
 		<hr class="mt-2"/>
 		<table class="table-auto text-sm text-gray-600">
 			<tbody>
