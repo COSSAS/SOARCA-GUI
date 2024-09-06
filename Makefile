@@ -9,10 +9,10 @@ BUILDTIME := $(shell  date '+%Y-%m-%dT%T%z')
 GOLDFLAGS += -X main.Version=$(VERSION)
 GOLDFLAGS += -X main.Buildtime=$(BUILDTIME)
 GOFLAGS = -ldflags "$(GOLDFLAGS)"
+
 #-----------------------------------------------------
 # DEV
 #-----------------------------------------------------
-
 
 dev:
 	@make -j dev-templ dev-tailwind dev-server 
@@ -21,7 +21,7 @@ dev-server:
 	# run air to detect any go file changes to re-build and re-run the server.
 
 	@go run github.com/air-verse/air@latest \
-	--build.cmd "templ generate && go build --tags dev -o tmp/bin/main ./server/" --build.bin "tmp/bin/main" --build.delay "100" \
+	--build.cmd "templ generate && go build -ldflags \"-X main.Version=$(VERSION)\"  --tags dev -o tmp/bin/main ./server/" --build.bin "tmp/bin/main" --build.delay "100" \
 	--build.exclude_dir "node_modules" \
 	--build.exclude_regex ".*_templ.go" \
 	--build.include_ext "go,templ" \
