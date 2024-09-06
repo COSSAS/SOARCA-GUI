@@ -7,7 +7,7 @@ const (
 )
 
 templ Navsidebar(title string, homeLink string, version string, documentationUrl string) {
-	<aside class="relative bg-blue-600 dark:bg-blue-950 h-screen w-64 hidden sm:block shadow-xl">
+	<aside class="relative bg-v-blue-deep dark:bg-blue-950 h-screen w-64 hidden sm:block shadow-xl">
 		<div class="p-6">
 			<a href={ templ.URL(homeLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">
 				<img src={ soarcaLogoUrlPath } class="w-30 py-3 md:py-0 g-image"/>
