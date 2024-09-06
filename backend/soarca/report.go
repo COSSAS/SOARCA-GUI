@@ -14,10 +14,10 @@ const (
 
 type Report struct {
 	Host   string
-	client http.Client
+	client *http.Client
 }
 
-func NewReport(host string, client http.Client) *Report {
+func NewReport(host string, client *http.Client) *Report {
 	return &Report{Host: host, client: client}
 }
 

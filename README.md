@@ -2,7 +2,14 @@
 <a href="https://cossas-project.org/cossas-software/soarca"><img src="img/soarca-logo.svg"/>
 </div>
 
+
 # SOARCA-GUI
+
+
+[![https://cossas-project.org/portfolio/SOARCA/](https://img.shields.io/badge/website-cossas.github.io-orange)](https://cossas.github.io/SOARCA/docs/)
+[![Pipeline status](https://github.com/cossas/soarca-gui/actions/workflows/ci.yml/badge.svg?development)](https://github.com/COSSAS/SOARCA/actions)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 
 > [!WARNING]
 > SOARCA-GUI is still in development and features for the base version v0.1 are still being added.
