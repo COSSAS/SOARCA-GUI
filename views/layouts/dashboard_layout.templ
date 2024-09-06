@@ -58,11 +58,11 @@ templ renderLinks(links []link, css string) {
 
 templ DashboardLayout() {
 	@BaseLayout() {
-		<body class="bg-blue-50 dark:bg-black font-family-sans-serif flex">
+		<body class="font-family-sans-serif flex bg-c-blue-light-backgroud dark:bg-black">
 			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl) {
 				@renderLinks(navBarlinks, "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item")
 			}
-			<div class="w-full flex flex-col h-screen overflow-y-hidden">
+			<div class="flex h-screen w-full flex-col overflow-y-hidden">
 				@headbar.DesktopHeaderBar() {
 					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-v-blue-deep")
 				}
@@ -70,7 +70,7 @@ templ DashboardLayout() {
 					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg  hover:bg-blue-800 hover:text-white")
 				}
 				<main class="h-full overflow-y-auto">
-					<div class="container px-6 mx-auto grid">
+					<div class="container mx-auto grid px-6">
 						{ children... }
 					</div>
 				</main>
