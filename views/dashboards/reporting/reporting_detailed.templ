@@ -71,28 +71,28 @@ templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 		<table class="table-auto text-sm text-gray-600">
 			<tbody>
 				<tr>
-					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Execution ID:</th>
-					<td>{ executionReport.ExecutionId }</td>
+					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text">Execution ID:</th>
+					<td class="dark:text-white">{ executionReport.ExecutionId }</td>
 				</tr>
 				<tr>
-					<th class="font-semibold text-left pr-4 dark:text-c-dark-slate-text ">Description:</th>
-					<td>{ executionReport.Description }</td>
+					<th class="font-semibold text-left pr-4 dark:text-c-dark-slate-text">Description:</th>
+					<td class="dark:text-white">{ executionReport.Description }</td>
 				</tr>
 				<tr>
-					<th class="font-semibold text-left pr-4 dark:text-c-dark-slate-text ">Started:</th>
-					<td>{ executionReport.Started.Format(time.ANSIC) }</td>
+					<th class="font-semibold text-left pr-4 dark:text-c-dark-slate-text">Started:</th>
+					<td class="dark:text-white">{ executionReport.Started.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Ended:</th>
-					<td>{ executionReport.Ended.Format(time.ANSIC) }</td>
+					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text">Ended:</th>
+					<td class="dark:text-white">{ executionReport.Ended.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
 					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Duration:</th>
-					<td>{ formatDuration(executionReport.Started, executionReport.Ended) }</td>
+					<td class="dark:text-white">{ formatDuration(executionReport.Started, executionReport.Ended) }</td>
 				</tr>
 				<tr>
 					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Status:</th>
-					<td>{  executionReport.StatusText }</td>
+					<td class="dark:bg-c-dark-slate-background">{  executionReport.StatusText }</td>
 				</tr>
 			</tbody>
 		</table>
@@ -226,7 +226,7 @@ templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 		<ol class="border-s border-gray-200  dark:border-gray-700">
 			for _, stepResult := range stepResults {
 				<li class="mb-5 ms-6">
-					<span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-white ring-8 ring-white">
+					<span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-white dark:bg-c-dark-slate-card ring-8 ring-white dark:ring-c-dark-slate-card">
 						@indicators.ReportingStatusTagNoText(stepResult.Status)
 					</span>
 					<h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">{ stepResult.Name }</h3>

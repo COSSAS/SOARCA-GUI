@@ -16,7 +16,7 @@ templ ReportingIndex() {
 }
 
 templ banner() {
-	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 mb-2")) {
+	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 mb-2  dark:bg-c-dark-slate-background/ dark:bg-none")) {
 		<div class="h-10 flex items-center">
 			<button onclick="history.back()" class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700">
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-4 rtl:rotate-180">
@@ -24,7 +24,7 @@ templ banner() {
 				</svg>
 				<span>Go back</span>
 			</button>
-			<h1 class="ml-3 text-2xl text-bold text-white">Reporting</h1>
+			<h1 class="ml-3 text-2xl text-bold text-white dark:text-c-dark-slate-text">Reporting</h1>
 		</div>
 	}
 }
