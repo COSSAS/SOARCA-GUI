@@ -45,7 +45,7 @@ templ section404(errors utils.Errors) {
 }
 
 templ headersection() {
-	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 mb-1")) {
+	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 mb-2  dark:bg-c-dark-slate-background/ dark:bg-none")) {
 		<div clas="h-10 flex items-center justify-center ">
 			<button onclick="history.back()" class="flex w-1/2 items-center justify-center gap-x-2 rounded-lg border bg-white px-5 py-2 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 sm:w-auto">
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-5 rtl:rotate-180">
@@ -92,7 +92,7 @@ templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 				</tr>
 				<tr>
 					<th class="pr-4 text-left font-semibold dark:text-c-dark-slate-text ">Status:</th>
-					<td class="dark:bg-c-dark-slate-background">{  executionReport.StatusText }</td>
+					<td class="dark:text-white">{  executionReport.StatusText }</td>
 				</tr>
 			</tbody>
 		</table>
@@ -107,7 +107,7 @@ templ statusIndicator(status string) {
 
 templ expander() {
 	<div x-data="{ reportsOpen: false }">
-		<div @click="reportsOpen = !reportsOpen" class="mx-auto mb-5 mt-32 flex w-full items-center overflow-hidden border-b text-gray-600 md:mt-0">
+		<div @click="reportsOpen = !reportsOpen" class="mx-auto mb-5 mt-32 flex w-full items-center overflow-hidden border-b text-c-dark-slate-text-dark md:mt-0">
 			<div class="w-10 transform border-r px-2 transition duration-300 ease-in-out" :class="{'rotate-90': reportsOpen,' -translate-y-0.0': !reportsOpen }">
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
@@ -175,32 +175,32 @@ templ actionStepInfoCard(stepResult reporter.StepExecutionReport) {
 		<table class="table-auto text-sm text-gray-600">
 			<tbody>
 				<tr>
-					<th class="font-semibold text-left pr-4">Execution ID:</th>
-					<td>{ stepResult.ExecutionId }</td>
+					<th class="font-semibold text-left pr-4 dark:text-white">Execution ID:</th>
+					<td class="dark:text-white">{ stepResult.ExecutionId }</td>
 				</tr>
 				<tr>
-					<th class="font-semibold text-left pr-4">Description:</th>
-					<td>{ stepResult.Description }</td>
+					<th class="font-semibold text-left pr-4 dark:text-white">Description:</th>
+					<td class="dark:text-white">{ stepResult.Description }</td>
 				</tr>
 				<tr>
-					<th class="font-semibold text-left pr-4">Started:</th>
-					<td>{ stepResult.Started.Format(time.ANSIC) }</td>
+					<th class="font-semibold text-left pr-4 dark:text-white">Started:</th>
+					<td class="dark:text-white">{ stepResult.Started.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Ended:</th>
-					<td>{ stepResult.Ended.Format(time.ANSIC) }</td>
+					<th class="pr-4 text-left font-semibold dark:text-white">Ended:</th>
+					<td class="dark:text-white">{ stepResult.Ended.Format(time.ANSIC) }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Duration:</th>
-					<td>{ formatDuration(stepResult.Started, stepResult.Ended) }</td>
+					<th class="pr-4 text-left font-semibold dark:text-white">Duration:</th>
+					<td class="dark:text-white">{ formatDuration(stepResult.Started, stepResult.Ended) }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Status:</th>
-					<td>{ stepResult.StatusText }</td>
+					<th class="pr-4 text-left font-semibold dark:text-white">Status:</th>
+					<td class="dark:text-white">{ stepResult.StatusText }</td>
 				</tr>
 				<tr>
-					<th class="pr-4 text-left font-semibold">Executed by:</th>
-					<td>{ stepResult.ExecutedBy }</td>
+					<th class="pr-4 text-left font-semibold dark:text-white">Executed by:</th>
+					<td class="dark:text-white">{ stepResult.ExecutedBy }</td>
 				</tr>
 			</tbody>
 		</table>
