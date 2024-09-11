@@ -58,7 +58,7 @@ templ headersection() {
 }
 
 templ section(executionReport reporter.PlaybookExecutionReport) {
-	@cards.Card(utils.Class("relative shadow-lg rounded-lg p-6 mb-6"), reportingShadowColorStatus(executionReport.Status)) {
+	@cards.Card(utils.Class("relative shadow-lg dark:shadow-2xl rounded-lg p-6 mb-6 "), reportingShadowColorStatus(executionReport.Status)) {
 		{ children... }
 	}
 }
