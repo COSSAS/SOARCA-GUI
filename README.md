@@ -14,6 +14,13 @@
 > [!WARNING]
 > SOARCA-GUI is still in development and features for the base version v0.1 are still being added.
 
+
+
+> [!WARNING]
+> Under the hood we make HTMX call-backs to the SOARCA-GUI "backend", here we use polling. Somehow the polling behaviour is flagged by addblockers which block the poll to the backend. 
+> Please add an exclusion for the SOARCA-GUI. This issue will be looked at in the future. 
+
+
 A [Go](https://go.dev), [Templ](https://templ.guide/), [Tailwind CSS](https://tailwindcss.com/) and [HTMX](https://htmx.org/) based GUI for [SOARCA](https://github.com/COSSAS/SOARCA). 
 
 
