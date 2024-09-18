@@ -1,12 +1,10 @@
 package cookies
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
-)
-
-const (
-	stateSession = "soarca_gui_state"
 )
 
 type CookieJar struct {
@@ -17,13 +15,15 @@ func NewCookieJar(secret []byte) *CookieJar {
 	return &CookieJar{store: sessions.NewCookieStore(secret)}
 }
 
-func (cj *CookieJar) setCallBackCookie(g *gin.Context, name string, stateValue string) {
-	session := sessions.NewSession(cj.store, stateSession)
+func (cj *CookieJar) SetCallBackCookie(g *gin.Context, name string, stateValue string) {
+	session := sessions.NewSession(cj.store, name)
 	session.Values["state"] = stateValue
 	session.Options.MaxAge = 60 * 5
 	session.Options.Path = "/"
 	session.Options.Secure = g.Request.TLS != nil
 
-	if err := session.Save(); err != nil {
+	if err := cj.store.Save(g.Request, c.Writer, session); err != nil {
+		fmt.Println("[error] failed to store session")
+		return
 	}
 }
