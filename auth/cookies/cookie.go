@@ -7,6 +7,10 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+type ICookieJar interface {
+	SetCallBackCookie(*gin.Context, string, string)
+}
+
 type CookieJar struct {
 	store sessions.Store
 }
@@ -22,7 +26,7 @@ func (cj *CookieJar) SetCallBackCookie(g *gin.Context, name string, stateValue s
 	session.Options.Path = "/"
 	session.Options.Secure = g.Request.TLS != nil
 
-	if err := cj.store.Save(g.Request, c.Writer, session); err != nil {
+	if err := cj.store.Save(g.Request, g.Writer, session); err != nil {
 		fmt.Println("[error] failed to store session")
 		return
 	}
