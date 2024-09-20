@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"io"
-	"net/http"
 )
 
 func randString(nByte int) (string, error) {
@@ -13,7 +12,4 @@ func randString(nByte int) (string, error) {
 		return "", err
 	}
 	return base64.RawURLEncoding.EncodeToString(b), nil
-}
-
-func setCallbackCookie(w http.ResponseWriter, r *http.Request, name string, value string) {
 }
