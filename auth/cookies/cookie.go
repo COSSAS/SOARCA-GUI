@@ -10,7 +10,6 @@ import (
 type ICookieJar interface {
 	SetCallBackCookie(*gin.Context, string, string)
 }
-
 type CookieJar struct {
 	store sessions.Store
 }

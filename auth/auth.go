@@ -17,12 +17,12 @@ type Authenticator struct {
 	verifierProvider *oidc.Provider
 }
 
-func SetupAuthHandler() *Authenticator {
+func SetupOIDCAuthHandler() *Authenticator {
 	providerLink := utils.GetEnv("OIDC_PROVIDER", "")
 	clientID := utils.GetEnv("OIDC_CLIENT_ID", "")
 	clientSecret := utils.GetEnv("OIDC_CLIENT_SECRET", "")
 	redirectURL := utils.GetEnv("OIDC_REDIRECT_URL", "")
-	cookieJarSecret := utils.GetEnv("COOKIE_SECRET", "")
+	cookieJarSecret := utils.GetEnv("COOKIE_SECRET_KEY", "")
 	if providerLink == "" {
 		log.Fatal("invalid provider link for the env: OIDC_PROVIDER")
 	}
@@ -36,7 +36,7 @@ func SetupAuthHandler() *Authenticator {
 		log.Fatal("invalid redirect URL for the env: OIDC_REDIRECT_URL")
 	}
 	if cookieJarSecret == "" || len(cookieJarSecret) < 32 {
-		log.Fatal("invalid cookie secret key for the env: COOKIE_SECRET_KEY. Note: should be at leat 32 characters")
+		log.Fatal("invalid cookie secret key for the env: COOKIE_SECRET_KEY. Note: should be at least 32 characters")
 	}
 
 	ctx := context.Background()
