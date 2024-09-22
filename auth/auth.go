@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"log"
 	"net/http"
 	"soarca-gui/auth/cookies"
@@ -11,6 +12,10 @@ import (
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
+)
+
+const (
+	OIDC_REDIRECT_URL = "/oidc-login"
 )
 
 type Authenticator struct {
@@ -22,9 +27,9 @@ type Authenticator struct {
 
 func SetupOIDCAuthHandler() *Authenticator {
 	providerLink := utils.GetEnv("OIDC_PROVIDER", "")
+	soarcaGUIDomain := utils.GetEnv("SOARCA_GUI_URI", "http://localhost:8081")
 	clientID := utils.GetEnv("OIDC_CLIENT_ID", "")
 	clientSecret := utils.GetEnv("OIDC_CLIENT_SECRET", "")
-	redirectURL := utils.GetEnv("OIDC_REDIRECT_URL", "")
 	skipTLSVerify := utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false")
 	cookieJarSecret := utils.GetEnv("COOKIE_SECRET_KEY", "")
 
@@ -32,14 +37,12 @@ func SetupOIDCAuthHandler() *Authenticator {
 	if providerLink == "" {
 		log.Fatal("invalid provider link for the env: OIDC_PROVIDER")
 	}
+
 	if clientID == "" {
 		log.Fatal("invalid oidc client ID for the env: OIDC_CLIENT_ID")
 	}
 	if clientSecret == "" {
 		log.Fatal("invalid oidc client secret for the env: OIDC_CLIENT_SECRET")
-	}
-	if redirectURL == "" {
-		log.Fatal("invalid redirect URL for the env: OIDC_REDIRECT_URL")
 	}
 	if cookieJarSecret == "" || len(cookieJarSecret) < 32 {
 		log.Fatal("invalid cookie secret key for the env: COOKIE_SECRET_KEY. Note: should be at least 33 characters")
@@ -76,7 +79,7 @@ func SetupOIDCAuthHandler() *Authenticator {
 	oauthConfig := &oauth2.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
-		RedirectURL:  redirectURL,
+		RedirectURL:  fmt.Sprintf("%s%s", soarcaGUIDomain, OIDC_REDIRECT_URL),
 		Endpoint:     provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
 	}

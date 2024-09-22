@@ -20,7 +20,7 @@ func (auth *Authenticator) OIDCRedirectToLogin(context *gin.Context) {
 		api.JSONErrorStatus(context, http.StatusInsufficientStorage, errors.New("failed to generate state"))
 		return
 	}
-	nonce, err := randString(32)
+	nonce, err := randString(16)
 	if err != nil {
 		api.JSONErrorStatus(context, http.StatusInsufficientStorage, errors.New("failed to generate nonce"))
 		return
@@ -77,4 +77,5 @@ func (auth *Authenticator) OIDCCallBack(context *gin.Context) {
 		api.JSONErrorStatus(context, http.StatusBadRequest, errors.New("nonce for verified id token did not match"))
 		return
 	}
+	context.Redirect(http.StatusOK, "/dashboard")
 }
