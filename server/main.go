@@ -20,9 +20,8 @@ var (
 func main() {
 	fmt.Println("Version: ", Version)
 	fmt.Println("Buildtime ", Buildtime)
-	// errenv := godotenv.Load(".env")
+	errenv := godotenv.Load(".env")
 
-	errenv := godotenv.Load(".env.example")
 	if errenv != nil {
 		fmt.Println("Failed to read env variable, but will continue")
 	}

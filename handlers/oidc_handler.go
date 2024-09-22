@@ -19,9 +19,12 @@ func NewOIDCAuthHanlder(authenticator *auth.Authenticator) *OIDCAuthHandler {
 }
 
 func (a *OIDCAuthHandler) OIDCAuthPageHandler(context *gin.Context) {
+	// context.Header("HX-Redirect", "/dashboard")
+	// context.String(http.StatusFound, "")
 	render := utils.NewTempl(context, http.StatusOK, authviews.OIDCLoginIndex())
 	context.Render(http.StatusOK, render)
 }
 
 func (a *OIDCAuthHandler) OIDCLoginHandler(context *gin.Context) {
+	a.authenticator.RedirectToOIDCLogin(context)
 }
