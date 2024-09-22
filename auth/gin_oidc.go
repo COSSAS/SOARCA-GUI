@@ -14,19 +14,19 @@ const (
 	CALLBACK_NONCE = "soarca_gui_nonce"
 )
 
-func (auth *Authenticator) redirectToOIDCLogin(ctx *gin.Context) {
+func (auth *Authenticator) RedirectToOIDCLogin(context *gin.Context) {
 	state, err := randString(32)
 	if err != nil {
-		api.JSONErrorStatus(ctx, http.StatusInsufficientStorage, errors.New("failed to generate state"))
+		api.JSONErrorStatus(context, http.StatusInsufficientStorage, errors.New("failed to generate state"))
 		return
 	}
 	nonce, err := randString(32)
 	if err != nil {
-		api.JSONErrorStatus(ctx, http.StatusInsufficientStorage, errors.New("failed to generate nonce"))
+		api.JSONErrorStatus(context, http.StatusInsufficientStorage, errors.New("failed to generate nonce"))
 		return
 	}
-	auth.Cookiejar.SetCallBackCookie(ctx, CALLBACK_STATE, state)
-	auth.Cookiejar.SetCallBackCookie(ctx, CALLBACK_NONCE, nonce)
+	auth.Cookiejar.SetCallBackCookie(context, CALLBACK_STATE, state)
+	auth.Cookiejar.SetCallBackCookie(context, CALLBACK_NONCE, nonce)
 
-	ctx.Redirect(http.StatusFound, auth.OauthConfig.AuthCodeURL(state, oidc.Nonce(nonce)))
+	context.Redirect(http.StatusFound, auth.OauthConfig.AuthCodeURL(state, oidc.Nonce(nonce)))
 }

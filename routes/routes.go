@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"soarca-gui/auth"
@@ -26,7 +25,6 @@ func Setup(app *gin.Engine) {
 	authEnabledStr := utils.GetEnv("AUTH_ENABLED", "false")
 	authEnabled, err := strconv.ParseBool(authEnabledStr)
 	publicRoutes := app.Group("/")
-	fmt.Println(authEnabled)
 	if err != nil {
 		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
 	}
@@ -36,7 +34,6 @@ func Setup(app *gin.Engine) {
 		PublicRoutes(publicRoutes)
 	}
 	ReportingRoutes(reporter, publicRoutes)
-	// PublicRoutes(publicRoutes)
 	StatusRoutes(status, publicRoutes)
 	SettingsRoutes(publicRoutes)
 }
@@ -47,7 +44,7 @@ func PublicOIDCRoutes(app *gin.RouterGroup) {
 	publicRoute := app.Group("/")
 	{
 		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
-		publicRoute.POST("/login-redirect", authHandler.OIDCLoginHandler)
+		publicRoute.GET("/oidc-login", authHandler.OIDCLoginHandler)
 		publicRoute.GET("/dashboard", handlers.HomeDashboard)
 
 	}
