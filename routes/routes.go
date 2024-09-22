@@ -1,13 +1,16 @@
 package routes
 
 import (
+	"fmt"
+	"log"
 	"net/http"
-
+	"soarca-gui/auth"
 	"soarca-gui/backend"
 	"soarca-gui/backend/soarca"
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,20 +22,40 @@ func Setup(app *gin.Engine) {
 	})
 
 	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
-
 	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
-
+	authEnabledStr := utils.GetEnv("AUTH_ENABLED", "false")
+	authEnabled, err := strconv.ParseBool(authEnabledStr)
 	publicRoutes := app.Group("/")
-
-	PublicRoutes(publicRoutes)
+	fmt.Println(authEnabled)
+	if err != nil {
+		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
+	}
+	if authEnabled {
+		PublicOIDCRoutes(publicRoutes)
+	} else {
+		PublicRoutes(publicRoutes)
+	}
 	ReportingRoutes(reporter, publicRoutes)
+	// PublicRoutes(publicRoutes)
 	StatusRoutes(status, publicRoutes)
 	SettingsRoutes(publicRoutes)
 }
 
+func PublicOIDCRoutes(app *gin.RouterGroup) {
+	auth := auth.SetupOIDCAuthHandler()
+	authHandler := handlers.NewOIDCAuthHanlder(auth)
+	publicRoute := app.Group("/")
+	{
+		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
+		publicRoute.POST("/login-redirect", authHandler.OIDCLoginHandler)
+		publicRoute.GET("/dashboard", handlers.HomeDashboard)
+
+	}
+	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
+}
+
 func PublicRoutes(app *gin.RouterGroup) {
 	authHandler := handlers.AuthHandler{}
-
 	publicRoute := app.Group("/")
 	{
 		publicRoute.GET("/", authHandler.AuthPage)
@@ -40,7 +63,6 @@ func PublicRoutes(app *gin.RouterGroup) {
 		publicRoute.GET("/dashboard", handlers.HomeDashboard)
 
 	}
-
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
