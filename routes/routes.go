@@ -40,7 +40,7 @@ func Setup(app *gin.Engine) {
 
 func PublicOIDCRoutes(app *gin.RouterGroup) {
 	auth := auth.SetupOIDCAuthHandler()
-	authHandler := handlers.NewOIDCAuthHanlder(auth)
+	authHandler := handlers.NewOIDCAuthHandler(auth)
 	publicRoute := app.Group("/")
 	{
 		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
