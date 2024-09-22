@@ -45,6 +45,7 @@ func PublicOIDCRoutes(app *gin.RouterGroup) {
 	{
 		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
 		publicRoute.GET("/oidc-login", authHandler.OIDCLoginHandler)
+		publicRoute.GET("/oidc-callback", authHandler.OIDCCallBackHandler)
 		publicRoute.GET("/dashboard", handlers.HomeDashboard)
 
 	}

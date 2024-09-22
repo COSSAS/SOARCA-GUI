@@ -30,4 +30,5 @@ func (auth *OIDCAuthHandler) OIDCLoginHandler(context *gin.Context) {
 }
 
 func (auth *OIDCAuthHandler) OIDCCallBackHandler(context *gin.Context) {
+	auth.authenticator.OIDCCallBack(context)
 }
