@@ -32,14 +32,14 @@ templ themeButton() {
 			id="theme-toggle"
 			@click="darkMode = !darkMode"
 			:class="darkMode ? 'bg-blue-600' : 'bg-neutral-200'"
-			class="relative inline-flex h-6 py-0.5 focus:outline-none rounded-full w-10"
+			class="relative inline-flex h-6 w-10 rounded-full py-0.5 focus:outline-none"
 			x-cloak
 		>
 			<span
 				:class="darkMode ? 'translate-x-[18px]' : 'translate-x-0.5'"
-				class="w-5 h-5 duration-200 ease-in-out bg-white rounded-full shadow-md"
+				class="h-5 w-5 rounded-full bg-white shadow-md duration-200 ease-in-out"
 			>
-				<svg class="fill-yellow-500 hidden dark:block absolute inset-0 w-3 h-3 m-auto" fill="currentColor" viewBox="0 0 20 20">
+				<svg class="absolute inset-0 m-auto hidden h-3 w-3 fill-yellow-500 dark:block" fill="currentColor" viewBox="0 0 20 20">
 					<path
 						d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
 						fill-rule="evenodd"
@@ -47,7 +47,7 @@ templ themeButton() {
 					></path>
 				</svg>
 				<!-- Light Mode SVG -->
-				<svg class="fill-violet-700 block dark:hidden absolute inset-0 w-3 h-3 m-auto" fill="currentColor" viewBox="0 0 20 20">
+				<svg class="absolute inset-0 m-auto block h-3 w-3 fill-violet-700 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
 					<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
 				</svg>
 			</span>
@@ -56,19 +56,19 @@ templ themeButton() {
 }
 
 templ DesktopHeaderBar() {
-	<header class="w-full items-center bg-slate-50 py-2 px-6 hidden sm:flex">
+	<header class="hidden w-full items-center bg-slate-50 px-6 py-2 dark:bg-c-dark-slate-header-background sm:flex">
 		@indicators.HealthIndicator(indicators.HealthIndicatorData{Loaded: false})
 		@themeButton()
 		<div class="w-1/2"></div>
-		<div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
+		<div x-data="{ isOpen: false }" class="relative flex w-1/2 justify-end">
 			<button
 				@click="isOpen = !isOpen"
-				class="relative z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-gray-400 hover:border-blue-600 focus:border-blue-600 focus:outline-none"
+				class="relative z-10 h-12 w-12 overflow-hidden rounded-full border-4 border-gray-400 hover:border-blue-600 focus:border-blue-600 focus:outline-none"
 			>
 				<img src="" alt="Profile image"/>
 			</button>
-			<button x-show="isOpen" @click="isOpen = false" class="h-full w-full fixed inset-0 cursor-default"></button>
-			<div x-show="isOpen" class="absolute w-32 bg-white rounded-lg shadow-lg py-2 mt-16 z-50">
+			<button x-show="isOpen" @click="isOpen = false" class="fixed inset-0 h-full w-full cursor-default"></button>
+			<div x-show="isOpen" class="absolute z-50 mt-16 w-32 rounded-lg bg-white py-2 shadow-lg">
 				{ children... }
 			</div>
 		</div>
@@ -76,10 +76,10 @@ templ DesktopHeaderBar() {
 }
 
 templ MobileHeaderBar(homePageLink string) {
-	<header x-data="{ isOpen: false }" class="w-full bg-blue-600 bg-sidebar py-5 px-6 sm:hidden">
+	<header x-data="{ isOpen: false }" class="bg-sidebar w-full bg-blue-600 px-6 py-5 sm:hidden">
 		<div class="flex items-center justify-between">
-			<a href={ templ.URL(homePageLink) } class="text-white text-3xl font-semibold uppercase hover:text-gray-300">SOARCA</a>
-			<button @click="isOpen = !isOpen" class="text-white text-3xl focus:outline-none">
+			<a href={ templ.URL(homePageLink) } class="text-3xl font-semibold uppercase text-white hover:text-gray-300">SOARCA</a>
+			<button @click="isOpen = !isOpen" class="text-3xl text-white focus:outline-none">
 				@icons.NewIcon("more-horizontal").InsertIcon("mr-3", utils.WithXshow("!isOpen"))
 				@icons.NewIcon("x").InsertIcon("mr-3", utils.WithXshow("isOpen"))
 			</button>

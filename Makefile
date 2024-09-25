@@ -20,7 +20,7 @@ dev:
 dev-server:
 	# run air to detect any go file changes to re-build and re-run the server.
 
-	@go run github.com/air-verse/air@latest \
+	@go run github.com/air-verse/air@v1.52.3 \
 	--build.cmd "templ generate && go build -ldflags \"-X main.Version=$(VERSION)\"  --tags dev -o tmp/bin/main ./server/" --build.bin "tmp/bin/main" --build.delay "100" \
 	--build.exclude_dir "node_modules" \
 	--build.exclude_regex ".*_templ.go" \

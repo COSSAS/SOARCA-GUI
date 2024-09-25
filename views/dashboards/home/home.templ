@@ -24,16 +24,15 @@ templ testcard() {
 			/>
 		</div>
 		<div class="p-6">
-			<h5 class="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+			<h5 class="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900 dark:text-white">
 				Check out the interation capabilities
 			</h5>
-			<p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
+			<p class="block text-base leading-relaxed text-inherit dark:text-c-dark-slate-text">
 				SOARCA makes your operation relaxed
 			</p>
 		</div>
 		<div class="p-6 pt-0">
-			<button
-				class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg bg-gray-900 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"
+			<button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg bg-gray-900 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none dark:text-c-dark-slate-text"
 				type="button"
 			>
 				Read More
@@ -50,13 +49,13 @@ templ testCarousel() {
 	</div>
 	<div id="carousel" class="relative" data-carousel="">
 		<div class="relative overflow-hidden h-[36rem] lg:h-[32rem]">
-			<div class="hidden duration-1000 ease-in-linear bg-white dark:bg-gray-800" data-carousel-item>
+			<div class="hidden duration-1000 ease-in-linear bg-white dark:bg-c-dark-slate-card" data-carousel-item>
 				@testcard()
 			</div>
-			<div class="hidden duration-1000 ease-in-linear bg-white dark:bg-gray-800" data-carousel-item>
+			<div class="hidden duration-1000 ease-in-linear bg-white dark:bg-c-dark-slate-card" data-carousel-item>
 				@testcard()
 			</div>
-			<div class="hidden duration-1000 ease-in-linear bg-white dark:bg-gray-800" data-carousel-item>
+			<div class="hidden duration-1000 ease-in-linear bg-white dark:bg-c-dark-slate-card" data-carousel-item>
 				@testcard()
 			</div>
 		</div>
@@ -101,7 +100,7 @@ templ dummyActivity() {
 	<div class="p-4">
 		<div class="flex items-center justify-between mb-4">
 			<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Latest Activity</h3>
-			<a href="#" class="inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700">
+			<a href="#" class="inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-white dark:text-primary-500 dark:hover:bg-gray-700">
 				View all
 			</a>
 		</div>
@@ -111,7 +110,7 @@ templ dummyActivity() {
 				<time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">April 2023</time>
 				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">SOARCA UI Enhancements</h3>
 				<p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">Implemented new user interface designs in Figma to streamline the workflow and enhance user experience for security automation.</p>
-				<a href="#" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-primary-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+				<a href="#" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-primary-700 dark:text-c-dark-slate-text dark:bg-c-dark-slate-documentation-background">
 					Learn more 
 					<svg class="w-3 h-3 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 						<path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -123,8 +122,8 @@ templ dummyActivity() {
 				<time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 2023</time>
 				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">SOARCA FIN Integration</h3>
 				<p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">Integrate custom integration into your code using the SOARCA Fin Library</p>
-				<a href="https://flowbite.com/blocks/" class="inline-flex items-center text-xs font-medium hover:underline text-primary-700 sm:text-sm dark:text-primary-500">
-					Go to SOARCA FIN library
+				<a href="https://flowbite.com/blocks/" class="inline-flex items-center text-xs font-medium hover:underline text-primary-700 sm:text-sm dark:text-white dark:text-primary-500">
+					Go to SOARCA FIN library/
 					<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
 					</svg>
@@ -147,10 +146,10 @@ templ dummyActivity() {
 }
 
 templ headersection() {
-	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2")) {
+	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 dark:bg-c-dark-blue-background dark:bg-none")) {
 		<div class="h-10 flex items-center">
-			@icons.NewIcon("user").InsertIcon("ml-3 mr-3 text-white")
-			<h1 class="text-2xl text-bold text-white">Welcome 'some name' back to SOARCA</h1>
+			@icons.NewIcon("user").InsertIcon("ml-3 mr-3 text-white dark:text-c-slate-text")
+			<h1 class="text-2xl text-bold text-white dark:text-c-dark-slate-text">Welcome 'some name' back to SOARCA</h1>
 		</div>
 	}
 }

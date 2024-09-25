@@ -14,35 +14,35 @@ templ Tag(opts ...func(*templ.Attributes)) {
 }
 
 templ TagSucces() {
-	@Tag(utils.Class("text-emerald-500 bg-emerald-100/60 dark:bg-emerald-800")) {
+	@Tag(utils.Class("text-emerald-500 bg-emerald-100/60 dark:text-c-dark-slate-text dark:bg-emerald-800")) {
 		@icons.NewIcon("check").SetSize("12").InsertIcon("")
 		{ children... }
 	}
 }
 
 templ TagFailed() {
-	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-red-800")) {
+	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:text-c-dark-slate-text dark:bg-red-800")) {
 		@icons.NewIcon("x").SetSize("12").InsertIcon("")
 		{ children... }
 	}
 }
 
 templ TagOngoing() {
-	@Tag(utils.Class("text-orange-500 rounded-full gap-x-2 bg-orange-100/60 dark:bg-orange-800")) {
+	@Tag(utils.Class("text-orange-500 rounded-full gap-x-2 bg-orange-100/60 dark:text-c-dark-slate-text dark:bg-orange-800")) {
 		@icons.NewIcon("loader").SetSize("12").InsertIcon("animate-spin ")
 		{ children... }
 	}
 }
 
 templ TagServerSideError() {
-	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-red-800")) {
+	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:text-c-dark-slate-text dark:bg-red-800")) {
 		@icons.NewIcon("server").SetSize("12").InsertIcon("")
 		{ children... }
 	}
 }
 
 templ TagClientSideError() {
-	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-red-800")) {
+	@Tag(utils.Class("text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:text-c-dark-slate-text dark:bg-red-800")) {
 		@icons.NewIcon("monitor").SetSize("12").InsertIcon("")
 		{ children... }
 	}
