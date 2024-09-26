@@ -83,5 +83,6 @@ func (auth *Authenticator) OIDCCallBack(gin *gin.Context) {
 		api.JSONErrorStatus(gin, http.StatusBadRequest, errors.New("nonce for verified id token did not match"))
 		return
 	}
+	auth.Cookiejar.DeleteSession(gin, CALLBACK_NONCE)
 	gin.Redirect(http.StatusFound, "/dashboard")
 }
