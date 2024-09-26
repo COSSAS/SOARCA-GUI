@@ -16,7 +16,9 @@ import (
 )
 
 const (
-	OIDC_CALL_BACK = "/oidc-callback"
+	OIDC_CALL_BACK_PATH          = "/oidc-callback"
+	COOKIE_ENCRYPTION_KEY_LENGTH = 32
+	COOKIE_SECRET_KEY_LENGHT     = 32
 )
 
 type Authenticator struct {
@@ -37,13 +39,15 @@ func SetupOIDCAuthHandler() *Authenticator {
 		cookieJarSecret     string
 		cookieEncryptionKey string
 	}{
-		providerLink:        utils.GetEnv("OIDC_PROVIDER", ""),
-		soarcaGUIDomain:     utils.GetEnv("SOARCA_GUI_URI", "http://localhost:8081"),
-		clientID:            utils.GetEnv("OIDC_CLIENT_ID", ""),
-		clientSecret:        utils.GetEnv("OIDC_CLIENT_SECRET", ""),
-		skipTLSVerify:       utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
-		cookieJarSecret:     utils.GetEnv("COOKIE_SECRET_KEY", string(securecookie.GenerateRandomKey(32))),
-		cookieEncryptionKey: utils.GetEnv("COOKIE_ENCRYPTION_KEY", string(securecookie.GenerateRandomKey(32))),
+		providerLink:    utils.GetEnv("OIDC_PROVIDER", ""),
+		soarcaGUIDomain: utils.GetEnv("SOARCA_GUI_URI", "http://localhost:8081"),
+		clientID:        utils.GetEnv("OIDC_CLIENT_ID", ""),
+		clientSecret:    utils.GetEnv("OIDC_CLIENT_SECRET", ""),
+		skipTLSVerify:   utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
+		cookieJarSecret: utils.GetEnv("COOKIE_SECRET_KEY",
+			string(securecookie.GenerateRandomKey(COOKIE_SECRET_KEY_LENGHT))),
+		cookieEncryptionKey: utils.GetEnv("COOKIE_ENCRYPTION_KEY",
+			string(securecookie.GenerateRandomKey(COOKIE_ENCRYPTION_KEY_LENGTH))),
 	}
 
 	validateEnvVariables(env)
@@ -64,7 +68,7 @@ func SetupOIDCAuthHandler() *Authenticator {
 	oauthConfig := &oauth2.Config{
 		ClientID:     env.clientID,
 		ClientSecret: env.clientSecret,
-		RedirectURL:  fmt.Sprintf("%s%s", env.soarcaGUIDomain, OIDC_CALL_BACK),
+		RedirectURL:  fmt.Sprintf("%s%s", env.soarcaGUIDomain, OIDC_CALL_BACK_PATH),
 		Endpoint:     provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
 	}
