@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/gorilla/securecookie"
 	"golang.org/x/oauth2"
 )
 
@@ -28,19 +29,21 @@ type Authenticator struct {
 
 func SetupOIDCAuthHandler() *Authenticator {
 	env := struct {
-		providerLink    string
-		soarcaGUIDomain string
-		clientID        string
-		clientSecret    string
-		skipTLSVerify   string
-		cookieJarSecret string
+		providerLink        string
+		soarcaGUIDomain     string
+		clientID            string
+		clientSecret        string
+		skipTLSVerify       string
+		cookieJarSecret     string
+		cookieEncryptionKey string
 	}{
-		providerLink:    utils.GetEnv("OIDC_PROVIDER", ""),
-		soarcaGUIDomain: utils.GetEnv("SOARCA_GUI_URI", "http://localhost:8081"),
-		clientID:        utils.GetEnv("OIDC_CLIENT_ID", ""),
-		clientSecret:    utils.GetEnv("OIDC_CLIENT_SECRET", ""),
-		skipTLSVerify:   utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
-		cookieJarSecret: utils.GetEnv("COOKIE_SECRET_KEY", ""),
+		providerLink:        utils.GetEnv("OIDC_PROVIDER", ""),
+		soarcaGUIDomain:     utils.GetEnv("SOARCA_GUI_URI", "http://localhost:8081"),
+		clientID:            utils.GetEnv("OIDC_CLIENT_ID", ""),
+		clientSecret:        utils.GetEnv("OIDC_CLIENT_SECRET", ""),
+		skipTLSVerify:       utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
+		cookieJarSecret:     utils.GetEnv("COOKIE_SECRET_KEY", string(securecookie.GenerateRandomKey(32))),
+		cookieEncryptionKey: utils.GetEnv("COOKIE_ENCRYPTION_KEY", string(securecookie.GenerateRandomKey(32))),
 	}
 
 	validateEnvVariables(env)
@@ -66,18 +69,19 @@ func SetupOIDCAuthHandler() *Authenticator {
 		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
 	}
 
-	cookieJar := cookies.NewCookieJar([]byte(env.cookieJarSecret))
+	cookieJar := cookies.NewCookieJar([]byte(env.cookieJarSecret), []byte(env.cookieEncryptionKey))
 
 	return NewAuthenticator(cookieJar, oidcConfig, oauthConfig, provider, skipTLS)
 }
 
 func validateEnvVariables(env struct {
-	providerLink    string
-	soarcaGUIDomain string
-	clientID        string
-	clientSecret    string
-	skipTLSVerify   string
-	cookieJarSecret string
+	providerLink        string
+	soarcaGUIDomain     string
+	clientID            string
+	clientSecret        string
+	skipTLSVerify       string
+	cookieJarSecret     string
+	cookieEncryptionKey string
 },
 ) {
 	if env.providerLink == "" {
@@ -88,9 +92,6 @@ func validateEnvVariables(env struct {
 	}
 	if env.clientSecret == "" {
 		log.Fatal("invalid oidc client secret for the env: OIDC_CLIENT_SECRET")
-	}
-	if env.cookieJarSecret == "" || len(env.cookieJarSecret) < 32 {
-		log.Fatal("invalid cookie secret key for the env: COOKIE_SECRET_KEY. Note: should be at least 33 characters")
 	}
 }
 

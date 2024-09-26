@@ -10,13 +10,14 @@ import (
 type ICookieJar interface {
 	SetCallBackState(context *gin.Context, name string, stateValue string)
 	StateSession(contex *gin.Context, name string) (value string, isNew bool)
+	DeleteSession(context *gin.Context, name string) error
 }
 type CookieJar struct {
 	store sessions.Store
 }
 
-func NewCookieJar(secret []byte) *CookieJar {
-	return &CookieJar{store: sessions.NewCookieStore(secret)}
+func NewCookieJar(secret []byte, encryptionKey []byte) *CookieJar {
+	return &CookieJar{store: sessions.NewCookieStore(secret, encryptionKey)}
 }
 
 func (cj *CookieJar) SetCallBackState(context *gin.Context, name string, stateValue string) {
@@ -45,4 +46,17 @@ func (cj *CookieJar) StateSession(context *gin.Context, stateValue string) (valu
 	}
 
 	return "", true
+}
+
+func (cj *CookieJar) DeleteSession(context *gin.Context, name string) error {
+	session, err := cj.store.Get(context.Request, name)
+	if err != nil {
+		return err
+	}
+	session.Options.MaxAge = -1
+	err = cj.store.Save(context.Request, context.Writer, session)
+	if err != nil {
+		return err
+	}
+	return nil
 }
