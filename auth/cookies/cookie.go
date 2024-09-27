@@ -7,10 +7,18 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+const (
+	CALLBACK_STATE = "soarca_gui_state"
+	CALLBACK_NONCE = "soarca_gui_nonce"
+)
+
 type ICookieJar interface {
-	SetCallBackState(context *gin.Context, name string, stateValue string)
-	StateSession(contex *gin.Context, name string) (value string, isNew bool)
-	DeleteSession(context *gin.Context, name string) error
+	SetCallBackNonce(context *gin.Context, stateValue string) error
+	SetCallBackState(context *gin.Context, stateValue string) error
+	GetStateSession(context *gin.Context) (value string, isNew bool)
+	GetNonceSession(context *gin.Context) (value string, isNew bool)
+	DeleteStateSession(context *gin.Context) error
+	DeleteNonceSession(context *gin.Context) error
 }
 type CookieJar struct {
 	store sessions.Store
@@ -20,7 +28,23 @@ func NewCookieJar(secret []byte, encryptionKey []byte) *CookieJar {
 	return &CookieJar{store: sessions.NewCookieStore(secret, encryptionKey)}
 }
 
-func (cj *CookieJar) SetCallBackState(context *gin.Context, name string, stateValue string) {
+func (cj *CookieJar) SetCallBackState(context *gin.Context, stateValue string) error {
+	return cj.setCallBackSession(context, CALLBACK_STATE, stateValue)
+}
+
+func (cj *CookieJar) SetCallBackNonce(context *gin.Context, stateValue string) error {
+	return cj.setCallBackSession(context, CALLBACK_NONCE, stateValue)
+}
+
+func (cj *CookieJar) GetStateSession(context *gin.Context) (value string, isNew bool) {
+	return cj.getStateSession(context, CALLBACK_STATE)
+}
+
+func (cj *CookieJar) GetNonceSession(context *gin.Context) (value string, isNew bool) {
+	return cj.getStateSession(context, CALLBACK_NONCE)
+}
+
+func (cj *CookieJar) SetUserState(context *gin.Context, name string, stateValue string) {
 	session := sessions.NewSession(cj.store, name)
 	session.Values["state"] = stateValue
 	session.Options.MaxAge = 60 * 5
@@ -33,7 +57,28 @@ func (cj *CookieJar) SetCallBackState(context *gin.Context, name string, stateVa
 	}
 }
 
-func (cj *CookieJar) StateSession(context *gin.Context, stateValue string) (value string, isNew bool) {
+func (cj *CookieJar) DeleteStateSession(context *gin.Context) error {
+	return cj.deleteSession(context, CALLBACK_STATE)
+}
+
+func (cj *CookieJar) DeleteNonceSession(context *gin.Context) error {
+	return cj.deleteSession(context, CALLBACK_NONCE)
+}
+
+func (cj *CookieJar) setCallBackSession(context *gin.Context, name string, stateValue string) error {
+	session := sessions.NewSession(cj.store, name)
+	session.Values["state"] = stateValue
+	session.Options.MaxAge = 60 * 5
+	session.Options.Path = "/"
+	session.Options.Secure = context.Request.TLS != nil
+
+	if err := cj.store.Save(context.Request, context.Writer, session); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (cj *CookieJar) getStateSession(context *gin.Context, stateValue string) (value string, isNew bool) {
 	session, _ := cj.store.Get(context.Request, stateValue)
 
 	if session.IsNew {
@@ -48,13 +93,13 @@ func (cj *CookieJar) StateSession(context *gin.Context, stateValue string) (valu
 	return "", true
 }
 
-func (cj *CookieJar) DeleteSession(context *gin.Context, name string) error {
-	session, err := cj.store.Get(context.Request, name)
+func (cj *CookieJar) deleteSession(gc *gin.Context, name string) error {
+	session, err := cj.store.Get(gc.Request, name)
 	if err != nil {
 		return err
 	}
 	session.Options.MaxAge = -1
-	err = cj.store.Save(context.Request, context.Writer, session)
+	err = cj.store.Save(gc.Request, gc.Writer, session)
 	if err != nil {
 		return err
 	}
