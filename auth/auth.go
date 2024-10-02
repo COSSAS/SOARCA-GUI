@@ -21,11 +21,25 @@ const (
 	COOKIE_SECRET_KEY_LENGHT     = 32
 )
 
+type User struct {
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Name     string   `json:"name"`
+	Groups   []string `json:"groups"`
+}
+type UserClaimsConfig struct {
+	OIDCClaimUsernameField string
+	OIDCClaimEmailField    string
+	OIDCClaimNameField     string
+	OIDCClaimGroupsField   string
+}
+
 type Authenticator struct {
 	Cookiejar        cookies.ICookieJar
 	OIDCconfig       *oidc.Config
 	OauthConfig      *oauth2.Config
 	verifierProvider *oidc.Provider
+	userclaimConfig  *UserClaimsConfig
 	skipTLSVerify    bool
 }
 
@@ -72,10 +86,22 @@ func SetupOIDCAuthHandler() *Authenticator {
 		Endpoint:     provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
 	}
+	userClaimsConfig := &UserClaimsConfig{
+		OIDCClaimUsernameField: "preferred_username",
+		OIDCClaimEmailField:    "email",
+		OIDCClaimNameField:     "name",
+		OIDCClaimGroupsField:   "groups",
+	}
 
 	cookieJar := cookies.NewCookieJar([]byte(env.cookieJarSecret), []byte(env.cookieEncryptionKey))
 
-	return NewAuthenticator(cookieJar, oidcConfig, oauthConfig, provider, skipTLS)
+	return NewAuthenticator(
+		cookieJar,
+		oidcConfig,
+		oauthConfig,
+		provider,
+		skipTLS,
+		userClaimsConfig)
 }
 
 func validateEnvVariables(env struct {
@@ -111,12 +137,13 @@ func setupHTTPClient(skipTLS bool) *http.Client {
 	return http.DefaultClient
 }
 
-func NewAuthenticator(cj cookies.ICookieJar, OIDCconfig *oidc.Config, OauthConfig *oauth2.Config, verifierProvider *oidc.Provider, skipTLSVerify bool) *Authenticator {
+func NewAuthenticator(cj cookies.ICookieJar, OIDCconfig *oidc.Config, OauthConfig *oauth2.Config, verifierProvider *oidc.Provider, skipTLSVerify bool, userClaims *UserClaimsConfig) *Authenticator {
 	return &Authenticator{
 		Cookiejar:        cj,
 		OIDCconfig:       OIDCconfig,
 		OauthConfig:      OauthConfig,
 		verifierProvider: verifierProvider,
+		userclaimConfig:  userClaims,
 		skipTLSVerify:    skipTLSVerify,
 	}
 }

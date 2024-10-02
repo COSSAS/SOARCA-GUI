@@ -16,6 +16,7 @@ type ICookieJar interface {
 	SetCallBackState(context *gin.Context, stateValue string) error
 	GetStateSession(context *gin.Context) (value string, isNew bool)
 	GetNonceSession(context *gin.Context) (value string, isNew bool)
+	GetUserToken(context *gin.Context) (value string, isNew bool)
 	SetUserToken(context *gin.Context, token string) error
 	DeleteStateSession(context *gin.Context) error
 	DeleteNonceSession(context *gin.Context) error
@@ -41,6 +42,10 @@ func (cj *CookieJar) GetStateSession(context *gin.Context) (value string, isNew 
 }
 
 func (cj *CookieJar) GetNonceSession(context *gin.Context) (value string, isNew bool) {
+	return cj.getStateSession(context, CALLBACK_NONCE)
+}
+
+func (cj *CookieJar) GetUserToken(context *gin.Context) (value string, isNew bool) {
 	return cj.getStateSession(context, CALLBACK_NONCE)
 }
 
