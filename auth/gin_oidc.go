@@ -85,6 +85,11 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 
 func (auth *Authenticator) sessionAuth(gc *gin.Context) gin.HandlerFunc {
 	return func(gc *gin.Context) {
-		return
+		tokenCookie, noCookie := auth.Cookiejar.GetUserToken(gc)
+		if noCookie {
+			gc.Redirect(http.StatusOK, "/")
+			return
+		}
+		username, role, err := auth.VerifyClaims(gc*gin.Context, tokenCookie)
 	}
 }
