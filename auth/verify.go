@@ -7,21 +7,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (auth *Authenticator) VerifyClaims(gc *gin.Context, token string) (name string, role string, err error) {
+func (auth *Authenticator) VerifyClaims(gc *gin.Context, token string) (*User, error) {
 	verifier := auth.GetTokenVerifier()
 	accessToken, err := verifier.Verify(gc, token)
 	if err != nil {
-		return "", "", errors.New(fmt.Sprintf("could not obtain token from cookie: %w", err))
+		return nil, errors.New(fmt.Sprintf("could not obtain token from cookie: %s", err.Error()))
 	}
 	var claims map[string]any
 	if err := accessToken.Claims(&claims); err != nil {
-		return "", "", errors.New(fmt.Sprintf("could not map clains: %w", err))
+		return nil, errors.New(fmt.Sprintf("could not map clains: %s", err.Error()))
 	}
 	if _, ok := claims["iss"]; !ok {
-		return "", "", errors.New("no issues in claim")
+		return nil, errors.New("no issues in claim")
 	}
-
-	return "", "", nil
+	return auth.mapClaimsToUser(claims)
 }
 
 func (auth *Authenticator) mapClaimsToUser(claims map[string]any) (*User, error) {
