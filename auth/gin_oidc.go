@@ -80,6 +80,19 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 		return
 	}
 	auth.Cookiejar.DeleteNonceSession(gc)
+	accessToken := oauth2Token.AccessToken
+	// if err := verifiedIDToken.VerifyAccessToken(accessToken); err != nil {
+	// 	log.Printf(err.Error())
+	// 	api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("access token not matched with id token"))
+	// 	return
+	// }
+	//
+
+	if _, err = verifier.Verify(localContext, accessToken); err != nil {
+		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("invalid access token"))
+	}
+	auth.Cookiejar.SetUserToken(gc, accessToken)
+	auth.Cookiejar.DeleteStateSession(gc)
 	gc.Redirect(http.StatusFound, "/dashboard")
 }
 
@@ -90,6 +103,11 @@ func (auth *Authenticator) sessionAuth(gc *gin.Context) gin.HandlerFunc {
 			gc.Redirect(http.StatusOK, "/")
 			return
 		}
-		username, role, err := auth.VerifyClaims(gc*gin.Context, tokenCookie)
+		_, err := auth.VerifyClaims(gc, tokenCookie)
+		if err != nil {
+			api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("could not map token claims"))
+			return
+		}
+		return
 	}
 }

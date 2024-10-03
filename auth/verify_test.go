@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapClaimsToUser_AllFieldsMappedCorrectly(t *testing.T) {
-	UserClaimsConfig := UserClaimsConfig{
+func TestMapClaimsToUserAllFieldsMappedCorrectly(t *testing.T) {
+	config := UserClaimsConfig{
 		OIDCClaimUsernameField: "preferred_username",
 		OIDCClaimEmailField:    "email",
 		OIDCClaimNameField:     "name",
@@ -27,7 +27,7 @@ func TestMapClaimsToUser_AllFieldsMappedCorrectly(t *testing.T) {
 	}
 
 	auth := &Authenticator{
-		userclaimConfig: &UserClaimsConfig,
+		userclaimConfig: &config,
 	}
 
 	user, err := auth.mapClaimsToUser(claims)
