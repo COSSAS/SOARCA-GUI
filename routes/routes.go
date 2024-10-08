@@ -24,29 +24,33 @@ func Setup(app *gin.Engine) {
 	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
 	authEnabledStr := utils.GetEnv("AUTH_ENABLED", "false")
 	authEnabled, err := strconv.ParseBool(authEnabledStr)
+
+	auth := auth.SetupOIDCAuthHandler()
 	publicRoutes := app.Group("/")
 	if err != nil {
 		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
 	}
 	if authEnabled {
-		PublicOIDCRoutes(publicRoutes)
+		PublicOIDCRoutes(publicRoutes, auth)
 	} else {
 		PublicRoutes(publicRoutes)
 	}
-	ReportingRoutes(reporter, publicRoutes)
-	StatusRoutes(status, publicRoutes)
-	SettingsRoutes(publicRoutes)
+	protectedRoutes := app.Group("/")
+	protectedRoutes.Use(auth.LoadAuthContext())
+
+	DashboardRoutes(protectedRoutes)
+	ReportingRoutes(reporter, protectedRoutes)
+	StatusRoutes(status, protectedRoutes)
+	SettingsRoutes(protectedRoutes)
 }
 
-func PublicOIDCRoutes(app *gin.RouterGroup) {
-	auth := auth.SetupOIDCAuthHandler()
-	authHandler := handlers.NewOIDCAuthHandler(auth)
+func PublicOIDCRoutes(app *gin.RouterGroup, OIDCauth *auth.Authenticator) {
+	authHandler := handlers.NewOIDCAuthHandler(OIDCauth)
 	publicRoute := app.Group("/")
 	{
 		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
 		publicRoute.GET("/oidc-login", authHandler.OIDCLoginHandler)
 		publicRoute.GET("/oidc-callback", authHandler.OIDCCallBackHandler)
-		publicRoute.GET("/dashboard", handlers.HomeDashboard)
 
 	}
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
@@ -58,10 +62,13 @@ func PublicRoutes(app *gin.RouterGroup) {
 	{
 		publicRoute.GET("/", authHandler.AuthPage)
 		publicRoute.POST("/login", authHandler.Login)
-		publicRoute.GET("/dashboard", handlers.HomeDashboard)
 
 	}
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
+}
+
+func DashboardRoutes(app *gin.RouterGroup) {
+	app.GET("dashboard", handlers.HomeDashboard)
 }
 
 func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {

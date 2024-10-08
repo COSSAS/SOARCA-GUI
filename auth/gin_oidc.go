@@ -81,33 +81,19 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 	}
 	auth.Cookiejar.DeleteNonceSession(gc)
 	accessToken := oauth2Token.AccessToken
-	// if err := verifiedIDToken.VerifyAccessToken(accessToken); err != nil {
-	// 	log.Printf(err.Error())
-	// 	api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("access token not matched with id token"))
-	// 	return
-	// }
-	//
 
-	if _, err = verifier.Verify(localContext, accessToken); err != nil {
-		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("invalid access token"))
+	userInfo, err := auth.GetProvider().UserInfo(localContext, oauth2.StaticTokenSource(oauth2Token))
+	if err != nil {
+		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("failed to get user info of access token"))
+		return
+	}
+
+	// authentik does not support at_hash so we can use the verifacess token.
+	if userInfo.Subject != verifiedIDToken.Subject {
+		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("user info subject does not match ID token subject"))
+		return
 	}
 	auth.Cookiejar.SetUserToken(gc, accessToken)
 	auth.Cookiejar.DeleteStateSession(gc)
 	gc.Redirect(http.StatusFound, "/dashboard")
-}
-
-func (auth *Authenticator) sessionAuth(gc *gin.Context) gin.HandlerFunc {
-	return func(gc *gin.Context) {
-		tokenCookie, noCookie := auth.Cookiejar.GetUserToken(gc)
-		if noCookie {
-			gc.Redirect(http.StatusOK, "/")
-			return
-		}
-		_, err := auth.VerifyClaims(gc, tokenCookie)
-		if err != nil {
-			api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("could not map token claims"))
-			return
-		}
-		return
-	}
 }

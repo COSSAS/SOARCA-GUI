@@ -148,6 +148,10 @@ func NewAuthenticator(cj cookies.ICookieJar, OIDCconfig *oidc.Config, OauthConfi
 	}
 }
 
+func (auth *Authenticator) GetProvider() *oidc.Provider {
+	return auth.verifierProvider
+}
+
 func (auth *Authenticator) GetTokenVerifier() *oidc.IDTokenVerifier {
 	return auth.verifierProvider.Verifier(auth.OIDCconfig)
 }
