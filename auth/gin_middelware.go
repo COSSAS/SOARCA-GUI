@@ -2,27 +2,61 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"soarca-gui/auth/api"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (auth *Authenticator) Middelware(permissions ...string) gin.HandlerFunc {
+func (auth *Authenticator) Middleware(permissions ...string) gin.HandlerFunc {
 	return func(gc *gin.Context) {
-		return
+		_, exists := GetUserFromContext(gc)
+		if !exists {
+			api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("user not authenticated"))
+			gc.Abort()
+			return
+		}
+
+		userPermissions := GetUserPermissions(gc)
+		if !hasRequiredPermissions(userPermissions, permissions) {
+			api.JSONErrorStatus(gc, http.StatusForbidden, errors.New("Insufficient permissions"))
+			gc.Abort()
+			return
+		}
+
+		gc.Next()
 	}
 }
 
+func hasRequiredPermissions(userPermissions []string, requiredPermissions []string) bool {
+	if len(requiredPermissions) == 0 {
+		return true
+	}
+
+	permissionSet := make(map[string]bool)
+	for _, perm := range userPermissions {
+		permissionSet[perm] = true
+	}
+
+	for _, perm := range requiredPermissions {
+		if !permissionSet[perm] {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (auth *Authenticator) LoadAuthContext() gin.HandlerFunc {
-	return auth.setSessionAuthContext()
+	return func(gc *gin.Context) {
+		auth.setSessionAuthContext()(gc)
+		gc.Next()
+	}
 }
 
 func (auth *Authenticator) setSessionAuthContext() gin.HandlerFunc {
 	return func(gc *gin.Context) {
 		tokenCookie, noCookie := auth.Cookiejar.GetUserToken(gc)
-		fmt.Println(tokenCookie)
 		if noCookie {
 			gc.Redirect(http.StatusFound, "/")
 			gc.Abort()
@@ -34,7 +68,6 @@ func (auth *Authenticator) setSessionAuthContext() gin.HandlerFunc {
 			gc.Abort()
 			return
 		}
-
 		setContext(gc, *user)
 		gc.Next()
 	}
