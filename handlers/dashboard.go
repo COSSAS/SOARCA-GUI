@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-
 	"soarca-gui/utils"
 	"soarca-gui/views/dashboards/home"
 	"soarca-gui/views/layouts"
