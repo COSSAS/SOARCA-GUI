@@ -1,6 +1,8 @@
 package cookies
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 )
@@ -51,14 +53,13 @@ func (cj *CookieJar) GetUserToken(context *gin.Context) (value string, isNew boo
 }
 
 func (cj *CookieJar) SetUserToken(context *gin.Context, token string) error {
-	session, err := cj.store.Get(context.Request, USER_TOKEN)
-	if err != nil {
-		return nil
-	}
+	session, _ := cj.store.Get(context.Request, USER_TOKEN)
+
 	session.Values["token"] = token
 	session.Options.MaxAge = 60 * 60 * 8
 	session.Options.Path = "/"
 	session.Options.Secure = context.Request.TLS != nil
+	session.Options.SameSite = http.SameSiteLaxMode
 	return session.Save(context.Request, context.Writer)
 }
 
@@ -71,14 +72,13 @@ func (cj *CookieJar) DeleteNonceSession(context *gin.Context) error {
 }
 
 func (cj *CookieJar) setCallBackSession(context *gin.Context, name string, stateValue string) error {
-	session, err := cj.store.Get(context.Request, name)
-	if err != nil {
-		return err
-	}
+	session, _ := cj.store.Get(context.Request, name)
+
 	session.Values["state"] = stateValue
 	session.Options.MaxAge = 60 * 5
 	session.Options.Path = "/"
 	session.Options.Secure = context.Request.TLS != nil
+	session.Options.SameSite = http.SameSiteLaxMode
 	return session.Save(context.Request, context.Writer)
 }
 
@@ -107,10 +107,8 @@ func (cj *CookieJar) getToken(context *gin.Context, name string) (value string, 
 }
 
 func (cj *CookieJar) deleteSession(gc *gin.Context, name string) error {
-	session, err := cj.store.Get(gc.Request, name)
-	if err != nil {
-		return err
-	}
+	session, _ := cj.store.Get(gc.Request, name)
+
 	session.Options.MaxAge = -1
 	return session.Save(gc.Request, gc.Writer)
 }
