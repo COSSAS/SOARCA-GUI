@@ -14,15 +14,15 @@ func TestMapClaimsToUserAllFieldsMappedCorrectly(t *testing.T) {
 		OIDCClaimGroupsField:   "groups",
 	}
 	claims := map[string]interface{}{
-		"preferred_username": "johndoe",
-		"email":              "john@example.com",
-		"name":               "John Doe",
+		"preferred_username": "soarca-gui",
+		"email":              "soarca@soarca.com",
+		"name":               "soarca",
 		"groups":             []interface{}{"users", "admins"},
 	}
 	expectedUser := &User{
-		Username: "johndoe",
-		Email:    "john@example.com",
-		Name:     "John Doe",
+		Username: "soarca-gui",
+		Email:    "soarca@soarca.com",
+		Name:     "soarca",
 		Groups:   []string{"users", "admins"},
 	}
 
