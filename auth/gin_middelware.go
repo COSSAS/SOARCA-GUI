@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"soarca-gui/auth/api"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,7 +50,14 @@ func hasRequiredPermissions(userPermissions []string, requiredPermissions []stri
 
 func (auth *Authenticator) LoadAuthContext() gin.HandlerFunc {
 	return func(gc *gin.Context) {
-		auth.setSessionAuthContext()(gc)
+		authToken := gc.Request.Header.Get("Authorization")
+
+		switch {
+		case authToken != "":
+			auth.setBearerAuthContext()(gc)
+		default:
+			auth.setSessionAuthContext()(gc)
+		}
 		gc.Next()
 	}
 }
@@ -68,6 +76,32 @@ func (auth *Authenticator) setSessionAuthContext() gin.HandlerFunc {
 			gc.Abort()
 			return
 		}
+		setContext(gc, *user)
+		gc.Next()
+	}
+}
+
+func (auth *Authenticator) setBearerAuthContext() gin.HandlerFunc {
+	return func(gc *gin.Context) {
+		authHeader := gc.Request.Header.Get("Authorization")
+		if authHeader == "" {
+			gc.Abort()
+		}
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+		if tokenString == authHeader {
+			api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("invalid authorization header format"))
+			gc.Abort()
+			return
+		}
+
+		user, err := auth.VerifyClaims(gc, tokenString)
+		if err != nil {
+			api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("invalid bearer token"))
+			gc.Abort()
+			return
+		}
+
 		setContext(gc, *user)
 		gc.Next()
 	}
