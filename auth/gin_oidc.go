@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"net/http"
 	"soarca-gui/auth/api"
 
@@ -25,7 +24,6 @@ func (auth *Authenticator) OIDCRedirectToLogin(gc *gin.Context) {
 		return
 	}
 	err = auth.Cookiejar.SetCallBackNonce(gc, nonce)
-	fmt.Println(err)
 	if err != nil {
 		api.JSONErrorStatus(gc, http.StatusInternalServerError, errors.New("failed to set nonce"))
 		return
@@ -40,7 +38,6 @@ func (auth *Authenticator) OIDCRedirectToLogin(gc *gin.Context) {
 
 func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 	state, isNew := auth.Cookiejar.GetStateSession(gc)
-	fmt.Println("state is new ", isNew)
 	if isNew || state == "" {
 		api.JSONErrorStatus(gc, http.StatusBadRequest, errors.New("state missing"))
 		return

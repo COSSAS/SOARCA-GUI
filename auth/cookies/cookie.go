@@ -53,7 +53,10 @@ func (cj *CookieJar) GetUserToken(context *gin.Context) (value string, isNew boo
 }
 
 func (cj *CookieJar) SetUserToken(context *gin.Context, token string) error {
-	session, _ := cj.store.Get(context.Request, USER_TOKEN)
+	session, err := cj.store.Get(context.Request, USER_TOKEN)
+	if err != nil {
+		return err
+	}
 
 	session.Values["token"] = token
 	session.Options.MaxAge = 60 * 60 * 8
@@ -72,8 +75,10 @@ func (cj *CookieJar) DeleteNonceSession(context *gin.Context) error {
 }
 
 func (cj *CookieJar) setCallBackSession(context *gin.Context, name string, stateValue string) error {
-	session, _ := cj.store.Get(context.Request, name)
-
+	session, err := cj.store.Get(context.Request, name)
+	if err != nil {
+		return err
+	}
 	session.Values["state"] = stateValue
 	session.Options.MaxAge = 60 * 5
 	session.Options.Path = "/"
