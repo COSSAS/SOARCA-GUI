@@ -37,7 +37,7 @@ func Setup(app *gin.Engine) {
 	}
 	protectedRoutes := app.Group("/")
 	protectedRoutes.Use(auth.LoadAuthContext())
-	protectedRoutes.Use(auth.Middleware("admin"))
+	// protectedRoutes.Use(auth.Middleware("admin"))
 
 	DashboardRoutes(protectedRoutes)
 	ReportingRoutes(reporter, protectedRoutes)
