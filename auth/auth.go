@@ -54,7 +54,7 @@ func SetupOIDCAuthHandler() *Authenticator {
 		cookieEncryptionKey string
 	}{
 		providerLink:    utils.GetEnv("OIDC_PROVIDER", ""),
-		soarcaGUIDomain: utils.GetEnv("SOARCA_GUI_URI", "http://localhost:8081"),
+		soarcaGUIDomain: buildSoarcaGUIURI(),
 		clientID:        utils.GetEnv("OIDC_CLIENT_ID", ""),
 		clientSecret:    utils.GetEnv("OIDC_CLIENT_SECRET", ""),
 		skipTLSVerify:   utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
@@ -102,6 +102,12 @@ func SetupOIDCAuthHandler() *Authenticator {
 		provider,
 		skipTLS,
 		userClaimsConfig)
+}
+
+func buildSoarcaGUIURI() string {
+	domain := utils.GetEnv("SOARCA_GUI_DOMAIN", "http://localhost")
+	port := utils.GetEnv("PORT", "8081")
+	return fmt.Sprintf("%s:%s", domain, port)
 }
 
 func validateEnvVariables(env struct {
