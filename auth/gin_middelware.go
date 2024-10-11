@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"soarca-gui/auth/api"
+	"soarca-gui/auth/cookies"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -64,9 +65,14 @@ func (auth *Authenticator) LoadAuthContext() gin.HandlerFunc {
 
 func (auth *Authenticator) setSessionAuthContext() gin.HandlerFunc {
 	return func(gc *gin.Context) {
-		tokenCookie, noCookie := auth.Cookiejar.GetUserToken(gc)
+		tokenCookie, noCookie, err := auth.Cookiejar.Get(gc, cookies.Token)
 		if noCookie {
 			gc.Redirect(http.StatusFound, "/")
+			gc.Abort()
+			return
+		}
+		if err != nil {
+			api.JSONErrorStatus(gc, http.StatusBadRequest, errors.New("could not get cookie"))
 			gc.Abort()
 			return
 		}
