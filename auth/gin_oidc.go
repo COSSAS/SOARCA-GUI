@@ -98,7 +98,7 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 	}
 	tokenCookie, err := cookies.NewCookie(cookies.Token, accessToken)
 	if err != nil {
-		api.jsonerrorstat(gc, http.StatusInternalServerError, errors.new("failed to set access cookie token"))
+		api.JSONErrorStatus(gc, http.StatusInternalServerError, errors.New("failed to set access cookie token"))
 		return
 	}
 	auth.Cookiejar.Store(gc, tokenCookie)
