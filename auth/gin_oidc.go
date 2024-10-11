@@ -91,13 +91,19 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 		return
 	}
 
-	// authentik does not support at_hash so we can use the verifacess token.
 	if userInfo.Subject != verifiedIDToken.Subject {
+		// authentik does not support at_hash so we can use the verifacess token.
 		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("user info subject does not match ID token subject"))
 		return
 	}
-	auth.Cookiejar.SetUserToken(gc, accessToken)
-	auth.Cookiejar.DeleteNonceSession(gc)
-	auth.Cookiejar.DeleteStateSession(gc)
+	tokenCookie, err := cookies.NewCookie(cookies.Token, accessToken)
+	if err != nil {
+		api.jsonerrorstat(gc, http.StatusInternalServerError, errors.new("failed to set access cookie token"))
+		return
+	}
+	auth.Cookiejar.Store(gc, tokenCookie)
+	auth.Cookiejar.Delete(gc, cookies.Nonce)
+	auth.Cookiejar.Delete(gc, cookies.State)
+
 	gc.Redirect(http.StatusFound, "/dashboard")
 }
