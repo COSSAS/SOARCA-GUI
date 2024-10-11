@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"soarca-gui/auth/api"
+	"soarca-gui/auth/cookies"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
@@ -23,12 +24,14 @@ func (auth *Authenticator) OIDCRedirectToLogin(gc *gin.Context) {
 		api.JSONErrorStatus(gc, http.StatusInternalServerError, errors.New("failed to generate nonce"))
 		return
 	}
-	err = auth.Cookiejar.SetCallBackNonce(gc, nonce)
+	nonceCookie, err := cookies.NewCookie(cookies.Nonce, nonce)
+	err = auth.Cookiejar.Store(gc, nonceCookie)
 	if err != nil {
 		api.JSONErrorStatus(gc, http.StatusInternalServerError, errors.New("failed to set nonce"))
 		return
 	}
-	err = auth.Cookiejar.SetCallBackState(gc, state)
+	stateCookie, err := cookies.NewCookie(cookies.Nonce, nonce)
+	err = auth.Cookiejar.Store(gc, stateCookie)
 	if err != nil {
 		api.JSONErrorStatus(gc, http.StatusInternalServerError, errors.New("failed to set state"))
 		return
@@ -37,8 +40,8 @@ func (auth *Authenticator) OIDCRedirectToLogin(gc *gin.Context) {
 }
 
 func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
-	state, isNew := auth.Cookiejar.GetStateSession(gc)
-	if isNew || state == "" {
+	state, isNew, err := auth.Cookiejar.Get(gc, cookies.State)
+	if isNew || state == "" || err != nil {
 		api.JSONErrorStatus(gc, http.StatusBadRequest, errors.New("state missing"))
 		return
 	}
@@ -70,7 +73,7 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("failed to verify ID token"))
 		return
 	}
-	nonce, isNewNonce := auth.Cookiejar.GetNonceSession(gc)
+	nonce, isNewNonce, err := auth.Cookiejar.Get(gc, cookies.Nonce)
 	if isNewNonce || nonce == "" {
 		api.JSONErrorStatus(gc, http.StatusBadRequest, errors.New("invalid or missing nonce"))
 		return
@@ -79,7 +82,7 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("nonce for verified id token did not match"))
 		return
 	}
-	auth.Cookiejar.DeleteNonceSession(gc)
+	auth.Cookiejar.Delete(gc, cookies.Nonce)
 	accessToken := oauth2Token.AccessToken
 
 	userInfo, err := auth.GetProvider().UserInfo(localContext, oauth2.StaticTokenSource(oauth2Token))
