@@ -50,7 +50,7 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 		return
 	}
 	localContext := gc.Request.Context()
-	if auth.skipTLSVerify {
+	if auth.skipTLSValidation {
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
