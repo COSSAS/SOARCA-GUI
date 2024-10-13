@@ -9,6 +9,7 @@ import (
 	"soarca-gui/auth/cookies"
 	"soarca-gui/utils"
 	"strconv"
+	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/securecookie"
@@ -16,7 +17,7 @@ import (
 )
 
 const (
-	OIDC_CALL_BACK_PATH          = "/oidc-callback"
+	DEFAULT_OIDC_CALLBACK_PATH   = "/oidc-callback"
 	COOKIE_ENCRYPTION_KEY_LENGTH = 32
 	COOKIE_SECRET_KEY_LENGHT     = 32
 )
@@ -27,6 +28,7 @@ type User struct {
 	Name     string   `json:"name"`
 	Groups   []string `json:"groups"`
 }
+
 type UserClaimsConfig struct {
 	OIDCClaimUsernameField string
 	OIDCClaimEmailField    string
@@ -52,16 +54,16 @@ func SetupOIDCAuthHandler() *Authenticator {
 		skipTLSVerify       string
 		cookieJarSecret     string
 		cookieEncryptionKey string
+		oidcCallbackPath    string
 	}{
-		providerLink:    utils.GetEnv("OIDC_PROVIDER", ""),
-		soarcaGUIDomain: buildSoarcaGUIURI(),
-		clientID:        utils.GetEnv("OIDC_CLIENT_ID", ""),
-		clientSecret:    utils.GetEnv("OIDC_CLIENT_SECRET", ""),
-		skipTLSVerify:   utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
-		cookieJarSecret: utils.GetEnv("COOKIE_SECRET_KEY",
-			string(securecookie.GenerateRandomKey(COOKIE_SECRET_KEY_LENGHT))),
-		cookieEncryptionKey: utils.GetEnv("COOKIE_ENCRYPTION_KEY",
-			string(securecookie.GenerateRandomKey(COOKIE_ENCRYPTION_KEY_LENGTH))),
+		providerLink:        utils.GetEnv("OIDC_PROVIDER", ""),
+		soarcaGUIDomain:     buildSoarcaGUIURI(),
+		clientID:            utils.GetEnv("OIDC_CLIENT_ID", ""),
+		clientSecret:        utils.GetEnv("OIDC_CLIENT_SECRET", ""),
+		skipTLSVerify:       utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
+		cookieJarSecret:     utils.GetEnv("COOKIE_SECRET_KEY", string(securecookie.GenerateRandomKey(COOKIE_SECRET_KEY_LENGHT))),
+		cookieEncryptionKey: utils.GetEnv("COOKIE_ENCRYPTION_KEY", string(securecookie.GenerateRandomKey(COOKIE_ENCRYPTION_KEY_LENGTH))),
+		oidcCallbackPath:    utils.GetEnv("OIDC_CALLBACK_PATH", DEFAULT_OIDC_CALLBACK_PATH),
 	}
 
 	validateEnvVariables(env)
@@ -82,7 +84,7 @@ func SetupOIDCAuthHandler() *Authenticator {
 	oauthConfig := &oauth2.Config{
 		ClientID:     env.clientID,
 		ClientSecret: env.clientSecret,
-		RedirectURL:  fmt.Sprintf("%s%s", env.soarcaGUIDomain, OIDC_CALL_BACK_PATH),
+		RedirectURL:  fmt.Sprintf("%s%s", env.soarcaGUIDomain, env.oidcCallbackPath),
 		Endpoint:     provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
 	}
@@ -118,6 +120,7 @@ func validateEnvVariables(env struct {
 	skipTLSVerify       string
 	cookieJarSecret     string
 	cookieEncryptionKey string
+	oidcCallbackPath    string
 },
 ) {
 	if env.providerLink == "" {
@@ -128,6 +131,12 @@ func validateEnvVariables(env struct {
 	}
 	if env.clientSecret == "" {
 		log.Fatal("invalid oidc client secret for the env: OIDC_CLIENT_SECRET")
+	}
+	if env.oidcCallbackPath == "" {
+		log.Fatal("invalid OIDC callback path for the env: OIDC_CALLBACK_PATH")
+	}
+	if !strings.HasPrefix(env.oidcCallbackPath, "/") {
+		log.Fatal("OIDC callback path must start with a forward slash (/)")
 	}
 }
 
