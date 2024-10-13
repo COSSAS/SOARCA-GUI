@@ -37,21 +37,21 @@ type UserClaimsConfig struct {
 }
 
 type Authenticator struct {
-	Cookiejar        cookies.ICookieJar
-	OIDCconfig       *oidc.Config
-	OauthConfig      *oauth2.Config
-	verifierProvider *oidc.Provider
-	userclaimConfig  *UserClaimsConfig
-	skipTLSVerify    bool
+	Cookiejar         cookies.ICookieJar
+	OIDCconfig        *oidc.Config
+	OauthConfig       *oauth2.Config
+	verifierProvider  *oidc.Provider
+	userclaimConfig   *UserClaimsConfig
+	skipTLSValidation bool
 }
 
-func SetupOIDCAuthHandler() *Authenticator {
+func SetupNewAuthHandler() *Authenticator {
 	env := struct {
 		providerLink        string
 		soarcaGUIDomain     string
 		clientID            string
 		clientSecret        string
-		skipTLSVerify       string
+		skipTLSValidation   string
 		cookieJarSecret     string
 		cookieEncryptionKey string
 		oidcCallbackPath    string
@@ -60,20 +60,20 @@ func SetupOIDCAuthHandler() *Authenticator {
 		soarcaGUIDomain:     buildSoarcaGUIURI(),
 		clientID:            utils.GetEnv("OIDC_CLIENT_ID", ""),
 		clientSecret:        utils.GetEnv("OIDC_CLIENT_SECRET", ""),
-		skipTLSVerify:       utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
+		skipTLSValidation:   utils.GetEnv("OIDC_SKIP_TLS_VERIFY", "false"),
 		cookieJarSecret:     utils.GetEnv("COOKIE_SECRET_KEY", string(securecookie.GenerateRandomKey(COOKIE_SECRET_KEY_LENGHT))),
 		cookieEncryptionKey: utils.GetEnv("COOKIE_ENCRYPTION_KEY", string(securecookie.GenerateRandomKey(COOKIE_ENCRYPTION_KEY_LENGTH))),
 		oidcCallbackPath:    utils.GetEnv("OIDC_CALLBACK_PATH", DEFAULT_OIDC_CALLBACK_PATH),
 	}
 
 	validateEnvVariables(env)
-	skipTLS, err := strconv.ParseBool(env.skipTLSVerify)
+	skipTLSValidation, err := strconv.ParseBool(env.skipTLSValidation)
 	if err != nil {
 		log.Printf("Invalid SKIP_TLS_VERIFY value. Defaulting to false. Error: %v", err)
-		skipTLS = false
+		skipTLSValidation = false
 	}
 
-	client := setupHTTPClient(skipTLS)
+	client := setupHTTPClient(skipTLSValidation)
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, client)
 	provider, err := oidc.NewProvider(ctx, env.providerLink)
 	if err != nil {
@@ -102,7 +102,7 @@ func SetupOIDCAuthHandler() *Authenticator {
 		oidcConfig,
 		oauthConfig,
 		provider,
-		skipTLS,
+		skipTLSValidation,
 		userClaimsConfig)
 }
 
@@ -117,7 +117,7 @@ func validateEnvVariables(env struct {
 	soarcaGUIDomain     string
 	clientID            string
 	clientSecret        string
-	skipTLSVerify       string
+	skipTLSValidation   string
 	cookieJarSecret     string
 	cookieEncryptionKey string
 	oidcCallbackPath    string
@@ -152,14 +152,14 @@ func setupHTTPClient(skipTLS bool) *http.Client {
 	return http.DefaultClient
 }
 
-func NewAuthenticator(cj cookies.ICookieJar, OIDCconfig *oidc.Config, OauthConfig *oauth2.Config, verifierProvider *oidc.Provider, skipTLSVerify bool, userClaims *UserClaimsConfig) *Authenticator {
+func NewAuthenticator(cj cookies.ICookieJar, OIDCconfig *oidc.Config, OauthConfig *oauth2.Config, verifierProvider *oidc.Provider, skipTLSValidation bool, userClaims *UserClaimsConfig) *Authenticator {
 	return &Authenticator{
-		Cookiejar:        cj,
-		OIDCconfig:       OIDCconfig,
-		OauthConfig:      OauthConfig,
-		verifierProvider: verifierProvider,
-		userclaimConfig:  userClaims,
-		skipTLSVerify:    skipTLSVerify,
+		Cookiejar:         cj,
+		OIDCconfig:        OIDCconfig,
+		OauthConfig:       OauthConfig,
+		verifierProvider:  verifierProvider,
+		userclaimConfig:   userClaims,
+		skipTLSValidation: skipTLSValidation,
 	}
 }
 

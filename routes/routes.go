@@ -25,7 +25,7 @@ func Setup(app *gin.Engine) {
 	authEnabledStr := utils.GetEnv("AUTH_ENABLED", "false")
 	authEnabled, err := strconv.ParseBool(authEnabledStr)
 
-	auth := auth.SetupOIDCAuthHandler()
+	auth := auth.SetupNewAuthHandler()
 	publicRoutes := app.Group("/")
 	if err != nil {
 		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
