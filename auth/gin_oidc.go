@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"net/http"
 	"soarca-gui/auth/api"
 	"soarca-gui/auth/cookies"
@@ -30,7 +31,7 @@ func (auth *Authenticator) OIDCRedirectToLogin(gc *gin.Context) {
 		api.JSONErrorStatus(gc, http.StatusInternalServerError, errors.New("failed to set nonce"))
 		return
 	}
-	stateCookie, err := cookies.NewCookie(cookies.Nonce, nonce)
+	stateCookie, err := cookies.NewCookie(cookies.State, state)
 	err = auth.Cookiejar.Store(gc, stateCookie)
 	if err != nil {
 		api.JSONErrorStatus(gc, http.StatusInternalServerError, errors.New("failed to set state"))
@@ -41,6 +42,7 @@ func (auth *Authenticator) OIDCRedirectToLogin(gc *gin.Context) {
 
 func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 	state, isNew, err := auth.Cookiejar.Get(gc, cookies.State)
+
 	if isNew || state == "" || err != nil {
 		api.JSONErrorStatus(gc, http.StatusBadRequest, errors.New("state missing"))
 		return
@@ -58,6 +60,7 @@ func (auth *Authenticator) OIDCCallBack(gc *gin.Context) {
 		localContext = context.WithValue(localContext, oauth2.HTTPClient, client)
 	}
 	oauth2Token, err := auth.OauthConfig.Exchange(localContext, gc.Query("code"))
+	fmt.Println(err)
 	if err != nil {
 		api.JSONErrorStatus(gc, http.StatusUnauthorized, errors.New("could not exchange code for token"))
 		return

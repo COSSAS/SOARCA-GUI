@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	userValueContextKey   = "user-context"
-	permissionsContextKey = "user-permissions"
+	userValueContextKey  = "user-context"
+	userGroupsContextKey = "user-groups"
 )
 
 func setContext(gc *gin.Context, user User) error {
@@ -17,7 +17,7 @@ func setContext(gc *gin.Context, user User) error {
 		return err
 	}
 	gc.Set(userValueContextKey, string(userJSON))
-	gc.Set(permissionsContextKey, user.Groups)
+	gc.Set(userGroupsContextKey, user.Groups)
 	return nil
 }
 
@@ -38,14 +38,14 @@ func GetUserFromContext(gc *gin.Context) (User, bool) {
 	return user, true
 }
 
-func GetUserPermissions(gc *gin.Context) []string {
-	permissions, exists := gc.Get(permissionsContextKey)
+func GetUserAssignedGroups(gc *gin.Context) []string {
+	groups, exists := gc.Get(userGroupsContextKey)
 	if !exists {
 		return []string{}
 	}
-	groups, ok := permissions.([]string)
+	assignedGroups, ok := groups.([]string)
 	if !ok {
 		return []string{}
 	}
-	return groups
+	return assignedGroups
 }

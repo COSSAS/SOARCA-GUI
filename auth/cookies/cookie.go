@@ -85,7 +85,6 @@ func (cj *CookieJar) Delete(gc *gin.Context, cookieType CookieType) error {
 	}
 
 	session.Options.MaxAge = -1
-
 	delete(session.Values, keyName)
 
 	return session.Save(gc.Request, gc.Writer)

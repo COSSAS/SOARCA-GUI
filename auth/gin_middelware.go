@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (auth *Authenticator) Middleware(permissions ...string) gin.HandlerFunc {
+func (auth *Authenticator) Middleware(requiredGroups []string) gin.HandlerFunc {
 	return func(gc *gin.Context) {
 		_, exists := GetUserFromContext(gc)
 		if !exists {
@@ -18,34 +18,29 @@ func (auth *Authenticator) Middleware(permissions ...string) gin.HandlerFunc {
 			gc.Abort()
 			return
 		}
-
-		userPermissions := GetUserPermissions(gc)
-		if !hasRequiredPermissions(userPermissions, permissions) {
-			api.JSONErrorStatus(gc, http.StatusForbidden, errors.New("Insufficient permissions"))
+		userGroups := GetUserAssignedGroups(gc)
+		if !hasRequiredGroups(userGroups, requiredGroups) {
+			api.JSONErrorStatus(gc, http.StatusForbidden, errors.New("insufficient permissions"))
 			gc.Abort()
 			return
 		}
-
 		gc.Next()
 	}
 }
 
-func hasRequiredPermissions(userPermissions []string, requiredPermissions []string) bool {
-	if len(requiredPermissions) == 0 {
+func hasRequiredGroups(userGroups []string, requiredGroups []string) bool {
+	if len(requiredGroups) == 0 {
 		return true
 	}
-
-	permissionSet := make(map[string]bool)
-	for _, perm := range userPermissions {
-		permissionSet[perm] = true
+	groupSet := make(map[string]bool)
+	for _, group := range userGroups {
+		groupSet[group] = true
 	}
-
-	for _, perm := range requiredPermissions {
-		if !permissionSet[perm] {
+	for _, group := range requiredGroups {
+		if !groupSet[group] {
 			return false
 		}
 	}
-
 	return true
 }
 
