@@ -1,13 +1,15 @@
 package routes
 
 import (
+	"log"
 	"net/http"
-
 	"soarca-gui/backend"
 	"soarca-gui/backend/soarca"
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
+	"strconv"
+	"github.com/COSSAS/gauth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,29 +21,55 @@ func Setup(app *gin.Engine) {
 	})
 
 	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
-
 	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
+	authEnabledStr := utils.GetEnv("AUTH_ENABLED", "false")
+	authEnabled, err := strconv.ParseBool(authEnabledStr)
 
+	auth := gaut.
 	publicRoutes := app.Group("/")
+	if err != nil {
+		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
+	}
+	if authEnabled {
+		PublicOIDCRoutes(publicRoutes, auth)
+	} else {
+		PublicRoutes(publicRoutes)
+	}
+	protectedRoutes := app.Group("/")
+	protectedRoutes.Use(auth.LoadAuthContext())
+	// protectedRoutes.Use(auth.Middleware("admin"))
 
-	PublicRoutes(publicRoutes)
-	ReportingRoutes(reporter, publicRoutes)
-	StatusRoutes(status, publicRoutes)
-	SettingsRoutes(publicRoutes)
+	DashboardRoutes(protectedRoutes)
+	ReportingRoutes(reporter, protectedRoutes)
+	StatusRoutes(status, protectedRoutes)
+	SettingsRoutes(protectedRoutes)
+}
+
+func PublicOIDCRoutes(app *gin.RouterGroup, OIDCauth *auth.Authenticator) {
+	authHandler := handlers.NewOIDCAuthHandler(OIDCauth)
+	publicRoute := app.Group("/")
+	{
+		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
+		publicRoute.GET("/oidc-login", authHandler.OIDCLoginHandler)
+		publicRoute.GET("/oidc-callback", authHandler.OIDCCallBackHandler)
+
+	}
+	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
 func PublicRoutes(app *gin.RouterGroup) {
 	authHandler := handlers.AuthHandler{}
-
 	publicRoute := app.Group("/")
 	{
 		publicRoute.GET("/", authHandler.AuthPage)
 		publicRoute.POST("/login", authHandler.Login)
-		publicRoute.GET("/dashboard", handlers.HomeDashboard)
 
 	}
-
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
+}
+
+func DashboardRoutes(app *gin.RouterGroup) {
+	app.GET("dashboard", handlers.HomeDashboard)
 }
 
 func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {

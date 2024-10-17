@@ -1,6 +1,8 @@
 module soarca-gui
 
-go 1.22.2
+go 1.23
+
+toolchain go1.23.1
 
 require (
 	github.com/a-h/templ v0.2.771
@@ -9,8 +11,14 @@ require (
 )
 
 require (
+	github.com/COSSAS/gauth v0.0.1-alpha // indirect
+	github.com/coreos/go-oidc/v3 v3.11.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-jose/go-jose/v4 v4.0.2 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
+	github.com/gorilla/sessions v1.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	golang.org/x/oauth2 v0.23.0 // indirect
 )
 
 require (
