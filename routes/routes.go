@@ -9,6 +9,7 @@ import (
 	"soarca-gui/public"
 	"soarca-gui/utils"
 	"strconv"
+
 	"github.com/COSSAS/gauth"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,10 @@ func Setup(app *gin.Engine) {
 	authEnabledStr := utils.GetEnv("AUTH_ENABLED", "false")
 	authEnabled, err := strconv.ParseBool(authEnabledStr)
 
-	auth := gaut.
+	auth, err := gauth.New(gauth.OIDCRedirectConfig())
+	if err != nil {
+		log.Fatal("could not configure oidc redirect config: ", err)
+	}
 	publicRoutes := app.Group("/")
 	if err != nil {
 		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
@@ -45,7 +49,7 @@ func Setup(app *gin.Engine) {
 	SettingsRoutes(protectedRoutes)
 }
 
-func PublicOIDCRoutes(app *gin.RouterGroup, OIDCauth *auth.Authenticator) {
+func PublicOIDCRoutes(app *gin.RouterGroup, OIDCauth *gauth.Authenticator) {
 	authHandler := handlers.NewOIDCAuthHandler(OIDCauth)
 	publicRoute := app.Group("/")
 	{

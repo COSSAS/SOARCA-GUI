@@ -2,19 +2,19 @@ package handlers
 
 import (
 	"net/http"
-	"soarca-gui/auth"
 	"soarca-gui/utils"
 
 	authviews "soarca-gui/views/auth"
 
+	"github.com/COSSAS/gauth"
 	"github.com/gin-gonic/gin"
 )
 
 type OIDCAuthHandler struct {
-	authenticator *auth.Authenticator
+	authenticator *gauth.Authenticator
 }
 
-func NewOIDCAuthHandler(authenticator *auth.Authenticator) *OIDCAuthHandler {
+func NewOIDCAuthHandler(authenticator *gauth.Authenticator) *OIDCAuthHandler {
 	return &OIDCAuthHandler{authenticator: authenticator}
 }
 
