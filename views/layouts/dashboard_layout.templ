@@ -58,16 +58,16 @@ templ renderLinks(links []link, css string) {
 
 templ DashboardLayout() {
 	@BaseLayout() {
-		<body class="font-family-sans-serif flex bg-c-blue-light-backgroud dark:bg-black">
+		<body class="flex font-family-sans-serif bg-c-blue-light-background dark:bg-c-dark-slate-background">
 			@navbar.Navsidebar(title, dashboardPath, version, documentationUrl) {
 				@renderLinks(navBarlinks, "flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item")
 			}
 			<div class="flex h-screen w-full flex-col overflow-y-hidden">
 				@headbar.DesktopHeaderBar() {
-					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-v-blue-deep")
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-blue-600 dark:hover:opacity-100")
 				}
 				@headbar.MobileHeaderBar(dashboardPath) {
-					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg  hover:bg-blue-800 hover:text-white")
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg hover:text-white dark:hover:opacity-100")
 				}
 				<main class="h-full overflow-y-auto">
 					<div class="container mx-auto grid px-6">
@@ -80,43 +80,43 @@ templ DashboardLayout() {
 			<script src="/public/vendor/prism.js"></script>
 			@icons.LoadIcons()
 			<script>
-// Get the theme toggle icons
-var themeToggleDarkIcon = document.getElementById("theme-toggle-dark-icon");
-var themeToggleLightIcon = document.getElementById("theme-toggle-light-icon");
+    // Get the theme toggle icons
+    var themeToggleDarkIcon = document.getElementById("theme-toggle-dark-icon");
+    var themeToggleLightIcon = document.getElementById("theme-toggle-light-icon");
 
-// Check and apply the theme based on local storage or system preference
-if (
-    localStorage.getItem("color-theme") === "dark" ||
-    (!localStorage.getItem("color-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
-) {
-    document.documentElement.classList.add("dark");
-    themeToggleLightIcon.classList.remove("hidden");
-    themeToggleDarkIcon.classList.add("hidden");
-} else {
-    document.documentElement.classList.remove("dark");
-    themeToggleLightIcon.classList.add("hidden");
-    themeToggleDarkIcon.classList.remove("hidden");
-}
+    // Check and apply the theme based on local storage or system preference
+    if (
+      localStorage.getItem("color-theme") === "dark" ||
+      (!localStorage.getItem("color-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+      themeToggleLightIcon.classList.remove("hidden");
+      themeToggleDarkIcon.classList.add("hidden");
+    } else {
+      document.documentElement.classList.remove("dark");
+      themeToggleLightIcon.classList.add("hidden");
+      themeToggleDarkIcon.classList.remove("hidden");
+    }
 
-// Toggle the theme when the button is clicked
-var themeToggleBtn = document.getElementById("theme-toggle");
+    // Toggle the theme when the button is clicked
+    var themeToggleBtn = document.getElementById("theme-toggle");
 
-themeToggleBtn.addEventListener("click", function () {
-    // Toggle the icons
-    themeToggleDarkIcon.classList.toggle("hidden");
-    themeToggleLightIcon.classList.toggle("hidden");
+    themeToggleBtn.addEventListener("click", function () {
+      // Toggle the icons
+      themeToggleDarkIcon.classList.toggle("hidden");
+      themeToggleLightIcon.classList.toggle("hidden");
 
-    // Toggle the dark class and update local storage
-    if (document.documentElement.classList.contains("dark")) {
+      // Toggle the dark class and update local storage
+      if (document.documentElement.classList.contains("dark")) {
         document.documentElement.classList.remove("dark");
         localStorage.setItem("color-theme", "light");
-    } else {
+      } else {
         document.documentElement.classList.add("dark");
         localStorage.setItem("color-theme", "dark");
-    }
-});
+      }
+    });
 
-</script>
+  </script>
 		</body>
 	}
 }

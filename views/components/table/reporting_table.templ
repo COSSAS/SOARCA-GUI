@@ -91,7 +91,7 @@ templ reportingTableHeaders() {
 
 templ reportingTableDataRow(row ReportingDataTableRow) {
 	@Td() {
-		<a href={ templ.URL(fmt.Sprintf("%s%s", reportingDetailedViewEndpoint, row.ExecutionID)) } class="text-blue-800 hover:text-blue-400">{ row.Name } </a>
+		<a href={ templ.URL(fmt.Sprintf("%s%s", reportingDetailedViewEndpoint, row.ExecutionID)) } class="text-blue-800 hover:text-blue-400 dark:text-c-dark-slate-text dark:hover:text-white dark:hover:underline">{ row.Name } </a>
 	}
 	@Td() {
 		{ row.StartTime.Format(time.ANSIC) }
