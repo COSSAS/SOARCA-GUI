@@ -27,6 +27,7 @@ func Setup(app *gin.Engine) {
 	authEnabled, err := strconv.ParseBool(authEnabledStr)
 
 	auth, err := gauth.New(gauth.OIDCRedirectConfig())
+	authHandler := handlers.NewOIDCAuthHandler(auth)
 	if err != nil {
 		log.Fatal("could not configure oidc redirect config: ", err)
 	}
@@ -34,23 +35,22 @@ func Setup(app *gin.Engine) {
 	if err != nil {
 		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
 	}
+	protectedRoutes := app.Group("/")
+	protectedRoutes.Use(auth.LoadAuthContext())
 	if authEnabled {
-		PublicOIDCRoutes(publicRoutes, auth)
+		PublicOIDCRoutes(publicRoutes, authHandler)
 	} else {
 		PublicRoutes(publicRoutes)
 	}
-	protectedRoutes := app.Group("/")
-	protectedRoutes.Use(auth.LoadAuthContext())
 	protectedRoutes.Use(auth.Middleware([]string{"admin"}))
-	DashboardRoutes(protectedRoutes)
+	DashboardRoutes(protectedRoutes, authHandler)
 
 	ReportingRoutes(reporter, protectedRoutes)
 	StatusRoutes(status, protectedRoutes)
 	SettingsRoutes(protectedRoutes)
 }
 
-func PublicOIDCRoutes(app *gin.RouterGroup, OIDCauth *gauth.Authenticator) {
-	authHandler := handlers.NewOIDCAuthHandler(OIDCauth)
+func PublicOIDCRoutes(app *gin.RouterGroup, authHandler *handlers.OIDCAuthHandler) {
 	publicRoute := app.Group("/")
 	{
 		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
@@ -72,8 +72,9 @@ func PublicRoutes(app *gin.RouterGroup) {
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
-func DashboardRoutes(app *gin.RouterGroup) {
+func DashboardRoutes(app *gin.RouterGroup, authHandler *handlers.OIDCAuthHandler) {
 	app.GET("dashboard", handlers.HomeDashboard)
+	app.GET("logout", authHandler.OIDCLogoutHandler)
 }
 
 func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {

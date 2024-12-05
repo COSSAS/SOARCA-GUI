@@ -1,5 +1,5 @@
-github.com/COSSAS/gauth v0.0.1-alpha h1:OjmHnm+P5CaepeZ32Lt7ifsZiUu2FwA2y2nfJ0vwdlk=
-github.com/COSSAS/gauth v0.0.1-alpha/go.mod h1:/frC1atZ6WgK4/4MyUyDm1zZ1swIVYmpRLcBCd+2Zew=
+github.com/COSSAS/gauth v0.0.1-alpha-c h1:XY1Jbn4hlLEmkthKo1ZVxt4le7wQLsy5htFKCn/ACxY=
+github.com/COSSAS/gauth v0.0.1-alpha-c/go.mod h1:/frC1atZ6WgK4/4MyUyDm1zZ1swIVYmpRLcBCd+2Zew=
 github.com/a-h/templ v0.2.771 h1:4KH5ykNigYGGpCe0fRJ7/hzwz72k3qFqIiiLLJskbSo=
 github.com/a-h/templ v0.2.771/go.mod h1:lq48JXoUvuQrU0VThrK31yFwdRjTCnIE5bcPCM9IP1w=
 github.com/bytedance/sonic v1.11.6 h1:oUp34TzMlL+OY1OUWxHqsdkgC/Zfc85zGqw9siXjrc0=
@@ -36,6 +36,8 @@ github.com/goccy/go-json v0.10.2/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MG
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
+github.com/google/gofuzz v1.2.0 h1:xRy4A+RhZaiKjJ1bPfwQ8sedCA+YS2YcCHW6ec7JMi0=
+github.com/google/gofuzz v1.2.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/gorilla/securecookie v1.1.2 h1:YCIWL56dvtr73r6715mJs5ZvhtnY73hBvEF8kXD8ePA=
 github.com/gorilla/securecookie v1.1.2/go.mod h1:NfCASbcHqRSY+3a8tlWJwsQap2VX5pwzwo4h3eOamfo=
 github.com/gorilla/sessions v1.4.0 h1:kpIYOp/oi6MG/p5PgxApU8srsSw9tuFbt46Lt7auzqQ=

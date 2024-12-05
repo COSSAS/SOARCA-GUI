@@ -30,5 +30,9 @@ func (auth *OIDCAuthHandler) OIDCLoginHandler(context *gin.Context) {
 }
 
 func (auth *OIDCAuthHandler) OIDCCallBackHandler(context *gin.Context) {
-	auth.authenticator.OIDCCallBack(context)
+	auth.authenticator.OIDCCallBack(context, "/dashboard")
+}
+
+func (auth *OIDCAuthHandler) OIDCLogoutHandler(context *gin.Context) {
+	auth.authenticator.Logout(context, "http://localhost:7331/")
 }

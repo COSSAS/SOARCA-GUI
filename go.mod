@@ -5,13 +5,13 @@ go 1.23
 toolchain go1.23.1
 
 require (
+	github.com/COSSAS/gauth v0.0.1-alpha-c
 	github.com/a-h/templ v0.2.771
 	github.com/gin-gonic/gin v1.10.0
 	github.com/stretchr/testify v1.9.0
 )
 
 require (
-	github.com/COSSAS/gauth v0.0.1-alpha // indirect
 	github.com/coreos/go-oidc/v3 v3.11.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.2 // indirect
