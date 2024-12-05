@@ -64,10 +64,10 @@ templ DashboardLayout() {
 			}
 			<div class="flex h-screen w-full flex-col overflow-y-hidden">
 				@headbar.DesktopHeaderBar() {
-					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-v-blue-deep")
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link hover:text-blue-600 dark:hover:opacity-100")
 				}
 				@headbar.MobileHeaderBar(dashboardPath) {
-					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg hover:bg-blue-800 hover:text-white")
+					@renderLinks(headBarlinks, "block px-4 py-2 account-link rounded-lg hover:text-white dark:hover:opacity-100")
 				}
 				<main class="h-full overflow-y-auto">
 					<div class="container mx-auto grid px-6">

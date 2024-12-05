@@ -31,7 +31,7 @@ templ themeButton() {
 		<button
 			id="theme-toggle"
 			@click="darkMode = !darkMode"
-			:class="darkMode ? 'bg-blue-600' : 'bg-neutral-200'"
+			:class="darkMode ? 'bg-c-dark-slate-text-dark' : 'bg-neutral-200'"
 			class="relative inline-flex h-6 w-10 rounded-full py-0.5 focus:outline-none"
 			x-cloak
 		>
@@ -46,7 +46,6 @@ templ themeButton() {
 						clip-rule="evenodd"
 					></path>
 				</svg>
-				<!-- Light Mode SVG -->
 				<svg class="absolute inset-0 m-auto block h-3 w-3 fill-violet-700 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
 					<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
 				</svg>
@@ -63,12 +62,15 @@ templ DesktopHeaderBar() {
 		<div x-data="{ isOpen: false }" class="relative flex w-1/2 justify-end">
 			<button
 				@click="isOpen = !isOpen"
-				class="relative z-10 h-12 w-12 overflow-hidden rounded-full border-4 border-gray-400 hover:border-blue-600 focus:border-blue-600 focus:outline-none"
+				class="relative z-10 h-12 w-12 overflow-hidden rounded-full border-4 border-gray-400 hover:border-blue-600 hover:bg-blue-50 focus:border-blue-600 focus:outline-none dark:border-c-dark-slate-border dark:hover:border-c-blue-deep dark:hover:bg-slate-700"
 			>
-				<img src="" alt="Profile image"/>
+				<img src="" alt="Profile image" class="dark:filter dark:brightness-75"/>
 			</button>
 			<button x-show="isOpen" @click="isOpen = false" class="fixed inset-0 h-full w-full cursor-default"></button>
-			<div x-show="isOpen" class="absolute z-50 mt-16 w-32 rounded-lg bg-white py-2 shadow-lg">
+			<div
+				x-show="isOpen"
+				class="absolute z-50 mt-16 w-32 rounded-lg bg-white py-2 shadow-lg dark:bg-c-dark-slate-card dark:text-c-dark-slate-text dark:border dark:border-c-dark-slate-border"
+			>
 				{ children... }
 			</div>
 		</div>
@@ -76,15 +78,26 @@ templ DesktopHeaderBar() {
 }
 
 templ MobileHeaderBar(homePageLink string) {
-	<header x-data="{ isOpen: false }" class="bg-sidebar w-full bg-blue-600 px-6 py-5 sm:hidden">
+	<header x-data="{ isOpen: false }" class="bg-sidebar w-full bg-blue-600 dark:bg-c-dark-blue-background px-6 py-5 sm:hidden">
 		<div class="flex items-center justify-between">
-			<a href={ templ.URL(homePageLink) } class="text-3xl font-semibold uppercase text-white hover:text-gray-300">SOARCA</a>
-			<button @click="isOpen = !isOpen" class="text-3xl text-white focus:outline-none">
+			<a
+				href={ templ.URL(homePageLink) }
+				class="text-3xl font-semibold uppercase text-white hover:text-gray-300 dark:hover:text-c-dark-slate-text"
+			>
+				SOARCA
+			</a>
+			<button
+				@click="isOpen = !isOpen"
+				class="text-3xl text-white focus:outline-none"
+			>
 				@icons.NewIcon("more-horizontal").InsertIcon("mr-3", utils.WithXshow("!isOpen"))
 				@icons.NewIcon("x").InsertIcon("mr-3", utils.WithXshow("isOpen"))
 			</button>
 		</div>
-		<nav :class="isOpen ? 'flex': 'hidden'" class="flex flex-col pt-4">
+		<nav
+			:class="isOpen ? 'flex': 'hidden'"
+			class="flex flex-col pt-4 dark:bg-c-dark-blue-background"
+		>
 			{ children... }
 		</nav>
 	</header>
