@@ -146,18 +146,18 @@ templ dummyActivity() {
 	</div>
 }
 
-templ headersection() {
+templ headersection(userName string) {
 	@cards.Card(utils.Class("relative bg-gradient-to-r from-blue-600 to-fuchsia-500 shadow-md rounded-lg p-2 dark:bg-c-dark-blue-background dark:bg-none")) {
 		<div class="h-10 flex items-center">
+			<h1 class="text-2xl text-bold text-white dark:text-c-dark-slate-text">Welcome { userName } back to SOARCA</h1>
 			@icons.NewIcon("user").InsertIcon("ml-3 mr-3 text-white dark:text-c-slate-text")
-			<h1 class="text-2xl text-bold text-white dark:text-c-dark-slate-text">Welcome 'some name' back to SOARCA</h1>
 		</div>
 	}
 }
 
-templ Home(comp templ.Component) {
+templ Home(comp templ.Component, userName string) {
 	@layouts.DashboardLayout() {
-		@headersection()
+		@headersection(userName)
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
 			@card.Card(card.WithHeight24())
 			@card.Card(card.WithHeight24())
