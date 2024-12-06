@@ -18,6 +18,29 @@ type TestData struct {
 	Value int    `json:"value"`
 }
 
+func TestFetchToJsonWithHeaderModification(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-Test-Header") != "test-value" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		err := json.NewEncoder(w).Encode(TestData{Name: "test", Value: 123})
+		if err != nil {
+			t.Fatalf("could not encode json: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	client := &http.Client{Timeout: 1 * time.Second}
+	var result TestData
+	err := fetchToJson(client, server.URL, &result, func(req *http.Request) {
+		req.Header.Add("X-Test-Header", "test-value")
+	})
+	assert.Nil(t, err, "expected no error")
+}
+
 func TestFetchToJsonSuccessful(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -31,7 +54,7 @@ func TestFetchToJsonSuccessful(t *testing.T) {
 
 	client := &http.Client{Timeout: 1 * time.Second}
 	var result TestData
-	err := fetchToJson(client, server.URL, &result)
+	err := fetchToJson(client, server.URL, &result, nil)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -49,7 +72,7 @@ func TestFetchToJsonNon200StatusCode(t *testing.T) {
 
 	client := &http.Client{Timeout: 1 * time.Second}
 	var result TestData
-	err := fetchToJson(client, server.URL, &result)
+	err := fetchToJson(client, server.URL, &result, nil)
 
 	expectedErrMsg := "fetch failed: unexpected status code: 404"
 	if err == nil {
@@ -73,7 +96,7 @@ func TestFetchToJsonInvalidJSON(t *testing.T) {
 
 	client := &http.Client{Timeout: 1 * time.Second}
 	var result TestData
-	err := fetchToJson(client, server.URL, &result)
+	err := fetchToJson(client, server.URL, &result, nil)
 
 	expectedErrMsg := "failed to unmarshal JSON object"
 	if err == nil {
@@ -92,7 +115,7 @@ func TestFetchToJsonEmptyResponseBody(t *testing.T) {
 
 	client := &http.Client{Timeout: 1 * time.Second}
 	var result TestData
-	err := fetchToJson(client, server.URL, &result)
+	err := fetchToJson(client, server.URL, &result, nil)
 
 	expectedErrMsg := "fetch failed: empty response body"
 	if err == nil {
@@ -106,7 +129,7 @@ func TestFetchToJsonEmptyResponseBody(t *testing.T) {
 func TestFetchToJsonInvalidURL(t *testing.T) {
 	client := &http.Client{}
 	var result TestData
-	err := fetchToJson(client, "invalid-url", &result)
+	err := fetchToJson(client, "invalid-url", &result, nil)
 	if err == nil {
 		t.Fatal("expected error for invalid URL, got nil")
 	}
@@ -130,7 +153,7 @@ func TestFetchSuccessful(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
-	body, err := fetch(ctx, client, server.URL)
+	body, err := fetch(ctx, client, server.URL, nil)
 
 	assert.Nil(t, err, "expected no error, got %v", err)
 	assert.Equal(t, checkBody, string(body), "expected body to be 'Success', got %v", string(body))
@@ -148,7 +171,7 @@ func TestFetchEmptyResponseBody(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
-	body, err := fetch(ctx, client, server.URL)
+	body, err := fetch(ctx, client, server.URL, nil)
 
 	assert.NotNil(t, err, "expected an error, got nil")
 	assert.Contains(t, err.Error(), expectedErrMsg, "expected error message to contain %q, got %q", expectedErrMsg, err.Error())
@@ -172,7 +195,7 @@ func TestFetchContextTimeout(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
-	body, err := fetch(ctx, client, server.URL)
+	body, err := fetch(ctx, client, server.URL, nil)
 
 	assert.NotNil(t, err, "expected an error, got nil")
 	assert.Contains(t, err.Error(), expectedErrMsg, "expected error message to contain %q, got %q", expectedErrMsg, err.Error())

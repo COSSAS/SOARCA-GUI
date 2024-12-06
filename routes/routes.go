@@ -21,10 +21,11 @@ func Setup(app *gin.Engine) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
-	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
-	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
-	authEnabledStr := utils.GetEnv("AUTH_ENABLED", "false")
-	authEnabled, err := strconv.ParseBool(authEnabledStr)
+	authEnabled, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
+	authEnabledToSoarca, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
+
+	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabledToSoarca)
+	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabledToSoarca)
 
 	auth, err := gauth.New(gauth.OIDCRedirectConfig())
 	authHandler := handlers.NewOIDCAuthHandler(auth)
@@ -45,8 +46,8 @@ func Setup(app *gin.Engine) {
 	protectedRoutes.Use(auth.Middleware([]string{"admin"}))
 	DashboardRoutes(protectedRoutes, authHandler)
 
-	ReportingRoutes(reporter, protectedRoutes)
-	StatusRoutes(status, protectedRoutes)
+	ReportingRoutes(reporter, protectedRoutes, authEnabledToSoarca)
+	StatusRoutes(status, protectedRoutes, authEnabledToSoarca)
 	SettingsRoutes(protectedRoutes)
 }
 
@@ -77,8 +78,8 @@ func DashboardRoutes(app *gin.RouterGroup, authHandler *handlers.OIDCAuthHandler
 	app.GET("logout", authHandler.OIDCLogoutHandler)
 }
 
-func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {
-	reportingHandlers := handlers.NewReportingHandler(backend)
+func ReportingRoutes(backend backend.Report, app *gin.RouterGroup, authentication bool) {
+	reportingHandlers := handlers.NewReportingHandler(backend, authentication)
 
 	reportingRoute := app.Group("/reporting")
 	{
@@ -89,8 +90,8 @@ func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {
 	}
 }
 
-func StatusRoutes(backend backend.Status, app *gin.RouterGroup) {
-	statusHandlers := handlers.NewStatusHandler(backend)
+func StatusRoutes(backend backend.Status, app *gin.RouterGroup, authentication bool) {
+	statusHandlers := handlers.NewStatusHandler(backend, authentication)
 
 	statusRoute := app.Group("/status")
 	{

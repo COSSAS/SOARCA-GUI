@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-
 	"soarca-gui/backend"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/indicators"
@@ -11,15 +10,16 @@ import (
 )
 
 type statusHandler struct {
-	status backend.Status
+	status        backend.Status
+	authenticated bool
 }
 
-func NewStatusHandler(backend backend.Status) statusHandler {
-	return statusHandler{status: backend}
+func NewStatusHandler(backend backend.Status, authenticated bool) statusHandler {
+	return statusHandler{status: backend, authenticated: authenticated}
 }
 
 func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
-	response, err := s.status.GetPongFromStatus()
+	response, err := s.status.GetPongFromStatus("")
 	indicatorData := indicators.HealthIndicatorData{Loaded: true}
 
 	switch {

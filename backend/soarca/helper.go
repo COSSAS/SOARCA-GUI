@@ -13,12 +13,11 @@ const (
 	timeout time.Duration = 500
 )
 
-func fetchToJson(client *http.Client, url string, target interface{}) error {
-
+func fetchToJson(client *http.Client, url string, target interface{}, modifyRequest func(*http.Request)) error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Millisecond)
 	defer cancel()
 
-	body, err := fetch(ctx, client, url)
+	body, err := fetch(ctx, client, url, modifyRequest)
 	if err != nil {
 		return fmt.Errorf("fetch failed: %w", err)
 	}
@@ -31,10 +30,14 @@ func fetchToJson(client *http.Client, url string, target interface{}) error {
 	return nil
 }
 
-func fetch(ctx context.Context, client *http.Client, url string) ([]byte, error) {
+func fetch(ctx context.Context, client *http.Client, url string, modifyRequest func(*http.Request)) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	if modifyRequest != nil {
+		modifyRequest(req)
 	}
 
 	response, err := client.Do(req)
