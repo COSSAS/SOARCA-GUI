@@ -21,25 +21,23 @@ func NewStatus(host string, client *http.Client, authentication bool) *Status {
 
 func (status *Status) GetPongFromStatus(bearerToken string) (string, error) {
 	url := fmt.Sprintf("%s%s", status.Host, statusPingPath)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Millisecond)
 	defer cancel()
 
 	var body []byte
 	var err error
 	if status.authentication {
-		err = fetchToJson(status.client, url, &body, func(req *http.Request) {
+		body, err = fetch(ctx, status.client, url, func(req *http.Request) {
 			if bearerToken != "" {
 				req.Header.Add("Authorization", "Bearer "+bearerToken)
 			}
 		})
-		if err != nil {
-			return "", fmt.Errorf("failed to read response body: %w", err)
-		}
 	} else {
 		body, err = fetch(ctx, status.client, url, nil)
-		if err != nil {
-			return "", fmt.Errorf("failed to read response body: %w", err)
-		}
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	return string(body), nil

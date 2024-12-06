@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"soarca-gui/backend"
 	"soarca-gui/utils"
 	"soarca-gui/views/components/indicators"
 
+	gauth_context "github.com/COSSAS/gauth/context"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,8 +20,19 @@ func NewStatusHandler(backend backend.Status, authenticated bool) statusHandler 
 	return statusHandler{status: backend, authenticated: authenticated}
 }
 
+func (s *statusHandler) fetchStatus(context *gin.Context) (string, error) {
+	if s.authenticated {
+		bearerToken, exists := gauth_context.GetTokenFromContext(context)
+		if exists {
+			return s.status.GetPongFromStatus(bearerToken)
+		}
+	}
+	return s.status.GetPongFromStatus("")
+}
+
 func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
-	response, err := s.status.GetPongFromStatus("")
+	response, err := s.fetchStatus(context)
+	fmt.Println(response)
 	indicatorData := indicators.HealthIndicatorData{Loaded: true}
 
 	switch {
