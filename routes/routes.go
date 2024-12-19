@@ -43,7 +43,7 @@ func Setup(app *gin.Engine) {
 	} else {
 		PublicRoutes(publicRoutes)
 	}
-	protectedRoutes.Use(auth.Middleware([]string{"admin"}))
+	protectedRoutes.Use(auth.Middleware([]string{"soarca_admin"}))
 	DashboardRoutes(protectedRoutes, authHandler)
 
 	ReportingRoutes(reporter, protectedRoutes, authEnabledToSoarca)
