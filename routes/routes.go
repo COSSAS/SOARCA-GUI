@@ -22,10 +22,9 @@ func Setup(app *gin.Engine) {
 	})
 
 	authEnabled, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
-	authEnabledToSoarca, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
 
-	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabledToSoarca)
-	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabledToSoarca)
+	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
+	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
 
 	auth, err := gauth.New(gauth.OIDCRedirectConfig())
 	authHandler := handlers.NewOIDCAuthHandler(auth)
@@ -46,8 +45,8 @@ func Setup(app *gin.Engine) {
 	protectedRoutes.Use(auth.Middleware([]string{"soarca_admin"}))
 	DashboardRoutes(protectedRoutes, authHandler)
 
-	ReportingRoutes(reporter, protectedRoutes, authEnabledToSoarca)
-	StatusRoutes(status, protectedRoutes, authEnabledToSoarca)
+	ReportingRoutes(reporter, protectedRoutes, authEnabled)
+	StatusRoutes(status, protectedRoutes, authEnabled)
 	SettingsRoutes(protectedRoutes)
 }
 
