@@ -1,6 +1,7 @@
 package soarca
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -60,4 +61,38 @@ func fetch(ctx context.Context, client *http.Client, url string, modifyRequest f
 	}
 
 	return body, nil
+}
+
+func postJson(client *http.Client, url string, payload interface{}) error {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Millisecond)
+	defer cancel()
+
+	return postJsonWithContext(ctx, client, url, payload)
+}
+
+func postJsonWithContext(ctx context.Context, client *http.Client, url string, payload interface{}) error {
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal payload: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	response, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to make POST request: %w", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(response.Body)
+		return fmt.Errorf("unexpected status code: %d, body: %s", response.StatusCode, string(body))
+	}
+
+	return nil
 }
