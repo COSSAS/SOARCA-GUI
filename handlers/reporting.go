@@ -28,10 +28,8 @@ func NewReportingHandler(backend backend.Report, authenticated bool) reportingHa
 
 func (r *reportingHandler) fetchReports(context *gin.Context) ([]reporter.PlaybookExecutionReport, error) {
 	if r.authenticated {
-		bearerToken, exists := gauth_context.GetTokenFromContext(context)
-		if exists {
-			return r.reporter.GetReports(bearerToken)
-		}
+		bearerToken, _ := gauth_context.GetTokenFromContext(context)
+		return r.reporter.GetReports(bearerToken)
 	}
 	return r.reporter.GetReports("")
 }

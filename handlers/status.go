@@ -22,10 +22,8 @@ func NewStatusHandler(backend backend.Status, authenticated bool) statusHandler 
 
 func (s *statusHandler) fetchStatus(context *gin.Context) (string, error) {
 	if s.authenticated {
-		bearerToken, exists := gauth_context.GetTokenFromContext(context)
-		if exists {
-			return s.status.GetPongFromStatus(bearerToken)
-		}
+		bearerToken, _ := gauth_context.GetTokenFromContext(context)
+		return s.status.GetPongFromStatus(bearerToken)
 	}
 	return s.status.GetPongFromStatus("")
 }
