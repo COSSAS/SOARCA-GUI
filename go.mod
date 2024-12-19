@@ -2,8 +2,6 @@ module soarca-gui
 
 go 1.23
 
-toolchain go1.23.1
-
 require (
 	github.com/COSSAS/gauth v1.0.1
 	github.com/a-h/templ v0.2.771
