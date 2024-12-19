@@ -1,5 +1,7 @@
 github.com/COSSAS/gauth v1.0.1-alpha h1:u+WxxgC1eDrcK0o64apNGoWfgn0LD9TWlrPG+MyjIjY=
 github.com/COSSAS/gauth v1.0.1-alpha/go.mod h1:/frC1atZ6WgK4/4MyUyDm1zZ1swIVYmpRLcBCd+2Zew=
+github.com/COSSAS/gauth v1.0.1 h1:5eOuLLLSmwIMYhbnbrY7zPRX2I8KSTBmFp+T+sAGtpQ=
+github.com/COSSAS/gauth v1.0.1/go.mod h1:tbk8e5uUnGA8JBDqDc8jJo/QF23lke2B9GNP26XZ3f4=
 github.com/a-h/templ v0.2.771 h1:4KH5ykNigYGGpCe0fRJ7/hzwz72k3qFqIiiLLJskbSo=
 github.com/a-h/templ v0.2.771/go.mod h1:lq48JXoUvuQrU0VThrK31yFwdRjTCnIE5bcPCM9IP1w=
 github.com/bytedance/sonic v1.11.6 h1:oUp34TzMlL+OY1OUWxHqsdkgC/Zfc85zGqw9siXjrc0=
