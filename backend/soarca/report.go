@@ -3,41 +3,47 @@ package soarca
 import (
 	"fmt"
 	"net/http"
-
 	"soarca-gui/models/reporter"
 )
 
 const (
-	statusPingPath = "/status/ping"
-	reporterPath   = "/reporter"
+	reporterPath = "/reporter"
 )
 
 type Report struct {
-	Host   string
-	client *http.Client
+	Host           string
+	client         *http.Client
+	authentication bool
 }
 
-func NewReport(host string, client *http.Client) *Report {
-	return &Report{Host: host, client: client}
+func NewReport(host string, client *http.Client, authentication bool) *Report {
+	return &Report{Host: host, client: client, authentication: authentication}
 }
 
-func (report *Report) GetReports() ([]reporter.PlaybookExecutionReport, error) {
+func (report *Report) GetReports(bearerToken string) ([]reporter.PlaybookExecutionReport, error) {
 	url := fmt.Sprintf("%s%s", report.Host, reporterPath)
-
 	var reportings []reporter.PlaybookExecutionReport
-	err := fetchToJson(report.client, url, &reportings)
+
+	err := fetchToJson(report.client, url, &reportings, func(req *http.Request) {
+		if bearerToken != "" {
+			req.Header.Add("Authorization", "Bearer "+bearerToken)
+		}
+	})
 	if err != nil {
 		return nil, err
 	}
-
 	return reportings, nil
 }
 
-func (report *Report) GetReportsById(Id string) (reporter.PlaybookExecutionReport, error) {
+func (report *Report) GetReportsById(Id, bearerToken string) (reporter.PlaybookExecutionReport, error) {
 	url := fmt.Sprintf("%s%s/%s", report.Host, reporterPath, Id)
 	var returnReport reporter.PlaybookExecutionReport
 
-	err := fetchToJson(report.client, url, &returnReport)
+	err := fetchToJson(report.client, url, &returnReport, func(req *http.Request) {
+		if bearerToken != "" {
+			req.Header.Add("Authorization", "Bearer "+bearerToken)
+		}
+	})
 	if err != nil {
 		return reporter.PlaybookExecutionReport{}, err
 	}

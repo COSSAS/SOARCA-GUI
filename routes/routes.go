@@ -1,13 +1,16 @@
 package routes
 
 import (
+	"log"
 	"net/http"
-
 	"soarca-gui/backend"
 	"soarca-gui/backend/soarca"
 	"soarca-gui/handlers"
 	"soarca-gui/public"
 	"soarca-gui/utils"
+	"strconv"
+
+	"github.com/COSSAS/gauth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,34 +21,53 @@ func Setup(app *gin.Engine) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
 	})
 
-	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
+	authEnabled, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
 
-	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
+	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
+	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
 
+	auth, err := gauth.New(gauth.OIDCRedirectConfig())
+	authHandler := handlers.NewOIDCAuthHandler(auth)
+	if err != nil {
+		log.Fatal("could not configure oidc redirect config: ", err)
+	}
 	publicRoutes := app.Group("/")
+	protectedRoutes := app.Group("/")
+	protectedRoutes.Use(auth.LoadAuthContext())
 
-	PublicRoutes(publicRoutes)
-	ReportingRoutes(reporter, publicRoutes)
-	StatusRoutes(status, publicRoutes)
-	SettingsRoutes(publicRoutes)
+	PublicRoutes(publicRoutes, authEnabled, authHandler)
+
+	protectedRoutes.Use(auth.Middleware([]string{"soarca_admin"}))
+	DashboardRoutes(protectedRoutes, authHandler)
+
+	ReportingRoutes(reporter, protectedRoutes, authEnabled)
+	StatusRoutes(status, protectedRoutes, authEnabled)
+	SettingsRoutes(protectedRoutes)
 }
 
-func PublicRoutes(app *gin.RouterGroup) {
-	authHandler := handlers.AuthHandler{}
-
+func PublicRoutes(app *gin.RouterGroup, authEnabled bool, oidcAuthHandler *handlers.OIDCAuthHandler) {
 	publicRoute := app.Group("/")
-	{
+
+	if authEnabled {
+		publicRoute.GET("/", oidcAuthHandler.OIDCAuthPageHandler)
+		publicRoute.GET("/oidc-login", oidcAuthHandler.OIDCLoginHandler)
+		publicRoute.GET("/oidc-callback", oidcAuthHandler.OIDCCallBackHandler)
+	} else {
+		authHandler := handlers.AuthHandler{}
 		publicRoute.GET("/", authHandler.AuthPage)
 		publicRoute.POST("/login", authHandler.Login)
-		publicRoute.GET("/dashboard", handlers.HomeDashboard)
-
 	}
 
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
-func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {
-	reportingHandlers := handlers.NewReportingHandler(backend)
+func DashboardRoutes(app *gin.RouterGroup, authHandler *handlers.OIDCAuthHandler) {
+	app.GET("dashboard", handlers.HomeDashboard)
+	app.GET("logout", authHandler.OIDCLogoutHandler)
+}
+
+func ReportingRoutes(backend backend.Report, app *gin.RouterGroup, authentication bool) {
+	reportingHandlers := handlers.NewReportingHandler(backend, authentication)
 
 	reportingRoute := app.Group("/reporting")
 	{
@@ -56,8 +78,8 @@ func ReportingRoutes(backend backend.Report, app *gin.RouterGroup) {
 	}
 }
 
-func StatusRoutes(backend backend.Status, app *gin.RouterGroup) {
-	statusHandlers := handlers.NewStatusHandler(backend)
+func StatusRoutes(backend backend.Status, app *gin.RouterGroup, authentication bool) {
+	statusHandlers := handlers.NewStatusHandler(backend, authentication)
 
 	statusRoute := app.Group("/status")
 	{

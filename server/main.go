@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"soarca-gui/internal/status"
 	"soarca-gui/routes"
 	"soarca-gui/utils"
