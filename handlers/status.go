@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"soarca-gui/backend"
 	"soarca-gui/utils"
@@ -20,17 +19,16 @@ func NewStatusHandler(backend backend.Status, authenticated bool) statusHandler 
 	return statusHandler{status: backend, authenticated: authenticated}
 }
 
-func (s *statusHandler) fetchStatus(context *gin.Context) (string, error) {
-	if s.authenticated {
+func (status *statusHandler) fetchStatus(context *gin.Context) (string, error) {
+	if status.authenticated {
 		bearerToken, _ := gauth_context.GetTokenFromContext(context)
-		return s.status.GetPongFromStatus(bearerToken)
+		return status.status.GetPongFromStatus(bearerToken)
 	}
-	return s.status.GetPongFromStatus("")
+	return status.status.GetPongFromStatus("")
 }
 
-func (s *statusHandler) HealthComponentHandler(context *gin.Context) {
-	response, err := s.fetchStatus(context)
-	fmt.Println(response)
+func (status *statusHandler) HealthComponentHandler(context *gin.Context) {
+	response, err := status.fetchStatus(context)
 	indicatorData := indicators.HealthIndicatorData{Loaded: true}
 
 	switch {
