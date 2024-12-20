@@ -8,7 +8,7 @@ import (
 	"soarca-gui/utils"
 	"soarca-gui/views/components/cards"
 	"soarca-gui/views/components/table"
-	"soarca-gui/views/dashboards/reporting"
+	reporting_dashboard "soarca-gui/views/dashboards/reporting"
 
 	gauth_context "github.com/COSSAS/gauth/context"
 	"github.com/gin-gonic/gin"
@@ -26,18 +26,18 @@ func NewReportingHandler(backend backend.Report, authenticated bool) reportingHa
 	}
 }
 
-func (r *reportingHandler) fetchReports(context *gin.Context) ([]reporter.PlaybookExecutionReport, error) {
-	if r.authenticated {
+func (reporting *reportingHandler) fetchReports(context *gin.Context) ([]reporter.PlaybookExecutionReport, error) {
+	if reporting.authenticated {
 		bearerToken, _ := gauth_context.GetTokenFromContext(context)
-		return r.reporter.GetReports(bearerToken)
+		return reporting.reporter.GetReports(bearerToken)
 	}
-	return r.reporter.GetReports("")
+	return reporting.reporter.GetReports("")
 }
 
-func (r *reportingHandler) ReportingCardSectionHandler(context *gin.Context) {
-	reports, err := r.fetchReports(context)
+func (reporting *reportingHandler) ReportingCardSectionHandler(context *gin.Context) {
+	reports, err := reporting.fetchReports(context)
 	if err != nil {
-		r.renderCardSectionError(context)
+		reporting.renderCardSectionError(context)
 		return
 	}
 
@@ -51,7 +51,7 @@ func (r *reportingHandler) ReportingCardSectionHandler(context *gin.Context) {
 	context.Render(http.StatusOK, render)
 }
 
-func (r *reportingHandler) renderCardSectionError(context *gin.Context) {
+func (reporting *reportingHandler) renderCardSectionError(context *gin.Context) {
 	metrics := []cards.ReportingCardData{
 		{Type: cards.Unkown},
 		{Type: cards.Unkown},
@@ -61,16 +61,16 @@ func (r *reportingHandler) renderCardSectionError(context *gin.Context) {
 	context.Render(http.StatusInternalServerError, render)
 }
 
-func (r *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
-	reports, err := r.fetchReports(context)
+func (reporting *reportingHandler) ReportingTableCardHandler(context *gin.Context) {
+	reports, err := reporting.fetchReports(context)
 	if err != nil {
-		r.renderEmptyTableRow(context)
+		reporting.renderEmptyTableRow(context)
 		return
 	}
 
-	rows := r.convertReportsToTableRows(reports)
+	rows := reporting.convertReportsToTableRows(reports)
 	if len(rows) <= 0 {
-		r.renderEmptyTableRow(context)
+		reporting.renderEmptyTableRow(context)
 		return
 	}
 
@@ -92,21 +92,21 @@ func (r *reportingHandler) convertReportsToTableRows(reports []reporter.Playbook
 	return rows
 }
 
-func (r *reportingHandler) ReportingIndexHandler(context *gin.Context) {
-	render := utils.NewTempl(context, http.StatusOK, reporting.ReportingIndex())
+func (reporting *reportingHandler) ReportingIndexHandler(context *gin.Context) {
+	render := utils.NewTempl(context, http.StatusOK, reporting_dashboard.ReportingIndex())
 	context.Render(http.StatusOK, render)
 }
 
-func (r *reportingHandler) renderEmptyTableRow(context *gin.Context) {
+func (reporting *reportingHandler) renderEmptyTableRow(context *gin.Context) {
 	render := utils.NewTempl(context, http.StatusOK, table.EmptyRow())
 	context.Render(http.StatusNotFound, render)
 }
 
-func (r *reportingHandler) ReportingDetailedView(context *gin.Context) {
+func (reporting *reportingHandler) ReportingDetailedView(context *gin.Context) {
 	id := context.Param("id")
 	errs := utils.Errors{}
 
-	foundReport, err := r.fetchReportById(context, id)
+	foundReport, err := reporting.fetchReportById(context, id)
 
 	if foundReport.ExecutionId == "" {
 		errs.Add("backend", errors.New("no report found for ID"))
@@ -117,21 +117,21 @@ func (r *reportingHandler) ReportingDetailedView(context *gin.Context) {
 	}
 
 	if errs.Any() {
-		render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView404(errs))
+		render := utils.NewTempl(context, http.StatusOK, reporting_dashboard.ReportingDetailedView404(errs))
 		context.Render(http.StatusNotFound, render)
 		return
 	}
 
-	render := utils.NewTempl(context, http.StatusOK, reporting.ReportingDetailedView(foundReport))
+	render := utils.NewTempl(context, http.StatusOK, reporting_dashboard.ReportingDetailedView(foundReport))
 	context.Render(http.StatusOK, render)
 }
 
-func (r *reportingHandler) fetchReportById(context *gin.Context, id string) (reporter.PlaybookExecutionReport, error) {
-	if r.authenticated {
+func (reporting *reportingHandler) fetchReportById(context *gin.Context, id string) (reporter.PlaybookExecutionReport, error) {
+	if reporting.authenticated {
 		bearerToken, _ := gauth_context.GetTokenFromContext(context)
-		return r.reporter.GetReportsById(id, bearerToken)
+		return reporting.reporter.GetReportsById(id, bearerToken)
 	}
-	return r.reporter.GetReportsById(id, "")
+	return reporting.reporter.GetReportsById(id, "")
 }
 
 func countStatusType(status string, reports []reporter.PlaybookExecutionReport) int {
