@@ -32,16 +32,11 @@ func Setup(app *gin.Engine) {
 		log.Fatal("could not configure oidc redirect config: ", err)
 	}
 	publicRoutes := app.Group("/")
-	if err != nil {
-		log.Fatal("AUTH_ENABLED flag could not be parsed properly should be 'true' | 'false'")
-	}
 	protectedRoutes := app.Group("/")
 	protectedRoutes.Use(auth.LoadAuthContext())
-	if authEnabled {
-		PublicOIDCRoutes(publicRoutes, authHandler)
-	} else {
-		PublicRoutes(publicRoutes)
-	}
+
+	PublicRoutes(publicRoutes, authEnabled, authHandler)
+
 	protectedRoutes.Use(auth.Middleware([]string{"soarca_admin"}))
 	DashboardRoutes(protectedRoutes, authHandler)
 
@@ -50,25 +45,19 @@ func Setup(app *gin.Engine) {
 	SettingsRoutes(protectedRoutes)
 }
 
-func PublicOIDCRoutes(app *gin.RouterGroup, authHandler *handlers.OIDCAuthHandler) {
+func PublicRoutes(app *gin.RouterGroup, authEnabled bool, oidcAuthHandler *handlers.OIDCAuthHandler) {
 	publicRoute := app.Group("/")
-	{
-		publicRoute.GET("/", authHandler.OIDCAuthPageHandler)
-		publicRoute.GET("/oidc-login", authHandler.OIDCLoginHandler)
-		publicRoute.GET("/oidc-callback", authHandler.OIDCCallBackHandler)
 
-	}
-	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
-}
-
-func PublicRoutes(app *gin.RouterGroup) {
-	authHandler := handlers.AuthHandler{}
-	publicRoute := app.Group("/")
-	{
+	if authEnabled {
+		publicRoute.GET("/", oidcAuthHandler.OIDCAuthPageHandler)
+		publicRoute.GET("/oidc-login", oidcAuthHandler.OIDCLoginHandler)
+		publicRoute.GET("/oidc-callback", oidcAuthHandler.OIDCCallBackHandler)
+	} else {
+		authHandler := handlers.AuthHandler{}
 		publicRoute.GET("/", authHandler.AuthPage)
 		publicRoute.POST("/login", authHandler.Login)
-
 	}
+
 	publicRoute.StaticFS("/public", public.GetPublicAssetsFileSystem())
 }
 
