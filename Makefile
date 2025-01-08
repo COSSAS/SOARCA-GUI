@@ -14,7 +14,8 @@ GOFLAGS = -ldflags "$(GOLDFLAGS)"
 # install
 #-----------------------------------------------------
 
-install-tools: install-go install-node
+install-tools: 
+	bash build/dependencies.sh
 	
 	
 
@@ -24,11 +25,11 @@ install-go:
 
 install-node:
 	wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+	. ~/.bashrc
 	nvm install 18
 
 install-dependencies:
 	go install github.com/a-h/templ/cmd/templ@v0.2.771
-	npm fund
 	npm install 
 
 #-----------------------------------------------------
@@ -105,7 +106,7 @@ run: docker
 test: build-templ
 	go test ./... -v
 
-.DEFAULT_GOAL := dev  
+.DEFAULT_GOAL := build  
 
 
 # release

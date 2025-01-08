@@ -8,6 +8,7 @@ plugins/*
 .vscode/*
 build/*
 !build/build.md
+!build/dependencies.sh
 bin/*
 swaggerdocs/*
 **.env
