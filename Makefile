@@ -1,4 +1,4 @@
-.PHONY: install-tools dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean test
+.PHONY: install-tools install-go install-node install-dependencies dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean test
 
 
 BINARY_NAME = soarca-gui
@@ -14,20 +14,22 @@ GOFLAGS = -ldflags "$(GOLDFLAGS)"
 # install
 #-----------------------------------------------------
 
-install-tools:
+install-tools: install-go install-node
+	
+	
+
+install-go:
 	wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
 	rm -rf /usr/local/go && tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz
-	echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
-	echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
-	echo 'export PATH=$PATH:$GOROOT/bin' >> ~/.bashrc
-	echo 'export GOPATH=$HOME/go' >> ~/.bashrc
-	echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
 
-	go install github.com/a-h/templ/cmd/templ@v0.2.771
-
+install-node:
 	wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 	nvm install 18
 
+install-dependencies:
+	go install github.com/a-h/templ/cmd/templ@v0.2.771
+	npm fund
+	npm install 
 
 #-----------------------------------------------------
 # DEV
