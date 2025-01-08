@@ -1,4 +1,4 @@
-.PHONY: dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean test
+.PHONY: install-tools dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean test
 
 
 BINARY_NAME = soarca-gui
@@ -9,6 +9,25 @@ BUILDTIME := $(shell  date '+%Y-%m-%dT%T%z')
 GOLDFLAGS += -X main.Version=$(VERSION)
 GOLDFLAGS += -X main.Buildtime=$(BUILDTIME)
 GOFLAGS = -ldflags "$(GOLDFLAGS)"
+
+#-----------------------------------------------------
+# install
+#-----------------------------------------------------
+
+install-tools:
+	wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
+	rm -rf /usr/local/go && tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz
+	echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+	echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
+	echo 'export PATH=$PATH:$GOROOT/bin' >> ~/.bashrc
+	echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+	echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
+
+	go install github.com/a-h/templ/cmd/templ@v0.2.771
+
+	wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+	nvm install 18
+
 
 #-----------------------------------------------------
 # DEV
