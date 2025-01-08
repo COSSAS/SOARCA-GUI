@@ -48,7 +48,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA/SOARCA-GUI
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -106,7 +106,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA/SOARCA
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
 
       - name: Build and sbom swagger
         run: |
