@@ -23,5 +23,5 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 nvm install 18
 
 # Install dependencies for project
-go install github.com/a-h/templ/cmd/templ@v0.2.771
+go install github.com/a-h/templ/cmd/templ@latest
 npm install
