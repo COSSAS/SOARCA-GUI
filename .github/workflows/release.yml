@@ -108,14 +108,13 @@ jobs:
       - name: Make repo safe
         run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
 
-      - name: Build and sbom swagger
+      - name: Build and sbom
         run: |
-          go install github.com/swaggo/swag/cmd/swag@latest
           go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
           make sbom
           zip -r bin/sbom.zip bin
 
-      - name: Release soarca binary
+      - name: Release soarca gui binary
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
