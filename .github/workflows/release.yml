@@ -108,6 +108,12 @@ jobs:
       - name: Make repo safe
         run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
 
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+
       - name: Build and sbom
         run: |
           go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
