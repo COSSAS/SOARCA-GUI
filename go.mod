@@ -6,7 +6,7 @@ toolchain go1.23.1
 
 require (
 	github.com/COSSAS/gauth v1.0.2
-	github.com/a-h/templ v0.2.771
+	github.com/a-h/templ v0.3.819
 	github.com/gin-gonic/gin v1.10.0
 	github.com/stretchr/testify v1.9.0
 )
