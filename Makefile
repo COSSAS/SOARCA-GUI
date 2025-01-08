@@ -102,7 +102,7 @@ compile: build-templ build-tailwind
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/${BINARY_NAME}-${VERSION}-darwin-arm64 $(GOFLAGS) server/main.go
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-windows-amd64 $(GOFLAGS) server/main.go
 
-sbom: compile
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 cyclonedx-gomod app -main cmd/soarca -json -licenses -output bin/${BINARY_NAME}-${VERSION}-linux-amd64.bom.json
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 cyclonedx-gomod app -main cmd/soarca -json -licenses -output bin/${BINARY_NAME}-${VERSION}-darwin-amd64.bom.json
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 cyclonedx-gomod app -main cmd/soarca -json -licenses -output bin/${BINARY_NAME}-${VERSION}-windows-amd64.bom.json
+sbom: build-templ compile
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-linux-amd64.bom.json
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-darwin-amd64.bom.json
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-windows-amd64.bom.json
