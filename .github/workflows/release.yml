@@ -111,6 +111,7 @@ jobs:
       - name: Build and sbom
         run: |
           go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+          go install github.com/a-h/templ/cmd/templ@latest 
           make sbom
           zip -r bin/sbom.zip bin
 
