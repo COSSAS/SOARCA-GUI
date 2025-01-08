@@ -19,4 +19,5 @@ nvm install 18
 
 # Install dependencies for project
 go install github.com/a-h/templ/cmd/templ@latest
+go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
 npm install
