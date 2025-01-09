@@ -1,0 +1,154 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+\-?*'
+
+jobs:
+  compile:
+    name: Build binary
+    runs-on: ubuntu-latest
+    container:
+      image: golangci/golangci-lint:latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Make repo safe
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+      - name: Install Templ 
+        run:  go install github.com/a-h/templ/cmd/templ@latest 
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      
+      - name: Build with make
+        run: make compile
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.sha }}
+          path: bin/*
+          retention-days: 1
+
+  
+  docker-build:
+    needs: compile
+    name: Build docker image and push it to docker hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Make repo safe
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Download bin
+        uses: actions/download-artifact@v4
+        with: 
+          pattern: ${{ github.sha }}
+
+      - name: Move files to bin folder and make executable
+        run: |
+          mkdir -p bin 
+          mv ${{ github.sha }}/* ./bin/
+          chmod +x bin/soarca-gui-*
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Get version
+        run: |
+          export VERSION=$(git describe --tags --dirty)
+          echo "describe_version=$(git describe --tags --dirty)" >> "$GITHUB_ENV"
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          build-args: |
+            VERSION=${{ env.describe_version }}
+          push: true
+          tags: cossas/soarca-gui:${{ env.describe_version }},cossas/soarca-gui:latest
+
+
+  release-binary:
+    needs: compile
+    name: Create release artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23.x'
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Make repo safe
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+
+      - name: Build and sbom
+        run: |
+          go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+          go install github.com/a-h/templ/cmd/templ@latest 
+          make sbom
+          zip -r bin/sbom.zip bin
+
+      - name: Release soarca gui binary
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+          workdir: server
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+
+      - name: Upload release sbom
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs');
+            const tag = context.ref.replace("refs/tags/", "");
+            // Get release for this tag
+            const release = await github.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag
+            });
+            // Upload the release asset
+            await github.repos.uploadReleaseAsset({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.data.id,
+              name: "sbom.zip",
+              data: await fs.readFileSync("bin/sbom.zip")
+            });

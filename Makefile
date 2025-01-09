@@ -1,4 +1,4 @@
-.PHONY: dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean test
+.PHONY: install-tools dev-server dev-tailwind dev-templ dev build-server build-tailwind build-templ build launch deploy clean test
 
 
 BINARY_NAME = soarca-gui
@@ -9,6 +9,14 @@ BUILDTIME := $(shell  date '+%Y-%m-%dT%T%z')
 GOLDFLAGS += -X main.Version=$(VERSION)
 GOLDFLAGS += -X main.Buildtime=$(BUILDTIME)
 GOFLAGS = -ldflags "$(GOLDFLAGS)"
+
+#-----------------------------------------------------
+# install
+#-----------------------------------------------------
+
+install-tools: 
+	bash build/dependencies.sh
+	
 
 #-----------------------------------------------------
 # DEV
@@ -57,9 +65,8 @@ build:  build-templ build-tailwind build-server
 
 build-server:
 	echo "Compiling for every OS and Platform"
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-linux-amd64 $(GOFLAGS) ./server/main.go
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/${BINARY_NAME}-${VERSION}-darwin-arm64 $(GOFLAGS) ./server/main.go
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-windows-amd64 $(GOFLAGS) ./server/main.go
+	CGO_ENABLED=0 go build -o build/${BINARY_NAME} $(GOFLAGS) ./server/main.go
+
 
 
 docker: 
@@ -85,4 +92,17 @@ run: docker
 test: build-templ
 	go test ./... -v
 
-.DEFAULT_GOAL := dev  
+.DEFAULT_GOAL := build  
+
+
+# release
+
+compile: build-templ build-tailwind
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-linux-amd64 $(GOFLAGS) server/main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/${BINARY_NAME}-${VERSION}-darwin-arm64 $(GOFLAGS) server/main.go
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-windows-amd64 $(GOFLAGS) server/main.go
+
+sbom: build-templ compile
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-linux-amd64.bom.json
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-darwin-amd64.bom.json
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-windows-amd64.bom.json
