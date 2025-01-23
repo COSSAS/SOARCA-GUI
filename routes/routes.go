@@ -31,20 +31,16 @@ func Setup(app *gin.Engine) {
 	var authHandler *handlers.OIDCAuthHandler
 	var err error
 
+	publicRoutes := app.Group("/")
+	protectedRoutes := app.Group("/")
+
 	if authEnabled {
 		auth, err = gauth.New(gauth.OIDCRedirectConfig())
 		if err != nil {
 			log.Fatal("could not configure oidc redirect config: ", err)
 		}
 		authHandler = handlers.NewOIDCAuthHandler(auth)
-	}
-
-	publicRoutes := app.Group("/")
-	protectedRoutes := app.Group("/")
-
-	PublicRoutes(publicRoutes, authEnabled, authHandler)
-
-	if authEnabled {
+		PublicRoutes(publicRoutes, authEnabled, authHandler)
 		protectedRoutes.Use(auth.LoadAuthContext())
 		protectedRoutes.Use(auth.Middleware([]string{requiredGroupPermission}))
 	}
