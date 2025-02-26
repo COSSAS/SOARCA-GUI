@@ -3,7 +3,7 @@ package reporter
 import (
 	"time"
 
-	"soarca-gui/models/cacao"
+	"soarca-gui/pkg/models/cacao"
 )
 
 type PlaybookExecutionReport struct {

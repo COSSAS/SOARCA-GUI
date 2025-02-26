@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"soarca-gui/utils"
+	"soarca-gui/pkg/utils"
 
 	authviews "soarca-gui/views/auth"
 

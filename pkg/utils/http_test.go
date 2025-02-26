@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"soarca-gui/utils"
+	"soarca-gui/pkg/utils"
 )
 
 type RequestBody struct {

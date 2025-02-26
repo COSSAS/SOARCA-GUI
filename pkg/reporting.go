@@ -3,12 +3,12 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"soarca-gui/backend"
-	"soarca-gui/models/reporter"
-	"soarca-gui/utils"
-	"soarca-gui/views/components/cards"
-	"soarca-gui/views/components/table"
-	reporting_dashboard "soarca-gui/views/dashboards/reporting"
+	"soarca-gui/pkg/backend"
+	"soarca-gui/pkg/models/reporter"
+	"soarca-gui/pkg/utils"
+	"soarca-gui/pkg/views/components/cards"
+	"soarca-gui/pkg/views/components/table"
+	reporting_dashboard "soarca-gui/pkg/views/dashboards/reporting"
 
 	gauth_context "github.com/COSSAS/gauth/context"
 	"github.com/gin-gonic/gin"

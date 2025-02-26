@@ -3,10 +3,10 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"soarca-gui/utils"
+	"soarca-gui/pkg/utils"
 	"strings"
 
-	authviews "soarca-gui/views/auth"
+	authviews "soarca-gui/pkg/views/auth"
 
 	"github.com/gin-gonic/gin"
 )

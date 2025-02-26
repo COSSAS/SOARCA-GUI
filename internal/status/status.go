@@ -2,8 +2,8 @@ package status
 
 import (
 	"runtime"
-	"soarca-gui/models/status"
-	"soarca-gui/utils"
+	"soarca-gui/pkg/models/status"
+	"soarca-gui/pkg/utils"
 	"time"
 )
 

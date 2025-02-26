@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"net/http"
-	"soarca-gui/utils"
-	"soarca-gui/views/dashboards/home"
-	"soarca-gui/views/layouts"
+	"soarca-gui/pkg/utils"
+	"soarca-gui/pkg/views/dashboards/home"
+	"soarca-gui/pkg/views/layouts"
 
 	auth_context "github.com/COSSAS/gauth/context"
 	"github.com/gin-gonic/gin"

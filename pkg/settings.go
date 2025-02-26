@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"soarca-gui/utils"
-	"soarca-gui/views/dashboards/settings"
+	"soarca-gui/pkg/utils"
+	"soarca-gui/pkg/views/dashboards/settings"
 
 	"github.com/gin-gonic/gin"
 )

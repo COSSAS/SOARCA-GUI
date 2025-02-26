@@ -1,6 +1,6 @@
 package backend
 
-import "soarca-gui/models/reporter"
+import "soarca-gui/pkg/models/reporter"
 
 type Report interface {
 	GetReports(bearerToken string) ([]reporter.PlaybookExecutionReport, error)
