@@ -3,7 +3,7 @@ package soarca
 import (
 	"fmt"
 	"net/http"
-	"soarca-gui/models/reporter"
+	"soarca-gui/pkg/models/reporter"
 )
 
 const (

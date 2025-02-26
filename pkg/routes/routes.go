@@ -3,11 +3,11 @@ package routes
 import (
 	"log"
 	"net/http"
-	"soarca-gui/backend"
-	"soarca-gui/backend/soarca"
-	"soarca-gui/handlers"
-	"soarca-gui/public"
-	"soarca-gui/utils"
+	"soarca-gui/pkg/backend"
+	"soarca-gui/pkg/backend/soarca"
+	"soarca-gui/pkg/handlers"
+	"soarca-gui/pkg/public"
+	"soarca-gui/pkg/utils"
 	"strconv"
 
 	"github.com/COSSAS/gauth"

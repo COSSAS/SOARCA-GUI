@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"soarca-gui/internal/status"
-	"soarca-gui/routes"
-	"soarca-gui/utils"
+	"soarca-gui/pkg/routes"
+	"soarca-gui/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"

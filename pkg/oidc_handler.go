@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"soarca-gui/pkg/utils"
 
-	authviews "soarca-gui/views/auth"
+	authviews "soarca-gui/pkg/views/auth"
 
 	"github.com/COSSAS/gauth"
 	"github.com/gin-gonic/gin"
