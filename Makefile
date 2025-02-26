@@ -29,7 +29,7 @@ dev-server:
 	# run air to detect any go file changes to re-build and re-run the server.
 
 	@go run github.com/air-verse/air@v1.52.3 \
-	--build.cmd "templ generate && go build -ldflags \"-X main.Version=$(VERSION)\"  --tags dev -o tmp/bin/main ./server/" --build.bin "tmp/bin/main" --build.delay "100" \
+	--build.cmd "templ generate && go build -ldflags \"-X main.Version=$(VERSION)\"  --tags dev -o tmp/bin/main ./cmd/soarca-gui/" --build.bin "tmp/bin/main" --build.delay "100" \
 	--build.exclude_dir "node_modules" \
 	--build.exclude_regex ".*_templ.go" \
 	--build.include_ext "go,templ" \
@@ -65,7 +65,7 @@ build:  build-templ build-tailwind build-server
 
 build-server:
 	echo "Compiling for every OS and Platform"
-	CGO_ENABLED=0 go build -o build/${BINARY_NAME} $(GOFLAGS) ./server/main.go
+	CGO_ENABLED=0 go build -o build/${BINARY_NAME} $(GOFLAGS) ./cmd/soarca-gui/main.go
 
 
 
@@ -76,7 +76,7 @@ build-templ:
 	@templ generate
 
 build-tailwind:
-	@npx tailwindcss -m -i ./views/assets/app.css -o ./public/public/styles.css $(ARGS)
+	@npx tailwindcss -m -i ./pkg/views/assets/app.css -o ./pkg/public/public/styles.css $(ARGS)
 
 lint: build-templ
 	GOFLAGS=-buildvcs=false golangci-lint run --timeout 5m0s -v
@@ -98,11 +98,11 @@ test: build-templ
 # release
 
 compile: build-templ build-tailwind
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-linux-amd64 $(GOFLAGS) server/main.go
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/${BINARY_NAME}-${VERSION}-darwin-arm64 $(GOFLAGS) server/main.go
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-windows-amd64 $(GOFLAGS) server/main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-linux-amd64 $(GOFLAGS) cmd/soarca-gui/main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/${BINARY_NAME}-${VERSION}-darwin-arm64 $(GOFLAGS) cmd/soarca-gui/main.go
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/${BINARY_NAME}-${VERSION}-windows-amd64 $(GOFLAGS) cmd/soarca-gui/main.go
 
 sbom: build-templ compile
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-linux-amd64.bom.json
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-darwin-amd64.bom.json
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 cyclonedx-gomod app -main server -json -licenses -output bin/${BINARY_NAME}-${VERSION}-windows-amd64.bom.json
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 cyclonedx-gomod app -main cmd/soarca-gui -json -licenses -output bin/${BINARY_NAME}-${VERSION}-linux-amd64.bom.json
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 cyclonedx-gomod app -main cmd/soarca-gui -json -licenses -output bin/${BINARY_NAME}-${VERSION}-darwin-amd64.bom.json
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 cyclonedx-gomod app -main cmd/soarca-gui -json -licenses -output bin/${BINARY_NAME}-${VERSION}-windows-amd64.bom.json
