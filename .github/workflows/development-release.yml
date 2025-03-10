@@ -28,7 +28,7 @@ jobs:
       - run: npm ci
       
       - name: Build with make
-        run: make build
+        run: make compile
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
