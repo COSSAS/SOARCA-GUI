@@ -15,6 +15,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const requiredGroupPermission = "soarca_admin"
+
 func Setup(app *gin.Engine) {
 	app.GET("/404-page", handlers.ErrorPage)
 	app.NoRoute(func(ctx *gin.Context) {
@@ -22,24 +24,28 @@ func Setup(app *gin.Engine) {
 	})
 
 	authEnabled, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
-
 	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
 	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
 
-	auth, err := gauth.New(gauth.OIDCRedirectConfig())
-	authHandler := handlers.NewOIDCAuthHandler(auth)
-	if err != nil {
-		log.Fatal("could not configure oidc redirect config: ", err)
-	}
+	var auth *gauth.Authenticator
+	var authHandler *handlers.OIDCAuthHandler
+	var err error
+
 	publicRoutes := app.Group("/")
 	protectedRoutes := app.Group("/")
-	protectedRoutes.Use(auth.LoadAuthContext())
+
+	if authEnabled {
+		auth, err = gauth.New(gauth.OIDCRedirectConfig())
+		if err != nil {
+			log.Fatal("could not configure oidc redirect config: ", err)
+		}
+		authHandler = handlers.NewOIDCAuthHandler(auth)
+		protectedRoutes.Use(auth.LoadAuthContext())
+		protectedRoutes.Use(auth.Middleware([]string{requiredGroupPermission}))
+	}
 
 	PublicRoutes(publicRoutes, authEnabled, authHandler)
-
-	protectedRoutes.Use(auth.Middleware([]string{"soarca_admin"}))
 	DashboardRoutes(protectedRoutes, authHandler)
-
 	ReportingRoutes(reporter, protectedRoutes, authEnabled)
 	StatusRoutes(status, protectedRoutes, authEnabled)
 	SettingsRoutes(protectedRoutes)
