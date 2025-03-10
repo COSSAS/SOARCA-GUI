@@ -40,11 +40,11 @@ func Setup(app *gin.Engine) {
 			log.Fatal("could not configure oidc redirect config: ", err)
 		}
 		authHandler = handlers.NewOIDCAuthHandler(auth)
-		PublicRoutes(publicRoutes, authEnabled, authHandler)
 		protectedRoutes.Use(auth.LoadAuthContext())
 		protectedRoutes.Use(auth.Middleware([]string{requiredGroupPermission}))
 	}
 
+	PublicRoutes(publicRoutes, authEnabled, authHandler)
 	DashboardRoutes(protectedRoutes, authHandler)
 	ReportingRoutes(reporter, protectedRoutes, authEnabled)
 	StatusRoutes(status, protectedRoutes, authEnabled)
