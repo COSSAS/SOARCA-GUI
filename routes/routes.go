@@ -26,6 +26,7 @@ func Setup(app *gin.Engine) {
 	authEnabled, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
 	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
 	status := soarca.NewStatus(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)
+	manual := soarca.NewManual(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{})
 
 	var auth *gauth.Authenticator
 	var authHandler *handlers.OIDCAuthHandler
@@ -48,6 +49,7 @@ func Setup(app *gin.Engine) {
 	DashboardRoutes(protectedRoutes, authHandler)
 	ReportingRoutes(reporter, protectedRoutes, authEnabled)
 	StatusRoutes(status, protectedRoutes, authEnabled)
+	ManualRoutes(manual, protectedRoutes, authEnabled)
 	SettingsRoutes(protectedRoutes)
 }
 
@@ -72,8 +74,8 @@ func DashboardRoutes(app *gin.RouterGroup, authHandler *handlers.OIDCAuthHandler
 	app.GET("logout", authHandler.OIDCLogoutHandler)
 }
 
-func ReportingRoutes(backend backend.Report, app *gin.RouterGroup, authentication bool) {
-	reportingHandlers := handlers.NewReportingHandler(backend, authentication)
+func ReportingRoutes(reporter backend.Report, app *gin.RouterGroup, authentication bool) {
+	reportingHandlers := handlers.NewReportingHandler(reporter, authentication)
 
 	reportingRoute := app.Group("/reporting")
 	{
@@ -97,5 +99,15 @@ func SettingsRoutes(app *gin.RouterGroup) {
 	reportingRoute := app.Group("/settings")
 	{
 		reportingRoute.GET("/", handlers.SettingsDashboard)
+	}
+}
+
+func ManualRoutes(manual backend.Manual, app *gin.RouterGroup, authentication bool) {
+	manualHandler := handlers.NewManualHandler(manual, authentication)
+
+	manualRoutes := app.Group(("/manual"))
+	{
+		manualRoutes.GET("/", manualHandler.ManualActionsHandler)
+		manualRoutes.POST("/continue", manualHandler.ManualContinueHandler)
 	}
 }
