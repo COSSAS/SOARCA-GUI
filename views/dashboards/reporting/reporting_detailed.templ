@@ -19,7 +19,7 @@ templ ReportingDetailedView(executionReport reporter.PlaybookExecutionReport) {
 		@headersection()
 		@section(executionReport) {
 			@playbookInfoCard(executionReport)
-			@actionStepInfoCards(executionReport.StepResults)
+			@actionStepInfoCards(executionReport.StepResults, executionReport.PlaybookId)
 		}
 	}
 }
@@ -65,7 +65,7 @@ templ section(executionReport reporter.PlaybookExecutionReport) {
 
 templ playbookInfoCard(executionReport reporter.PlaybookExecutionReport) {
 	@statusIndicator(executionReport.Status)
-	<span class="text-md font-bold text-gray-800 dark:text-c-dark-slate-text mb-8">{ executionReport.Name }</span>
+    <span class="text-md font-bold text-gray-800 dark:text-c-dark-slate-text mb-8">{ executionReport.Name }</span>
 	<hr class="mt-2"/>
 	<div class="mb-6">
 		<table class="table-auto text-sm text-gray-600">
@@ -209,7 +209,7 @@ templ actionStepInfoCard(stepResult reporter.StepExecutionReport) {
 	</div>
 }
 
-templ actionStepInfoCards(stepResults map[string]reporter.StepExecutionReport) {
+templ actionStepInfoCards(stepResults map[string]reporter.StepExecutionReport, playbookID string) {
 	@cards.Card(utils.Class("bg-blue-200 p-4 rounded-lg")) {
 		<span class="inline-flex items-center">
 			@icons.NewIcon("zap").SetSize("12").InsertIcon("text-blue-600 ")
@@ -217,11 +217,232 @@ templ actionStepInfoCards(stepResults map[string]reporter.StepExecutionReport) {
 				Found: { fmt.Sprint(len(stepResults)) } actions 
 			</p>
 		</span>
-		@viewSelector(timelineView(stepResults), detailedView(stepResults))
+		@viewSelector(timelineView(stepResults, playbookID), detailedView(stepResults))
 	}
 }
 
-templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
+templ manualExecutionView(stepResult reporter.StepExecutionReport, playbookID string) {
+    if (stepResult.Status == "ongoing") {
+        <form id="manualExecutionForm" class="mb-5 ms-6">
+            <input type="hidden" name="type" value="manual-step-response" />
+            <input type="hidden" name="execution_id" value={stepResult.ExecutionId} />
+            <input type="hidden" name="playbook_id" value={playbookID} />
+            <input type="hidden" name="step_id" value={stepResult.StepId} />
+            
+            <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-white dark:bg-c-dark-slate-card ring-8 ring-white dark:ring-c-dark-slate-card">
+                @icons.NewIcon("info").SetSize("20").InsertIcon("text-orange-500 dark:text-white")
+            </span>
+            <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">This step requires manual approval</h3>
+            
+            if len(stepResult.Variables) > 0 {
+                for name, variable := range stepResult.Variables {
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{ name }</label>
+                        <input type="hidden" name={"response_out_args." + name + ".type"} value={variable.Type} />
+                        <input type="hidden" name={"response_out_args." + name + ".name"} value={name} />
+                        if variable.Type == "boolean" {
+                            <select
+                                name={"response_out_args." + name + ".value"}
+                                class="w-full mt-2 mb-4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                required
+                            >
+                                <option value="">Select an option</option>
+                                <option value="success">True</option>
+                                <option value="failure">False</option>
+                            </select>
+                        } else if variable.Type == "int" {
+                            <input
+                                type="number"
+                                name={"response_out_args." + name + ".value"}
+                                class="w-full mt-2 mb-4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                required
+                            />
+                        } else {
+                            <input
+                                type="text"
+                                name={"response_out_args." + name + ".value"}
+                                class="w-full mt-2 mb-4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                required
+                            />
+                        }
+                    </div>
+                }
+            }
+
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Action</label>
+                <select
+                    name="response_status"
+                    class="w-full mt-2 mb-4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    required
+                >
+                    <option value="">Select an option</option>
+                    <option value="success">Approve (Continue)</option>
+                    <option value="failure">Reject (Stop)</option>
+                </select>
+            </div>
+            
+            <div class="flex space-x-2">
+                <button 
+                    type="submit"
+                    class="px-4 py-2 text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 dark:bg-blue-800"
+                >
+                    Submit
+                </button>
+            </div>
+        </form>
+
+        <script>
+            document.getElementById('manualExecutionForm').addEventListener('submit', function(event) {
+				event.preventDefault(); // Voorkom standaard form submit
+
+				function transformFormDataToJson(formData) {
+					const result = {
+						type: formData.get('type'),
+						execution_id: formData.get('execution_id'),
+						playbook_id: formData.get('playbook_id'),
+						step_id: formData.get('step_id'),
+						response_status: formData.get('response_status'),
+						response_out_args: {}
+					};
+
+					// Find all keys that start with 'response_out_args.'
+					const outArgKeys = Array.from(formData.keys()).filter(key => 
+						key.startsWith('response_out_args.')
+					);
+
+					// Group keys by their argument name (the part after response_out_args. and before next dot)
+					const args = {};
+					outArgKeys.forEach(key => {
+						const parts = key.split('.');
+						if (parts.length >= 3) {
+							const argName = parts[1];
+							const property = parts.slice(2).join('.');
+							
+							if (!args[argName]) {
+								args[argName] = {};
+							}
+							
+							// Handle nested properties if needed
+							let current = args[argName];
+							const propParts = property.split('.');
+							
+							for (let i = 0; i < propParts.length - 1; i++) {
+								const part = propParts[i];
+								if (!current[part]) {
+									current[part] = {};
+								}
+								current = current[part];
+							}
+							
+							current[propParts[propParts.length - 1]] = formData.get(key);
+						}
+					});
+
+					// Assign the processed args to response_out_args
+					result.response_out_args = args;
+
+					return result;
+				}
+
+				const formData = new FormData(event.target);
+				const desiredJson = transformFormDataToJson(formData);
+
+				// Verstuur via fetch
+				fetch('/manual/continue', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(desiredJson),
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					// Verwerk de response van de server
+					console.log('Success:', data);
+					window.location.reload();
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+					alert('Er is een fout opgetreden: ' + error.message);
+				});
+			});
+		</script>
+    } else {
+		<li class="mb-5 ms-6">
+			<span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-white dark:bg-c-dark-slate-card ring-8 ring-white dark:ring-c-dark-slate-card">
+				if (stepResult.Status == "successfully_executed") {
+					@indicators.ReportingStatusTagNoText(stepResult.Status)
+				} else if (stepResult.Status == "failure") {
+					@indicators.ReportingStatusTagNoText(stepResult.Status)
+				} else if ((stepResult.Status) == "server_side_error") {
+					@indicators.ReportingStatusTagNoText(stepResult.Status)
+				}
+			</span>
+
+			if (stepResult.Status == "successfully_executed") {
+				<h3 class="flex items-center text-lg font-semibold text-gray-900 dark:text-white">Success</h3>
+
+				<div class="block flex flex-col mt-1 space-y-2">
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Status:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.StatusText }</span>
+					</div>
+				</div>
+
+			} else if ((stepResult.Status) == "server_side_error") {
+				<h3 class="flex items-center text-lg font-semibold text-gray-900 dark:text-white">Server Side Error</h3>
+
+				<div class="block flex flex-col mt-1 space-y-2">
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Name:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.Name }</span>
+					</div>
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Description:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.Description }</span>
+					</div>
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Error information:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.StatusText }</span>
+					</div>
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Playbook ID:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ playbookID }</span>
+					</div>
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Execution ID:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.ExecutionId }</span>
+					</div>
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Step ID:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.StepId }</span>
+					</div>
+				</div>
+			} else {
+				<div class="block flex flex-col mt-1 space-y-2">
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Information:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.StatusText }</span>
+					</div>
+					<div class="flex flex-col">
+						<span class="text-sm font-bold leading-none text-gray-400 dark:text-gray-500">Step ID:</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{ stepResult.StepId }</span>
+					</div>
+				</div>
+			}
+		</li>
+	}
+}
+
+
+
+templ timelineView(stepResults map[string]reporter.StepExecutionReport, playbookID string) {
 	<div class="relative m-4">
 		<ol class="border-s border-gray-200  dark:border-gray-700">
 			for _, stepResult := range stepResults {
@@ -233,6 +454,10 @@ templ timelineView(stepResults map[string]reporter.StepExecutionReport) {
 					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Started: { stepResult.Started.Format(time.ANSIC) }</time>
 					<time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Duration: {  formatDuration(stepResult.Started, stepResult.Ended) }</time>
 				</li>
+
+				if (!stepResult.AutomatedExecution) {
+					@manualExecutionView(stepResult, playbookID)
+				}
 			}
 		</ol>
 	</div>
