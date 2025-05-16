@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -46,7 +47,10 @@ func fetch(ctx context.Context, client *http.Client, url string, modifyRequest f
 	if err != nil {
 		return nil, fmt.Errorf("failed to make GET request: %w", err)
 	}
-	defer response.Body.Close()
+	defer func() {
+		err := response.Body.Close()
+		fmt.Println(err)
+	}()
 
 	if response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("unexpected status code: %d", response.StatusCode)
@@ -88,10 +92,16 @@ func postJsonWithContext(ctx context.Context, client *http.Client, url string, p
 	if err != nil {
 		return fmt.Errorf("failed to make POST request: %w", err)
 	}
-	defer response.Body.Close()
+	defer func() {
+		err := response.Body.Close()
+		fmt.Println(err)
+	}()
 
 	if response.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(response.Body)
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			return errors.New("failed to read response body with non 200 status code")
+		}
 		return fmt.Errorf("unexpected status code: %d, body: %s", response.StatusCode, string(body))
 	}
 
