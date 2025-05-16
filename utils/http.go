@@ -22,14 +22,17 @@ func MakeJsonRequest[T any](url string, method string, requestBody interface{}, 
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 
-	resp, err := client.Do(req)
+	response, err := client.Do(req)
 	if err != nil {
 		return responseStruct, fmt.Errorf("failed to send request: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		err := response.Body.Close()
+		fmt.Println(err)
+	}()
 
-	body, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return responseStruct, fmt.Errorf("failed to read response body: %w", err)
 	}
