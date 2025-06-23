@@ -18,7 +18,7 @@ jobs:
       - name: Make repo safe
         run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
       - name: Install Templ 
-        run:  go install github.com/a-h/templ/cmd/templ@0.3.819
+        run:  go install github.com/a-h/templ/cmd/templ@v0.3.819
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -40,7 +40,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install Templ 
-        run:  go install github.com/a-h/templ/cmd/templ@0.3.819
+        run:  go install github.com/a-h/templ/cmd/templ@v0.3.819
 
       - name: lint
         run: |
@@ -64,7 +64,7 @@ jobs:
       - name: Make repo safe
         run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
       - name: Install Templ 
-        run:  go install github.com/a-h/templ/cmd/templ@0.3.819
+        run:  go install github.com/a-h/templ/cmd/templ@v0.3.819
         timeout-minutes: 12
       - name: Run tests
         run: |
