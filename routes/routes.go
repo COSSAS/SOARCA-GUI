@@ -18,10 +18,7 @@ import (
 const requiredGroupPermission = "soarca_admin"
 
 func Setup(app *gin.Engine) {
-	app.GET("/404-page", handlers.ErrorPage)
-	app.NoRoute(func(ctx *gin.Context) {
-		ctx.Redirect(http.StatusTemporaryRedirect, "/404-page")
-	})
+	app.NoRoute(handlers.NotFoundPage)
 
 	authEnabled, _ := strconv.ParseBool(utils.GetEnv("AUTH_ENABLED", "false"))
 	reporter := soarca.NewReport(utils.GetEnv("SOARCA_URI", "http://localhost:8080"), &http.Client{}, authEnabled)

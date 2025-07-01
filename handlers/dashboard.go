@@ -10,9 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ErrorPage(context *gin.Context) {
-	render := utils.NewTempl(context, http.StatusOK, layouts.Error404())
-	context.Render(http.StatusOK, render)
+func NotFoundPage(context *gin.Context) {
+	render := utils.NewTempl(context, http.StatusNotFound, layouts.Error404())
+	context.Render(http.StatusNotFound, render)
 }
 
 func HomeDashboard(context *gin.Context) {
