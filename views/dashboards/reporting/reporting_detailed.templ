@@ -244,7 +244,6 @@ templ manualExecutionView(stepResult reporter.StepExecutionReport, playbookID st
                             <select
                                 name={"response_out_args." + name + ".value"}
                                 class="w-full mt-2 mb-4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                                required
                             >
                                 <option value="">Select an option</option>
                                 <option value="success">True</option>
@@ -255,14 +254,12 @@ templ manualExecutionView(stepResult reporter.StepExecutionReport, playbookID st
                                 type="number"
                                 name={"response_out_args." + name + ".value"}
                                 class="w-full mt-2 mb-4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                                required
                             />
                         } else {
                             <input
                                 type="text"
                                 name={"response_out_args." + name + ".value"}
                                 class="w-full mt-2 mb-4 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                                required
                             />
                         }
                     </div>
