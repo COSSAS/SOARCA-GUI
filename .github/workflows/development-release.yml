@@ -1,0 +1,94 @@
+name: CD-Development
+
+on:
+  push:
+    branches:
+      - development
+  workflow_dispatch: {} # Allow manual triggering
+
+jobs:
+  build:
+    name: Build with npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Make repo safe
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Cache node modules
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with npm
+        run: npm run build
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ github.sha }}
+          path: dist/*
+          retention-days: 1
+
+  docker-build:
+    needs: build
+    name: Build docker image and push it to docker hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Make repo safe
+        run: git config --global --add safe.directory /__w/SOARCA/SOARCA-GUI
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Download dist
+        uses: actions/download-artifact@v7
+        with:
+          pattern: ${{ github.sha }}
+
+      - name: Move files to bin folder and make executable
+        run: |
+          mkdir -p bin 
+          mv ${{ github.sha }}/* ./bin/
+          chmod +x bin/soarca-gui-*
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Get version
+        run: |
+          export VERSION=$(git describe --tags --dirty)
+          echo "describe_version=$(git describe --tags --dirty)" >> "$GITHUB_ENV"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-args: |
+            VERSION=${{ env.describe_version }}
+          push: false
+          tags: cossas/soarca-gui:${{ env.describe_version }},cossas/soarca-gui:development

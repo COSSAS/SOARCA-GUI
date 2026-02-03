@@ -1,0 +1,185 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--a0d1e2f3-047b-5c5d-0f51-e2f3a0d1e2f3",
+  "name": "Brute Force Attack Mitigation",
+  "description": "Mitigate active brute force attack by blocking source IPs and isolating affected systems",
+  "playbook_types": ["mitigation"],
+  "playbook_activities": [
+    "restrict-access",
+    "eliminate-risk",
+    "disconnect-system"
+  ],
+  "playbook_processing_summary": {
+    "manual_playbook": false,
+    "external_playbooks": false,
+    "parallel_processing": true,
+    "if_logic": false,
+    "while_logic": false,
+    "switch_logic": false,
+    "temporal_logic": true,
+    "data_markings": false,
+    "digital_signatures": false
+  },
+  "created_by": "identity--00000000-0000-0000-0000-000000000003",
+  "created": "2025-01-23T10:45:00.000Z",
+  "modified": "2025-01-23T10:45:00.000Z",
+  "valid_from": "2025-01-23T10:45:00.000Z",
+  "priority": 90,
+  "severity": 85,
+  "impact": 70,
+  "playbook_variables": {
+    "__source_ip__": {
+      "type": "ipv4-addr",
+      "description": "Attacker IP address to block",
+      "external": true
+    },
+    "__target_service__": {
+      "type": "string",
+      "description": "Service being attacked (e.g., SSH, RDP, HTTP)",
+      "external": true
+    },
+    "__incident_id__": {
+      "type": "string",
+      "description": "Incident tracking identifier",
+      "external": true
+    }
+  },
+  "workflow_start": "start--b1e2f3a0-15c8-6d6e-1062-f3a0b1e2f3a0",
+  "workflow": {
+    "start--b1e2f3a0-15c8-6d6e-1062-f3a0b1e2f3a0": {
+      "type": "start",
+      "name": "Start Mitigation Response",
+      "on_completion": "parallel--c2f3a0b1-26d9-7e7f-2173-a0b1c2f3a0b1"
+    },
+    "parallel--c2f3a0b1-26d9-7e7f-2173-a0b1c2f3a0b1": {
+      "type": "parallel",
+      "name": "Execute Parallel Mitigation Actions",
+      "description": "Simultaneously block attacker and isolate targets",
+      "next_steps": [
+        "action--d3a0b1c2-37ea-8f80-3284-b1c2d3a0b1c2",
+        "action--e4b1c2d3-48fb-9091-4395-c2d3e4b1c2d3"
+      ],
+      "on_completion": "action--f5c2d3e4-59ac-a1a2-54a6-d3e4f5c2d3e4"
+    },
+    "action--d3a0b1c2-37ea-8f80-3284-b1c2d3a0b1c2": {
+      "type": "action",
+      "name": "Block Source IP at Firewall",
+      "description": "Add firewall rule to block all traffic from attacker IP",
+      "playbook_activity": "restrict-access",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "POST /api/firewall/block HTTP/1.1",
+          "playbook_activity": "restrict-access"
+        }
+      ],
+      "agent": "security-category--d3a0b1c2-37ea-8f80-3284-b1c2d3a0b1c2",
+      "targets": ["security-category--e4b1c2d3-48fb-9091-4395-c2d3e4b1c2d3"],
+      "on_completion": "end--f5c2d3e4-59ac-a1a2-54a6-d3e4f5c2d3e4"
+    },
+    "action--e4b1c2d3-48fb-9091-4395-c2d3e4b1c2d3": {
+      "type": "action",
+      "name": "Isolate Compromised Hosts",
+      "description": "Disconnect affected systems from network to prevent lateral movement",
+      "playbook_activity": "disconnect-system",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "POST /api/network/isolate?target=__target_service__:value HTTP/1.1",
+          "playbook_activity": "disconnect-system"
+        }
+      ],
+      "agent": "security-category--d3a0b1c2-37ea-8f80-3284-b1c2d3a0b1c2",
+      "targets": ["security-category--e4b1c2d3-48fb-9091-4395-c2d3e4b1c2d3"],
+      "on_completion": "end--06d3e4f5-6abd-b2b3-65b7-e4f506d3e4f5"
+    },
+    "end--f5c2d3e4-59ac-a1a2-54a6-d3e4f5c2d3e4": {
+      "type": "end",
+      "name": "End Firewall Block Branch"
+    },
+    "end--06d3e4f5-6abd-b2b3-65b7-e4f506d3e4f5": {
+      "type": "end",
+      "name": "End Isolation Branch"
+    },
+    "action--f5c2d3e4-59ac-a1a2-54a6-d3e4f5c2d3e4": {
+      "type": "action",
+      "name": "Reset Compromised Credentials",
+      "description": "Force password reset for affected user accounts",
+      "playbook_activity": "eliminate-risk",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "POST /api/iam/reset-passwords HTTP/1.1",
+          "playbook_activity": "eliminate-risk"
+        }
+      ],
+      "agent": "security-category--d3a0b1c2-37ea-8f80-3284-b1c2d3a0b1c2",
+      "targets": ["security-category--17e4f506-7bce-c3c4-76c8-f506a17e4f50"],
+      "on_completion": "action--28f5a617-8cdf-d4d5-87d9-0617b28f5a61",
+      "timeout": 30000
+    },
+    "action--28f5a617-8cdf-d4d5-87d9-0617b28f5a61": {
+      "type": "action",
+      "name": "Enable Multi-Factor Authentication",
+      "description": "Enforce MFA on compromised accounts to prevent further attacks",
+      "playbook_activity": "eliminate-risk",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "POST /api/iam/enable-mfa HTTP/1.1",
+          "playbook_activity": "eliminate-risk"
+        }
+      ],
+      "agent": "security-category--d3a0b1c2-37ea-8f80-3284-b1c2d3a0b1c2",
+      "targets": ["security-category--17e4f506-7bce-c3c4-76c8-f506a17e4f50"],
+      "on_completion": "action--39a6b728-9de0-e5e6-98ea-1728c39a6b72",
+      "timeout": 20000
+    },
+    "action--39a6b728-9de0-e5e6-98ea-1728c39a6b72": {
+      "type": "action",
+      "name": "Notify Affected Users",
+      "description": "Alert users of unauthorized access attempts and required actions",
+      "playbook_activity": "eliminate-risk",
+      "commands": [
+        {
+          "type": "manual",
+          "command": "Send security notification to users about incident __incident_id__:value and required actions"
+        }
+      ],
+      "agent": "individual--39a6b728-9de0-e5e6-98ea-1728c39a6b72",
+      "on_completion": "end--4ab7c839-a0f1-f6f7-a9fb-2839d4ab7c83"
+    },
+    "end--4ab7c839-a0f1-f6f7-a9fb-2839d4ab7c83": {
+      "type": "end",
+      "name": "Mitigation Complete"
+    }
+  },
+  "agent_definitions": {
+    "security-category--d3a0b1c2-37ea-8f80-3284-b1c2d3a0b1c2": {
+      "type": "security-category",
+      "name": "Security Orchestrator",
+      "description": "Central orchestration system for security responses",
+      "category": ["orchestrator"]
+    },
+    "individual--39a6b728-9de0-e5e6-98ea-1728c39a6b72": {
+      "type": "individual",
+      "name": "Security Coordinator",
+      "description": "Coordinator for user communications and incident response"
+    }
+  },
+  "target_definitions": {
+    "security-category--e4b1c2d3-48fb-9091-4395-c2d3e4b1c2d3": {
+      "type": "security-category",
+      "name": "Firewall",
+      "description": "Network firewall for enforcing access restrictions",
+      "category": ["firewall"]
+    },
+    "security-category--17e4f506-7bce-c3c4-76c8-f506a17e4f50": {
+      "type": "security-category",
+      "name": "Identity Management System",
+      "description": "Central IAM system for credential and access management",
+      "category": ["aaa"]
+    }
+  }
+}

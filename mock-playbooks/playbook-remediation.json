@@ -1,0 +1,188 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--25f61729-3945-5345-1e4f-61728a3945e5",
+  "name": "Infected Host Remediation",
+  "description": "Remediate and restore a compromised host system to known-good state after malware removal",
+  "playbook_types": ["remediation"],
+  "playbook_activities": [
+    "revert-system",
+    "restore-capabilities",
+    "restore-data"
+  ],
+  "playbook_processing_summary": {
+    "manual_playbook": false,
+    "external_playbooks": false,
+    "parallel_processing": false,
+    "if_logic": false,
+    "while_logic": false,
+    "switch_logic": false,
+    "temporal_logic": true,
+    "data_markings": false,
+    "digital_signatures": false
+  },
+  "created_by": "identity--00000000-0000-0000-0000-000000000002",
+  "created": "2025-01-23T10:30:00.000Z",
+  "modified": "2025-01-23T10:30:00.000Z",
+  "valid_from": "2025-01-23T10:30:00.000Z",
+  "priority": 85,
+  "severity": 80,
+  "impact": 75,
+  "playbook_variables": {
+    "__hostname__": {
+      "type": "string",
+      "description": "The hostname of the system to remediate",
+      "external": true
+    },
+    "__remediation_ticket__": {
+      "type": "string",
+      "description": "Tracking ticket ID for remediation actions",
+      "external": true
+    },
+    "__recovery_image__": {
+      "type": "string",
+      "description": "Path to clean system recovery image",
+      "external": true
+    }
+  },
+  "workflow_start": "start--36a72938-4a56-6456-2f5f-72838a4a56f6",
+  "workflow": {
+    "start--36a72938-4a56-6456-2f5f-72838a4a56f6": {
+      "type": "start",
+      "name": "Start Host Remediation",
+      "on_completion": "action--47b83a49-5b67-7567-3060-83949b5b67a7"
+    },
+    "action--47b83a49-5b67-7567-3060-83949b5b67a7": {
+      "type": "action",
+      "name": "Initiate System Reimage",
+      "description": "Begin process to reimage compromised system to clean state",
+      "playbook_activity": "revert-system",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "POST /api/imaging/reimage HTTP/1.1",
+          "playbook_activity": "revert-system"
+        }
+      ],
+      "agent": "security-category--47b83a49-5b67-7567-3060-83949b5b67a7",
+      "targets": ["linux--58c94b5a-6c78-8678-4171-94a5ac6c78b8"],
+      "on_completion": "action--58c94b5a-6c78-8678-4171-94a5ac6c78b8",
+      "timeout": 600000
+    },
+    "action--58c94b5a-6c78-8678-4171-94a5ac6c78b8": {
+      "type": "action",
+      "name": "Restore System Data",
+      "description": "Restore user data and system files from clean backup",
+      "playbook_activity": "restore-data",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "POST /api/backup/restore?host=__hostname__:value HTTP/1.1",
+          "playbook_activity": "restore-data"
+        }
+      ],
+      "agent": "security-category--47b83a49-5b67-7567-3060-83949b5b67a7",
+      "targets": ["linux--58c94b5a-6c78-8678-4171-94a5ac6c78b8"],
+      "on_completion": "action--69da5c6b-7d89-9789-5282-a5b6bd7d89c9",
+      "timeout": 300000
+    },
+    "action--69da5c6b-7d89-9789-5282-a5b6bd7d89c9": {
+      "type": "action",
+      "name": "Update Security Software",
+      "description": "Install latest security patches, antivirus definitions, and OS updates",
+      "playbook_activity": "restore-capabilities",
+      "commands": [
+        {
+          "type": "bash",
+          "command": "apt-get update && apt-get upgrade -y && systemctl start clamav-daemon",
+          "playbook_activity": "restore-capabilities"
+        }
+      ],
+      "agent": "linux--58c94b5a-6c78-8678-4171-94a5ac6c78b8",
+      "on_completion": "action--7aea6d7c-8e9a-a89a-6393-b6c7ce8e9ada",
+      "timeout": 120000
+    },
+    "action--7aea6d7c-8e9a-a89a-6393-b6c7ce8e9ada": {
+      "type": "action",
+      "name": "Re-enable Network Services",
+      "description": "Restart critical network services and enable system connectivity",
+      "playbook_activity": "restore-capabilities",
+      "commands": [
+        {
+          "type": "bash",
+          "command": "systemctl start networking && systemctl start ssh && systemctl start syslog",
+          "playbook_activity": "restore-capabilities"
+        }
+      ],
+      "agent": "linux--58c94b5a-6c78-8678-4171-94a5ac6c78b8",
+      "on_completion": "action--8bfb7e8d-9f0b-b90b-7404-c7d8df9f0beb",
+      "timeout": 30000
+    },
+    "action--8bfb7e8d-9f0b-b90b-7404-c7d8df9f0beb": {
+      "type": "action",
+      "name": "Verify System Health",
+      "description": "Run comprehensive health check to ensure system is operational",
+      "playbook_activity": "restore-capabilities",
+      "commands": [
+        {
+          "type": "bash",
+          "command": "systemctl status && netstat -tuln | grep LISTEN && df -h",
+          "playbook_activity": "restore-capabilities"
+        }
+      ],
+      "agent": "linux--58c94b5a-6c78-8678-4171-94a5ac6c78b8",
+      "on_completion": "action--9c0c8f9e-a01c-c01c-8515-d8e9e0a01cfc",
+      "timeout": 60000
+    },
+    "action--9c0c8f9e-a01c-c01c-8515-d8e9e0a01cfc": {
+      "type": "action",
+      "name": "Document Remediation",
+      "description": "Create detailed remediation report and close incident ticket",
+      "playbook_activity": "restore-capabilities",
+      "commands": [
+        {
+          "type": "manual",
+          "command": "Document remediation completion for __hostname__:value in ticket __remediation_ticket__:value"
+        }
+      ],
+      "agent": "individual--9c0c8f9e-a01c-c01c-8515-d8e9e0a01cfc",
+      "on_completion": "end--adfcaf0f-b12d-d12d-9626-e9faf1b12dfd",
+      "timeout": 10000
+    },
+    "end--adfcaf0f-b12d-d12d-9626-e9faf1b12dfd": {
+      "type": "end",
+      "name": "Remediation Complete"
+    }
+  },
+  "agent_definitions": {
+    "security-category--47b83a49-5b67-7567-3060-83949b5b67a7": {
+      "type": "security-category",
+      "name": "Imaging Service",
+      "description": "System imaging and recovery orchestrator",
+      "category": ["orchestrator"]
+    },
+    "linux--58c94b5a-6c78-8678-4171-94a5ac6c78b8": {
+      "type": "linux",
+      "name": "Remediation Agent",
+      "description": "Linux agent for executing remediation commands",
+      "address": {
+        "ipv4": ["192.168.1.50"]
+      }
+    },
+    "individual--9c0c8f9e-a01c-c01c-8515-d8e9e0a01cfc": {
+      "type": "individual",
+      "name": "Incident Manager",
+      "description": "Manager responsible for incident tracking and closure"
+    }
+  },
+  "target_definitions": {
+    "linux--58c94b5a-6c78-8678-4171-94a5ac6c78b8": {
+      "type": "linux",
+      "name": "Compromised Host",
+      "description": "System requiring remediation and restoration",
+      "address": {
+        "dname": ["__hostname__:value"]
+      }
+    }
+  }
+}

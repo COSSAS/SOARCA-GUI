@@ -1,0 +1,149 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6",
+  "name": "Network Traffic Investigation",
+  "description": "Investigate suspicious network traffic by analyzing source/destination IPs and checking reputation databases",
+  "playbook_types": ["investigation"],
+  "playbook_activities": ["analyze-collected-data", "identify-indicators"],
+  "playbook_processing_summary": {
+    "manual_playbook": false,
+    "external_playbooks": false,
+    "parallel_processing": false,
+    "if_logic": false,
+    "while_logic": false,
+    "switch_logic": false,
+    "temporal_logic": true,
+    "data_markings": false,
+    "digital_signatures": false
+  },
+  "created_by": "identity--00000000-0000-0000-0000-000000000000",
+  "created": "2025-01-23T10:00:00.000Z",
+  "modified": "2025-01-23T10:00:00.000Z",
+  "valid_from": "2025-01-23T10:00:00.000Z",
+  "priority": 50,
+  "severity": 50,
+  "impact": 30,
+  "playbook_variables": {
+    "__source_ip__": {
+      "type": "ipv4-addr",
+      "description": "The source IP address to investigate",
+      "external": true
+    },
+    "__destination_ip__": {
+      "type": "ipv4-addr",
+      "description": "The destination IP address to investigate",
+      "external": true
+    },
+    "__investigation_id__": {
+      "type": "string",
+      "description": "Unique identifier for this investigation",
+      "external": true
+    }
+  },
+  "workflow_start": "start--a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6",
+  "workflow": {
+    "start--a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6": {
+      "type": "start",
+      "name": "Start Investigation",
+      "on_completion": "action--b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d7"
+    },
+    "action--b2c3d4e5-f6a7-48b9-c0d1-e2f3a4b5c6d7": {
+      "type": "action",
+      "name": "Query GeoIP Database",
+      "description": "Look up geographical location information for the suspicious IPs",
+      "playbook_activity": "analyze-collected-data",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "GET /geoip/lookup?ip=__source_ip__:value HTTP/1.1",
+          "playbook_activity": "analyze-collected-data"
+        }
+      ],
+      "agent": "http-api--c3d4e5f6-a7b8-49ca-d1e2-f3a4b5c6d7e8",
+      "targets": ["http-api--d4e5f6a7-b8c9-4adb-e2f3-a4b5c6d7e8f9"],
+      "on_success": "action--c3d4e5f6-a7b8-49ca-d1e2-f3a4b5c6d7e8",
+      "on_failure": "end--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0",
+      "timeout": 30000
+    },
+    "action--c3d4e5f6-a7b8-49ca-d1e2-f3a4b5c6d7e8": {
+      "type": "action",
+      "name": "Check IP Reputation",
+      "description": "Query threat intelligence platform for reputation of identified IPs",
+      "playbook_activity": "identify-indicators",
+      "commands": [
+        {
+          "type": "http-api",
+          "command": "GET /api/reputation?ip=__destination_ip__:value HTTP/1.1",
+          "playbook_activity": "identify-indicators"
+        }
+      ],
+      "agent": "http-api--c3d4e5f6-a7b8-49ca-d1e2-f3a4b5c6d7e8",
+      "targets": ["http-api--d4e5f6a7-b8c9-4adb-e2f3-a4b5c6d7e8f9"],
+      "on_completion": "action--d4e5f6a7-b8c9-4adb-e2f3-a4b5c6d7e8f9",
+      "timeout": 30000
+    },
+    "action--d4e5f6a7-b8c9-4adb-e2f3-a4b5c6d7e8f9": {
+      "type": "action",
+      "name": "Analyze Traffic Patterns",
+      "description": "Analyze network traffic captures to identify suspicious patterns",
+      "playbook_activity": "analyze-collected-data",
+      "commands": [
+        {
+          "type": "manual",
+          "command": "Review captured network traffic between __source_ip__:value and __destination_ip__:value for anomalies"
+        }
+      ],
+      "agent": "individual--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0",
+      "on_completion": "action--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0",
+      "timeout": 60000
+    },
+    "action--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0": {
+      "type": "action",
+      "name": "Compile Investigation Report",
+      "description": "Document findings and recommendations from investigation",
+      "playbook_activity": "identify-indicators",
+      "commands": [
+        {
+          "type": "manual",
+          "command": "Create detailed report of investigation findings for __investigation_id__:value"
+        }
+      ],
+      "agent": "individual--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0",
+      "on_completion": "end--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0",
+      "timeout": 30000
+    },
+    "end--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0": {
+      "type": "end",
+      "name": "Investigation Complete"
+    }
+  },
+  "agent_definitions": {
+    "http-api--c3d4e5f6-a7b8-49ca-d1e2-f3a4b5c6d7e8": {
+      "type": "http-api",
+      "name": "GeoIP Service",
+      "description": "External GeoIP lookup service",
+      "address": {
+        "dname": ["geoip.example.com"]
+      },
+      "category": ["analytics"]
+    },
+    "individual--e5f6a7b8-c9da-4bec-f3a4-b5c6d7e8f9a0": {
+      "type": "individual",
+      "name": "Network Analyst",
+      "description": "Security analyst responsible for network investigations"
+    }
+  },
+  "target_definitions": {
+    "http-api--d4e5f6a7-b8c9-4adb-e2f3-a4b5c6d7e8f9": {
+      "type": "http-api",
+      "name": "Threat Intelligence Platform",
+      "description": "Internal threat intelligence platform for reputation lookups",
+      "address": {
+        "dname": ["tip.internal.example.com"]
+      },
+      "port": "443",
+      "category": ["tip"]
+    }
+  }
+}

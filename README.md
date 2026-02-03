@@ -2,66 +2,73 @@
 <a href="https://cossas-project.org/cossas-software/soarca"><img src="img/soarca-logo.svg"/>
 </div>
 
-
 # SOARCA-GUI
-
 
 [![https://cossas-project.org/portfolio/SOARCA/](https://img.shields.io/badge/website-cossas.github.io-orange)](https://cossas.github.io/SOARCA/docs/)
 [![Pipeline status](https://github.com/cossas/soarca-gui/actions/workflows/ci.yml/badge.svg?development)](https://github.com/COSSAS/SOARCA/actions)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+Modern [React](https://react.dev) + [Vite](https://vitejs.dev) frontend for the [SOARCA](https://github.com/COSSAS/SOARCA) platform, providing a lightweight UI to interact with SOARCA services. The app uses [TypeScript](https://www.typescriptlang.org/), [styled-components](https://styled-components.com/) for theming, [React Router](https://reactrouter.com/) for navigation, and [React Query](https://tanstack.com/query) for data fetching.
 
 > [!WARNING]
 > SOARCA-GUI is still in development and features for the base version v0.1 are still being added.
 
+## Requirements for running
 
+- [Node.js](https://nodejs.org/) 20+
+- [npm](https://www.npmjs.com/) 10+
+- (Optional) [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) for running the full stack locally
 
-> [!WARNING]
-> Under the hood we make HTMX call-backs to the SOARCA-GUI "backend", here we use polling. Somehow the polling behaviour is flagged by addblockers which block the poll to the backend. 
-> Please add an exclusion for the SOARCA-GUI. This issue will be looked at in the future. 
+## Getting Started (Development)
 
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the dev server (Vite):
+   ```bash
+   npm run dev
+   ```
+   The dev server runs at http://localhost:3000 but the port can be modified in the `vite.config.ts` and `Dockerfile`.
 
-A [Go](https://go.dev), [Templ](https://templ.guide/), [Tailwind CSS](https://tailwindcss.com/) and [HTMX](https://htmx.org/) based GUI for [SOARCA](https://github.com/COSSAS/SOARCA). 
+## NPM Scripts
 
+- `npm run dev` — start Vite dev server
+- `npm run lint` — run ESLint
+- `npm run build` — type-check and create production bundle
+- `npm run preview` — serve the production build locally
 
-## Quick Use
+## Running with Docker (optional)
 
-Usage of this SOARCA-GUI is described [here](https://cossas.github.io/SOARCA/docs/).
+Currently the docker image in not published yet, so you will have to buid your own
+
+```bash
+docker build -t soarca-ui-react-dev --target development .
+```
+
+To spin up the UI with the included compose setup:
+
+```bash
+docker compose up -d
+```
+
+## Hot-reload
+
+In both the local and Docker dev environment, Vite provides instant hot reload, so any change to the files will be reflected in the browser upon saving.
 
 ## Documentation
 
-All the documentation to off the SOARCA-GUI is currently being worked on. 
+- Project docs: https://cossas.github.io/SOARCA/docs/
+- Contribution guidelines: https://cossas.github.io/SOARCA/docs/contribution-guidelines/
 
-## Contributing 
+## Quick Use
 
-Want to contribute to this project? Please keep in mind the following [rules](https://cossas.github.io/SOARCA/docs/contribution-guidelines/):
+Usage of SOARCA-GUI is described here: https://cossas.github.io/SOARCA/docs/
+
+## Contributing
+
+Want to contribute to this project? Please keep in mind the following rules:
+
 - This repository uses git **rebase** strategy
 - For each PR, there should be at least one issue
 - Make sure all tests pass (including lint errors)
-
-### Running this repository
-
-#### Requirements
-
- - Make
- - Go
- - Npm
- - [Templ](https://templ.guide/quick-start/installation)
-
-
-#### Development environment
-
-The Makefile contains all the required setup for live reloading, meaning that whenever a change is detected in any of the files, the Templ proxy will reload the browser. For file change detection, we use Air. Note that Air does not need to be installed manually, as this is all handled through the Makefile. Although this setup works quite well, it is not perfect.
-
-To start the development environment, run:
-
-```bash
-make dev
-```
-In some cases, the TailwindCSS changes are not picked up correctly. If this happens, you need to rerun:
-
-```bash
-make build-tailwind
-make dev
-```
-This will rebuild the required CSS files, and rerun the development environment. 

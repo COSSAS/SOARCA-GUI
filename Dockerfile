@@ -1,18 +1,18 @@
-FROM golang:alpine as builder
-RUN apk update && apk upgrade && apk add --no-cache ca-certificates
-RUN update-ca-certificates
+# Stage 1: Development environment
+FROM node:24-alpine AS development
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --include=dev
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
 
-FROM scratch
-LABEL MAINTAINER Author maarten de kruijf, RabbITCybErSeC
+# Stage 2: Build for production
+FROM development AS builder
+COPY . .
+RUN npm run build
 
-ARG BINARY_NAME=soarca-gui
-ARG VERSION
-
-COPY bin/${BINARY_NAME}-${VERSION}-linux-amd64 /bin/soarca-gui
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-
-WORKDIR /bin
-
-EXPOSE 8081
-
-CMD ["./soarca-gui"]
+# Stage 3: Production environment
+FROM nginx:alpine AS production
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
