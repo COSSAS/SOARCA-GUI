@@ -1,30 +1,29 @@
-**/*.log
+# Logs
+logs
 *.log
-**/__pycache__/
-*.pyc
-*.DS_Store
-logs/*
-plugins/*
-.vscode/*
-build/*
-!build/build.md
-!build/dependencies.sh
-bin/*
-swaggerdocs/*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
 **.env
-test/cacao/flatfile-db-example.json
-test/routes/__debug_bin2988553005
 
-node_modules/*
+# github copilot instructions
+.github/copilot-instructions.md
 
-docs/public
-docs/resources/
-docs/node_modules/
-docs/package-lock.json
-docs/.hugo_build.lock
-**.hugo_build.lock
-**_templ.go
-**_templ.txt
-tmp/*
-
-public/public/styles.css
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

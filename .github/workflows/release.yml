@@ -6,45 +6,51 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+\-?*'
 
 jobs:
-  compile:
-    name: Build binary
+  build:
+    name: Build with npm
     runs-on: ubuntu-latest
-    container:
-      image: golangci/golangci-lint:latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
-      - name: Install Templ 
-        run:  go install github.com/a-h/templ/cmd/templ@v0.3.819
-
-      - name: Setup node
-        uses: actions/setup-node@v4
+        run: git config --global --add safe.directory /__w/SOARCA/SOARCA-GUI
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
         with:
-          node-version: 18
-      - run: npm ci
-      
-      - name: Build with make
-        run: make compile
+          node-version: 24
 
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v4
+      - name: Cache node modules
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with npm
+        run: npm run build
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ github.sha }}
-          path: bin/*
+          path: dist/*
           retention-days: 1
 
-  
   docker-build:
-    needs: compile
+    needs: build
     name: Build docker image and push it to docker hub
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Make repo safe
@@ -55,9 +61,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Download bin
-        uses: actions/download-artifact@v4
-        with: 
+      - name: Download dist
+        uses: actions/download-artifact@v7
+        with:
           pattern: ${{ github.sha }}
 
       - name: Move files to bin folder and make executable
@@ -78,40 +84,39 @@ jobs:
           echo "describe_version=$(git describe --tags --dirty)" >> "$GITHUB_ENV"
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           build-args: |
             VERSION=${{ env.describe_version }}
-          push: true
+          push: false
           tags: cossas/soarca-gui:${{ env.describe_version }},cossas/soarca-gui:latest
 
-
-  release-binary:
-    needs: compile
+  release-artifacts:
+    needs: build
     name: Create release artifacts
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.23.x'
+          go-version: "1.23.x"
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Make repo safe
         run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
       - run: npm ci
 
       - name: Build and sbom
