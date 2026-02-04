@@ -71,5 +71,6 @@ jobs:
           context: .
           build-args: |
             VERSION=${{ env.describe_version }}
-          push: false
+          push: true
+          target: production
           tags: cossas/soarca-gui:${{ env.describe_version }},cossas/soarca-gui:development
