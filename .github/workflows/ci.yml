@@ -89,6 +89,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: false
+          target: production
           tags: cossas/soarca-gui:pr-${{ env.describe_version }}
           build-args: |
             VERSION=${{ env.describe_version }}
