@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 *.tsbuildinfo
+**.env
 
 # github copilot instructions
 .github/copilot-instructions.md

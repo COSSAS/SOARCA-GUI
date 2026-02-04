@@ -1,10 +1,9 @@
-name: CD-Development
+name: development-release
 
 on:
   push:
     branches:
       - development
-  workflow_dispatch: {} # Allow manual triggering
 
 jobs:
   build:

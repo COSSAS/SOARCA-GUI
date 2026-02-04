@@ -1,4 +1,4 @@
-name: CD
+name: release
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+        run: git config --global --add safe.directory /__w/SOARCA/SOARCA-GUI
       - name: Use Node.js 24
         uses: actions/setup-node@v6
         with:
@@ -54,7 +54,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA/SOARCA-GUI
+        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
