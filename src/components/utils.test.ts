@@ -1,39 +1,95 @@
-import { theme } from "@/theme/theme";
+import { darkTheme, theme } from "@/theme/theme";
 import { describe, expect, test } from "vitest";
 import {
-  getThemeColorsByVariant,
   getThemePixelSizeValuesByThemeSize,
   getThemeSizeValuesByThemeSize,
+  getVariantColors,
   ThemeSize,
   ThemeVariant,
 } from "./utils";
 
 describe("Component utility functions", () => {
-  test("getThemeColorsByVariant returns correct colors for all variants", () => {
-    expect(getThemeColorsByVariant(ThemeVariant.Success)).toBe(
-      theme.colors.success,
-    );
-    expect(getThemeColorsByVariant(ThemeVariant.Warning)).toBe(
-      theme.colors.warning,
-    );
-    expect(getThemeColorsByVariant(ThemeVariant.Error)).toBe(
-      theme.colors.error,
-    );
-    expect(getThemeColorsByVariant(ThemeVariant.Info)).toBe(theme.colors.info);
-    expect(getThemeColorsByVariant(ThemeVariant.Primary)).toBe(
-      theme.colors.info,
-    );
-    expect(getThemeColorsByVariant(ThemeVariant.Accent)).toBe(
-      theme.colors.accent,
-    );
-    expect(getThemeColorsByVariant(ThemeVariant.Secondary)).toBe(
-      theme.colors.accent,
-    );
-  });
+  describe("getVariantColors", () => {
+    test("returns correct colors for all variants with light theme", () => {
+      expect(getVariantColors(theme, ThemeVariant.Success)).toEqual(
+        theme.colors.success,
+      );
+      expect(getVariantColors(theme, ThemeVariant.Warning)).toEqual(
+        theme.colors.warning,
+      );
+      expect(getVariantColors(theme, ThemeVariant.Error)).toEqual(
+        theme.colors.error,
+      );
+      expect(getVariantColors(theme, ThemeVariant.Info)).toEqual(
+        theme.colors.info,
+      );
+      expect(getVariantColors(theme, ThemeVariant.Primary)).toEqual(
+        theme.colors.info,
+      );
+      expect(getVariantColors(theme, ThemeVariant.Accent)).toEqual(
+        theme.colors.accent,
+      );
+      expect(getVariantColors(theme, ThemeVariant.Secondary)).toEqual(
+        theme.colors.accent,
+      );
+    });
 
-  test("getThemeColorsByVariant returns info color as fallback for invalid variant", () => {
-    const invalidVariant = "invalid" as ThemeVariant;
-    expect(getThemeColorsByVariant(invalidVariant)).toBe(theme.colors.info);
+    test("returns correct colors for all variants with dark theme", () => {
+      expect(getVariantColors(darkTheme, ThemeVariant.Success)).toEqual(
+        darkTheme.colors.success,
+      );
+      expect(getVariantColors(darkTheme, ThemeVariant.Warning)).toEqual(
+        darkTheme.colors.warning,
+      );
+      expect(getVariantColors(darkTheme, ThemeVariant.Error)).toEqual(
+        darkTheme.colors.error,
+      );
+      expect(getVariantColors(darkTheme, ThemeVariant.Info)).toEqual(
+        darkTheme.colors.info,
+      );
+      expect(getVariantColors(darkTheme, ThemeVariant.Primary)).toEqual(
+        darkTheme.colors.info,
+      );
+      expect(getVariantColors(darkTheme, ThemeVariant.Accent)).toEqual(
+        darkTheme.colors.accent,
+      );
+      expect(getVariantColors(darkTheme, ThemeVariant.Secondary)).toEqual(
+        darkTheme.colors.accent,
+      );
+    });
+
+    test("returns different colors for light and dark themes", () => {
+      const lightSuccess = getVariantColors(theme, ThemeVariant.Success);
+      const darkSuccess = getVariantColors(darkTheme, ThemeVariant.Success);
+
+      expect(lightSuccess.bg).not.toBe(darkSuccess.bg);
+      expect(lightSuccess.text).not.toBe(darkSuccess.text);
+      expect(lightSuccess.border).not.toBe(darkSuccess.border);
+    });
+
+    test("has consistent structure across all variants", () => {
+      const variants = [
+        ThemeVariant.Success,
+        ThemeVariant.Warning,
+        ThemeVariant.Error,
+        ThemeVariant.Info,
+        ThemeVariant.Accent,
+      ];
+
+      variants.forEach((variant) => {
+        const colors = getVariantColors(theme, variant);
+        expect(colors).toHaveProperty("bg");
+        expect(colors).toHaveProperty("border");
+        expect(colors).toHaveProperty("text");
+        expect(colors).toHaveProperty("solidBg");
+        expect(colors).toHaveProperty("solidText");
+        expect(typeof colors.bg).toBe("string");
+        expect(typeof colors.border).toBe("string");
+        expect(typeof colors.text).toBe("string");
+        expect(typeof colors.solidBg).toBe("string");
+        expect(typeof colors.solidText).toBe("string");
+      });
+    });
   });
 
   test("getThemeSizeValuesByThemeSize returns correct size values for all sizes", () => {

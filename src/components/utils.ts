@@ -1,7 +1,7 @@
 // Whenever you export both components and other things TypeScript complaints that fast-reload
 // cannot handle mixed exports. For this reason, we export them here.
 
-import { theme } from "@/theme/theme";
+import { theme, Theme } from "@/theme/theme";
 import { createContext, useContext } from "react";
 
 // ENUMS & CONSTANTS
@@ -34,17 +34,6 @@ export const enum ThemeSize {
   ThreeXL = "3xl",
   FourXL = "4xl",
 }
-
-const THEME_COLORS_BY_VARIANT: Record<ThemeVariant, typeof theme.colors.info> =
-  {
-    [ThemeVariant.Success]: theme.colors.success,
-    [ThemeVariant.Warning]: theme.colors.warning,
-    [ThemeVariant.Error]: theme.colors.error,
-    [ThemeVariant.Info]: theme.colors.info,
-    [ThemeVariant.Primary]: theme.colors.info,
-    [ThemeVariant.Accent]: theme.colors.accent,
-    [ThemeVariant.Secondary]: theme.colors.accent,
-  };
 
 const THEME_SIZE_VALUES_BY_THEME_SIZE: Record<ThemeSize, string> = {
   [ThemeSize.ExtraSmall]: theme.size.xs,
@@ -108,17 +97,43 @@ export const useTabs = () => {
   return context;
 };
 
+// TYPES
+
+export type VariantColors = {
+  bg: string;
+  border: string;
+  text: string;
+  solidBg: string;
+  solidText: string;
+};
+
 // FUNCTIONS
 
 /**
- * Maps the theme colors based on the provided theme variant.
- * @param variant - The ThemeVariant to map.
- * @returns The corresponding theme colors for the given variant.
+ * Maps a theme variant to the corresponding color set from a theme object.
+ * This function reads colors from the provided theme parameter, allowing it to work
+ * with both light and dark themes dynamically.
+ * @param themeObj - The theme object containing color definitions (light or dark theme)
+ * @param variant - The ThemeVariant to map
+ * @returns The corresponding theme colors for the given variant
  * @example
- * const colors = getThemeColorsByVariant(ThemeVariant.Success);
+ * // In a styled-component (theme comes from context)
+ * const colors = getVariantColors(theme, ThemeVariant.Success);
  */
-export const getThemeColorsByVariant = (variant: ThemeVariant) => {
-  return THEME_COLORS_BY_VARIANT[variant] ?? theme.colors.info;
+export const getVariantColors = (
+  themeObj: Theme,
+  variant: ThemeVariant,
+): VariantColors => {
+  const variantMap: Record<ThemeVariant, keyof typeof themeObj.colors> = {
+    [ThemeVariant.Success]: "success",
+    [ThemeVariant.Warning]: "warning",
+    [ThemeVariant.Error]: "error",
+    [ThemeVariant.Info]: "info",
+    [ThemeVariant.Primary]: "info",
+    [ThemeVariant.Accent]: "accent",
+    [ThemeVariant.Secondary]: "accent",
+  };
+  return themeObj.colors[variantMap[variant]] as VariantColors;
 };
 
 /**

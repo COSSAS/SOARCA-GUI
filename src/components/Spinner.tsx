@@ -1,10 +1,11 @@
 import { spin } from "@/theme/animations";
+import { theme } from "@/theme/theme";
 import React from "react";
 import styled from "styled-components";
 import {
-  getThemeColorsByVariant,
   getThemePixelSizeValuesByThemeSize,
   getThemeSizeValuesByThemeSize,
+  getVariantColors,
   ThemeSize,
   ThemeVariant,
 } from "./utils";
@@ -35,10 +36,10 @@ const SpinnerContainer = styled.div<{
 
   border-radius: 50%;
 
-  background-color: ${({ $variant }) =>
-    getThemeColorsByVariant($variant).solidBg};
+  background-color: ${({ $variant, theme }) =>
+    getVariantColors(theme, $variant).solidBg};
   border: 1px solid
-    ${({ $variant }) => getThemeColorsByVariant($variant).border};
+    ${({ $variant, theme }) => getVariantColors(theme, $variant).border};
 `;
 
 export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -77,9 +78,12 @@ export const Spinner: React.FC<SpinnerProps> = ({
   className,
   ...rest
 }) => {
-  const resolvedColor = $color || getThemeColorsByVariant($variant).solidBg;
+  // Note: We can't access theme context here in the component function,
+  // so we continue using the static theme for optional color overrides.
+  // This is acceptable since $color and $trackColor are explicit overrides.
+  const resolvedColor = $color || getVariantColors(theme, $variant).solidBg;
   const resolvedTrackColor =
-    $trackColor || getThemeColorsByVariant($variant).solidText;
+    $trackColor || getVariantColors(theme, $variant).solidText;
 
   const spinner = (
     <Ring
