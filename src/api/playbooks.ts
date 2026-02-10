@@ -4,28 +4,22 @@ import {
   fetchFromApi,
   HttpMutationMethod,
   mutationToApi,
-  SOARCA_URI,
 } from "./utils";
 
-export const getPlaybooks = () =>
-  fetchFromApi<Playbook[]>(`${SOARCA_URI}/playbook/`);
+export const getPlaybooks = () => fetchFromApi<Playbook[]>(`/api/playbook/`);
 
 export const getPlaybookById = (playbookId: string) =>
-  fetchFromApi<Playbook>(`${SOARCA_URI}/playbook/${playbookId}`);
+  fetchFromApi<Playbook>(`/api/playbook/${playbookId}`);
 
 export const createPlaybook = (playbook: Partial<Playbook>) =>
-  mutationToApi<Playbook>(
-    HttpMutationMethod.POST,
-    `${SOARCA_URI}/playbook/`,
-    playbook,
-  );
+  mutationToApi<Playbook>(HttpMutationMethod.POST, `/api/playbook/`, playbook);
 
 export const updatePlaybook = (playbookId: string, patch: Partial<Playbook>) =>
   mutationToApi<Playbook>(
     HttpMutationMethod.PUT,
-    `${SOARCA_URI}/playbook/${playbookId}`,
+    `/api/playbook/${playbookId}`,
     patch,
   );
 
 export const deletePlaybook = (playbookId: string) =>
-  deleteToApi(`${SOARCA_URI}/playbook/${playbookId}`);
+  deleteToApi(`/api/playbook/${playbookId}`);

@@ -1,17 +1,18 @@
 services:
-  soarca-ui-react:
-    image: soarca-ui-react:development
+  soarca-gui:
+    container_name: soarca-gui
+    image: soarca-gui:latest
     build:
       context: .
-      target: development
+      dockerfile: Dockerfile
+      args:
+        VITE_APP_VERSION: ${VITE_APP_VERSION:-development}
+        NGINX_BACKEND_URL: ${NGINX_BACKEND_URL:-http://host.docker.internal:8080/}
+        NGINX_SERVER_PORT: ${NGINX_SERVER_PORT:-8081}
     ports:
-      - "3000:3000"
+      - "${DOCKER_HOST_PORT:-8081}:${NGINX_SERVER_PORT:-8081}"
     environment:
-      - NODE_ENV=development
-    volumes:
-      - .:/app
-      - node_modules_volume:/app/node_modules
-    command: sh -c "npm install && npm run dev"
-
-volumes:
-  node_modules_volume:
+      - NODE_ENV=production
+      - NGINX_BACKEND_URL=${NGINX_BACKEND_URL:-http://host.docker.internal:8080/}
+      - NGINX_SERVER_PORT=${NGINX_SERVER_PORT:-8081}
+    restart: unless-stopped

@@ -1,7 +1,5 @@
 import { ErrorResponse } from "@/types";
 
-export const SOARCA_URI = import.meta.env.VITE_SOARCA_URI;
-
 /**
  * Fetches from the API and handles errors uniformly.
  * @param url - API endpoint URL

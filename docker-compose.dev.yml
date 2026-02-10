@@ -1,0 +1,23 @@
+services:
+  soarca-gui-dev:
+    container_name: soarca-gui-dev
+    image: soarca-gui:dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL:-http://host.docker.internal:8080}
+        VITE_SERVER_PORT: ${VITE_SERVER_PORT:-5173}
+    ports:
+      - "${DOCKER_HOST_PORT:-5173}:${VITE_SERVER_PORT:-5173}"
+    environment:
+      - NODE_ENV=development
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL:-http://host.docker.internal:8080}
+      - VITE_SERVER_PORT=${VITE_SERVER_PORT:-5173}
+    volumes:
+      - .:/app
+      - node_modules_volume:/app/node_modules
+    command: sh -c "npm install && npm run dev"
+
+volumes:
+  node_modules_volume:

@@ -1,0 +1,9 @@
+# Install (dev) dependencies and run development server
+# NOTE: we install git to allow the versioning of the application to be included in the build (e.g., for display in the UI)
+FROM node:24-alpine
+RUN apk add --no-cache git
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --include=dev
+EXPOSE 5173
+CMD ["npm", "run", "dev"]
