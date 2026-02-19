@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { BadgeShape, getThemeColorsByVariant, ThemeVariant } from "./utils";
+import { BadgeShape, ThemeVariant, getVariantColors } from "./utils";
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   $variant?: ThemeVariant;
@@ -31,16 +31,16 @@ export const Badge = styled.span<BadgeProps>`
   border-radius: ${({ $shape = BadgeShape.Pill, theme }) =>
     $shape === BadgeShape.Rounded ? theme.radius.md : theme.radius.full};
   border: 1px solid
-    ${({ $variant = ThemeVariant.Info }) =>
-      getThemeColorsByVariant($variant).border};
+    ${({ $variant = ThemeVariant.Info, theme }) =>
+      getVariantColors(theme, $variant).border};
 
   font: ${({ theme }) => theme.typography.small.font};
   line-height: ${({ theme }) => theme.fonts.lineHeight.mini};
 
-  background: ${({ $variant = ThemeVariant.Info }) =>
-    getThemeColorsByVariant($variant).bg};
-  color: ${({ $variant = ThemeVariant.Info }) =>
-    getThemeColorsByVariant($variant).text};
+  background: ${({ $variant = ThemeVariant.Info, theme }) =>
+    getVariantColors(theme, $variant).bg};
+  color: ${({ $variant = ThemeVariant.Info, theme }) =>
+    getVariantColors(theme, $variant).text};
 
   ${({ $isInteractive, theme }) =>
     $isInteractive

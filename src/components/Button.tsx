@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import {
   ButtonWidth,
-  getThemeColorsByVariant,
   getThemeSizeValuesByThemeSize,
+  getVariantColors,
   ThemeSize,
   ThemeVariant,
 } from "./utils";
@@ -67,7 +67,7 @@ export const Button = styled.button<ButtonProps>`
   transition: all ${({ theme }) => theme.transitions.base};
 
   ${({ $variant = ThemeVariant.Info, $ghost, theme }) => {
-    const colors = getThemeColorsByVariant($variant);
+    const colors = getVariantColors(theme, $variant);
     const baseBg = colors.solidBg;
     const hoverBg = colors.text;
     const textColor = colors.solidText;

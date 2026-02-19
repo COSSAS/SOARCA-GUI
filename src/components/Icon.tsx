@@ -1,8 +1,8 @@
 import { LucideIcon } from "lucide-react";
 import styled from "styled-components";
 import {
-  getThemeColorsByVariant,
   getThemePixelSizeValuesByThemeSize,
+  getVariantColors,
   ThemeSize,
   ThemeVariant,
 } from "./utils";
@@ -36,10 +36,10 @@ const IconWrapper = styled.span<{
 
   transition: all ${({ theme }) => theme.transitions.base};
 
-  ${({ $variant, $ghost, $round }) => {
+  ${({ $variant, $ghost, $round, theme }) => {
     if (!$round || !$variant) return "";
 
-    const colors = getThemeColorsByVariant($variant);
+    const colors = getVariantColors(theme, $variant);
     const baseBg = colors.solidBg;
     const textColor = colors.solidText;
     const borderColor = colors.border;

@@ -19,6 +19,8 @@ export const Input = styled.input`
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.md};
 
   font: ${({ theme }) => theme.typography.caption.font};
+  color: ${({ theme }) => theme.colors.text.primary};
+  background: ${({ theme }) => theme.colors.background.primary};
 
   transition: border-color ${({ theme }) => theme.transitions.base};
 
@@ -58,6 +60,8 @@ const StyledSelect = styled.select`
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
 
   font: ${({ theme }) => theme.typography.body.font};
+  color: ${({ theme }) => theme.colors.text.primary};
+  background: ${({ theme }) => theme.colors.background.primary};
   line-height: 1.5;
 
   transition: border-color ${({ theme }) => theme.transitions.base};

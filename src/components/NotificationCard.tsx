@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ThemeVariant, getThemeColorsByVariant } from "./utils";
+import { ThemeVariant, getVariantColors } from "./utils";
 
 export interface NotificationCardProps extends React.HTMLAttributes<HTMLDivElement> {
   $variant?: ThemeVariant;
@@ -38,13 +38,13 @@ export const NotificationCard = styled.div<NotificationCardProps>`
 
   border-radius: ${({ theme }) => theme.radius.md};
   border: 1px solid
-    ${({ $variant = ThemeVariant.Info }) =>
-      getThemeColorsByVariant($variant).border};
+    ${({ $variant = ThemeVariant.Info, theme }) =>
+      getVariantColors(theme, $variant).border};
 
-  background: ${({ $variant = ThemeVariant.Info }) =>
-    getThemeColorsByVariant($variant).bg};
-  color: ${({ $variant = ThemeVariant.Info }) =>
-    getThemeColorsByVariant($variant).text};
+  background: ${({ $variant = ThemeVariant.Info, theme }) =>
+    getVariantColors(theme, $variant).bg};
+  color: ${({ $variant = ThemeVariant.Info, theme }) =>
+    getVariantColors(theme, $variant).text};
 
   font: ${({ theme }) => theme.typography.body.font};
 `;

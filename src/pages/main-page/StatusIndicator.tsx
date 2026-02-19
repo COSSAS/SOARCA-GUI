@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { css, styled } from "styled-components";
 
 import { getPingStatus } from "@/api/status";
-import { getThemeColorsByVariant, ThemeVariant } from "@/components/utils";
+import { getVariantColors, ThemeVariant } from "@/components/utils";
+import { theme } from "@/theme";
 import { pulse } from "@/theme/animations";
 
 export const StatusIndicator: React.FC = () => {
@@ -57,10 +58,10 @@ const StatusDot = styled.div<{
 
   background-color: ${({ $isOnline, $isReconnecting }) =>
     $isOnline
-      ? getThemeColorsByVariant(ThemeVariant.Success).solidBg
+      ? getVariantColors(theme, ThemeVariant.Success).solidBg
       : $isReconnecting
-        ? getThemeColorsByVariant(ThemeVariant.Warning).solidBg
-        : getThemeColorsByVariant(ThemeVariant.Error).solidBg};
+        ? getVariantColors(theme, ThemeVariant.Warning).solidBg
+        : getVariantColors(theme, ThemeVariant.Error).solidBg};
 
   animation: ${({ $isOnline, $isReconnecting }) =>
     $isOnline || $isReconnecting

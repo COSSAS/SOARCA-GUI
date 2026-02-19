@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
   FormLabel,
+  RadioGroup,
   Spacer,
   SuspenseCard,
   ThemeVariant,
@@ -19,10 +20,13 @@ import {
   DetailsItem,
   DetailsValue,
 } from "@/pages/main-page/monitoring-page/ExecutionDetailPage.styles";
+import { ThemeMode, useThemeMode } from "@/theme";
 import { formatDateTime, formatDuration } from "@/utils";
 import { CreditsEasterEgg } from "./Credits";
 
 export const SettingsPage: React.FC = () => {
+  const { mode, setMode } = useThemeMode();
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["system-status"],
     queryFn: getSystemStatus,
@@ -39,6 +43,28 @@ export const SettingsPage: React.FC = () => {
       $errorMessage={parsedError?.message}
     >
       <Spacer $direction="vertical" $gap="lg">
+        <CardContainer>
+          <CardHeader>
+            <CardTitle>Appearance</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <DetailsGrid>
+              <DetailsItem>
+                <FormLabel>Theme</FormLabel>
+                <RadioGroup
+                  name="theme-mode"
+                  $options={[
+                    { label: "Automatic", value: "auto" },
+                    { label: "Light", value: "light" },
+                    { label: "Dark (Beta)", value: "dark" },
+                  ]}
+                  $value={mode}
+                  $onChange={(v) => setMode(v as ThemeMode)}
+                />
+              </DetailsItem>
+            </DetailsGrid>
+          </CardBody>
+        </CardContainer>
         <CardContainer>
           <CardHeader>
             <CardTitle>SOARCA information</CardTitle>
