@@ -230,4 +230,113 @@ export const theme = {
   },
 };
 
+export const darkTheme: Theme = {
+  ...theme,
+  colors: {
+    primary: {
+      main: "#60a5fa",
+      hover: "#93bbfd",
+      disabled: "#6b7280",
+      bg: "#1e2a3a",
+      border: "#60a5fa",
+      text: "#ffffff",
+    },
+    secondary: {
+      main: "#374151",
+      hover: "#4b5563",
+      text: "#e5e7eb",
+      bg: "#1f2937",
+    },
+    error: {
+      bg: "#3b1c1c",
+      border: "#ef4444",
+      text: "#fca5a5",
+      solidBg: "#dc2626",
+      solidText: "#ffffff",
+    },
+    info: {
+      bg: "#1e2a3a",
+      border: "#60a5fa",
+      text: "#93c5fd",
+      solidBg: "#3b82f6",
+      solidText: "#ffffff",
+    },
+    success: {
+      bg: "#1a2e1a",
+      border: "#22c55e",
+      text: "#86efac",
+      solidBg: "#16a34a",
+      solidText: "#ffffff",
+    },
+    warning: {
+      bg: "#2e2a1a",
+      border: "#facc15",
+      text: "#fde68a",
+      solidBg: "#eab308",
+      solidText: "#1f2937",
+    },
+    accent: {
+      bg: "#2a1f3d",
+      border: "#8b7cf7",
+      text: "#c4b5fd",
+      solidBg: "#6a5ac7",
+      solidText: "#ffffff",
+    },
+    gray: {
+      50: "#111827",
+      100: "#1f2937",
+      200: "#374151",
+      300: "#4b5563",
+      400: "#6b7280",
+      500: "#9ca3af",
+      600: "#d1d5db",
+      700: "#e5e7eb",
+      800: "#f3f4f6",
+      900: "#f9fafb",
+    },
+    text: {
+      primary: "#f3f4f6",
+      secondary: "#d1d5db",
+      tertiary: "#9ca3af",
+      placeholder: "#6b7280",
+    },
+    background: {
+      primary: "#111827",
+      secondary: "#1f2937",
+      tertiary: "#171f2e",
+      overlay: "rgba(0, 0, 0, 0.7)",
+    },
+    border: {
+      light: "#374151",
+      medium: "#4b5563",
+      dark: "#6b7280",
+    },
+    table: {
+      headerBg: "#1e3a5f",
+      headerText: "#e5e7eb",
+      rowEvenBg: "#111827",
+      rowOddBg: "#1a2332",
+      rowText: "#e5e7eb",
+      border: "#374151",
+    },
+    palette: {
+      primary: "#60a5fa",
+      primaryDark: "#3b82f6",
+      secondary: "#34d399",
+      tertiary: "#67e8f9",
+      background: "#0f172a",
+      surface: "#1e293b",
+      textPrimary: "#f1f5f9",
+      textSecondary: "#cbd5e1",
+      accent: "#8b7cf7",
+    },
+  },
+  shadows: {
+    sm: "0 1px 2px rgba(0, 0, 0, 0.3)",
+    base: "0 1px 3px rgba(0, 0, 0, 0.4)",
+    md: "0 4px 6px rgba(0, 0, 0, 0.4)",
+    lg: "0 10px 15px rgba(0, 0, 0, 0.4)",
+  },
+};
+
 export type Theme = typeof theme;
