@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
+import logoDark from "@/assets/soarca-logo-cropped-dark.svg";
 import logo from "@/assets/soarca-logo-cropped.svg";
 import logoSmall from "@/assets/soarca-logo-small.svg";
 import { PATHS, SOARCA_DOC_URL } from "@/utils";
@@ -33,6 +34,7 @@ import {
   ThemeVariant,
 } from "@/components";
 
+import { useThemeMode } from "@/theme/ThemeModeContext";
 import {
   ContentArea,
   MainContent,
@@ -62,6 +64,7 @@ const NAV_ROUTES: NavRoute[] = [
 
 export const MainPage: React.FC = () => {
   const navigate = useNavigate();
+  const { resolved } = useThemeMode();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -79,7 +82,11 @@ export const MainPage: React.FC = () => {
       <Sidebar $isOpen={sidebarOpen}>
         <SidebarHeader>
           <SidebarLogoContainer>
-            <ImageContainer src={logo} alt="SOARCA Logo" $width="11.5rem" />
+            <ImageContainer
+              src={resolved === "dark" ? logoDark : logo}
+              alt="SOARCA Logo"
+              $width="11.5rem"
+            />
           </SidebarLogoContainer>
           <Button
             $variant={ThemeVariant.Primary}

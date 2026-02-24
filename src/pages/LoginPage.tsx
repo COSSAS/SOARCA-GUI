@@ -2,7 +2,9 @@ import { HelpCircle, KeyRound, LockKeyholeOpen } from "lucide-react";
 import styled from "styled-components";
 
 import soarcaBackground from "@/assets/soarca-background.jpg";
+import logoDark from "@/assets/soarca-logo-cropped-dark.svg";
 import logo from "@/assets/soarca-logo-cropped.svg";
+
 import {
   Button,
   ButtonWidth,
@@ -17,14 +19,19 @@ import {
   Spacer,
   ThemeVariant,
 } from "@/components";
+import { useThemeMode } from "@/theme";
 
 export const LoginPage: React.FC = () => {
+  const { resolved } = useThemeMode();
   return (
     <PageContainer $backgroundImage={soarcaBackground}>
       <LoginCard>
         <LoginCardHeader>
           <Spacer $gap="md" $align="center" $justify="center">
-            <ImageContainer src={logo} alt="SOARCA Logo" />
+            <ImageContainer
+              src={resolved === "dark" ? logoDark : logo}
+              alt="SOARCA Logo"
+            />
           </Spacer>
         </LoginCardHeader>
         <LoginCardBody>
