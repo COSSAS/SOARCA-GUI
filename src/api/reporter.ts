@@ -1,10 +1,8 @@
 import { PlaybookExecutionReport } from "@/types";
-import { fetchFromApi, SOARCA_URI } from "./utils";
+import { fetchFromApi } from "./utils";
 
 export const getReporterState = () =>
-  fetchFromApi<PlaybookExecutionReport[]>(`${SOARCA_URI}/reporter/`);
+  fetchFromApi<PlaybookExecutionReport[]>(`/api/reporter/`);
 
 export const getReportOfExecutionById = (executionId: string) =>
-  fetchFromApi<PlaybookExecutionReport>(
-    `${SOARCA_URI}/reporter/${executionId}`,
-  );
+  fetchFromApi<PlaybookExecutionReport>(`/api/reporter/${executionId}`);

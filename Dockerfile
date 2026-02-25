@@ -1,19 +1,15 @@
-# Stage 1: Development environment
-FROM node:24-alpine AS development
+# Install dependencies and build the application
+FROM node:24-alpine AS builder
 RUN apk add --no-cache git
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --include=dev
-EXPOSE 3000
-CMD ["npm", "run", "dev"]
-
-# Stage 2: Build for production
-FROM development AS builder
+RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 3: Production environment
+# Serve with nginx
 FROM nginx:alpine AS production
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8081
 CMD ["nginx", "-g", "daemon off;"]

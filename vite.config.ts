@@ -4,29 +4,43 @@ import sbom from "rollup-plugin-sbom";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-// Get version from git describe --tags (tag name only, without hash/dirty suffix)
-const getGitVersion = () => {
+/**
+ * Resolve the app version.
+ */
+const getAppVersion = (): string => {
+  // Explicit env var (ideal for CI and Docker builds)
+  if (process.env.VITE_APP_VERSION) {
+    return process.env.VITE_APP_VERSION;
+  }
+
+  // Git tag (works locally; fails in Docker where .git is excluded)
   try {
-    // Try to get the most recent tag
     const tag = execSync("git describe --tags --abbrev=0", {
       encoding: "utf-8",
-      stdio: ["pipe", "pipe", "ignore"], // Suppress stderr
+      stdio: ["pipe", "pipe", "ignore"],
     }).trim();
-    return tag;
+    if (tag) return tag;
   } catch {
-    // If no tags exist, fall back to development
-    return "development";
+    // .git not available — continue to fallback
   }
+  // Fallback for local development without .git or CI/CD environment
+  return "development";
 };
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths(), sbom()],
   define: {
-    __APP_VERSION__: JSON.stringify(getGitVersion()),
+    __APP_VERSION__: JSON.stringify(getAppVersion()),
   },
   server: {
+    proxy: {
+      "/api": {
+        target: process.env.VITE_BACKEND_URL || "http://localhost:8080",
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
     host: true,
-    port: 3000,
+    port: Number(process.env.VITE_SERVER_PORT) || 5173,
     strictPort: true, // Fail if port is already in use, as the docker container won't be able to use a different one
     watch: {
       usePolling: true,
@@ -34,6 +48,6 @@ export default defineConfig({
   },
   preview: {
     host: true,
-    port: 3000,
+    port: 4173,
   },
 });
