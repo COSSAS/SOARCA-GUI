@@ -2,6 +2,8 @@ services:
   soarca-gui:
     container_name: soarca-gui
     image: soarca-gui:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     build:
       context: .
       dockerfile: Dockerfile
