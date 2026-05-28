@@ -4,18 +4,20 @@ import React from "react";
 import { useParams } from "react-router";
 
 import { getReportOfExecutionById } from "@/api/reporter";
+import { getErrorFromApiResponse } from "@/api/utils";
 import {
   Badge,
   CardBody,
   CardContainer,
   CardHeader,
   CardTitle,
+  CenteredCardContent,
   ExpandableText,
   FormLabel,
   Icon,
   Link,
   Spacer,
-  SuspenseCard,
+  Spinner,
   Tabs,
   TabsProvider,
   Text,
@@ -38,7 +40,6 @@ import {
   TabsSection,
 } from "./ExecutionDetailPage.styles";
 
-import { getErrorFromApiResponse } from "@/api/utils";
 import { SoarcaApiPlaybookExecutionStatus } from "@/enums";
 import { formatDateTime, PATHS } from "@/utils";
 import { DetailsTabView } from "./details-tab-view/DetailsTabView";
@@ -51,13 +52,11 @@ export const ExecutionDetailPage: React.FC = () => {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["report", executionId],
     queryFn: () => getReportOfExecutionById(executionId!),
-    enabled: !!executionId, // only run the query if executionId is defined
+    enabled: !!executionId,
     staleTime: 1000,
     refetchOnWindowFocus: false,
     retry: false,
     refetchInterval: (data) => {
-      // if the status of the playbook is ongoing, refetch every second
-      // otherwise there is no point in refetching
       if (!data) return false;
       return data.status === SoarcaApiPlaybookExecutionStatus.ONGOING
         ? 1000
@@ -69,7 +68,98 @@ export const ExecutionDetailPage: React.FC = () => {
   const report: PlaybookExecutionReport | undefined = data;
   const steps = Object.values(report?.step_results || {});
   const status = getPlaybookStatusFromSoarcaStatus(report?.status);
-  const parsedError = getErrorFromApiResponse(error as Error);
+  const parsedError = getErrorFromApiResponse(error);
+
+  const renderBody = () => {
+    if (isLoading)
+      return (
+        <CenteredCardContent>
+          <Spinner $size={ThemeSize.Large} />
+        </CenteredCardContent>
+      );
+    if (isError)
+      return (
+        <Text>{parsedError?.message || "Could not load execution report"}</Text>
+      );
+    if (!report) return <Text>No report data found for this execution.</Text>;
+
+    return (
+      <ResponsiveLayout>
+        <DetailsGrid>
+          <DetailsItem>
+            <FormLabel>Execution ID</FormLabel>
+            <Text>{report.execution_id}</Text>
+          </DetailsItem>
+          <DetailsItem>
+            <FormLabel>Status</FormLabel>
+            <Badge $variant={getBadgeVariantFromStatus(status)}>
+              <Icon
+                $icon={getIconFromStatus(status)}
+                $size={ThemeSize.Medium}
+              />
+              {status}
+            </Badge>
+          </DetailsItem>
+          <DetailsItem>
+            <FormLabel>Description</FormLabel>
+            <ExpandableText
+              $text={<DetailsValue>{report.description || "—"}</DetailsValue>}
+            />
+          </DetailsItem>
+          <DetailsItem>
+            <FormLabel>Status details</FormLabel>
+            <ExpandableText
+              $text={<DetailsValue>{report.status_text || "—"}</DetailsValue>}
+            />
+          </DetailsItem>
+          <DetailsItem>
+            <FormLabel>Started</FormLabel>
+            <Text>{formatDateTime(report.started)}</Text>
+          </DetailsItem>
+          <DetailsItem>
+            <FormLabel>Ended</FormLabel>
+            <Text>{formatDateTime(report.ended)}</Text>
+          </DetailsItem>
+        </DetailsGrid>
+        {steps.length === 0 ? (
+          <NoStepsMessage>
+            <Text>No steps found for this execution.</Text>
+          </NoStepsMessage>
+        ) : (
+          <TabsProvider initialTab={TABS.timeline}>
+            <TabsSection>
+              <Tabs
+                tabs={[
+                  {
+                    id: TABS.timeline,
+                    label: (
+                      <Spacer $direction="horizontal" $gap="xs" $align="center">
+                        <Icon $icon={SquareChartGantt} /> Timeline
+                      </Spacer>
+                    ),
+                  },
+                  {
+                    id: TABS.detailed,
+                    label: (
+                      <Spacer $direction="horizontal" $gap="xs" $align="center">
+                        <Icon $icon={Info} /> Details
+                      </Spacer>
+                    ),
+                  },
+                ]}
+              />
+              <TabContentRenderer
+                steps={steps}
+                playbookId={report.playbook_id}
+                executionId={report.execution_id}
+                onRefetch={refetch}
+              />
+            </TabsSection>
+          </TabsProvider>
+        )}
+      </ResponsiveLayout>
+    );
+  };
 
   return (
     <Spacer $direction="vertical" $gap="lg" $align="start">
@@ -77,107 +167,12 @@ export const ExecutionDetailPage: React.FC = () => {
         <Icon $icon={ArrowLeft} />
         Back to monitoring
       </Link>
-      <SuspenseCard
-        $isLoading={isLoading}
-        $isError={isError}
-        $errorMessage={parsedError?.message}
-        $returnedNoContent={!isLoading && !isError && !report}
-        $noContentMessage="No report data found for this execution."
-      >
-        <CardContainer>
-          <CardHeader>
-            <CardTitle>{report?.name}</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <ResponsiveLayout>
-              <DetailsGrid>
-                <DetailsItem>
-                  <FormLabel>Execution ID</FormLabel>
-                  <Text>{report?.execution_id}</Text>
-                </DetailsItem>
-                <DetailsItem>
-                  <FormLabel>Status</FormLabel>
-                  <Badge $variant={getBadgeVariantFromStatus(status)}>
-                    <Icon
-                      $icon={getIconFromStatus(status)}
-                      $size={ThemeSize.Medium}
-                    />
-                    {status}
-                  </Badge>
-                </DetailsItem>
-                <DetailsItem>
-                  <FormLabel>Description</FormLabel>
-                  <ExpandableText
-                    $text={
-                      <DetailsValue>{report?.description || "—"}</DetailsValue>
-                    }
-                  />
-                </DetailsItem>
-                <DetailsItem>
-                  <FormLabel>Status details</FormLabel>
-                  <ExpandableText
-                    $text={
-                      <DetailsValue>{report?.status_text || "—"}</DetailsValue>
-                    }
-                  />
-                </DetailsItem>
-                <DetailsItem>
-                  <FormLabel>Started</FormLabel>
-                  <Text>{formatDateTime(report?.started)}</Text>
-                </DetailsItem>
-                <DetailsItem>
-                  <FormLabel>Ended</FormLabel>
-                  <Text>{formatDateTime(report?.ended)}</Text>
-                </DetailsItem>
-              </DetailsGrid>
-              {steps.length === 0 ? (
-                <NoStepsMessage>
-                  <Text>No steps found for this execution.</Text>
-                </NoStepsMessage>
-              ) : (
-                <TabsProvider initialTab={TABS.timeline}>
-                  <TabsSection>
-                    <Tabs
-                      tabs={[
-                        {
-                          id: TABS.timeline,
-                          label: (
-                            <Spacer
-                              $direction="horizontal"
-                              $gap="xs"
-                              $align="center"
-                            >
-                              <Icon $icon={SquareChartGantt} /> Timeline
-                            </Spacer>
-                          ),
-                        },
-                        {
-                          id: TABS.detailed,
-                          label: (
-                            <Spacer
-                              $direction="horizontal"
-                              $gap="xs"
-                              $align="center"
-                            >
-                              <Icon $icon={Info} /> Details
-                            </Spacer>
-                          ),
-                        },
-                      ]}
-                    />
-                    <TabContentRenderer
-                      steps={steps}
-                      playbookId={report?.playbook_id}
-                      executionId={report?.execution_id}
-                      onRefetch={refetch}
-                    />
-                  </TabsSection>
-                </TabsProvider>
-              )}
-            </ResponsiveLayout>
-          </CardBody>
-        </CardContainer>
-      </SuspenseCard>
+      <CardContainer>
+        <CardHeader>
+          <CardTitle>{report?.name ?? "Execution report"}</CardTitle>
+        </CardHeader>
+        <CardBody>{renderBody()}</CardBody>
+      </CardContainer>
     </Spacer>
   );
 };

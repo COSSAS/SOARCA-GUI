@@ -18,7 +18,7 @@ export const Input = styled.input`
 
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.md};
 
-  font: ${({ theme }) => theme.typography.caption.font};
+  font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
   background: ${({ theme }) => theme.colors.background.primary};
 
@@ -53,16 +53,24 @@ export const Input = styled.input`
 const StyledSelect = styled.select`
   width: 100%;
   box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
 
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
+  padding: ${({ theme }) =>
+    `${theme.spacing.md} ${theme.spacing["2xl"]} ${theme.spacing.md} ${theme.spacing.md}`};
 
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
-  background: ${({ theme }) => theme.colors.background.primary};
-  line-height: 1.5;
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  background-image: ${({ theme }) => {
+    const color = theme.colors.text.tertiary.replace("#", "%23");
+    return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='${color}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C%2Fsvg%3E")`;
+  }};
+  background-repeat: no-repeat;
+  background-position: right ${({ theme }) => theme.spacing.md} center;
 
   transition: border-color ${({ theme }) => theme.transitions.base};
 
@@ -80,7 +88,7 @@ const StyledSelect = styled.select`
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: ${({ theme }) => theme.colors.background.secondary};
+    background-color: ${({ theme }) => theme.colors.background.secondary};
   }
 
   & > option {

@@ -77,8 +77,8 @@ export async function deleteToApi(url: string): Promise<void> {
  * @example
  * const errorResponse = apiErrorToErrorResponse(error);
  */
-export const getErrorFromApiResponse = (error: Error): ErrorResponse => {
-  if (error && error instanceof Error) {
+export const getErrorFromApiResponse = (error: unknown): ErrorResponse => {
+  if (error instanceof Error) {
     try {
       return JSON.parse(error.message) as ErrorResponse;
     } catch {
@@ -90,14 +90,14 @@ export const getErrorFromApiResponse = (error: Error): ErrorResponse => {
 
 /**
  * Formats an error for display in a toast notification.
- * @param error - The Error object to format
+ * @param error - The error to format (any value; non-Error inputs use the default message)
  * @param defaultMessage - The default message to use if the error does not have a specific message
  * @returns Formatted error message string
  * @example
  * const message = formatErrorForToast(error, "An unexpected error occurred.");
  */
 export const formatErrorForToast = (
-  error: Error,
+  error: unknown,
   defaultMessage: string,
 ): string => {
   const parsed = getErrorFromApiResponse(error);

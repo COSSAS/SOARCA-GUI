@@ -2,6 +2,7 @@ import { Copy } from "lucide-react";
 import React from "react";
 import toast from "react-hot-toast";
 
+import { formatErrorForToast } from "@/api/utils";
 import { Button } from "./Button";
 import Icon from "./Icon";
 import { ThemeSize } from "./utils";
@@ -23,8 +24,6 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   disabled = false,
   ...rest
 }) => {
-
-
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (disabled || !$text) return;
@@ -33,8 +32,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
       await navigator.clipboard.writeText($text);
       toast.success("Copied to clipboard");
     } catch (err) {
-      console.error("Copy failed", err);
-      toast.error("Failed to copy to clipboard");
+      toast.error(formatErrorForToast(err, "Failed to copy to clipboard"));
     }
   };
 

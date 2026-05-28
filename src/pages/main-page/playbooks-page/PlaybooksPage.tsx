@@ -1,4 +1,4 @@
-import { SuspenseCard, ThemeSize, ThemeVariant } from "@/components";
+import { ThemeSize, ThemeVariant } from "@/components";
 import { useQuery } from "@tanstack/react-query";
 import { FilePlusCorner, MoreVertical } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -12,9 +12,12 @@ import {
   CardContainer,
   CardHeader,
   CardTitle,
+  CenteredCardContent,
   Icon,
+  Spinner,
+  Text,
 } from "@/components";
-import { ErrorResponse, Playbook, Step } from "@/types";
+import { Playbook, Step } from "@/types";
 import { PATHS, sortByString } from "@/utils";
 
 import {
@@ -143,45 +146,51 @@ export const PlaybooksPage: React.FC = () => {
     true,
     false,
   );
-  const noContent = !isLoading && !isError && sortedPlaybooks.length === 0;
-  const parsedError = getErrorFromApiResponse(error as Error) as ErrorResponse;
+
+  const parsedError = getErrorFromApiResponse(error);
 
   const handlePlaybookClick = (playbookId: string) => {
     navigate(PATHS.PLAYBOOKS.DETAIL.replace(":playbookId", playbookId));
   };
 
+  const renderBody = () => {
+    if (isLoading)
+      return (
+        <CenteredCardContent>
+          <Spinner $size={ThemeSize.Large} />
+        </CenteredCardContent>
+      );
+    if (isError)
+      return <Text>{parsedError?.message || "Could not load playbooks"}</Text>;
+    if (sortedPlaybooks.length === 0)
+      return <Text>No playbooks available</Text>;
+    return (
+      <PlaybookList>
+        {sortedPlaybooks.map((playbook) => (
+          <PlaybookItem
+            key={playbook.id}
+            playbook={playbook}
+            onClick={() => handlePlaybookClick(playbook.id)}
+          />
+        ))}
+      </PlaybookList>
+    );
+  };
+
   return (
-    <SuspenseCard
-      $isLoading={isLoading}
-      $isError={isError}
-      $errorMessage={parsedError?.message}
-      $returnedNoContent={noContent}
-      $noContentMessage="No playbooks available"
-    >
-      <CardContainer>
-        <CardHeader>
-          <CardTitle>Playbooks</CardTitle>
-          <Button
-            $variant={ThemeVariant.Primary}
-            $size={ThemeSize.Small}
-            onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
-          >
-            <Icon $icon={FilePlusCorner} $size={ThemeSize.Medium} />
-            New
-          </Button>
-        </CardHeader>
-        <CardBody>
-          <PlaybookList>
-            {sortedPlaybooks.map((playbook) => (
-              <PlaybookItem
-                key={playbook.id}
-                playbook={playbook}
-                onClick={() => handlePlaybookClick(playbook.id)}
-              />
-            ))}
-          </PlaybookList>
-        </CardBody>
-      </CardContainer>
-    </SuspenseCard>
+    <CardContainer>
+      <CardHeader>
+        <CardTitle>Playbooks</CardTitle>
+        <Button
+          $variant={ThemeVariant.Primary}
+          $size={ThemeSize.Small}
+          onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
+        >
+          <Icon $icon={FilePlusCorner} $size={ThemeSize.Medium} />
+          New
+        </Button>
+      </CardHeader>
+      <CardBody>{renderBody()}</CardBody>
+    </CardContainer>
   );
 };

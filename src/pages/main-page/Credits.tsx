@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { FormLabel, Link } from "@/components";
 import {
@@ -7,6 +7,8 @@ import {
 } from "@/pages/main-page/monitoring-page/ExecutionDetailPage.styles";
 import { MadeWithLove, PixelHeart } from "./Credits.styles";
 
+const TRIGGER = "credits";
+
 /**
  * Little fun easter egg that shows credits when the user types "credits".
  * It also desappears when the user types anything else.
@@ -14,23 +16,19 @@ import { MadeWithLove, PixelHeart } from "./Credits.styles";
  */
 export const CreditsEasterEgg: React.FC = () => {
   const [showEasterEgg, setShowEasterEgg] = useState(false);
-  const [keyBuffer, setKeyBuffer] = useState("");
+  const keyBufferRef = useRef("");
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      const newBuffer = (keyBuffer + e.key).slice(-7);
-      setKeyBuffer(newBuffer);
-
-      if (newBuffer === "credits") {
-        setShowEasterEgg(true);
-      } else if (showEasterEgg) {
-        setShowEasterEgg(false);
-      }
+      keyBufferRef.current = (keyBufferRef.current + e.key).slice(
+        -TRIGGER.length,
+      );
+      setShowEasterEgg(keyBufferRef.current === TRIGGER);
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [keyBuffer, showEasterEgg]);
+  }, []);
 
   if (!showEasterEgg) {
     return null;

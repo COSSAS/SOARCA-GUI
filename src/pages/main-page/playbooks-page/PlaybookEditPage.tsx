@@ -12,13 +12,16 @@ import {
   CardContainer,
   CardHeader,
   CardTitle,
+  CenteredCardContent,
   Icon,
   Link,
   Spacer,
-  SuspenseCard,
+  Spinner,
+  Text,
+  ThemeSize,
   ThemeVariant,
 } from "@/components";
-import { ErrorResponse, Playbook } from "@/types";
+import { Playbook } from "@/types";
 import { PATHS } from "@/utils";
 
 import CodeEditor from "@/components/CodeEditor";
@@ -55,9 +58,7 @@ export const PlaybookEditPage: React.FC = () => {
     enabled: !!playbookId,
   });
 
-  const fetchPlaybookError = getErrorFromApiResponse(
-    queryError as Error,
-  ) as ErrorResponse;
+  const fetchPlaybookError = getErrorFromApiResponse(queryError);
 
   const initialJsonContent = useMemo(() => {
     return playbook ? JSON.stringify(playbook, null, 2) : "";
@@ -94,64 +95,73 @@ export const PlaybookEditPage: React.FC = () => {
         Back to playbook
       </Link>
 
-      <SuspenseCard
-        $isLoading={isLoading}
-        $isError={isError}
-        $errorMessage={fetchPlaybookError?.message}
-        $returnedNoContent={!isLoading && !isError && !playbook}
-        $noContentMessage="Playbook not found"
-      >
-        <CardContainer>
-          <CardHeader>
-            <CardTitle>Edit Playbook: {playbook?.name}</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <EditorHint>
-              Edit the playbook JSON below. Changes will be validated before
-              saving.
-            </EditorHint>
+      <CardContainer>
+        <CardHeader>
+          <CardTitle>Edit Playbook: {playbook?.name ?? "..."}</CardTitle>
+        </CardHeader>
+        <CardBody>
+          {isLoading ? (
+            <CenteredCardContent>
+              <Spinner $size={ThemeSize.Large} />
+            </CenteredCardContent>
+          ) : isError || !playbook ? (
+            <Text>
+              {isError
+                ? fetchPlaybookError?.message || "Could not load playbook"
+                : "Playbook not found"}
+            </Text>
+          ) : (
+            <>
+              <EditorHint>
+                Edit the playbook JSON below. Changes will be validated before
+                saving.
+              </EditorHint>
 
-            <CodeEditor
-              $value={jsonContent || initialJsonContent}
-              $onChange={(v) => {
-                setJsonContent(v);
-                setError("");
-                if (v.trim()) {
-                  const validation = validatePlaybookJson(v);
-                  if (!validation.valid)
-                    setError(validation.error || "Invalid JSON");
-                }
-              }}
-              $placeholder="Edit your CACAO playbook JSON here..."
-              $disabled={updateMutation.isPending}
-              $hasError={!!error}
-              $minHeight="500px"
-            />
-            {error && <ErrorMessage>{error}</ErrorMessage>}
-            <ActionButtons>
-              <Button
-                $variant={ThemeVariant.Primary}
-                $ghost
-                onClick={() =>
-                  navigate(
-                    PATHS.PLAYBOOKS.DETAIL.replace(":playbookId", playbookId!),
-                  )
-                }
-                disabled={updateMutation.isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                $variant={ThemeVariant.Success}
-                onClick={handleSubmit}
-                disabled={!canSubmit || !hasChanges}
-              >
-                Save
-              </Button>
-            </ActionButtons>
-          </CardBody>
-        </CardContainer>
-      </SuspenseCard>
+              <CodeEditor
+                $value={jsonContent || initialJsonContent}
+                $onChange={(v) => {
+                  setJsonContent(v);
+                  setError("");
+                  if (v.trim()) {
+                    const validation = validatePlaybookJson(v);
+                    if (!validation.valid)
+                      setError(validation.error || "Invalid JSON");
+                  }
+                }}
+                $placeholder="Edit your CACAO playbook JSON here..."
+                $disabled={updateMutation.isPending}
+                $hasError={!!error}
+                $minHeight="500px"
+              />
+              {error && <ErrorMessage>{error}</ErrorMessage>}
+              <ActionButtons>
+                <Button
+                  $variant={ThemeVariant.Primary}
+                  $ghost
+                  onClick={() =>
+                    navigate(
+                      PATHS.PLAYBOOKS.DETAIL.replace(
+                        ":playbookId",
+                        playbookId!,
+                      ),
+                    )
+                  }
+                  disabled={updateMutation.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  $variant={ThemeVariant.Success}
+                  onClick={handleSubmit}
+                  disabled={!canSubmit || !hasChanges}
+                >
+                  Save
+                </Button>
+              </ActionButtons>
+            </>
+          )}
+        </CardBody>
+      </CardContainer>
     </Spacer>
   );
 };

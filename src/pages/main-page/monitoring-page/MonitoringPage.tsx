@@ -12,14 +12,16 @@ import {
   CardHeader,
   CardTitle,
   Cell,
+  CenteredCardContent,
   HeaderCell,
   Icon,
   Row,
   Spacer,
-  SuspenseCard,
+  Spinner,
   Table,
   TableBody,
   TableHead,
+  Text,
 } from "@/components";
 import { ThemeSize, ThemeVariant } from "@/components/utils";
 import { PlaybookExecutionStatus } from "@/enums";
@@ -27,7 +29,7 @@ import {
   getBadgeVariantFromStatus,
   getPlaybookStatusFromSoarcaStatus,
 } from "@/pages/main-page/monitoring-page/utils";
-import { ErrorResponse, PlaybookExecutionReport } from "@/types";
+import { PlaybookExecutionReport } from "@/types";
 import {
   computeDurationMs,
   formatDateTime,
@@ -80,66 +82,68 @@ export const MonitoringPage: React.FC = () => {
   });
 
   const rows = parseReportToRows(data || []) as PlaybookRow[];
-
-  const noContent = !isLoading && !isError && rows.length === 0;
-  const parsedError = getErrorFromApiResponse(error as Error) as ErrorResponse;
+  const parsedError = getErrorFromApiResponse(error);
 
   const navigateToExecutionDetail = (executionId: string) => {
     navigate(PATHS.MONITORING.DETAIL.replace(":executionId", executionId));
   };
 
-  return (
-    <SuspenseCard
-      $isLoading={isLoading}
-      $isError={isError}
-      $errorMessage={parsedError?.message}
-      $returnedNoContent={noContent}
-      $noContentMessage="It looks like nothing is happening..."
-    >
-      <CardContainer>
-        <PlaybooksExecutionsCardHeader rows={rows} />
-        <CardBody>
-          <Table>
-            <TableHead>
-              <tr>
-                <HeaderCell>Playbook name</HeaderCell>
-                <HeaderCell>Start time</HeaderCell>
-                <HeaderCell>Execution duration</HeaderCell>
-                <HeaderCell>Status</HeaderCell>
-              </tr>
-            </TableHead>
-            <TableBody>
-              {rows.map((r) => (
-                <Row
-                  key={r.id}
-                  $isClickable
-                  onClick={() => navigateToExecutionDetail(r.id)}
+  const renderBody = () => {
+    if (isLoading)
+      return (
+        <CenteredCardContent>
+          <Spinner $size={ThemeSize.Large} />
+        </CenteredCardContent>
+      );
+    if (isError)
+      return <Text>{parsedError?.message || "Could not load executions"}</Text>;
+    if (rows.length === 0)
+      return <Text>It looks like nothing is happening...</Text>;
+    return (
+      <Table>
+        <TableHead>
+          <tr>
+            <HeaderCell>Playbook name</HeaderCell>
+            <HeaderCell>Start time</HeaderCell>
+            <HeaderCell>Execution duration</HeaderCell>
+            <HeaderCell>Status</HeaderCell>
+          </tr>
+        </TableHead>
+        <TableBody>
+          {rows.map((r) => (
+            <Row
+              key={r.id}
+              $isClickable
+              onClick={() => navigateToExecutionDetail(r.id)}
+            >
+              <Cell>{r.name}</Cell>
+              <Cell>{r.startTime}</Cell>
+              <Cell>{formatDuration(r.durationMs)}</Cell>
+              <Cell>
+                <Badge
+                  $variant={getBadgeVariantFromStatus(r.status)}
+                  title={
+                    r.hasActionRequired ? "Manual action(s) needed" : undefined
+                  }
                 >
-                  <Cell>{r.name}</Cell>
-                  <Cell>{r.startTime}</Cell>
-                  <Cell>{formatDuration(r.durationMs)}</Cell>
-                  <Cell>
-                    <Badge
-                      $variant={getBadgeVariantFromStatus(r.status)}
-                      title={
-                        r.hasActionRequired
-                          ? "Manual action(s) needed"
-                          : undefined
-                      }
-                    >
-                      {r.status}
-                      {r.hasActionRequired && (
-                        <Icon $icon={BadgeAlert} $size={ThemeSize.Medium} />
-                      )}
-                    </Badge>
-                  </Cell>
-                </Row>
-              ))}
-            </TableBody>
-          </Table>
-        </CardBody>
-      </CardContainer>
-    </SuspenseCard>
+                  {r.status}
+                  {r.hasActionRequired && (
+                    <Icon $icon={BadgeAlert} $size={ThemeSize.Medium} />
+                  )}
+                </Badge>
+              </Cell>
+            </Row>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  };
+
+  return (
+    <CardContainer>
+      <PlaybooksExecutionsCardHeader rows={rows} />
+      <CardBody>{renderBody()}</CardBody>
+    </CardContainer>
   );
 };
 

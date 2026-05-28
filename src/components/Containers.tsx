@@ -34,3 +34,10 @@ export const PageContainer = styled.div<PageContainerProps>`
 
   padding: 0;
 `;
+
+export const CenteredCardContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+`;
