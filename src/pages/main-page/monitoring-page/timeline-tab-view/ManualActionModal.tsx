@@ -2,13 +2,14 @@ import {
   QueryObserverResult,
   useMutation,
   UseMutationResult,
+  useQuery,
 } from "@tanstack/react-query";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-import { postStepActionResult } from "@/api/manual";
+import { getStepManualData, postStepActionResult } from "@/api/manual";
 import { formatErrorForToast } from "@/api/utils";
-import { Button, Modal, RadioGroup, ThemeVariant } from "@/components";
+import { Button, Modal, RadioGroup, Spinner, ThemeVariant } from "@/components";
 import {
   Execution,
   ManualOutArgsUpdatePayload,
@@ -53,28 +54,9 @@ const enum ActionType {
 const decodeCommand = (commandB64: string): string => {
   try {
     return atob(commandB64);
-  } catch (error) {
-    console.error("Failed to decode command:", error);
+  } catch {
     return commandB64;
   }
-};
-
-const initFromStep = (step?: StepExecutionReport | null) => {
-  const initialValues: Record<string, string> = {};
-  const initialChoices: Record<string, ActionType> = {};
-
-  if (step?.variables) {
-    Object.entries(step.variables).forEach(([key, variable]) => {
-      if (variable?.value && variable.value.trim() !== "") {
-        initialValues[key] = variable.value;
-        initialChoices[key] = ActionType.CONFIRM;
-      } else {
-        initialValues[key] = "";
-      }
-    });
-  }
-
-  return { initialValues, initialChoices };
 };
 
 export const ManualActionModal: React.FC<ManualActionModalProps> = ({
@@ -84,14 +66,18 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const initial = initFromStep(activeStep);
-
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
-    initial.initialValues,
+    {},
   );
   const [variableChoices, setVariableChoices] = useState<
     Record<string, ActionType>
-  >(initial.initialChoices);
+  >({});
+
+  const { data: interactionData, isLoading: isLoadingOutArgs } = useQuery({
+    queryKey: ["manual", executionId, activeStep?.step_id],
+    queryFn: () => getStepManualData(executionId!, activeStep!.step_id),
+    enabled: !!activeStep && !!executionId,
+  });
 
   const mutation = useMutation({
     mutationFn: (payload: ManualOutArgsUpdatePayload) =>
@@ -122,32 +108,27 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
     if (!activeStep || !playbookId || !executionId) return;
 
     const response_out_args: Variables = {};
-    const activeStepVariablesArr = Object.entries(activeStep.variables || {});
+    const outArgs = interactionData?.out_args ?? {};
 
-    if (activeStepVariablesArr.length > 0) {
-      // Process variables
-      Object.entries(activeStep.variables || {}).forEach(([key, variable]) => {
-        const hasExistingValue =
-          variable?.value && variable.value.trim() !== "";
+    Object.entries(outArgs).forEach(([key, variable]) => {
+      const hasExistingValue = variable?.value && variable.value.trim() !== "";
 
-        if (hasExistingValue) {
-          response_out_args[key] = {
-            ...variable,
-            name: variable?.name || key,
-            type: variable?.type || "string",
-            value: variable.value,
-          };
-        } else {
-          // Variable needs a value - use the input value
-          response_out_args[key] = {
-            ...variable,
-            name: variable?.name || key,
-            type: variable?.type || "string",
-            value: variableValues[key] || "",
-          };
-        }
-      });
-    }
+      if (hasExistingValue) {
+        response_out_args[key] = {
+          ...variable,
+          name: variable?.name || key,
+          type: variable?.type || "string",
+          value: variable.value,
+        };
+      } else {
+        response_out_args[key] = {
+          ...variable,
+          name: variable?.name || key,
+          type: variable?.type || "string",
+          value: variableValues[key] || "",
+        };
+      }
+    });
 
     const responseStatus: ManualResponseStatus =
       action === ActionType.CONFIRM ? "success" : "failure";
@@ -176,6 +157,8 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
       <Modal.Body>
         <ModalContent
           activeStep={activeStep}
+          outArgs={interactionData?.out_args ?? {}}
+          isLoadingOutArgs={isLoadingOutArgs}
           mutation={mutation}
           variableValues={variableValues}
           variableChoices={variableChoices}
@@ -197,7 +180,7 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
           $variant={ThemeVariant.Error}
           title="Reject the action and notify the playbook"
           onClick={() => handleSubmit(ActionType.REJECT)}
-          disabled={mutation.isPending}
+          disabled={mutation.isPending || isLoadingOutArgs}
         >
           Reject
         </Button>
@@ -205,7 +188,7 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
           $variant={ThemeVariant.Success}
           title="Confirm the action and submit the variables, if requested"
           onClick={() => handleSubmit(ActionType.CONFIRM)}
-          disabled={mutation.isPending}
+          disabled={mutation.isPending || isLoadingOutArgs}
         >
           Confirm
         </Button>
@@ -216,6 +199,8 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
 
 interface ModalContentProps {
   activeStep: StepExecutionReport | null;
+  outArgs: Variables;
+  isLoadingOutArgs: boolean;
   mutation: UseMutationResult<
     Execution,
     Error,
@@ -230,13 +215,15 @@ interface ModalContentProps {
 
 const ModalContent: React.FC<ModalContentProps> = ({
   activeStep,
+  outArgs,
+  isLoadingOutArgs,
   mutation,
   variableValues,
   variableChoices,
   onChoiceChange,
   onValueChange,
 }) => {
-  const activeStepVariables = Object.entries(activeStep?.variables || {});
+  const outArgEntries = Object.entries(outArgs);
   const commandTexts =
     activeStep?.commands_b64?.map((cmd) => decodeCommand(cmd)) || [];
 
@@ -258,11 +245,15 @@ const ModalContent: React.FC<ModalContentProps> = ({
         </Section>
       )}
 
-      {activeStepVariables.length > 0 ? (
+      {isLoadingOutArgs ? (
+        <Section>
+          <Spinner />
+        </Section>
+      ) : outArgEntries.length > 0 ? (
         <Section>
           <SectionTitle>Variables</SectionTitle>
           <VariableList>
-            {activeStepVariables.map(([key, variable]) => {
+            {outArgEntries.map(([key, variable]) => {
               const hasExistingValue =
                 variable?.value && variable.value.trim() !== "";
               const varType = variable?.type || "string";
