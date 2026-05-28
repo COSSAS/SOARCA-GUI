@@ -1,0 +1,69 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--4e286394-ff8f-487f-84dd-f7ccf1fa59de",
+  "name": "Block AD user",
+  "description": "Blocks AD user by providing the AD user name",
+  "created_by": "identity--aaacfc1a-fa46-4c1c-85dd-2a0823ce3943",
+  "created": "2024-09-04T08:19:39.424Z",
+  "modified": "2024-09-04T08:22:25.712Z",
+  "revoked": false,
+  "playbook_variables": {
+    "__user__": {
+      "type": "string",
+      "constant": false,
+      "external": true
+    }
+  },
+  "workflow_start": "start--4270ba65-31c3-4041-9fa0-17241122bb9f",
+  "workflow": {
+    "start--4270ba65-31c3-4041-9fa0-17241122bb9f": {
+      "on_completion": "action--0a6fbf98-4e75-45fd-9948-8c62908521db",
+      "type": "start"
+    },
+    "action--0a6fbf98-4e75-45fd-9948-8c62908521db": {
+      "name": "Disable account",
+      "description": "Disable windows account in AD",
+      "on_completion": "end--bfbcfc10-1926-4409-8ea2-bfd1814365b3",
+      "type": "action",
+      "commands": [
+        {
+          "type": "powershell",
+          "description": "Block user given to the playbook",
+          "command": "Disable-ADAccount -Identity __user__:value"
+        }
+      ],
+      "agent": "soarca--49cde8bd-cc50-4d1a-b60c-8d49a785f4b9",
+      "targets": ["net-address--78a788f6-c2b8-4c46-9648-c2cb933c63b2"]
+    },
+    "end--bfbcfc10-1926-4409-8ea2-bfd1814365b3": {
+      "type": "end"
+    }
+  },
+  "authentication_info_definitions": {
+    "authentication-info--9a2d2fd6-aa6d-4d2e-ad2a-f6f84d544dbc": {
+      "type": "user-auth",
+      "name": "Domain admin",
+      "username": "admin.project",
+      "password": "censored",
+      "kms": false
+    }
+  },
+  "agent_definitions": {
+    "soarca--49cde8bd-cc50-4d1a-b60c-8d49a785f4b9": {
+      "type": "soarca",
+      "name": "soarca-powershell"
+    }
+  },
+  "target_definitions": {
+    "net-address--78a788f6-c2b8-4c46-9648-c2cb933c63b2": {
+      "type": "net-address",
+      "name": "Windows AD DS server",
+      "address": {
+        "ipv4": ["192.168.1.121"]
+      },
+      "port": "5985",
+      "authentication_info": "authentication-info--9a2d2fd6-aa6d-4d2e-ad2a-f6f84d544dbc"
+    }
+  }
+}

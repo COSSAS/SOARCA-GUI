@@ -2,17 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 import { getSystemStatus } from "@/api/status";
-import { getErrorFromApiResponse } from "@/api/utils";
 import {
   Badge,
   CardBody,
   CardContainer,
   CardHeader,
   CardTitle,
+  CenteredCardContent,
   FormLabel,
   RadioGroup,
   Spacer,
-  SuspenseCard,
+  Spinner,
+  ThemeSize,
   ThemeVariant,
 } from "@/components";
 import {
@@ -27,7 +28,7 @@ import { CreditsEasterEgg } from "./Credits";
 export const SettingsPage: React.FC = () => {
   const { mode, setMode } = useThemeMode();
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["system-status"],
     queryFn: getSystemStatus,
     refetchInterval: 5000,
@@ -35,41 +36,40 @@ export const SettingsPage: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  const parsedError = getErrorFromApiResponse(error as Error);
   return (
-    <SuspenseCard
-      $isLoading={isLoading}
-      $isError={isError}
-      $errorMessage={parsedError?.message}
-    >
-      <Spacer $direction="vertical" $gap="lg">
-        <CardContainer>
-          <CardHeader>
-            <CardTitle>Appearance</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <DetailsGrid>
-              <DetailsItem>
-                <FormLabel>Theme</FormLabel>
-                <RadioGroup
-                  name="theme-mode"
-                  $options={[
-                    { label: "Automatic", value: "auto" },
-                    { label: "Light", value: "light" },
-                    { label: "Dark (Beta)", value: "dark" },
-                  ]}
-                  $value={mode}
-                  $onChange={(v) => setMode(v as ThemeMode)}
-                />
-              </DetailsItem>
-            </DetailsGrid>
-          </CardBody>
-        </CardContainer>
-        <CardContainer>
-          <CardHeader>
-            <CardTitle>SOARCA information</CardTitle>
-          </CardHeader>
-          <CardBody>
+    <Spacer $direction="vertical" $gap="lg">
+      <CardContainer>
+        <CardHeader>
+          <CardTitle>Appearance</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <DetailsGrid>
+            <DetailsItem>
+              <FormLabel>Theme</FormLabel>
+              <RadioGroup
+                name="theme-mode"
+                $options={[
+                  { label: "Automatic", value: "auto" },
+                  { label: "Light", value: "light" },
+                  { label: "Dark (Beta)", value: "dark" },
+                ]}
+                $value={mode}
+                $onChange={(v) => setMode(v as ThemeMode)}
+              />
+            </DetailsItem>
+          </DetailsGrid>
+        </CardBody>
+      </CardContainer>
+      <CardContainer>
+        <CardHeader>
+          <CardTitle>SOARCA information</CardTitle>
+        </CardHeader>
+        <CardBody>
+          {isLoading ? (
+            <CenteredCardContent>
+              <Spinner $size={ThemeSize.Large} />
+            </CenteredCardContent>
+          ) : (
             <DetailsGrid>
               <DetailsItem>
                 <FormLabel>Status</FormLabel>
@@ -79,7 +79,7 @@ export const SettingsPage: React.FC = () => {
                       isError ? ThemeVariant.Error : ThemeVariant.Success
                     }
                   >
-                    {isError ? "Error" : "Online"}
+                    {isError ? "Offline" : "Online"}
                   </Badge>
                 </DetailsValue>
               </DetailsItem>
@@ -119,24 +119,24 @@ export const SettingsPage: React.FC = () => {
                 </DetailsValue>
               </DetailsItem>
             </DetailsGrid>
-          </CardBody>
-        </CardContainer>
+          )}
+        </CardBody>
+      </CardContainer>
 
-        <CardContainer>
-          <CardHeader>
-            <CardTitle>SOARCA GUI information</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <DetailsGrid>
-              <DetailsItem>
-                <FormLabel>Version</FormLabel>
-                <DetailsValue>{__APP_VERSION__}</DetailsValue>
-              </DetailsItem>
-              <CreditsEasterEgg />
-            </DetailsGrid>
-          </CardBody>
-        </CardContainer>
-      </Spacer>
-    </SuspenseCard>
+      <CardContainer>
+        <CardHeader>
+          <CardTitle>SOARCA GUI information</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <DetailsGrid>
+            <DetailsItem>
+              <FormLabel>Version</FormLabel>
+              <DetailsValue>{__APP_VERSION__}</DetailsValue>
+            </DetailsItem>
+            <CreditsEasterEgg />
+          </DetailsGrid>
+        </CardBody>
+      </CardContainer>
+    </Spacer>
   );
 };

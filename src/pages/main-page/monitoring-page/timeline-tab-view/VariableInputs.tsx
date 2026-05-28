@@ -1,5 +1,5 @@
-import { Input, Select } from "@/components";
-import React from "react";
+import { CodeEditor, Input, Select } from "@/components";
+import React, { useState } from "react";
 
 interface VariableInputProps {
   variableKey: string;
@@ -8,6 +8,40 @@ interface VariableInputProps {
   disabled: boolean;
   onChange: (key: string, value: string) => void;
 }
+
+const DictionaryInput: React.FC<{
+  variableKey: string;
+  value: string;
+  disabled: boolean;
+  onChange: (key: string, value: string) => void;
+}> = ({ variableKey, value, disabled, onChange }) => {
+  const [hasError, setHasError] = useState(false);
+
+  const handleChange = (val: string) => {
+    if (val.trim() === "") {
+      setHasError(false);
+    } else {
+      try {
+        JSON.parse(val);
+        setHasError(false);
+      } catch {
+        setHasError(true);
+      }
+    }
+    onChange(variableKey, val);
+  };
+
+  return (
+    <CodeEditor
+      $value={value}
+      $onChange={handleChange}
+      $disabled={disabled}
+      $placeholder='{"key": "value"}'
+      $hasError={hasError}
+      $minHeight="100px"
+    />
+  );
+};
 
 export const VariableInput: React.FC<VariableInputProps> = ({
   variableKey,
@@ -125,7 +159,26 @@ export const VariableInput: React.FC<VariableInputProps> = ({
           pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
         />
       );
+    case "dictionary":
+      return (
+        <DictionaryInput
+          variableKey={variableKey}
+          value={value}
+          disabled={disabled}
+          onChange={onChange}
+        />
+      );
     case "hash":
+      return (
+        <Input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(variableKey, e.target.value)}
+          disabled={disabled}
+          placeholder="Hash value (hex string)"
+          pattern="^[a-fA-F0-9]+$"
+        />
+      );
     case "md5-hash":
       return (
         <Input
@@ -133,7 +186,7 @@ export const VariableInput: React.FC<VariableInputProps> = ({
           value={value}
           onChange={(e) => onChange(variableKey, e.target.value)}
           disabled={disabled}
-          placeholder={`${type === "md5-hash" ? "MD5" : "Hash"} hash (32 characters)`}
+          placeholder="MD5 hash (32 characters)"
           pattern="^[a-fA-F0-9]{32}$"
         />
       );

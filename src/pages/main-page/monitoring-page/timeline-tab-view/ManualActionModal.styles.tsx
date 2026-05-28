@@ -56,22 +56,21 @@ export const CommandText = styled.div`
 `;
 
 export const VariableList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.md};
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: ${({ theme }) => theme.spacing.lg};
+  row-gap: ${({ theme }) => theme.spacing.md};
+  align-items: center;
 `;
 
 export const VariableRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.lg};
+  display: contents;
 `;
 
 export const VariableLabel = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
-  min-width: 180px;
   flex-shrink: 0;
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
@@ -100,6 +99,5 @@ export const InfoIconWrapper = styled.div`
 `;
 
 export const VariableInputContainer = styled.div`
-  flex: 1;
-  display: flex;
+  min-width: 0;
 `;

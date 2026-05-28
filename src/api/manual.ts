@@ -1,5 +1,9 @@
-import { Execution, ManualOutArgsUpdatePayload } from "@/types";
-import { HttpMutationMethod, mutationToApi } from "./utils";
+import {
+  Execution,
+  InteractionCommandData,
+  ManualOutArgsUpdatePayload,
+} from "@/types";
+import { fetchFromApi, HttpMutationMethod, mutationToApi } from "./utils";
 
 export const postStepActionResult = (data: ManualOutArgsUpdatePayload) =>
   mutationToApi<Execution>(
@@ -7,3 +11,6 @@ export const postStepActionResult = (data: ManualOutArgsUpdatePayload) =>
     `/api/manual/continue`,
     data,
   );
+
+export const getStepManualData = (executionId: string, stepId: string) =>
+  fetchFromApi<InteractionCommandData>(`/api/manual/${executionId}/${stepId}`);
