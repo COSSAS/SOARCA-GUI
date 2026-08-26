@@ -1,6 +1,7 @@
 import {
   Activity,
   BookOpen,
+  Cable,
   FilePlusCorner,
   Home,
   LayoutDashboard,
@@ -59,6 +60,7 @@ const NAV_ROUTES: NavRoute[] = [
     icon: LayoutDashboard,
   },
   { path: PATHS.MONITORING.BASE, label: "Monitoring", icon: Activity },
+  { path: PATHS.FINS.BASE, label: "Fins", icon: Cable },
   { path: PATHS.SETTINGS, label: "Settings (Beta)", icon: Settings },
 ];
 
@@ -107,7 +109,9 @@ export const MainPage: React.FC = () => {
                 (route.path === PATHS.MONITORING.BASE &&
                   location.pathname.includes(PATHS.MONITORING.BASE)) ||
                 (route.path === PATHS.PLAYBOOKS.BASE &&
-                  location.pathname.includes(PATHS.PLAYBOOKS.BASE))
+                  location.pathname.includes(PATHS.PLAYBOOKS.BASE)) ||
+                (route.path === PATHS.FINS.BASE &&
+                  location.pathname.includes(PATHS.FINS.BASE))
               }
               onClick={() => handleNavigation(route.path)}
             >

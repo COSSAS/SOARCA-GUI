@@ -6,6 +6,8 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 import { MainPage } from "./pages/main-page/MainPage";
 import { SettingsPage } from "./pages/main-page/SettingsPage";
+import { FinDetailPage } from "./pages/main-page/fins-page/fin-detail-page/FinDetailPage";
+import { FinsPage } from "./pages/main-page/fins-page/FinsPage";
 import { ExecutionDetailPage } from "./pages/main-page/monitoring-page/ExecutionDetailPage";
 import { MonitoringPage } from "./pages/main-page/monitoring-page/MonitoringPage";
 import { PlaybookCreatePage } from "./pages/main-page/playbooks-page/PlaybookCreatePage";
@@ -39,6 +41,8 @@ function App() {
             path={PATHS.MONITORING.DETAIL}
             element={<ExecutionDetailPage />}
           />
+          <Route path={PATHS.FINS.BASE} element={<FinsPage />} />
+          <Route path={PATHS.FINS.DETAIL} element={<FinDetailPage />} />
           <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
         </Route>
         <Route path="*" element={<Navigate to={PATHS.NOT_FOUND} replace />} />
