@@ -14,6 +14,7 @@ export type StepExecutionReport = {
   status_text: string;
   step_execution_id: string;
   step_id: string;
+  type: string;
   variables: Record<string, Variable>;
 };
 

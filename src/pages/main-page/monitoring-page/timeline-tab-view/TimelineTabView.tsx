@@ -1,4 +1,4 @@
-import { BadgeAlert, Check, Hand, X } from "lucide-react";
+import { BadgeAlert, Check, Flag, Hand, X } from "lucide-react";
 import React, { useState } from "react";
 
 import {
@@ -101,8 +101,10 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
             step_execution_id,
             status: soarcaStatus,
             automated_execution,
+            type: stepType,
           } = step;
           const status = getStepStatusFromSoarcaStatus(soarcaStatus);
+          const isMarkerStep = stepType === "start" || stepType === "end";
 
           const isStepTerminated = status !== StepExecutionStatus.Running;
           const isStepManualAndOngoing =
@@ -127,7 +129,9 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                   <StepCard step={step} />
                 </TimelineLeftCell>
                 <TimelineIconContainer>
-                  {status === StepExecutionStatus.Running ? (
+                  {isMarkerStep ? (
+                    <Icon $icon={Flag} $round $variant={ThemeVariant.Info} />
+                  ) : status === StepExecutionStatus.Running ? (
                     <Spinner
                       $variant={ThemeVariant.Warning}
                       $size={ThemeSize.Large}
