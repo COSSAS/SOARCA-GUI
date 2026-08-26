@@ -7,7 +7,7 @@ import {
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-import { getStepManualData, postStepActionResult } from "@/api/manual";
+import { getStepManualData, putStepActionResult } from "@/api/manual";
 import { formatErrorForToast } from "@/api/utils";
 import { Button, Modal, RadioGroup, Spinner, ThemeVariant } from "@/components";
 import {
@@ -74,14 +74,15 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
   >({});
 
   const { data: interactionData, isLoading: isLoadingOutArgs } = useQuery({
-    queryKey: ["manual", executionId, activeStep?.step_id],
-    queryFn: () => getStepManualData(executionId!, activeStep!.step_id),
+    queryKey: ["manual", executionId, activeStep?.step_execution_id],
+    queryFn: () =>
+      getStepManualData(executionId!, activeStep!.step_execution_id),
     enabled: !!activeStep && !!executionId,
   });
 
   const mutation = useMutation({
     mutationFn: (payload: ManualOutArgsUpdatePayload) =>
-      postStepActionResult(payload),
+      putStepActionResult(executionId!, activeStep!.step_execution_id, payload),
     onSuccess: async () => {
       toast.success("Action submitted");
       if (onSuccess) {
@@ -134,9 +135,6 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
       action === ActionType.CONFIRM ? "success" : "failure";
 
     const payload: ManualOutArgsUpdatePayload = {
-      execution_id: executionId,
-      playbook_id: playbookId,
-      step_id: activeStep.step_id,
       type: "manual-command-info",
       response_status: responseStatus,
       response_out_args,

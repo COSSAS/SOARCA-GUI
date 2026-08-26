@@ -76,12 +76,12 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
   return (
     <DetailedContainer>
       {steps.map((step) => {
-        const { step_id, status: soarcaStatus } = step;
+        const { step_execution_id, status: soarcaStatus } = step;
         const status = getStepStatusFromSoarcaStatus(soarcaStatus);
 
         return (
           <ExpandableCard
-            key={step_id}
+            key={step_execution_id}
             $defaultExpanded={true}
             $header={
               <Spacer

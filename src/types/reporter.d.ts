@@ -12,6 +12,7 @@ export type StepExecutionReport = {
   started: ISODateString;
   status: SoarcaStepExecutionStatus;
   status_text: string;
+  step_execution_id: string;
   step_id: string;
   variables: Record<string, Variable>;
 };
@@ -40,6 +41,4 @@ export type PlaybookExecutionReport = {
 };
 
 export type SoarcaPlaybookExecutionStatus =
-  | "successfully_executed"
-  | "ongoing"
-  | "failed";
+  "successfully_executed" | "ongoing" | "failed";

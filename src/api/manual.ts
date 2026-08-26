@@ -5,12 +5,21 @@ import {
 } from "@/types";
 import { fetchFromApi, HttpMutationMethod, mutationToApi } from "./utils";
 
-export const postStepActionResult = (data: ManualOutArgsUpdatePayload) =>
+export const putStepActionResult = (
+  executionId: string,
+  stepExecutionId: string,
+  data: ManualOutArgsUpdatePayload,
+) =>
   mutationToApi<Execution>(
-    HttpMutationMethod.POST,
-    `/api/manual/continue`,
+    HttpMutationMethod.PUT,
+    `/api/manual/${executionId}/${stepExecutionId}`,
     data,
   );
 
-export const getStepManualData = (executionId: string, stepId: string) =>
-  fetchFromApi<InteractionCommandData>(`/api/manual/${executionId}/${stepId}`);
+export const getStepManualData = (
+  executionId: string,
+  stepExecutionId: string,
+) =>
+  fetchFromApi<InteractionCommandData>(
+    `/api/manual/${executionId}/${stepExecutionId}`,
+  );

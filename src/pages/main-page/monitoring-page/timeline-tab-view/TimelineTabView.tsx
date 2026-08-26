@@ -97,7 +97,11 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
       <TimelineContainer>
         <TimelineCenterLine />
         {sortedSteps.map((step, stepIndex) => {
-          const { step_id, status: soarcaStatus, automated_execution } = step;
+          const {
+            step_execution_id,
+            status: soarcaStatus,
+            automated_execution,
+          } = step;
           const status = getStepStatusFromSoarcaStatus(soarcaStatus);
 
           const isStepTerminated = status !== StepExecutionStatus.Running;
@@ -117,7 +121,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
           let rowIndex = 0;
 
           return (
-            <React.Fragment key={step_id}>
+            <React.Fragment key={step_execution_id}>
               <TimelineRow $delay={stepIndex * 0.15 + rowIndex++ * 0.15}>
                 <TimelineLeftCell>
                   <StepCard step={step} />
@@ -195,7 +199,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
         })}
       </TimelineContainer>
       <ManualActionModal
-        key={selectedActionStep?.step_id ?? "none"} // reset modal state when changing step
+        key={selectedActionStep?.step_execution_id ?? "none"} // reset modal state when changing step
         activeStep={selectedActionStep}
         playbookId={playbookId}
         executionId={executionId}
