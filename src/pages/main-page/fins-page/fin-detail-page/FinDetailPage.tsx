@@ -1,17 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
-import React from "react";
-import { useParams } from "react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, Trash } from "lucide-react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router";
 
-import { getFinById } from "@/api/fin";
-import { getErrorFromApiResponse } from "@/api/utils";
+import { deleteFin, getFinById } from "@/api/fin";
+import { formatErrorForToast, getErrorFromApiResponse } from "@/api/utils";
 import {
   Badge,
+  Button,
+  ButtonWidth,
   CardBody,
   CardContainer,
   CardHeader,
   CardTitle,
   CenteredCardContent,
+  ConfirmDialog,
   CopyButton,
   FormLabel,
   Icon,
@@ -35,12 +39,27 @@ import {
 
 export const FinDetailPage: React.FC = () => {
   const { finId } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["fin", finId],
     queryFn: () => getFinById(finId!),
     enabled: !!finId,
     refetchOnWindowFocus: false,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteFin(finId!),
+    onSuccess: () => {
+      toast.success("Fin deleted");
+      queryClient.invalidateQueries({ queryKey: ["fins"] });
+      navigate(PATHS.FINS.BASE);
+    },
+    onError: (err: Error) => {
+      toast.error(formatErrorForToast(err, "Failed to delete fin"));
+    },
   });
 
   const fin = data;
@@ -119,16 +138,55 @@ export const FinDetailPage: React.FC = () => {
 
   return (
     <Spacer $direction="vertical" $gap="lg" $align="start">
-      <Link $to={PATHS.FINS.BASE}>
-        <Icon $icon={ArrowLeft} />
-        Back to fins
-      </Link>
+      <Spacer
+        style={{ width: "100%" }}
+        $direction="horizontal"
+        $gap="lg"
+        $align="center"
+        $justify="space-between"
+      >
+        <Link $to={PATHS.FINS.BASE}>
+          <Icon $icon={ArrowLeft} />
+          Back to fins
+        </Link>
+        {fin && (
+          <Button
+            $variant={ThemeVariant.Error}
+            $size={ThemeSize.Small}
+            $width={ButtonWidth.Auto}
+            $ghost
+            onClick={() => setOpenDeleteConfirm(true)}
+            disabled={deleteMutation.isPending}
+          >
+            <Icon $icon={Trash} $size={ThemeSize.Medium} />
+            Delete
+          </Button>
+        )}
+      </Spacer>
       <CardContainer>
         <CardHeader>
           <CardTitle>{fin?.display_name || fin?.fin_id || "Fin"}</CardTitle>
         </CardHeader>
         <CardBody>{renderBody()}</CardBody>
       </CardContainer>
+      {fin && (
+        <ConfirmDialog
+          $isOpen={openDeleteConfirm}
+          $title="Delete fin"
+          $description={`Delete the registration for '${
+            fin.display_name || fin.fin_id
+          }'? This forcibly removes it from SOARCA even if the fin is still running - it will need to re-register before it can pick up jobs again. This action cannot be undone.`}
+          $confirmLabel="Delete"
+          $cancelLabel="Cancel"
+          $confirmVariant={ThemeVariant.Error}
+          $isPending={deleteMutation.isPending}
+          $onCancel={() => setOpenDeleteConfirm(false)}
+          $onConfirm={() => {
+            setOpenDeleteConfirm(false);
+            deleteMutation.mutate();
+          }}
+        />
+      )}
     </Spacer>
   );
 };
