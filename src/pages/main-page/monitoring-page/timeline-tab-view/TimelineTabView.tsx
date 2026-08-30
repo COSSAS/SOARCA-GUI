@@ -1,4 +1,4 @@
-import { BadgeAlert, Check, Hand, X } from "lucide-react";
+import { BadgeAlert, Check, Flag, Hand, X } from "lucide-react";
 import React, { useState } from "react";
 
 import {
@@ -16,7 +16,7 @@ import {
   getUserCompletedActionCardProperties,
   UserActionResponse,
 } from "@/pages/main-page/monitoring-page/utils";
-import { PlaybookExecutionReport, StepExecutionReport } from "@/types";
+import { PlaybookRunReport, StepRunReport } from "@/types";
 import {
   computeDurationMs,
   formatDateTime,
@@ -45,12 +45,12 @@ import {
   UserReplyItem,
 } from "./TimelineTabView.styles";
 
-const dateExtractor = (step: StepExecutionReport) => {
+const dateExtractor = (step: StepRunReport) => {
   const date = parseDate(step.started);
   return date ? date.getTime() : undefined;
 };
 
-const getUserResponses = (step: StepExecutionReport): UserActionResponse[] => {
+const getUserResponses = (step: StepRunReport): UserActionResponse[] => {
   const stepVariables = step.variables;
 
   if (!stepVariables) {
@@ -67,11 +67,11 @@ const getUserResponses = (step: StepExecutionReport): UserActionResponse[] => {
 };
 
 interface TimelineViewProps {
-  steps: StepExecutionReport[];
+  steps: StepRunReport[];
   playbookId?: string;
   executionId?: string;
   onRefetch?: () => Promise<
-    QueryObserverResult<PlaybookExecutionReport, unknown>
+    QueryObserverResult<PlaybookRunReport, unknown>
   >;
 }
 
@@ -84,7 +84,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
   // We use this state to pass the right step to the manual action modal
   // when the user clicks on the "User action required" card
   const [selectedActionStep, setSelectedActionStep] =
-    useState<StepExecutionReport | null>(null);
+    useState<StepRunReport | null>(null);
 
   const resetSelectedActionStep = () => {
     setSelectedActionStep(null);
@@ -97,8 +97,14 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
       <TimelineContainer>
         <TimelineCenterLine />
         {sortedSteps.map((step, stepIndex) => {
-          const { step_id, status: soarcaStatus, automated_execution } = step;
+          const {
+            step_run_id,
+            status: soarcaStatus,
+            automated_execution,
+            type: stepType,
+          } = step;
           const status = getStepStatusFromSoarcaStatus(soarcaStatus);
+          const isMarkerStep = stepType === "start" || stepType === "end";
 
           const isStepTerminated = status !== StepExecutionStatus.Running;
           const isStepManualAndOngoing =
@@ -117,13 +123,15 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
           let rowIndex = 0;
 
           return (
-            <React.Fragment key={step_id}>
+            <React.Fragment key={step_run_id}>
               <TimelineRow $delay={stepIndex * 0.15 + rowIndex++ * 0.15}>
                 <TimelineLeftCell>
                   <StepCard step={step} />
                 </TimelineLeftCell>
                 <TimelineIconContainer>
-                  {status === StepExecutionStatus.Running ? (
+                  {isMarkerStep ? (
+                    <Icon $icon={Flag} $round $variant={ThemeVariant.Info} />
+                  ) : status === StepExecutionStatus.Running ? (
                     <Spinner
                       $variant={ThemeVariant.Warning}
                       $size={ThemeSize.Large}
@@ -195,7 +203,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
         })}
       </TimelineContainer>
       <ManualActionModal
-        key={selectedActionStep?.step_id ?? "none"} // reset modal state when changing step
+        key={selectedActionStep?.step_run_id ?? "none"} // reset modal state when changing step
         activeStep={selectedActionStep}
         playbookId={playbookId}
         executionId={executionId}
@@ -207,7 +215,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
 };
 
 interface StepCardProps {
-  step: StepExecutionReport;
+  step: StepRunReport;
 }
 
 const StepCard: React.FC<StepCardProps> = ({ step }) => {
