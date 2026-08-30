@@ -29,7 +29,7 @@ import {
   getIconFromStatus,
   getPlaybookStatusFromSoarcaStatus,
 } from "@/pages/main-page/monitoring-page/utils";
-import { PlaybookExecutionReport, StepExecutionReport } from "@/types";
+import { PlaybookRunReport, StepRunReport } from "@/types";
 import {
   DetailsGrid,
   DetailsItem,
@@ -65,7 +65,7 @@ export const ExecutionDetailPage: React.FC = () => {
     refetchIntervalInBackground: true,
   });
 
-  const report: PlaybookExecutionReport | undefined = data;
+  const report: PlaybookRunReport | undefined = data;
   const steps = Object.values(report?.step_results || {});
   const status = getPlaybookStatusFromSoarcaStatus(report?.status);
   const parsedError = getErrorFromApiResponse(error);
@@ -87,8 +87,8 @@ export const ExecutionDetailPage: React.FC = () => {
       <ResponsiveLayout>
         <DetailsGrid>
           <DetailsItem>
-            <FormLabel>Execution ID</FormLabel>
-            <Text>{report.execution_id}</Text>
+            <FormLabel>Run ID</FormLabel>
+            <Text>{report.run_id}</Text>
           </DetailsItem>
           <DetailsItem>
             <FormLabel>Status</FormLabel>
@@ -151,7 +151,7 @@ export const ExecutionDetailPage: React.FC = () => {
               <TabContentRenderer
                 steps={steps}
                 playbookId={report.playbook_id}
-                executionId={report.execution_id}
+                executionId={report.run_id}
                 onRefetch={refetch}
               />
             </TabsSection>
@@ -178,11 +178,11 @@ export const ExecutionDetailPage: React.FC = () => {
 };
 
 interface TabContentRendererProps {
-  steps: StepExecutionReport[];
+  steps: StepRunReport[];
   playbookId?: string;
   executionId?: string;
   onRefetch?: () => Promise<
-    QueryObserverResult<PlaybookExecutionReport, unknown>
+    QueryObserverResult<PlaybookRunReport, unknown>
   >;
 }
 

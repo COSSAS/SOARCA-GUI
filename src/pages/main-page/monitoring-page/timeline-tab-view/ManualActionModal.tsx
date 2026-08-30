@@ -11,11 +11,11 @@ import { getStepManualData, putStepActionResult } from "@/api/manual";
 import { formatErrorForToast } from "@/api/utils";
 import { Button, Modal, RadioGroup, Spinner, ThemeVariant } from "@/components";
 import {
-  Execution,
+  RunStarted,
   ManualOutArgsUpdatePayload,
   ManualResponseStatus,
-  PlaybookExecutionReport,
-  StepExecutionReport,
+  PlaybookRunReport,
+  StepRunReport,
   Variables,
 } from "@/types";
 import {
@@ -37,12 +37,12 @@ import {
 import { VariableInput } from "./VariableInputs";
 
 interface ManualActionModalProps {
-  activeStep: StepExecutionReport | null;
+  activeStep: StepRunReport | null;
   playbookId?: string;
   executionId?: string;
   onClose: () => void;
   onSuccess?: () => Promise<
-    QueryObserverResult<PlaybookExecutionReport, unknown>
+    QueryObserverResult<PlaybookRunReport, unknown>
   >;
 }
 
@@ -74,15 +74,14 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
   >({});
 
   const { data: interactionData, isLoading: isLoadingOutArgs } = useQuery({
-    queryKey: ["manual", executionId, activeStep?.step_execution_id],
-    queryFn: () =>
-      getStepManualData(executionId!, activeStep!.step_execution_id),
+    queryKey: ["manual", executionId, activeStep?.step_run_id],
+    queryFn: () => getStepManualData(executionId!, activeStep!.step_run_id),
     enabled: !!activeStep && !!executionId,
   });
 
   const mutation = useMutation({
     mutationFn: (payload: ManualOutArgsUpdatePayload) =>
-      putStepActionResult(executionId!, activeStep!.step_execution_id, payload),
+      putStepActionResult(executionId!, activeStep!.step_run_id, payload),
     onSuccess: async () => {
       toast.success("Action submitted");
       if (onSuccess) {
@@ -196,11 +195,11 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
 };
 
 interface ModalContentProps {
-  activeStep: StepExecutionReport | null;
+  activeStep: StepRunReport | null;
   outArgs: Variables;
   isLoadingOutArgs: boolean;
   mutation: UseMutationResult<
-    Execution,
+    RunStarted,
     Error,
     ManualOutArgsUpdatePayload,
     unknown

@@ -1,24 +1,24 @@
 import { Variable } from "./cacao";
 import { ISODateString } from "./common";
 
-export type StepExecutionReport = {
+export type StepRunReport = {
   automated_execution?: boolean;
   commands_b64: string[];
   description: string;
   ended: ISODateString;
   executed_by: string;
-  execution_id: string;
+  run_id: string;
   name: string;
   started: ISODateString;
-  status: SoarcaStepExecutionStatus;
+  status: SoarcaStepRunStatus;
   status_text: string;
-  step_execution_id: string;
+  step_run_id: string;
   step_id: string;
   type: string;
   variables: Record<string, Variable>;
 };
 
-export type SoarcaStepExecutionStatus =
+export type SoarcaStepRunStatus =
   | "successfully_executed"
   | "ongoing"
   | "failed"
@@ -27,19 +27,19 @@ export type SoarcaStepExecutionStatus =
   | "timeout_error"
   | "exception_condition_error";
 
-export type PlaybookExecutionReport = {
+export type PlaybookRunReport = {
   description: string;
   ended: ISODateString;
-  execution_id: string;
+  run_id: string;
   name: string;
   playbook_id: string;
   request_interval: number;
   started: ISODateString;
-  status: SoarcaPlaybookExecutionStatus;
+  status: SoarcaPlaybookRunStatus;
   status_text: string;
-  step_results: Record<string, StepExecutionReport>;
+  step_results: Record<string, StepRunReport>;
   type: string;
 };
 
-export type SoarcaPlaybookExecutionStatus =
+export type SoarcaPlaybookRunStatus =
   "successfully_executed" | "ongoing" | "failed";

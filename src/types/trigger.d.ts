@@ -1,4 +1,4 @@
-export type Execution = {
-  execution_id: string;
-  payload: string; // playbook id or reference
+export type RunStarted = {
+  run_id: string;
+  playbook_id: string;
 };

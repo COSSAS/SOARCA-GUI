@@ -25,7 +25,7 @@ import {
   ThemeSize,
   ThemeVariant,
 } from "@/components";
-import { Execution, Playbook } from "@/types";
+import { RunStarted, Playbook } from "@/types";
 import { PATHS } from "@/utils";
 
 import { generatePlaybookFilename, getOrderedSteps } from "../utils";
@@ -57,11 +57,9 @@ export const PlaybookDetailPage: React.FC = () => {
   const [openRunModal, setOpenRunModal] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
-  const navigateToExecution = (data: Execution) => {
-    if (data?.execution_id) {
-      navigate(
-        PATHS.MONITORING.DETAIL.replace(":executionId", data.execution_id),
-      );
+  const navigateToExecution = (data: RunStarted) => {
+    if (data?.run_id) {
+      navigate(PATHS.MONITORING.DETAIL.replace(":executionId", data.run_id));
     } else {
       navigate(PATHS.MONITORING.BASE);
     }
@@ -69,7 +67,7 @@ export const PlaybookDetailPage: React.FC = () => {
 
   const mutation = useMutation({
     mutationFn: () => triggerPlaybookById(playbookId!),
-    onSuccess: (data: Execution) => {
+    onSuccess: (data: RunStarted) => {
       toast.success("Playbook started");
       navigateToExecution(data);
     },

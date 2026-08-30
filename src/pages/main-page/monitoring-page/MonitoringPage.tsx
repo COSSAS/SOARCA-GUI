@@ -29,7 +29,7 @@ import {
   getBadgeVariantFromStatus,
   getPlaybookStatusFromSoarcaStatus,
 } from "@/pages/main-page/monitoring-page/utils";
-import { PlaybookExecutionReport } from "@/types";
+import { PlaybookRunReport } from "@/types";
 import {
   computeDurationMs,
   formatDateTime,
@@ -47,7 +47,7 @@ interface PlaybookRow {
   hasActionRequired: boolean; // this will indicate if there are ongoing manual actions that require user intervention
 }
 
-const hasOngoingManualActions = (report: PlaybookExecutionReport): boolean => {
+const hasOngoingManualActions = (report: PlaybookRunReport): boolean => {
   const steps = Object.values(report.step_results || {});
   return steps.some(
     (step) => step.automated_execution === false && step.status === "ongoing",
@@ -55,12 +55,12 @@ const hasOngoingManualActions = (report: PlaybookExecutionReport): boolean => {
 };
 
 const parseReportToRows = (
-  reports: PlaybookExecutionReport[],
+  reports: PlaybookRunReport[],
 ): PlaybookRow[] => {
   return reports.map((report) => {
     const status = getPlaybookStatusFromSoarcaStatus(report.status);
     return {
-      id: report.execution_id,
+      id: report.run_id,
       name: report.name,
       startTime: formatDateTime(report.started),
       durationMs: computeDurationMs(report.started, report.ended),

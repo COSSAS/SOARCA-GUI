@@ -22,7 +22,7 @@ import {
   getIconFromStepStatus,
   getStepStatusFromSoarcaStatus,
 } from "@/pages/main-page/monitoring-page/utils";
-import { StepExecutionReport } from "@/types";
+import { StepRunReport } from "@/types";
 import {
   computeDurationMs,
   decodeBase64,
@@ -65,7 +65,7 @@ const renderAutomatedIcon = (isAutomated: boolean | undefined) => {
 };
 
 interface DetailsTabViewProps {
-  steps: StepExecutionReport[];
+  steps: StepRunReport[];
 }
 
 export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
@@ -76,12 +76,12 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
   return (
     <DetailedContainer>
       {steps.map((step) => {
-        const { step_execution_id, status: soarcaStatus } = step;
+        const { step_run_id, status: soarcaStatus } = step;
         const status = getStepStatusFromSoarcaStatus(soarcaStatus);
 
         return (
           <ExpandableCard
-            key={step_execution_id}
+            key={step_run_id}
             $defaultExpanded={true}
             $header={
               <Spacer
@@ -117,8 +117,8 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
             <Spacer $direction="vertical" $gap="md" $align="start">
               <DetailsGrid>
                 <DetailsItem>
-                  <FormLabel>Execution ID</FormLabel>
-                  <Text>{step.execution_id || "—"}</Text>
+                  <FormLabel>Run ID</FormLabel>
+                  <Text>{step.run_id || "—"}</Text>
                 </DetailsItem>
                 <DetailsItem>
                   <FormLabel>Status</FormLabel>

@@ -14,20 +14,20 @@ export type ResolvedTarget = {
 };
 
 // One pending manual command/interaction: a whole step (commands + targets),
-// individually addressable by (execution_id, step_execution_id) since a
+// individually addressable by (run_id, step_run_id) since a
 // step_id can recur (e.g. overlapping while-loop iterations).
 export type InteractionCommandData = {
   commands: ManualCommand[];
-  execution_id: string;
+  run_id: string;
   out_args: Variables;
   playbook_id: string;
-  step_execution_id: string;
+  step_run_id: string;
   step_id: string;
   targets: ResolvedTarget[];
-  type: string; // e.g. "execution-status"
+  type: string; // "manual-command-info"
 };
 
-// Body for PUT /manual/{execution_id}/{step_execution_id} — the ids are
+// Body for PUT /manual/{run_id}/{step_run_id} — the ids are
 // resolved from the URL, not repeated in the payload.
 export type ManualOutArgsUpdatePayload = {
   response_out_args: Variables;

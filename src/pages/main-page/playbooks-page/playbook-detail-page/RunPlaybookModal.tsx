@@ -6,7 +6,7 @@ import { triggerPlaybookById } from "@/api/trigger";
 import { formatErrorForToast } from "@/api/utils";
 import { Button, Modal, ThemeVariant } from "@/components";
 import { VariableInput } from "@/pages/main-page/monitoring-page/timeline-tab-view/VariableInputs";
-import { Execution, Playbook, Variables } from "@/types";
+import { RunStarted, Playbook, Variables } from "@/types";
 
 import {
   Description,
@@ -22,7 +22,7 @@ interface RunPlaybookModalProps {
   playbook: Playbook;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (execution: Execution) => void;
+  onSuccess: (execution: RunStarted) => void;
 }
 
 export const RunPlaybookModal: React.FC<RunPlaybookModalProps> = ({
@@ -42,7 +42,7 @@ export const RunPlaybookModal: React.FC<RunPlaybookModalProps> = ({
   const mutation = useMutation({
     mutationFn: (variables: Variables | undefined) =>
       triggerPlaybookById(playbook.id, variables),
-    onSuccess: (data: Execution) => {
+    onSuccess: (data: RunStarted) => {
       toast.success("Playbook started");
       onSuccess(data);
       onClose();

@@ -6,13 +6,13 @@ import {
   StepExecutionStatus,
 } from "@/enums";
 import {
-  SoarcaPlaybookExecutionStatus,
-  SoarcaStepExecutionStatus,
+  SoarcaPlaybookRunStatus,
+  SoarcaStepRunStatus,
 } from "@/types";
 import { Check, LucideIcon, PlayIcon, X } from "lucide-react";
 
 const SOARCA_STEP_STATUS_MAP: Record<
-  SoarcaStepExecutionStatus,
+  SoarcaStepRunStatus,
   StepExecutionStatus
 > = {
   [SoarcaApiStepExecutionStatus.SUCCESS]: StepExecutionStatus.Executed,
@@ -28,7 +28,7 @@ const SOARCA_STEP_STATUS_MAP: Record<
 };
 
 export function getStepStatusFromSoarcaStatus(
-  stepStatus?: SoarcaStepExecutionStatus,
+  stepStatus?: SoarcaStepRunStatus,
 ): StepExecutionStatus {
   return stepStatus
     ? SOARCA_STEP_STATUS_MAP[stepStatus]
@@ -36,7 +36,7 @@ export function getStepStatusFromSoarcaStatus(
 }
 
 const SOARCA_PLAYBOOK_STATUS_MAP: Record<
-  SoarcaPlaybookExecutionStatus,
+  SoarcaPlaybookRunStatus,
   PlaybookExecutionStatus
 > = {
   [SoarcaApiPlaybookExecutionStatus.SUCCESS]: PlaybookExecutionStatus.Executed,
@@ -45,7 +45,7 @@ const SOARCA_PLAYBOOK_STATUS_MAP: Record<
 };
 
 export function getPlaybookStatusFromSoarcaStatus(
-  playbookStatus?: SoarcaPlaybookExecutionStatus,
+  playbookStatus?: SoarcaPlaybookRunStatus,
 ): PlaybookExecutionStatus {
   return playbookStatus
     ? SOARCA_PLAYBOOK_STATUS_MAP[playbookStatus]
