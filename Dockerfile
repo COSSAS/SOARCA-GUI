@@ -2,10 +2,12 @@
 FROM node:24-alpine AS builder
 RUN apk add --no-cache git
 WORKDIR /app
+ARG VITE_APP_VERSION=development
+ENV VITE_APP_VERSION=${VITE_APP_VERSION}
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm run build && rm -rf dist/cyclonedx
 
 # Serve with nginx
 FROM nginx:alpine AS production

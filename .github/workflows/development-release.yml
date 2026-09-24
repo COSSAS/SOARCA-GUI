@@ -62,7 +62,6 @@ jobs:
 
       - name: Get version
         run: |
-          export VERSION=$(git describe --tags --dirty)
           echo "describe_version=$(git describe --tags --dirty)" >> "$GITHUB_ENV"
 
       - name: Build and push
@@ -70,7 +69,7 @@ jobs:
         with:
           context: .
           build-args: |
-            VERSION=${{ env.describe_version }}
+            VITE_APP_VERSION=${{ env.describe_version }}
           push: true
           target: production
           tags: cossas/soarca-gui:${{ env.describe_version }},cossas/soarca-gui:development
