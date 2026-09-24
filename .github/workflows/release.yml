@@ -74,16 +74,20 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
+      - name: Get version
+        run: |
+          echo "describe_version=$(git describe --tags --dirty)" >> "$GITHUB_ENV"
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           build-args: |
-            VITE_APP_VERSION=${{ github.ref_name }}
+            VITE_APP_VERSION=${{ env.describe_version }}
           push: true
           target: production
           tags: |
-            cossas/soarca-gui:${{ github.ref_name }}
+            cossas/soarca-gui:${{ env.describe_version }}
             cossas/soarca-gui:latest
 
   publish-sbom:
