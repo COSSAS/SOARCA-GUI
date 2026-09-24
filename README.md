@@ -109,6 +109,10 @@ flowchart TB
 
 - `VITE_BACKEND_URL` - Backend API URL (proxied by Vite dev server)
 - `VITE_SERVER_PORT` - Port where Vite dev server listens
+- `VITE_ENABLE_HTTPS` - Set to `true` to serve the development or preview build over HTTPS
+- `VITE_HTTPS_CERT_FILE` - Path to the TLS certificate used by Vite
+- `VITE_HTTPS_KEY_FILE` - Path to the TLS certificate key used by Vite
+- `VITE_VERIFY_SSL` - Set to `true` to verify the backend certificate when Vite proxies API requests
 - `DOCKER_HOST_PORT` - The port of the host machine that is mapped to the `VITE_SERVER_PORT` of the Vite dev server running in the container. This is only relevant when running the Development Container.
 - `HOST_PORT` - is the same of the `VITE_SERVER_PORT` if run locally or `DOCKER_HOST_PORT` if running the Development Container.
 
@@ -125,7 +129,12 @@ flowchart TB
 
    If no enviroment variables are provided, the defaults are:
    - `VITE_BACKEND_URL`: `http://localhost:8080` - (SOARCA default)
-   - `VITE_SERVER_PORT`: `5713` - (Vite default)
+   - `VITE_SERVER_PORT`: `5173` - (Vite default)
+   - `VITE_ENABLE_HTTPS`: `false`
+
+   To enable HTTPS, set `VITE_ENABLE_HTTPS=true` and provide
+   `VITE_HTTPS_CERT_FILE` and `VITE_HTTPS_KEY_FILE`. Set
+   `VITE_BACKEND_URL=https://localhost:8080` when SOARCA also uses HTTPS.
 
 3. **Start the dev server:**
 
@@ -144,6 +153,10 @@ flowchart TB
    - `VITE_BACKEND_URL`: `http://host.docker.internal:8080` - (The `localhost:8080` equivalent of the Container internal network)
    - `VITE_SERVER_PORT`: `5173`
    - `DOCKER_HOST_PORT` — port on the host mapped to the `VITE_SERVER_PORT` (default: `5173`)
+
+   For HTTPS, place `server.crt` and `server.key` in `./certs`, then set
+   `VITE_ENABLE_HTTPS=true`. The development Compose file mounts that directory
+   read-only at `/app/certs`.
 
 2. **Start the container:**
    ```bash
@@ -257,10 +270,14 @@ flowchart TB
 
 **Environment variables involved:**
 
-- `VITE_BACKEND_URL` - Backend API URL embedded into the client bundle at build time (must be set before running `npm run build`)
 - `VITE_APP_VERSION` - Application version embedded into the client bundle at build time (optional, falls back to git describe or "development")
 - `NGINX_BACKEND_URL` - Backend API URL used by Nginx at runtime to proxy `/api/*` requests. This is only relevant when running in Docker Container Mode.
 - `NGINX_SERVER_PORT` - Port where Nginx listens inside the container. This is only relevant when running in Docker Container Mode.
+- `NGINX_CERT_FILE` - TLS certificate path inside the container
+- `NGINX_CERT_KEY_FILE` - TLS certificate key path inside the container
+- `NGINX_PROXY_SSL_VERIFY` - Controls verification of the backend TLS certificate
+- `SOARCA_CERTS_VOLUME` - External Docker volume containing the SOARCA TLS certificate and key
+- `SOARCA_GUI_VERSION` - Docker Hub image tag to run, defaulting to `latest`
 - `DOCKER_HOST_PORT` - The port of the host machine that is mapped to the `NGINX_SERVER_PORT` of the Nginx server running in the container. This is only relevant when running in Docker Container Mode.
 - `HOST_PORT` - Port 4173 (Vite default) for local preview mode (`npm run preview`) or `DOCKER_HOST_PORT` when running in Docker Container Mode.
 
@@ -276,7 +293,7 @@ flowchart TB
    Optionally create a `.env` file (explanation and defaults can be found in `.env.example`). Note that `VITE_` variables must be set at _build time_ to be embedded into the static bundle.
 
    If no environment variables are provided, the defaults are:
-   - `VITE_BACKEND_URL`: `http://localhost:8080` - (SOARCA default)
+   - `VITE_ENABLE_HTTPS`: `false`
 
 3. **Build and preview:**
 
@@ -293,21 +310,24 @@ flowchart TB
 #### Running in Docker Container (recommended for production)
 
 1. **Configure environment variables:**
-   Optionally provide values via the shell, a project `.env`, or `--env-file` when starting Compose (explanation and defaults can be found in `.env.example`). Note that `VITE_` variables are build-time only (embedded at image build), while `NGINX_` variables are runtime (used by the running container).
+   Optionally provide values via the shell, a project `.env`, or `--env-file` when starting Compose (explanation and defaults can be found in `.env.example`). The production container serves HTTPS and expects the certificate volume created by the SOARCA deployment.
 
    If no environment variables are provided, the defaults are:
-   - `VITE_BACKEND_URL`: `http://localhost:8080` - embedded at build time
-   - `NGINX_BACKEND_URL`: `http://host.docker.internal:8080/` - used at runtime
+   - `SOARCA_GUI_VERSION`: `latest`
+   - `SOARCA_CERTS_VOLUME`: `soarca_certs_data_container`
+   - `NGINX_BACKEND_URL`: `https://host.docker.internal:8080/`
    - `NGINX_SERVER_PORT`: `8081`
-   - `DOCKER_HOST_PORT`: `8081` — port on the host mapped to the `NGINX_SERVER_PORT`
+   - `NGINX_PROXY_SSL_VERIFY`: `off`, to support SOARCA's generated self-signed certificate
+   - `DOCKER_HOST_PORT`: `8081` - port on the host mapped to the `NGINX_SERVER_PORT`
 
-2. **Build and start the container:**
+2. **Pull and start the container:**
 
    ```bash
-   docker compose up --build
+   docker compose pull
+   docker compose up -d
    ```
 
-   The app will be available at `http://localhost:DOCKER_HOST_PORT`.
+   The app will be available at `https://localhost:DOCKER_HOST_PORT`.
 
 ### NPM Scripts for local run
 

@@ -102,12 +102,12 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
 
           const isStepTerminated = status !== StepExecutionStatus.Running;
           const isStepManualAndOngoing =
-            !isStepTerminated && !automated_execution;
+            !isStepTerminated && automated_execution === false;
 
           // Determine if we should display the user action cards showing user responses.
           // We only display it if the step is not automated, it has been completed successfully.
           const shouldDisplayUserActionResponseCard =
-            isStepTerminated && !automated_execution;
+            isStepTerminated && automated_execution === false;
 
           const userResponses = shouldDisplayUserActionResponseCard
             ? getUserResponses(step)

@@ -16,8 +16,14 @@ services:
       - NODE_ENV=development
       - VITE_BACKEND_URL=${VITE_BACKEND_URL:-http://host.docker.internal:8080}
       - VITE_SERVER_PORT=${VITE_SERVER_PORT:-5173}
+      - VITE_ENABLE_HTTPS=${VITE_ENABLE_HTTPS:-false}
+      - VITE_HTTPS_CERT_FILE=${VITE_HTTPS_CERT_FILE:-/app/certs/server.crt}
+      - VITE_HTTPS_KEY_FILE=${VITE_HTTPS_KEY_FILE:-/app/certs/server.key}
+      - VITE_VERIFY_SSL=${VITE_VERIFY_SSL:-false}
+      - VITE_IS_DOCKER=true
     volumes:
       - .:/app
+      - ./certs:/app/certs:ro
       - node_modules_volume:/app/node_modules
     command: sh -c "npm install && npm run dev"
 

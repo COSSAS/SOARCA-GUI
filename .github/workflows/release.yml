@@ -5,6 +5,9 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+\-?*'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build with npm
@@ -14,8 +17,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA/SOARCA-GUI
+
       - name: Use Node.js 24
         uses: actions/setup-node@v6
         with:
@@ -37,40 +39,34 @@ jobs:
       - name: Build with npm
         run: npm run build
 
-      - name: "Upload Artifact"
+      - name: Prepare release SBOM
+        run: |
+          cp dist/cyclonedx/bom.json "soarca-gui-${GITHUB_REF_NAME}.cdx.json"
+          zip sbom.zip "soarca-gui-${GITHUB_REF_NAME}.cdx.json"
+
+      - name: Upload SBOM artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ github.sha }}
-          path: dist/*
+          name: release-sbom
+          path: sbom.zip
+          if-no-files-found: error
           retention-days: 1
 
   docker-build:
     needs: build
-    name: Build docker image and push it to docker hub
+    name: Build Docker image and push it to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Download dist
-        uses: actions/download-artifact@v7
-        with:
-          pattern: ${{ github.sha }}
-
-      - name: Move files to bin folder and make executable
-        run: |
-          mkdir -p bin 
-          mv ${{ github.sha }}/* ./bin/
-          chmod +x bin/soarca-gui-*
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -80,7 +76,6 @@ jobs:
 
       - name: Get version
         run: |
-          export VERSION=$(git describe --tags --dirty)
           echo "describe_version=$(git describe --tags --dirty)" >> "$GITHUB_ENV"
 
       - name: Build and push
@@ -88,72 +83,44 @@ jobs:
         with:
           context: .
           build-args: |
-            VERSION=${{ env.describe_version }}
-          push: false
-          tags: cossas/soarca-gui:${{ env.describe_version }},cossas/soarca-gui:latest
+            VITE_APP_VERSION=${{ env.describe_version }}
+          push: true
+          target: production
+          tags: |
+            cossas/soarca-gui:${{ env.describe_version }}
+            cossas/soarca-gui:latest
 
-  release-artifacts:
+  publish-sbom:
     needs: build
-    name: Create release artifacts
+    name: Publish SBOM to the GitHub release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Setup Go
-        uses: actions/setup-go@v4
+      - name: Download SBOM artifact
+        uses: actions/download-artifact@v7
         with:
-          go-version: "1.23.x"
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Checkout Code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Make repo safe
-        run: git config --global --add safe.directory /__w/SOARCA-GUI/SOARCA-GUI
+          name: release-sbom
 
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-      - run: npm ci
-
-      - name: Build and sbom
-        run: |
-          go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
-          go install github.com/a-h/templ/cmd/templ@v0.3.819
-          make sbom
-          zip -r bin/sbom.zip bin
-
-      - name: Release soarca gui binary
-        uses: goreleaser/goreleaser-action@v5
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean
-          workdir: server
+      - name: Create GitHub release and publish SBOM
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+              gh release create "$GITHUB_REF_NAME" \
+                --verify-tag \
+                --generate-notes \
+                --prerelease \
+                --title "$GITHUB_REF_NAME"
+            else
+              gh release create "$GITHUB_REF_NAME" \
+                --verify-tag \
+                --generate-notes \
+                --title "$GITHUB_REF_NAME"
+            fi
+          fi
 
-      - name: Upload release sbom
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const fs = require('fs');
-            const tag = context.ref.replace("refs/tags/", "");
-            // Get release for this tag
-            const release = await github.repos.getReleaseByTag({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag
-            });
-            // Upload the release asset
-            await github.repos.uploadReleaseAsset({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: release.data.id,
-              name: "sbom.zip",
-              data: await fs.readFileSync("bin/sbom.zip")
-            });
+          gh release upload "$GITHUB_REF_NAME" \
+            sbom.zip \
+            --clobber

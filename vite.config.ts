@@ -1,7 +1,10 @@
 import react from "@vitejs/plugin-react-swc";
 import { execSync } from "child_process";
+import fs from "node:fs";
+import type { ServerOptions as HttpsServerOptions } from "node:https";
+import path from "node:path";
 import sbom from "rollup-plugin-sbom";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 /**
@@ -27,27 +30,61 @@ const getAppVersion = (): string => {
   return "development";
 };
 
-export default defineConfig({
-  plugins: [react(), tsconfigPaths(), sbom()],
-  define: {
-    __APP_VERSION__: JSON.stringify(getAppVersion()),
-  },
-  server: {
-    proxy: {
-      "/api": {
-        target: process.env.VITE_BACKEND_URL || "http://localhost:8080",
-        rewrite: (path) => path.replace(/^\/api/, ""),
+const getHttpsOptions = (
+  enabled: boolean,
+  certFile?: string,
+  keyFile?: string,
+): HttpsServerOptions | undefined => {
+  if (!enabled) {
+    return undefined;
+  }
+
+  if (!certFile || !keyFile) {
+    throw new Error(
+      "VITE_HTTPS_CERT_FILE and VITE_HTTPS_KEY_FILE are required when VITE_ENABLE_HTTPS=true.",
+    );
+  }
+
+  return {
+    cert: fs.readFileSync(path.resolve(certFile)),
+    key: fs.readFileSync(path.resolve(keyFile)),
+  };
+};
+
+export default defineConfig(({ mode }) => {
+  const env = { ...loadEnv(mode, process.cwd(), ""), ...process.env };
+  const https = getHttpsOptions(
+    env.VITE_ENABLE_HTTPS === "true",
+    env.VITE_HTTPS_CERT_FILE,
+    env.VITE_HTTPS_KEY_FILE,
+  );
+
+  return {
+    plugins: [react(), tsconfigPaths(), sbom()],
+    define: {
+      __APP_VERSION__: JSON.stringify(getAppVersion()),
+    },
+    server: {
+      proxy: {
+        "/api": {
+          target: env.VITE_BACKEND_URL || "http://localhost:8080",
+          secure: env.VITE_VERIFY_SSL === "true",
+          rewrite: (requestPath) => requestPath.replace(/^\/api/, ""),
+        },
+      },
+      host: true,
+      port: Number(env.VITE_SERVER_PORT) || 5173,
+      strictPort: true,
+      https,
+      watch: {
+        usePolling:
+          env.VITE_USE_POLLING === "true" || env.VITE_IS_DOCKER === "true",
       },
     },
-    host: true,
-    port: Number(process.env.VITE_SERVER_PORT) || 5173,
-    strictPort: true, // Fail if port is already in use, as the docker container won't be able to use a different one
-    watch: {
-      usePolling: true,
+    preview: {
+      host: true,
+      port: 4173,
+      https,
     },
-  },
-  preview: {
-    host: true,
-    port: 4173,
-  },
+  };
 });

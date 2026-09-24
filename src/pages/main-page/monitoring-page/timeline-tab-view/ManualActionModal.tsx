@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 import { getStepManualData, postStepActionResult } from "@/api/manual";
 import { formatErrorForToast } from "@/api/utils";
-import { Button, Modal, RadioGroup, Spinner, ThemeVariant } from "@/components";
+import { Button, Modal, Spinner, ThemeVariant } from "@/components";
 import {
   Execution,
   ManualOutArgsUpdatePayload,
@@ -69,9 +69,6 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
     {},
   );
-  const [variableChoices, setVariableChoices] = useState<
-    Record<string, ActionType>
-  >({});
 
   const { data: interactionData, isLoading: isLoadingOutArgs } = useQuery({
     queryKey: ["manual", executionId, activeStep?.step_id],
@@ -96,10 +93,6 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
     },
   });
 
-  const handleChoiceChange = (key: string, value: ActionType) => {
-    setVariableChoices((prev) => ({ ...prev, [key]: value }));
-  };
-
   const handleValueChange = (key: string, value: string) => {
     setVariableValues((prev) => ({ ...prev, [key]: value }));
   };
@@ -111,23 +104,12 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
     const outArgs = interactionData?.out_args ?? {};
 
     Object.entries(outArgs).forEach(([key, variable]) => {
-      const hasExistingValue = variable?.value && variable.value.trim() !== "";
-
-      if (hasExistingValue) {
-        response_out_args[key] = {
-          ...variable,
-          name: variable?.name || key,
-          type: variable?.type || "string",
-          value: variable.value,
-        };
-      } else {
-        response_out_args[key] = {
-          ...variable,
-          name: variable?.name || key,
-          type: variable?.type || "string",
-          value: variableValues[key] || "",
-        };
-      }
+      response_out_args[key] = {
+        ...variable,
+        name: variable?.name || key,
+        type: variable?.type || "string",
+        value: variableValues[key] ?? variable?.value ?? "",
+      };
     });
 
     const responseStatus: ManualResponseStatus =
@@ -161,8 +143,6 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
           isLoadingOutArgs={isLoadingOutArgs}
           mutation={mutation}
           variableValues={variableValues}
-          variableChoices={variableChoices}
-          onChoiceChange={handleChoiceChange}
           onValueChange={handleValueChange}
         />
       </Modal.Body>
@@ -208,8 +188,6 @@ interface ModalContentProps {
     unknown
   >;
   variableValues: Record<string, string>;
-  variableChoices: Record<string, ActionType>;
-  onChoiceChange: (key: string, value: ActionType) => void;
   onValueChange: (key: string, value: string) => void;
 }
 
@@ -219,8 +197,6 @@ const ModalContent: React.FC<ModalContentProps> = ({
   isLoadingOutArgs,
   mutation,
   variableValues,
-  variableChoices,
-  onChoiceChange,
   onValueChange,
 }) => {
   const outArgEntries = Object.entries(outArgs);
@@ -254,8 +230,6 @@ const ModalContent: React.FC<ModalContentProps> = ({
           <SectionTitle>Variables</SectionTitle>
           <VariableList>
             {outArgEntries.map(([key, variable]) => {
-              const hasExistingValue =
-                variable?.value && variable.value.trim() !== "";
               const varType = variable?.type || "string";
 
               return (
@@ -269,30 +243,15 @@ const ModalContent: React.FC<ModalContentProps> = ({
                       </InfoIconWrapper>
                     )}
                   </VariableLabel>
-                  {hasExistingValue ? (
-                    <RadioGroup
-                      name={`var-${key}`}
-                      $options={[
-                        { label: "Confirm", value: ActionType.CONFIRM },
-                        { label: "Reject", value: ActionType.REJECT },
-                      ]}
-                      $value={variableChoices[key] || ActionType.CONFIRM}
-                      $onChange={(value) =>
-                        onChoiceChange(key, value as ActionType)
-                      }
-                      $disabled={mutation.isPending}
+                  <VariableInputContainer>
+                    <VariableInput
+                      variableKey={key}
+                      type={varType}
+                      value={variableValues[key] ?? variable?.value ?? ""}
+                      disabled={mutation.isPending}
+                      onChange={onValueChange}
                     />
-                  ) : (
-                    <VariableInputContainer>
-                      <VariableInput
-                        variableKey={key}
-                        type={varType}
-                        value={variableValues[key] || ""}
-                        disabled={mutation.isPending}
-                        onChange={onValueChange}
-                      />
-                    </VariableInputContainer>
-                  )}
+                  </VariableInputContainer>
                 </VariableRow>
               );
             })}

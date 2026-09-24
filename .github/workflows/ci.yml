@@ -92,5 +92,5 @@ jobs:
           target: production
           tags: cossas/soarca-gui:pr-${{ env.describe_version }}
           build-args: |
-            VERSION=${{ env.describe_version }}
+            VITE_APP_VERSION=${{ env.describe_version }}
           builder: default
