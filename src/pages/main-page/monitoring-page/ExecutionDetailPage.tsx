@@ -1,5 +1,5 @@
 import { QueryObserverResult, useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Info, SquareChartGantt } from "lucide-react";
+import { IconArrowLeft, IconInfoCircle, IconTimeline } from "@tabler/icons-react";
 import React from "react";
 import { useParams } from "react-router";
 
@@ -134,7 +134,7 @@ export const ExecutionDetailPage: React.FC = () => {
                     id: TABS.timeline,
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
-                        <Icon $icon={SquareChartGantt} /> Timeline
+                        <Icon $icon={IconTimeline} /> Timeline
                       </Spacer>
                     ),
                   },
@@ -142,7 +142,7 @@ export const ExecutionDetailPage: React.FC = () => {
                     id: TABS.detailed,
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
-                        <Icon $icon={Info} /> Details
+                        <Icon $icon={IconInfoCircle} /> Details
                       </Spacer>
                     ),
                   },
@@ -164,7 +164,7 @@ export const ExecutionDetailPage: React.FC = () => {
   return (
     <Spacer $direction="vertical" $gap="lg" $align="start">
       <Link $to={PATHS.MONITORING.BASE}>
-        <Icon $icon={ArrowLeft} />
+        <Icon $icon={IconArrowLeft} />
         Back to monitoring
       </Link>
       <CardContainer>

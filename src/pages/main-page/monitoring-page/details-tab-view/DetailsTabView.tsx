@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import React from "react";
 
 import {
@@ -44,7 +44,7 @@ const renderAutomatedIcon = (isAutomated: boolean | undefined) => {
     case true:
       return (
         <Icon
-          $icon={Check}
+          $icon={IconCheck}
           $size={ThemeSize.Medium}
           $variant={ThemeVariant.Success}
           $round
@@ -53,7 +53,7 @@ const renderAutomatedIcon = (isAutomated: boolean | undefined) => {
     case false:
       return (
         <Icon
-          $icon={X}
+          $icon={IconX}
           $size={ThemeSize.Medium}
           $variant={ThemeVariant.Error}
           $round

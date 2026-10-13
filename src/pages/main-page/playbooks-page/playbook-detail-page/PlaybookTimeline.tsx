@@ -1,7 +1,7 @@
 import { Badge, Icon, Text } from "@/components";
 import { ThemeSize, ThemeVariant } from "@/components/utils";
 import { Step } from "@/types";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
 import React from "react";
 import {
   StepCard,
@@ -51,7 +51,7 @@ export const PlaybookTimeline: React.FC<PlaybookTimelineProps> = ({
                       {step.name || step.type || "Step"}
                     </StepCardTitle>
                     <Icon
-                      $icon={isExpanded ? ChevronDown : ChevronRight}
+                      $icon={isExpanded ? IconChevronDown : IconChevronRight}
                       $size={ThemeSize.Medium}
                     />
                   </StepCardHeader>

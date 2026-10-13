@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { IconArrowLeft } from "@tabler/icons-react";
 import React, { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
@@ -91,7 +91,7 @@ export const PlaybookEditPage: React.FC = () => {
   return (
     <Spacer $direction="vertical" $gap="lg" $align="start">
       <Link $to={PATHS.PLAYBOOKS.DETAIL.replace(":playbookId", playbookId!)}>
-        <Icon $icon={ArrowLeft} />
+        <Icon $icon={IconArrowLeft} />
         Back to playbook
       </Link>
 

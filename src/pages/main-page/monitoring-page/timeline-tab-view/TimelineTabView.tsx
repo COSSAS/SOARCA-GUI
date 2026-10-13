@@ -1,4 +1,9 @@
-import { BadgeAlert, Check, Hand, X } from "lucide-react";
+import {
+  IconExclamationCircle,
+  IconCheck,
+  IconHandStop,
+  IconX,
+} from "@tabler/icons-react";
 import React, { useState } from "react";
 
 import {
@@ -131,12 +136,12 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                     />
                   ) : status === StepExecutionStatus.Executed ? (
                     <Icon
-                      $icon={Check}
+                      $icon={IconCheck}
                       $round
                       $variant={ThemeVariant.Success}
                     />
                   ) : (
-                    <Icon $icon={X} $round $variant={ThemeVariant.Error} />
+                    <Icon $icon={IconX} $round $variant={ThemeVariant.Error} />
                   )}
                 </TimelineIconContainer>
                 <TimelineRightCell>
@@ -150,7 +155,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                   </TimelineLeftCell>
                   <TimelineIconContainer>
                     <Icon
-                      $icon={BadgeAlert}
+                      $icon={IconExclamationCircle}
                       $round
                       $variant={ThemeVariant.Info}
                     />
@@ -171,7 +176,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                   </TimelineLeftCell>
                   <TimelineIconContainer>
                     <Icon
-                      $icon={Hand}
+                      $icon={IconHandStop}
                       $round
                       $variant={
                         status === StepExecutionStatus.Executed

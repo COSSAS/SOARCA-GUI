@@ -1,5 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileJson, Pencil, Play, Trash } from "lucide-react";
+import {
+  IconArrowLeft,
+  IconFileCode,
+  IconPencil,
+  IconPlayerPlay,
+  IconTrash,
+} from "@tabler/icons-react";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
@@ -115,7 +121,7 @@ export const PlaybookDetailPage: React.FC = () => {
     return (
       <Spacer $direction="vertical" $gap="lg" $align="start">
         <Link $to={PATHS.PLAYBOOKS.BASE}>
-          <Icon $icon={ArrowLeft} />
+          <Icon $icon={IconArrowLeft} />
           Back to playbooks
         </Link>
         <CardContainer>
@@ -133,7 +139,7 @@ export const PlaybookDetailPage: React.FC = () => {
     return (
       <Spacer $direction="vertical" $gap="lg" $align="start">
         <Link $to={PATHS.PLAYBOOKS.BASE}>
-          <Icon $icon={ArrowLeft} />
+          <Icon $icon={IconArrowLeft} />
           Back to playbooks
         </Link>
         <CardContainer>
@@ -162,7 +168,7 @@ export const PlaybookDetailPage: React.FC = () => {
         $justify="space-between"
       >
         <Link $to={PATHS.PLAYBOOKS.BASE}>
-          <Icon $icon={ArrowLeft} />
+          <Icon $icon={IconArrowLeft} />
           Back to playbooks
         </Link>
         <Spacer $direction="horizontal" $gap="sm">
@@ -175,7 +181,7 @@ export const PlaybookDetailPage: React.FC = () => {
               navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId!))
             }
           >
-            <Icon $icon={Pencil} $size={ThemeSize.Medium} />
+            <Icon $icon={IconPencil} $size={ThemeSize.Medium} />
             Edit
           </Button>
           <Button
@@ -186,7 +192,7 @@ export const PlaybookDetailPage: React.FC = () => {
             onClick={() => setOpenDeleteConfirm(true)}
             disabled={deleteMutation.isPending}
           >
-            <Icon $icon={Trash} $size={ThemeSize.Medium} />
+            <Icon $icon={IconTrash} $size={ThemeSize.Medium} />
             Delete
           </Button>
           <Button
@@ -199,7 +205,7 @@ export const PlaybookDetailPage: React.FC = () => {
             }
             disabled={mutation.isPending}
           >
-            <Icon $icon={Play} $size={ThemeSize.Medium} />
+            <Icon $icon={IconPlayerPlay} $size={ThemeSize.Medium} />
             Run
           </Button>
 
@@ -215,7 +221,7 @@ export const PlaybookDetailPage: React.FC = () => {
               toast.error(formatErrorForToast(err, "Failed to export playbook"))
             }
           >
-            <Icon $icon={FileJson} $size={ThemeSize.Medium} />
+            <Icon $icon={IconFileCode} $size={ThemeSize.Medium} />
             Export
           </ExportButton>
 
