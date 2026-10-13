@@ -240,23 +240,21 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                         {Object.entries(step.variables).map(
                           ([key, variable]) => {
                             const valueStr = String(variable?.value ?? "");
-                            const isTruncated = valueStr.length > 75;
-                            const displayValue = isTruncated
-                              ? valueStr.substring(0, 75) + "..."
-                              : valueStr;
                             const varName = variable?.name || key;
                             const varType = variable?.type || "unknown";
 
                             return (
                               <VariableItemRow key={key}>
-                                <VariableCellValue
-                                  style={{
-                                    cursor: isTruncated ? "help" : "default",
-                                  }}
-                                  title={isTruncated ? valueStr : undefined}
-                                >
-                                  <strong>{varName}</strong> ({varType}) :{" "}
-                                  {displayValue}
+                                <VariableCellValue>
+                                  <ExpandableText
+                                    $lineClamp={2}
+                                    $text={
+                                      <>
+                                        <strong>{varName}</strong> ({varType}) :{" "}
+                                        {valueStr}
+                                      </>
+                                    }
+                                  />
                                 </VariableCellValue>
                               </VariableItemRow>
                             );

@@ -57,6 +57,7 @@ export const VariableItemRow = styled.div`
 
 export const VariableCellValue = styled.div`
   width: 100%;
+  min-width: 0;
   box-sizing: border-box;
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
