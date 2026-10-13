@@ -1,5 +1,5 @@
 import { Button, Icon, ThemeSize, ThemeVariant } from "@/components";
-import { Trash2, Upload } from "lucide-react";
+import { IconTrash, IconUpload } from "@tabler/icons-react";
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 
@@ -183,7 +183,7 @@ export const FileDrop: React.FC<FileDropProps> = ({
         }}
       >
         <DropZone $isDragActive={isDragActive} $hasError={!!$error}>
-          <Icon $icon={Upload} $size={ThemeSize.ExtraLarge} />
+          <Icon $icon={IconUpload} $size={ThemeSize.ExtraLarge} />
           <DropZoneText>Click to browse or drag a file here</DropZoneText>
           <DropZoneHint>Only {$accept} files are accepted</DropZoneHint>
           {$fileName && (
@@ -200,7 +200,7 @@ export const FileDrop: React.FC<FileDropProps> = ({
                   $onRemove?.();
                 }}
               >
-                <Icon $icon={Trash2} $size={ThemeSize.Medium} />
+                <Icon $icon={IconTrash} $size={ThemeSize.Medium} />
               </Button>
             </FileName>
           )}

@@ -1,4 +1,4 @@
-import { LucideIcon } from "lucide-react";
+import type { TablerIcon } from "@tabler/icons-react";
 import styled from "styled-components";
 import {
   getThemePixelSizeValuesByThemeSize,
@@ -8,7 +8,7 @@ import {
 } from "./utils";
 
 interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
-  $icon: LucideIcon;
+  $icon: TablerIcon;
   $size?: ThemeSize;
   $variant?: ThemeVariant;
   $ghost?: boolean;
@@ -63,20 +63,24 @@ const IconWrapper = styled.span<{
     width: ${({ $size }) => $size}px;
     height: ${({ $size }) => $size}px;
   }
+
+  button & svg {
+    transform: scale(1.125);
+  }
 `;
 
 /**
- * Icon component to render Lucide icons with specified sizes and optional round container with variants.
- * @param $icon - LucideIcon component to render (copy the JSX name from @link https://lucide.dev/icons/)
+ * Renders Tabler icons with theme sizes and optional round containers.
+ * @param $icon - Tabler icon component from @tabler/icons-react
  * @param $size - ThemeSize enum (default: ThemeSize.Large, corrisponding to 16px)
  * @param $variant - "primary" | "secondary" | "success" | "warning" | "error" | "info" (only used with $round)
  * @param $ghost - boolean (default: false) - renders transparent background with colored border (only used with $round)
  * @param $round - boolean (default: false) - renders icon in a round container with variant colors
  * @param $stroke - number (default: 2) - stroke width of the icon
  * @example
- * <Icon $icon={Home} $size={ThemeSize.Large} />
- * <Icon $icon={BadgeAlert} $size={ThemeSize.ExtraLarge} $round $variant={ThemeVariant.Warning} />
- * <Icon $icon={CheckCircle} $size={ThemeSize.Large} $round $variant={ThemeVariant.Success} $ghost />
+ * <Icon $icon={IconHome} $size={ThemeSize.Large} />
+ * <Icon $icon={IconExclamationCircle} $size={ThemeSize.ExtraLarge} $round $variant={ThemeVariant.Warning} />
+ * <Icon $icon={IconCircleCheck} $size={ThemeSize.Large} $round $variant={ThemeVariant.Success} $ghost />
  */
 export const Icon: React.FC<IconProps> = ({
   $icon: IconComponent,
@@ -97,7 +101,7 @@ export const Icon: React.FC<IconProps> = ({
       $round={$round}
       {...rest}
     >
-      <IconComponent size={pixelSize} strokeWidth={$stroke} />
+      <IconComponent size={pixelSize} stroke={$stroke} />
     </IconWrapper>
   );
 };

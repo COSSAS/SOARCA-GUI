@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { X } from "lucide-react";
+import { IconX } from "@tabler/icons-react";
 import { Icon } from "./Icon";
 
 const Overlay = styled.div`
@@ -123,7 +123,7 @@ export const ModalCloseButton: React.FC<
 > = (props) => {
   return (
     <CloseButton {...props}>
-      <Icon $icon={X} $stroke={4} />
+      <Icon $icon={IconX} $stroke={4} />
     </CloseButton>
   );
 };

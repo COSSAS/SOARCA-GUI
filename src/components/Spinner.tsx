@@ -1,5 +1,6 @@
 import { spin } from "@/theme/animations";
 import { theme } from "@/theme/theme";
+import { IconCircle, IconLoader2 } from "@tabler/icons-react";
 import React from "react";
 import styled from "styled-components";
 import {
@@ -12,18 +13,24 @@ import {
 
 const Ring = styled.div<{
   $size: ThemeSize;
-  $color: string;
-  $trackColor: string;
+  $borderWidth: number;
 }>`
-  width: ${({ $size }) => `${getThemeSizeValuesByThemeSize($size)}`};
-  height: ${({ $size }) => `${getThemeSizeValuesByThemeSize($size)}`};
+  position: relative;
+  width: ${({ $size, $borderWidth }) =>
+    `calc(${getThemeSizeValuesByThemeSize($size)} + ${$borderWidth * 2}px)`};
+  height: ${({ $size, $borderWidth }) =>
+    `calc(${getThemeSizeValuesByThemeSize($size)} + ${$borderWidth * 2}px)`};
 
-  border-radius: 50%;
-  border: ${({ $size, $trackColor }) =>
-    `${Math.max(2, getThemePixelSizeValuesByThemeSize($size) / 4)}px solid ${$trackColor}`};
-  border-top-color: ${({ $color }) => $color};
+  svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
 
-  animation: ${spin} 0.8s linear infinite;
+  .tabler-icon-loader-2 {
+    animation: ${spin} 0.8s linear infinite;
+  }
 `;
 
 const SpinnerContainer = styled.div<{
@@ -85,14 +92,20 @@ export const Spinner: React.FC<SpinnerProps> = ({
   const resolvedTrackColor =
     $trackColor || getVariantColors(theme, $variant).solidText;
 
+  const pixelSize = getThemePixelSizeValuesByThemeSize($size);
+  const borderWidth = Math.max(2, pixelSize / 4);
+  const stroke = (borderWidth / (pixelSize + borderWidth * 2)) * 24;
+
   const spinner = (
     <Ring
       className={className}
       $size={$size}
-      $color={resolvedColor}
-      $trackColor={resolvedTrackColor}
+      $borderWidth={borderWidth}
       {...rest}
-    />
+    >
+      <IconCircle color={resolvedTrackColor} stroke={stroke} aria-hidden="true" />
+      <IconLoader2 color={resolvedColor} stroke={stroke} aria-hidden="true" />
+    </Ring>
   );
 
   return $withContainer ? (

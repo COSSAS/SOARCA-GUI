@@ -1,4 +1,4 @@
-import { HelpCircle, KeyRound, LockKeyholeOpen } from "lucide-react";
+import { IconHelpCircle, IconKey, IconLockOpen2 } from "@tabler/icons-react";
 import styled from "styled-components";
 
 import soarcaBackground from "@/assets/soarca-background.jpg";
@@ -56,7 +56,7 @@ export const LoginPage: React.FC = () => {
               $variant={ThemeVariant.Primary}
               $width={ButtonWidth.Full}
             >
-              <Icon $icon={LockKeyholeOpen} />
+              <Icon $icon={IconLockOpen2} />
               Log in with OIDC
             </Button>
           </FormContainer>
@@ -68,11 +68,11 @@ export const LoginPage: React.FC = () => {
             $justify="space-between"
           >
             <Link $to="/forgot-password" $variant="subtle">
-              <Icon $icon={KeyRound} />
+              <Icon $icon={IconKey} />
               Forgot password
             </Link>
             <Link $to="/help" $variant="subtle">
-              <Icon $icon={HelpCircle} />
+              <Icon $icon={IconHelpCircle} />
               Help
             </Link>
           </Spacer>

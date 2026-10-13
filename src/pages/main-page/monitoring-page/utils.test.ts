@@ -5,7 +5,7 @@ import {
   SoarcaApiStepExecutionStatus,
   StepExecutionStatus,
 } from "@/enums";
-import { Check, PlayIcon, X } from "lucide-react";
+import { IconCheck, IconPlayerPlay, IconX } from "@tabler/icons-react";
 import { describe, expect, test } from "vitest";
 import {
   getBadgeVariantFromStatus,
@@ -107,24 +107,24 @@ describe("Utility functions used in monitoring page", () => {
   });
 
   test("getIconFromStatus returns correct icons for playbook statuses", () => {
-    expect(getIconFromStatus(PlaybookExecutionStatus.Executed)).toBe(Check);
-    expect(getIconFromStatus(PlaybookExecutionStatus.Running)).toBe(PlayIcon);
-    expect(getIconFromStatus(PlaybookExecutionStatus.Failed)).toBe(X);
+    expect(getIconFromStatus(PlaybookExecutionStatus.Executed)).toBe(IconCheck);
+    expect(getIconFromStatus(PlaybookExecutionStatus.Running)).toBe(IconPlayerPlay);
+    expect(getIconFromStatus(PlaybookExecutionStatus.Failed)).toBe(IconX);
   });
 
   test("getIconFromStepStatus returns correct icons for step statuses", () => {
-    expect(getIconFromStepStatus(StepExecutionStatus.Executed)).toBe(Check);
-    expect(getIconFromStepStatus(StepExecutionStatus.Running)).toBe(PlayIcon);
-    expect(getIconFromStepStatus(StepExecutionStatus.Failed)).toBe(X);
-    expect(getIconFromStepStatus(StepExecutionStatus.ServerSideError)).toBe(X);
-    expect(getIconFromStepStatus(StepExecutionStatus.ClientSideError)).toBe(X);
-    expect(getIconFromStepStatus(StepExecutionStatus.TimeoutError)).toBe(X);
+    expect(getIconFromStepStatus(StepExecutionStatus.Executed)).toBe(IconCheck);
+    expect(getIconFromStepStatus(StepExecutionStatus.Running)).toBe(IconPlayerPlay);
+    expect(getIconFromStepStatus(StepExecutionStatus.Failed)).toBe(IconX);
+    expect(getIconFromStepStatus(StepExecutionStatus.ServerSideError)).toBe(IconX);
+    expect(getIconFromStepStatus(StepExecutionStatus.ClientSideError)).toBe(IconX);
+    expect(getIconFromStepStatus(StepExecutionStatus.TimeoutError)).toBe(IconX);
     expect(
       getIconFromStepStatus(StepExecutionStatus.ExceptionConditionError),
-    ).toBe(X);
+    ).toBe(IconX);
     // Test fallback for unknown status
     expect(
       getIconFromStepStatus("unknown" as unknown as StepExecutionStatus),
-    ).toBe(X);
+    ).toBe(IconX);
   });
 });

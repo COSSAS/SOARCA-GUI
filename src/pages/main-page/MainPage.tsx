@@ -1,14 +1,14 @@
 import {
-  Activity,
-  BookOpen,
-  FilePlusCorner,
-  Home,
-  LayoutDashboard,
-  LucideIcon,
-  Menu,
-  Settings,
-  X,
-} from "lucide-react";
+  IconActivity,
+  IconBook,
+  IconFilePlus,
+  IconHome,
+  IconLayoutDashboard,
+  IconMenu2,
+  IconSettings,
+  IconX,
+  type TablerIcon,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
@@ -48,18 +48,18 @@ import { StatusIndicator } from "./StatusIndicator";
 interface NavRoute {
   path: string;
   label: string;
-  icon: LucideIcon;
+  icon: TablerIcon;
 }
 
 const NAV_ROUTES: NavRoute[] = [
-  { path: PATHS.DASHBOARD, label: "Dashboard (Soon™)", icon: Home },
+  { path: PATHS.DASHBOARD, label: "Dashboard (Soon™)", icon: IconHome },
   {
     path: PATHS.PLAYBOOKS.BASE,
     label: "Playbooks (Beta)",
-    icon: LayoutDashboard,
+    icon: IconLayoutDashboard,
   },
-  { path: PATHS.MONITORING.BASE, label: "Monitoring", icon: Activity },
-  { path: PATHS.SETTINGS, label: "Settings (Beta)", icon: Settings },
+  { path: PATHS.MONITORING.BASE, label: "Monitoring", icon: IconActivity },
+  { path: PATHS.SETTINGS, label: "Settings (Beta)", icon: IconSettings },
 ];
 
 export const MainPage: React.FC = () => {
@@ -94,7 +94,7 @@ export const MainPage: React.FC = () => {
             $width={ButtonWidth.Full}
             onClick={() => handleNavigation(PATHS.PLAYBOOKS.NEW)}
           >
-            <Icon $icon={FilePlusCorner} />
+            <Icon $icon={IconFilePlus} />
             New playbook
           </Button>
         </SidebarHeader>
@@ -123,7 +123,7 @@ export const MainPage: React.FC = () => {
             target="_blank"
             rel="help noopener noreferrer"
           >
-            <Icon $icon={BookOpen} />
+            <Icon $icon={IconBook} />
             Docs
           </Link>
         </SidebarFooter>
@@ -143,9 +143,9 @@ export const MainPage: React.FC = () => {
               onClick={sidebarOpen ? closeSidebar : openSidebar}
             >
               {sidebarOpen ? (
-                <Icon $icon={X} $size={ThemeSize.ExtraLarge} />
+                <Icon $icon={IconX} $size={ThemeSize.ExtraLarge} />
               ) : (
-                <Icon $icon={Menu} $size={ThemeSize.ExtraLarge} />
+                <Icon $icon={IconMenu2} $size={ThemeSize.ExtraLarge} />
               )}
             </MobileMenuButton>
           </Spacer>

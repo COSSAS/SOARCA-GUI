@@ -1,4 +1,4 @@
-import { Copy } from "lucide-react";
+import { IconCopy } from "@tabler/icons-react";
 import React from "react";
 import toast from "react-hot-toast";
 
@@ -45,7 +45,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
       disabled={disabled}
       {...rest}
     >
-      <Icon $icon={Copy} $size={ThemeSize.Small} />
+      <Icon $icon={IconCopy} $size={ThemeSize.Small} />
     </Button>
   );
 };

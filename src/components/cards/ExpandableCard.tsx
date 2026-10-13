@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import React, { useState } from "react";
 
 import styled from "styled-components";
@@ -66,7 +66,7 @@ export const ExpandableCard: React.FC<ExpandableCardProps> = ({
         <div style={{ flex: 1, minWidth: 0 }}>{$header}</div>
         <ToggleButton>
           <ToggleIconWrapper $expanded={expanded}>
-            <Icon $icon={ChevronDown} />
+            <Icon $icon={IconChevronDown} />
           </ToggleIconWrapper>
         </ToggleButton>
       </CardHeader>
