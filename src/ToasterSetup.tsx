@@ -1,5 +1,5 @@
 import { theme } from "@/theme";
-import { Check, XCircle } from "lucide-react";
+import { IconCheck, IconCircleX } from "@tabler/icons-react";
 import { Toaster } from "react-hot-toast";
 import { Icon } from "./components/Icon";
 
@@ -26,7 +26,7 @@ export const ToasterSetup: React.FC = () => {
             background: theme.colors.success.solidBg,
             color: theme.colors.success.solidText,
           },
-          icon: <Icon $icon={Check} $round $ghost />,
+          icon: <Icon $icon={IconCheck} $round $ghost />,
         },
         error: {
           duration: theme.toasterDuration.error,
@@ -35,7 +35,7 @@ export const ToasterSetup: React.FC = () => {
             background: theme.colors.error.solidBg,
             color: theme.colors.error.solidText,
           },
-          icon: <Icon $icon={XCircle} $round $ghost />,
+          icon: <Icon $icon={IconCircleX} $round $ghost />,
         },
       }}
     />

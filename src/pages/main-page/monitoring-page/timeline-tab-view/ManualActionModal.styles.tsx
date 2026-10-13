@@ -1,4 +1,4 @@
-import { Info } from "lucide-react";
+import { IconInfoCircle } from "@tabler/icons-react";
 import styled from "styled-components";
 
 import { ModalCloseButton } from "@/components";
@@ -85,7 +85,7 @@ export const VariableType = styled.span`
   font-style: italic;
 `;
 
-export const InfoIcon = styled(Info)`
+export const InfoIcon = styled(IconInfoCircle)`
   width: 16px;
   height: 16px;
   color: ${({ theme }) => theme.colors.text.tertiary};

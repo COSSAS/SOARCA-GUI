@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft, FileJson, Upload } from "lucide-react";
+import { IconArrowLeft, IconFileCode, IconUpload } from "@tabler/icons-react";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
@@ -73,7 +73,7 @@ export const PlaybookCreatePage: React.FC = () => {
   return (
     <Spacer $direction="vertical" $gap="lg" $align="start">
       <Link $to={PATHS.PLAYBOOKS.BASE}>
-        <Icon $icon={ArrowLeft} />
+        <Icon $icon={IconArrowLeft} />
         Back to playbooks
       </Link>
 
@@ -88,7 +88,7 @@ export const PlaybookCreatePage: React.FC = () => {
               onClick={() => handleMethodChange("upload")}
               disabled={createMutation.isPending}
             >
-              <Icon $icon={Upload} $size={ThemeSize.Medium} />
+              <Icon $icon={IconUpload} $size={ThemeSize.Medium} />
               Upload JSON file
             </MethodButton>
             <MethodButton
@@ -96,7 +96,7 @@ export const PlaybookCreatePage: React.FC = () => {
               onClick={() => handleMethodChange("editor")}
               disabled={createMutation.isPending}
             >
-              <Icon $icon={FileJson} $size={ThemeSize.Medium} />
+              <Icon $icon={IconFileCode} $size={ThemeSize.Medium} />
               JSON Editor
             </MethodButton>
           </MethodSelector>

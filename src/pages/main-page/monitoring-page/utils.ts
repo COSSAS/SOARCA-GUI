@@ -9,7 +9,12 @@ import {
   SoarcaPlaybookExecutionStatus,
   SoarcaStepExecutionStatus,
 } from "@/types";
-import { Check, LucideIcon, PlayIcon, X } from "lucide-react";
+import {
+  IconCheck,
+  IconPlayerPlay,
+  IconX,
+  type TablerIcon,
+} from "@tabler/icons-react";
 
 const SOARCA_STEP_STATUS_MAP: Record<
   SoarcaStepExecutionStatus,
@@ -61,11 +66,11 @@ const PLAYBOOK_STATUS_TO_BADGE_MAP: Record<
   [PlaybookExecutionStatus.Failed]: ThemeVariant.Error,
 };
 
-const PLAYBOOK_STATUS_TO_ICON_MAP: Record<PlaybookExecutionStatus, LucideIcon> =
+const PLAYBOOK_STATUS_TO_ICON_MAP: Record<PlaybookExecutionStatus, TablerIcon> =
   {
-    [PlaybookExecutionStatus.Executed]: Check,
-    [PlaybookExecutionStatus.Running]: PlayIcon,
-    [PlaybookExecutionStatus.Failed]: X,
+    [PlaybookExecutionStatus.Executed]: IconCheck,
+    [PlaybookExecutionStatus.Running]: IconPlayerPlay,
+    [PlaybookExecutionStatus.Failed]: IconX,
   };
 
 export const getBadgeVariantFromStatus = (
@@ -74,7 +79,7 @@ export const getBadgeVariantFromStatus = (
 
 export const getIconFromStatus = (
   status: PlaybookExecutionStatus,
-): LucideIcon => PLAYBOOK_STATUS_TO_ICON_MAP[status];
+): TablerIcon => PLAYBOOK_STATUS_TO_ICON_MAP[status];
 
 const STEP_STATUS_TO_BADGE_MAP: Record<StepExecutionStatus, ThemeVariant> = {
   [StepExecutionStatus.Executed]: ThemeVariant.Success,
@@ -86,14 +91,14 @@ const STEP_STATUS_TO_BADGE_MAP: Record<StepExecutionStatus, ThemeVariant> = {
   [StepExecutionStatus.ExceptionConditionError]: ThemeVariant.Error,
 };
 
-const STEP_STATUS_TO_ICON_MAP: Record<StepExecutionStatus, LucideIcon> = {
-  [StepExecutionStatus.Executed]: Check,
-  [StepExecutionStatus.Running]: PlayIcon,
-  [StepExecutionStatus.Failed]: X,
-  [StepExecutionStatus.ServerSideError]: X,
-  [StepExecutionStatus.ClientSideError]: X,
-  [StepExecutionStatus.TimeoutError]: X,
-  [StepExecutionStatus.ExceptionConditionError]: X,
+const STEP_STATUS_TO_ICON_MAP: Record<StepExecutionStatus, TablerIcon> = {
+  [StepExecutionStatus.Executed]: IconCheck,
+  [StepExecutionStatus.Running]: IconPlayerPlay,
+  [StepExecutionStatus.Failed]: IconX,
+  [StepExecutionStatus.ServerSideError]: IconX,
+  [StepExecutionStatus.ClientSideError]: IconX,
+  [StepExecutionStatus.TimeoutError]: IconX,
+  [StepExecutionStatus.ExceptionConditionError]: IconX,
 };
 
 export const getBadgeVariantFromStepStatus = (
@@ -102,7 +107,7 @@ export const getBadgeVariantFromStepStatus = (
 
 export const getIconFromStepStatus = (
   status: StepExecutionStatus,
-): LucideIcon => STEP_STATUS_TO_ICON_MAP[status] ?? X;
+): TablerIcon => STEP_STATUS_TO_ICON_MAP[status] ?? IconX;
 
 export interface UserActionResponse {
   name: string;

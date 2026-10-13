@@ -1,6 +1,6 @@
 import { ThemeSize, ThemeVariant } from "@/components";
 import { useQuery } from "@tanstack/react-query";
-import { FilePlusCorner, MoreVertical } from "lucide-react";
+import { IconFilePlus, IconDotsVertical } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -126,7 +126,7 @@ const PlaybookItem: React.FC<PlaybookItemProps> = ({ playbook, onClick }) => {
         workflowStart={playbook.workflow_start}
       />
       <PlaybookActions onClick={(e) => e.stopPropagation()}>
-        <Icon $icon={MoreVertical} />
+        <Icon $icon={IconDotsVertical} />
       </PlaybookActions>
     </PlaybookListItem>
   );
@@ -186,7 +186,7 @@ export const PlaybooksPage: React.FC = () => {
           $size={ThemeSize.Small}
           onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
         >
-          <Icon $icon={FilePlusCorner} $size={ThemeSize.Medium} />
+          <Icon $icon={IconFilePlus} $size={ThemeSize.Medium} />
           New
         </Button>
       </CardHeader>

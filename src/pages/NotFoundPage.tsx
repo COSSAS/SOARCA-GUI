@@ -1,4 +1,4 @@
-import { MoveLeft } from "lucide-react";
+import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
 import soarcaBackground from "@/assets/soarca-background.jpg";
@@ -31,7 +31,7 @@ export const NotFoundPage: React.FC = () => {
             $width={ButtonWidth.Full}
             onClick={() => navigate(-1)}
           >
-            <Icon $icon={MoveLeft} $size={ThemeSize.Medium} />
+            <Icon $icon={IconArrowLeft} $size={ThemeSize.Medium} />
             Go Back
           </Button>
           <Button

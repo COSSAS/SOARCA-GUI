@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { BadgeAlert, Check, Play, X } from "lucide-react";
+import {
+  IconExclamationCircle,
+  IconCheck,
+  IconPlayerPlay,
+  IconX,
+} from "@tabler/icons-react";
 import React from "react";
 import { useNavigate } from "react-router";
 
@@ -128,7 +133,7 @@ export const MonitoringPage: React.FC = () => {
                 >
                   {r.status}
                   {r.hasActionRequired && (
-                    <Icon $icon={BadgeAlert} $size={ThemeSize.Medium} />
+                    <Icon $icon={IconExclamationCircle} $size={ThemeSize.Medium} />
                   )}
                 </Badge>
               </Cell>
@@ -168,15 +173,15 @@ const PlaybooksExecutionsCardHeader: React.FC<
       <CardTitle>Playbooks executions</CardTitle>
       <Spacer $direction="horizontal" $gap="md">
         <Badge $variant={ThemeVariant.Success}>
-          <Icon $icon={Check} /> {PlaybookExecutionStatus.Executed}{" "}
+          <Icon $icon={IconCheck} /> {PlaybookExecutionStatus.Executed}{" "}
           <strong>{executedCount}</strong>
         </Badge>
         <Badge $variant={ThemeVariant.Warning}>
-          <Icon $icon={Play} /> {PlaybookExecutionStatus.Running}{" "}
+          <Icon $icon={IconPlayerPlay} /> {PlaybookExecutionStatus.Running}{" "}
           <strong>{runningCount}</strong>
         </Badge>
         <Badge $variant={ThemeVariant.Error}>
-          <Icon $icon={X} /> {PlaybookExecutionStatus.Failed}{" "}
+          <Icon $icon={IconX} /> {PlaybookExecutionStatus.Failed}{" "}
           <strong>{failedCount}</strong>
         </Badge>
       </Spacer>
