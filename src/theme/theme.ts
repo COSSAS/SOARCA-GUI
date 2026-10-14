@@ -1,7 +1,7 @@
 // Theme configuration for the application
 const fonts = {
   family: {
-    primary: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
+    primary: `system-ui`,
     mono: `'Courier New', Courier, monospace`,
   },
   size: {
@@ -259,35 +259,35 @@ export const darkTheme: Theme = {
       bg: "#3b1c1c",
       border: "#ef4444",
       text: "#fca5a5",
-      solidBg: "#dc2626",
+      solidBg: "#ef4444",
       solidText: "#ffffff",
     },
     info: {
       bg: "#1e2a3a",
       border: "#60a5fa",
       text: "#93c5fd",
-      solidBg: "#3b82f6",
+      solidBg: "#60a5fa",
       solidText: "#ffffff",
     },
     success: {
       bg: "#1a2e1a",
       border: "#22c55e",
       text: "#86efac",
-      solidBg: "#16a34a",
+      solidBg: "#22c55e",
       solidText: "#ffffff",
     },
     warning: {
       bg: "#2e2a1a",
       border: "#facc15",
       text: "#fde68a",
-      solidBg: "#eab308",
+      solidBg: "#facc15",
       solidText: "#1f2937",
     },
     accent: {
       bg: "#2a1f3d",
       border: "#8b7cf7",
       text: "#c4b5fd",
-      solidBg: "#6a5ac7",
+      solidBg: "#8b7cf7",
       solidText: "#ffffff",
     },
     gray: {
