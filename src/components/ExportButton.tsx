@@ -1,14 +1,9 @@
 import React from "react";
 import { Button } from "./Button";
 import { ButtonWidth } from "./utils";
+import { downloadExport, ExportFormat } from "./export";
 
-/**
- * Extra formats supported by ExportButton
- */
-export type ExportFormat =
-  | "json"
-  | "txt"
-  | ((data: unknown) => { blob: Blob; filename: string });
+export type { ExportFormat } from "./export";
 
 export interface ExportButtonProps extends React.ComponentProps<typeof Button> {
   $data: unknown;
@@ -17,9 +12,6 @@ export interface ExportButtonProps extends React.ComponentProps<typeof Button> {
   $onSuccess?: () => void;
   $onError?: (err: unknown) => void;
 }
-
-const getDefaultFilename = (extension: string) =>
-  `export-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`;
 
 /**
  * ExportButton component to export data as a file in various formats.
@@ -43,39 +35,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
 }) => {
   const handleClick = () => {
     try {
-      let blob: Blob;
-      let outName = $filename;
-
-      // the user provides a custom formatter function
-      if (typeof $format === "function") {
-        const { blob: customBlob, filename: customFilename } = $format($data);
-        blob = customBlob;
-        outName = customFilename;
-        // json format
-      } else if ($format === "json") {
-        const json = JSON.stringify($data, null, 2);
-        blob = new Blob([json], { type: "application/json" });
-        if (!outName) outName = getDefaultFilename("json");
-        // plain text format
-      } else if ($format === "txt") {
-        const text = typeof $data === "string" ? $data : String($data);
-        blob = new Blob([text], { type: "text/plain" });
-        if (!outName) outName = getDefaultFilename("txt");
-      }
-
-      // trigger download
-      const url = URL.createObjectURL(blob!);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = outName || "export";
-      document.body.appendChild(a);
-      a.click();
-
-      // cleanup
-      a.remove();
-      URL.revokeObjectURL(url);
-
-      // callbacks
+      downloadExport($data, $format, $filename);
       if ($onSuccess) $onSuccess();
     } catch (err) {
       if ($onError) $onError(err);
