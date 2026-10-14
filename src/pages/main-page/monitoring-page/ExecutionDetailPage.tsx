@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContent,
+  ControlLabel,
   ExpandableText,
   FormLabel,
   Icon,
@@ -134,7 +135,8 @@ export const ExecutionDetailPage: React.FC = () => {
                     id: TABS.timeline,
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
-                        <Icon $icon={IconTimeline} /> Timeline
+                        <Icon $icon={IconTimeline} />
+                        <ControlLabel>Timeline</ControlLabel>
                       </Spacer>
                     ),
                   },
@@ -142,7 +144,8 @@ export const ExecutionDetailPage: React.FC = () => {
                     id: TABS.detailed,
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
-                        <Icon $icon={IconInfoCircle} /> Details
+                        <Icon $icon={IconInfoCircle} />
+                        <ControlLabel>Details</ControlLabel>
                       </Spacer>
                     ),
                   },

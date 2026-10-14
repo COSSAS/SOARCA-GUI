@@ -15,7 +15,6 @@ import {
   Icon,
   Link,
   Spacer,
-  ThemeSize,
   ThemeVariant,
 } from "@/components";
 import { Playbook } from "@/types";
@@ -88,7 +87,7 @@ export const PlaybookCreatePage: React.FC = () => {
               onClick={() => handleMethodChange("upload")}
               disabled={createMutation.isPending}
             >
-              <Icon $icon={IconUpload} $size={ThemeSize.Medium} />
+              <Icon $icon={IconUpload} />
               Upload JSON file
             </MethodButton>
             <MethodButton
@@ -96,7 +95,7 @@ export const PlaybookCreatePage: React.FC = () => {
               onClick={() => handleMethodChange("editor")}
               disabled={createMutation.isPending}
             >
-              <Icon $icon={IconFileCode} $size={ThemeSize.Medium} />
+              <Icon $icon={IconFileCode} />
               JSON Editor
             </MethodButton>
           </MethodSelector>

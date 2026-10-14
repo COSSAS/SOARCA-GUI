@@ -1,6 +1,10 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
+export const ControlLabel = styled.span`
+  align-self: baseline;
+`;
+
 export interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   $color?: string;
 }

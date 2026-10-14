@@ -200,7 +200,7 @@ export const FileDrop: React.FC<FileDropProps> = ({
                   $onRemove?.();
                 }}
               >
-                <Icon $icon={IconTrash} $size={ThemeSize.Medium} />
+                <Icon $icon={IconTrash} />
               </Button>
             </FileName>
           )}

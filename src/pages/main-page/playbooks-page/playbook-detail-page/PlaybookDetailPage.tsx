@@ -181,7 +181,7 @@ export const PlaybookDetailPage: React.FC = () => {
               navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId!))
             }
           >
-            <Icon $icon={IconPencil} $size={ThemeSize.Medium} />
+            <Icon $icon={IconPencil} />
             Edit
           </Button>
           <Button
@@ -192,7 +192,7 @@ export const PlaybookDetailPage: React.FC = () => {
             onClick={() => setOpenDeleteConfirm(true)}
             disabled={deleteMutation.isPending}
           >
-            <Icon $icon={IconTrash} $size={ThemeSize.Medium} />
+            <Icon $icon={IconTrash} />
             Delete
           </Button>
           <Button
@@ -205,7 +205,7 @@ export const PlaybookDetailPage: React.FC = () => {
             }
             disabled={mutation.isPending}
           >
-            <Icon $icon={IconPlayerPlay} $size={ThemeSize.Medium} />
+            <Icon $icon={IconPlayerPlay} />
             Run
           </Button>
 
@@ -221,7 +221,7 @@ export const PlaybookDetailPage: React.FC = () => {
               toast.error(formatErrorForToast(err, "Failed to export playbook"))
             }
           >
-            <Icon $icon={IconFileCode} $size={ThemeSize.Medium} />
+            <Icon $icon={IconFileCode} />
             Export
           </ExportButton>
 

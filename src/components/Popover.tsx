@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from "react";
 import styled from "styled-components";
+import { ControlLabel } from "./Typography";
 
 const PopoverContext = createContext<string | undefined>(undefined);
 
@@ -154,7 +155,7 @@ export const Popover: React.FC<PopoverProps> = ({
 
 export type PopoverItemProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export const PopoverItem: React.FC<PopoverItemProps> = (props) => {
+export const PopoverItem: React.FC<PopoverItemProps> = ({ children, ...props }) => {
   const targetId = useContext(PopoverContext);
 
   return (
@@ -163,6 +164,12 @@ export const PopoverItem: React.FC<PopoverItemProps> = (props) => {
       popoverTarget={targetId}
       popoverTargetAction="hide"
       {...props}
-    />
+    >
+      {React.Children.map(children, (child) =>
+        typeof child === "string" || typeof child === "number"
+          ? <ControlLabel>{child}</ControlLabel>
+          : child,
+      )}
+    </PopoverItemButton>
   );
 };

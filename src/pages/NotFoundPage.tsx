@@ -7,7 +7,6 @@ import {
   ButtonWidth,
   Icon,
   PageContainer,
-  ThemeSize,
   ThemeVariant,
 } from "@/components";
 import { PATHS } from "@/utils";
@@ -31,7 +30,7 @@ export const NotFoundPage: React.FC = () => {
             $width={ButtonWidth.Full}
             onClick={() => navigate(-1)}
           >
-            <Icon $icon={IconArrowLeft} $size={ThemeSize.Medium} />
+            <Icon $icon={IconArrowLeft} />
             Go Back
           </Button>
           <Button

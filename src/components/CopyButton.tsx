@@ -45,7 +45,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
       disabled={disabled}
       {...rest}
     >
-      <Icon $icon={IconCopy} $size={ThemeSize.Small} />
+      <Icon $icon={IconCopy} />
     </Button>
   );
 };

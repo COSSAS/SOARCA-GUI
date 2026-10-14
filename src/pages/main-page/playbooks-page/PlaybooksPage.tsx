@@ -187,7 +187,7 @@ export const PlaybooksPage: React.FC = () => {
           $size={ThemeSize.Small}
           onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
         >
-          <Icon $icon={IconFilePlus} $size={ThemeSize.Medium} />
+          <Icon $icon={IconFilePlus} />
           New
         </Button>
       </CardHeader>
