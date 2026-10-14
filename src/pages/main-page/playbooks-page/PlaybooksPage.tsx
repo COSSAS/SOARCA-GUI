@@ -1,6 +1,6 @@
 import { ThemeSize, ThemeVariant } from "@/components";
 import { useQuery } from "@tanstack/react-query";
-import { IconFilePlus, IconDotsVertical } from "@tabler/icons-react";
+import { IconFilePlus } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -35,6 +35,7 @@ import {
   TimelineSteps,
 } from "./PlaybooksPage.styles";
 import { getOrderedSteps } from "./utils";
+import { PlaybookActionsMenu } from "./PlaybookActionsMenu";
 
 interface PlaybookTimelineProps {
   workflow: Record<string, Step>;
@@ -126,7 +127,7 @@ const PlaybookItem: React.FC<PlaybookItemProps> = ({ playbook, onClick }) => {
         workflowStart={playbook.workflow_start}
       />
       <PlaybookActions onClick={(e) => e.stopPropagation()}>
-        <Icon $icon={IconDotsVertical} />
+        <PlaybookActionsMenu playbook={playbook} />
       </PlaybookActions>
     </PlaybookListItem>
   );
