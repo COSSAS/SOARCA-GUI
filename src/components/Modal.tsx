@@ -1,37 +1,42 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 
 import { IconX } from "@tabler/icons-react";
 import { Icon } from "./Icon";
 
-const Overlay = styled.div`
-  position: fixed;
-  display: flex;
+const Overlay = styled.dialog`
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 
-  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
 
-  background: ${({ theme }) => theme.colors.background.overlay};
-  z-index: ${({ theme }) => theme.zIndex.modalBackdrop};
-  backdrop-filter: blur(2px);
+  border: 0;
+  background: transparent;
 
-  cursor: not-allowed;
+  &[open] {
+    display: flex;
+  }
+
+  &::backdrop {
+    background: ${({ theme }) => theme.colors.background.overlay};
+    backdrop-filter: blur(${({ theme }) => theme.effects.backdropBlur});
+  }
 `;
 
 const Dialog = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: ${({ theme }) => theme.zIndex.modal};
 
   width: min(640px, 90vw);
   max-height: 90vh;
 
-  cursor: default;
-
-  background: ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.radius.lg};
+  background: ${({ theme }) => theme.colors.background.primary};
   box-shadow: ${({ theme }) => theme.shadows.lg};
 `;
 
@@ -52,11 +57,10 @@ const Header = styled.div`
 
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
 
-  font: ${({ theme }) => theme.typography.h3.font};
+  background-color: ${({ theme }) => theme.colors.info.solidBg};
 
   color: ${({ theme }) => theme.colors.info.solidText};
-  background-color: ${({ theme }) => theme.colors.info.solidBg};
-  border-radius: ${({ theme }) => `${theme.radius.lg} ${theme.radius.lg} 0 0`};
+  font: ${({ theme }) => theme.typography.h3.font};
 `;
 
 /**
@@ -69,8 +73,10 @@ const Header = styled.div`
  * </Modal.Body>
  */
 const Body = styled.div`
-  padding: ${({ theme }) => theme.spacing.lg};
   overflow: auto;
+
+  padding: ${({ theme }) => theme.spacing.lg};
+
   color: ${({ theme }) => theme.colors.text.primary};
   font: ${({ theme }) => theme.typography.body.font};
 `;
@@ -89,7 +95,9 @@ const Footer = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: ${({ theme }) => theme.spacing.sm};
+
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
+
   border-top: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
@@ -103,8 +111,9 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
 
-  background: none;
   border: none;
+  background: none;
+
   color: ${({ theme }) => theme.colors.primary.text};
 
   cursor: pointer;
@@ -122,7 +131,7 @@ export const ModalCloseButton: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement>
 > = (props) => {
   return (
-    <CloseButton {...props}>
+    <CloseButton type="button" aria-label="Close dialog" {...props}>
       <Icon $icon={IconX} $stroke={4} />
     </CloseButton>
   );
@@ -137,10 +146,10 @@ interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
 /**
  * Modal
  *
- * Full-screen modal component providing `Header`, `Body`, and `Footer` layout slots and an optional close button.
- * Renders only when `$isOpen` is true and handles overlay clicks to close.
+ * Native modal dialog providing `Header`, `Body`, and `Footer` layout slots and an optional close button.
+ * Renders with `showModal()` when `$isOpen` is true and handles Escape and backdrop clicks.
  * @param $isOpen - Controls whether the modal is visible.
- * @param $onClose - Callback invoked when the user requests to close the modal (overlay click or CloseButton).
+ * @param $onClose - Callback invoked when the user requests to close the modal (Escape, backdrop click, or CloseButton).
  * @param children - Use `Modal.Header`, `Modal.Body`, and `Modal.Footer` to structure content.
  * @example
  * <Modal $isOpen={isOpen} $onClose={handleClose}>
@@ -154,12 +163,44 @@ export const Modal: React.FC<ModalProps> & {
   Body: typeof Body;
   Footer: typeof Footer;
   CloseButton: typeof ModalCloseButton;
-} = ({ $isOpen, $onClose, children, ...rest }) => {
+} = ({
+  $isOpen,
+  $onClose,
+  children,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
+  ...rest
+}) => {
+  const openDialog = useCallback((dialog: HTMLDialogElement | null) => {
+    if (!dialog) return;
+    dialog.showModal();
+    return () => dialog.close();
+  }, []);
+
   if (!$isOpen) return null;
 
   return (
-    <Overlay onClick={$onClose}>
-      <Dialog onClick={(e) => e.stopPropagation()} {...rest}>
+    <Overlay
+      ref={openDialog}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
+      onCancel={(event) => {
+        event.preventDefault();
+        $onClose();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) $onClose();
+      }}
+    >
+      <Dialog
+        {...rest}
+        onClick={(event) => {
+          event.stopPropagation();
+          rest.onClick?.(event);
+        }}
+      >
         {children}
       </Dialog>
     </Overlay>

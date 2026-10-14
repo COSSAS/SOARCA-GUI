@@ -72,7 +72,11 @@ export const RunPlaybookModal: React.FC<RunPlaybookModalProps> = ({
   };
 
   return (
-    <Modal $isOpen={isOpen} $onClose={() => !mutation.isPending && onClose()}>
+    <Modal
+      $isOpen={isOpen}
+      $onClose={() => !mutation.isPending && onClose()}
+      aria-label="Run playbook"
+    >
       <Modal.Header>
         Run playbook
         <Modal.CloseButton
