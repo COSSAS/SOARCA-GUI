@@ -49,6 +49,7 @@ export const MobileMenuButton = styled.button`
   background: none;
   border: none;
 
+  color: ${({ theme }) => theme.colors.text.primary};
   cursor: pointer;
 
   @media (max-width: 768px) {
@@ -66,6 +67,7 @@ export const Overlay = styled.div<{ $isOpen: boolean }>`
     position: fixed;
     inset: 0;
     background-color: ${({ theme }) => theme.colors.background.overlay};
+    backdrop-filter: blur(${({ theme }) => theme.effects.backdropBlur});
     z-index: ${({ theme }) => theme.zIndex.overlay};
   }
 `;
