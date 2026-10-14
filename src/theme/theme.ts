@@ -31,6 +31,7 @@ const fonts = {
 export const theme = {
   fonts,
   colors: {
+    shade: "#000000",
     primary: {
       main: "#3b82f6",
       hover: "#2563eb",
@@ -102,7 +103,7 @@ export const theme = {
       primary: "#ffffff",
       secondary: "#f3f4f6",
       tertiary: "#f9fafb",
-      overlay: "rgba(0, 0, 0, 0.5)",
+      overlay: "rgba(0, 0, 0, 0.15)",
     },
     border: {
       light: "#e5e7eb",
@@ -170,6 +171,9 @@ export const theme = {
     md: "0 4px 6px rgba(0, 0, 0, 0.1)",
     lg: "0 10px 15px rgba(0, 0, 0, 0.1)",
   },
+  effects: {
+    backdropBlur: "1px",
+  },
   transitions: {
     fast: "0.15s ease",
     base: "0.2s ease",
@@ -225,6 +229,9 @@ export const theme = {
     },
   },
   interactions: {
+    subtleMix: "12%",
+    hoverDarken: "10%",
+    activeDarken: "20%",
     disabledOpacity: 0.6,
     activeScale: "0.98",
   },
@@ -233,6 +240,7 @@ export const theme = {
 export const darkTheme: Theme = {
   ...theme,
   colors: {
+    shade: theme.colors.shade,
     primary: {
       main: "#60a5fa",
       hover: "#93bbfd",
@@ -304,7 +312,7 @@ export const darkTheme: Theme = {
       primary: "#111827",
       secondary: "#1f2937",
       tertiary: "#171f2e",
-      overlay: "rgba(0, 0, 0, 0.7)",
+      overlay: "rgba(0, 0, 0, 0.15)",
     },
     border: {
       light: "#374151",
