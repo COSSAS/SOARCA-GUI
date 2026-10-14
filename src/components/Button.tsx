@@ -36,11 +36,11 @@ export const Button = styled.button<ButtonProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: ${({ $size = ThemeSize.Medium }) =>
     getThemeSizeValuesByThemeSize($size)};
-  width: ${({ $width = ButtonWidth.Auto }) =>
-    $width === ButtonWidth.Full ? "100%" : "auto"};
+
+  ${({ $width }) => ($width === ButtonWidth.Full ? "width: 100%;" : "")}
+
   ${({ $size = ThemeSize.Medium, theme }) => {
     switch ($size) {
       case ThemeSize.Small:
@@ -61,64 +61,58 @@ export const Button = styled.button<ButtonProps>`
 
   border-radius: ${({ theme }) => theme.radius.md};
 
-  cursor: pointer;
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
-
-  transition: all ${({ theme }) => theme.transitions.base};
-
   ${({ $variant = ThemeVariant.Info, $ghost, theme }) => {
     const colors = getVariantColors(theme, $variant);
-    const baseBg = colors.solidBg;
-    const hoverBg = colors.text;
-    const textColor = colors.solidText;
-    const borderColor = colors.border;
-    const disabledColor = theme.colors.gray[300];
-    const disabledText = theme.colors.gray[500];
-    const disabledBorder = theme.colors.gray[500];
-
-    // When ghost, the background is transparent and on hover it fills with the base color
-    if ($ghost) {
-      const ghostText = borderColor;
-      const ghostHoverBg = baseBg;
-      const ghostHoverText = textColor;
-      return `
-        background-color: transparent;
-        color: ${ghostText};
-        border: 1px solid ${borderColor};
-        &:hover {
-          background-color: ${ghostHoverBg};
-          color: ${ghostHoverText};
-        }
-        &:disabled {
-          background-color: transparent;
-          color: ${disabledText};
-          border-color: ${disabledBorder};
-          cursor: not-allowed;
-          opacity: 0.7;
-        }
-      `;
-    }
 
     return `
-      background-color: ${baseBg};
-      color: ${textColor};
-      border: 1px solid ${borderColor};
-      &:hover {
-        background-color: ${hoverBg};
-        color: ${textColor};
+      border: 1px solid ${colors.border};
+      background-color: ${$ghost ? "transparent" : colors.solidBg};
+
+      color: ${$ghost ? colors.border : colors.solidText};
+
+      &:hover:not(:disabled) {
+        background-color: color-mix(
+          in srgb,
+          ${colors.solidBg},
+          ${theme.colors.shade} ${theme.interactions.hoverDarken}
+        );
       }
+
+      &:active:not(:disabled) {
+        background-color: color-mix(
+          in srgb,
+          ${colors.solidBg},
+          ${theme.colors.shade} ${theme.interactions.activeDarken}
+        );
+      }
+
+      ${
+        $ghost
+          ? `
+        &:is(:hover, :active):not(:disabled) {
+          color: ${colors.solidText};
+        }
+      `
+          : ""
+      }
+
       &:disabled {
-        background-color: ${disabledColor};
-        border-color: ${disabledBorder};
-        color: ${disabledText};
+        border-color: ${theme.colors.gray[500]};
+        background-color: ${$ghost ? "transparent" : theme.colors.gray[300]};
+        opacity: ${theme.interactions.disabledOpacity};
+
+        color: ${theme.colors.gray[500]};
+
         cursor: not-allowed;
-        opacity: 0.7;
       }
     `;
   }}
 
-  &:active {
-    // Slightly scale down on active press for feedback
-    transform: scale(0.98);
-  }
+  font: ${({ theme }) => theme.typography.bodyMedium.font};
+
+  cursor: pointer;
+  transition:
+    background-color ${({ theme }) => theme.transitions.fast},
+    border-color ${({ theme }) => theme.transitions.fast},
+    color ${({ theme }) => theme.transitions.fast};
 `;
