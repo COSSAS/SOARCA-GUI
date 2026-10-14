@@ -20,6 +20,7 @@ import { PATHS, SOARCA_DOC_URL } from "@/utils";
 import {
   Button,
   ButtonWidth,
+  ControlLabel,
   Icon,
   ImageContainer,
   Link,
@@ -112,7 +113,7 @@ export const MainPage: React.FC = () => {
               onClick={() => handleNavigation(route.path)}
             >
               <Icon $icon={route.icon} />
-              {route.label}
+              <ControlLabel>{route.label}</ControlLabel>
             </NavItem>
           ))}
         </SidebarNav>
@@ -124,7 +125,7 @@ export const MainPage: React.FC = () => {
             rel="help noopener noreferrer"
           >
             <Icon $icon={IconBook} />
-            Docs
+            <ControlLabel>Docs</ControlLabel>
           </Link>
         </SidebarFooter>
       </Sidebar>

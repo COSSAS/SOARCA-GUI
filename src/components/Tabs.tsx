@@ -1,5 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
+import { ControlLabel } from "./Typography";
 import { TabsContext, TabsContextType, useTabs } from "./utils";
 
 interface TabOption {
@@ -60,6 +61,11 @@ const TabsContainer = styled.div`
 `;
 
 const TabButton = styled.button<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
 
   background: none;
@@ -118,7 +124,9 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, ...rest }) => {
           $active={tab.id === activeTab}
           onClick={() => selectTab(tab.id)}
         >
-          {tab.label}
+          {typeof tab.label === "string" || typeof tab.label === "number"
+            ? <ControlLabel>{tab.label}</ControlLabel>
+            : tab.label}
         </TabButton>
       ))}
     </TabsContainer>

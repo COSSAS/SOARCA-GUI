@@ -1,5 +1,6 @@
 import type { TablerIcon } from "@tabler/icons-react";
 import styled from "styled-components";
+import { ControlLabel } from "./Typography";
 import {
   getThemePixelSizeValuesByThemeSize,
   getVariantColors,
@@ -23,50 +24,37 @@ const IconWrapper = styled.span<{
   $round?: boolean;
 }>`
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  vertical-align: middle;
 
-  // small calculations to add padding when round.
   height: ${({ $size, $round }) =>
     $round ? `${$size + $size * 0.5}px` : `${$size}px`};
   width: ${({ $size, $round }) =>
     $round ? `${$size + $size * 0.5}px` : `${$size}px`};
 
-  border-radius: ${({ $round }) => ($round ? "50%" : "0")};
+  ${({ $round }) => $round ? "border-radius: 50%;" : ""}
 
-  transition: all ${({ theme }) => theme.transitions.base};
+  &:has(+ ${ControlLabel}),
+  ${ControlLabel} + & {
+    align-self: baseline;
+    translate: 0 calc(50% - 0.5cap);
+  }
 
   ${({ $variant, $ghost, $round, theme }) => {
     if (!$round || !$variant) return "";
 
     const colors = getVariantColors(theme, $variant);
-    const baseBg = colors.solidBg;
-    const textColor = colors.solidText;
-    const borderColor = colors.border;
-
-    if ($ghost) {
-      return `
-        background-color: transparent;
-        color: ${borderColor};
-        border: 1px solid ${borderColor};
-      `;
-    }
 
     return `
-      background-color: ${baseBg};
-      color: ${textColor};
-      border: 1px solid ${borderColor};
+      border: 1px solid ${colors.border};
+      background-color: ${$ghost ? "transparent" : colors.solidBg};
+
+      color: ${$ghost ? colors.border : colors.solidText};
     `;
   }}
 
-  svg {
-    width: ${({ $size }) => $size}px;
-    height: ${({ $size }) => $size}px;
-  }
-
-  button & svg {
-    transform: scale(1.125);
-  }
 `;
 
 /**

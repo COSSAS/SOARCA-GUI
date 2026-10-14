@@ -1,4 +1,6 @@
+import { Children } from "react";
 import styled from "styled-components";
+import { ControlLabel } from "./Typography";
 import {
   ButtonWidth,
   getThemeSizeValuesByThemeSize,
@@ -32,7 +34,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * // Large success button
  * <Button $variant="success" $size={ThemeSize.Large}>Complete Task</Button>
  */
-export const Button = styled.button<ButtonProps>`
+export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
+  children: Children.map(children, (child) =>
+    typeof child === "string" || typeof child === "number"
+      ? <ControlLabel>{child}</ControlLabel>
+      : child,
+  ),
+}))`
   display: inline-flex;
   align-items: center;
   justify-content: center;
