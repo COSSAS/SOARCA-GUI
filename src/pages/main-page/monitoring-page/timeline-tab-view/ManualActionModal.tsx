@@ -131,6 +131,7 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
     <Modal
       $isOpen={!!activeStep}
       $onClose={() => (!mutation.isPending ? onClose() : null)}
+      aria-label="Manual action required"
     >
       <Modal.Header>
         Manual action required

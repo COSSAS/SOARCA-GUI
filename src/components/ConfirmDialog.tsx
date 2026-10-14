@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 import { Modal } from "./Modal";
-import { ButtonWidth, ThemeVariant } from "./utils";
+import { ThemeVariant } from "./utils";
 
 export interface ConfirmDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   $isOpen: boolean;
@@ -45,17 +45,21 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   ...rest
 }) => {
   return (
-    <Modal $isOpen={$isOpen} $onClose={$onCancel} {...rest}>
+    <Modal
+      $isOpen={$isOpen}
+      $onClose={() => !$isPending && $onCancel()}
+      aria-label={$title}
+      {...rest}
+    >
       <Modal.Header>
         {$title}
-        <Modal.CloseButton onClick={$onCancel} />
+        <Modal.CloseButton onClick={$onCancel} disabled={$isPending} />
       </Modal.Header>
       <Modal.Body>{$description}</Modal.Body>
       <Modal.Footer>
         <Button
           $variant={$cancelVariant}
           $ghost
-          $width={ButtonWidth.Full}
           disabled={$isPending}
           onClick={$onCancel}
         >
@@ -63,7 +67,6 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </Button>
         <Button
           $variant={$confirmVariant}
-          $width={ButtonWidth.Full}
           disabled={$isPending}
           onClick={$onConfirm}
         >

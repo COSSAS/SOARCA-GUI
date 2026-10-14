@@ -15,7 +15,6 @@ export const PlaybookListItem = styled.div`
   &:hover {
     background-color: ${({ theme }) => theme.colors.info.bg};
     border-color: ${({ theme }) => theme.colors.info.border};
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 `;
