@@ -183,7 +183,7 @@ export const FileDrop: React.FC<FileDropProps> = ({
         }}
       >
         <DropZone $isDragActive={isDragActive} $hasError={!!$error}>
-          <Icon $icon={IconUpload} $size={ThemeSize.ExtraLarge} />
+          <Icon $icon={IconUpload} $size={ThemeSize.Large} />
           <DropZoneText>Click to browse or drag a file here</DropZoneText>
           <DropZoneHint>Only {$accept} files are accepted</DropZoneHint>
           {$fileName && (

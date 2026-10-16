@@ -158,7 +158,7 @@ export const PlaybooksPage: React.FC = () => {
     if (isLoading)
       return (
         <CenteredCardContent>
-          <Spinner $size={ThemeSize.Large} />
+          <Spinner $size={ThemeSize.Medium} />
         </CenteredCardContent>
       );
     if (isError)

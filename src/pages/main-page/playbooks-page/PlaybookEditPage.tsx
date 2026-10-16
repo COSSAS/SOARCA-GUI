@@ -102,7 +102,7 @@ export const PlaybookEditPage: React.FC = () => {
         <CardBody>
           {isLoading ? (
             <CenteredCardContent>
-              <Spinner $size={ThemeSize.Large} />
+              <Spinner $size={ThemeSize.Medium} />
             </CenteredCardContent>
           ) : isError || !playbook ? (
             <Text>

@@ -131,7 +131,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                   {status === StepExecutionStatus.Running ? (
                     <Spinner
                       $variant={ThemeVariant.Warning}
-                      $size={ThemeSize.Large}
+                      $size={ThemeSize.Medium}
                       $withContainer
                     />
                   ) : status === StepExecutionStatus.Executed ? (

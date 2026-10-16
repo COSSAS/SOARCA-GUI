@@ -139,31 +139,16 @@ export const theme = {
     "2xl": "1.5rem", // 24px
     "3xl": "2rem", // 32px
   },
-  size: {
-    xs: "0.25rem", // 4px
-    sm: "0.5rem", // 8px
-    md: "0.75rem", // 12px
-    lg: "1rem", // 16px
-    xl: "1.25rem", // 20px
-    "2xl": "1.5rem", // 24px
-    "3xl": "2rem", // 32px
-    "4xl": "3rem", // 48px
-  },
   // Height of buttons, inputs and selects, so controls of the same size line up.
   control_height: {
     sm: "1.75rem", // 28px
     md: "2.125rem", // 34px
     lg: "2.625rem", // 42px
   },
-  size_pixels: {
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 20,
-    "2xl": 24,
-    "3xl": 32,
-    "4xl": 48,
+  icon_size: {
+    sm: 12,
+    md: 16,
+    lg: 20,
   },
   radius: {
     sm: "0.25rem",

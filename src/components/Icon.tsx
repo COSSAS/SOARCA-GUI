@@ -1,7 +1,7 @@
 import type { TablerIcon } from "@tabler/icons-react";
 import styled from "styled-components";
 import {
-  getThemePixelSizeValuesByThemeSize,
+  getIconPixelSize,
   getVariantColors,
   ThemeSize,
   ThemeVariant,
@@ -54,26 +54,26 @@ const IconWrapper = styled.span<{
 /**
  * Renders Tabler icons with theme sizes and optional round containers.
  * @param $icon - Tabler icon component from @tabler/icons-react
- * @param $size - ThemeSize enum (default: ThemeSize.Large, corrisponding to 16px)
+ * @param $size - ThemeSize enum on the icon scale: sm 12, md 16, lg 20 px (default: ThemeSize.Medium, 16px)
  * @param $variant - "primary" | "success" | "warning" | "error" | "accent" (only used with $round)
  * @param $ghost - boolean (default: false) - renders transparent background with colored border (only used with $round)
  * @param $round - boolean (default: false) - renders icon in a round container with variant colors
  * @param $stroke - number (default: 2) - stroke width of the icon
  * @example
- * <Icon $icon={IconHome} $size={ThemeSize.Large} />
- * <Icon $icon={IconExclamationCircle} $size={ThemeSize.ExtraLarge} $round $variant={ThemeVariant.Warning} />
- * <Icon $icon={IconCircleCheck} $size={ThemeSize.Large} $round $variant={ThemeVariant.Success} $ghost />
+ * <Icon $icon={IconHome} />
+ * <Icon $icon={IconExclamationCircle} $size={ThemeSize.Large} $round $variant={ThemeVariant.Warning} />
+ * <Icon $icon={IconCircleCheck} $round $variant={ThemeVariant.Success} $ghost />
  */
 export const Icon: React.FC<IconProps> = ({
   $icon: IconComponent,
-  $size = ThemeSize.Large,
+  $size = ThemeSize.Medium,
   $variant,
   $ghost = false,
   $round = false,
   $stroke = 2,
   ...rest
 }) => {
-  const pixelSize = getThemePixelSizeValuesByThemeSize($size);
+  const pixelSize = getIconPixelSize($size);
 
   return (
     <IconWrapper

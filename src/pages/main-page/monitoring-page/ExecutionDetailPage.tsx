@@ -74,7 +74,7 @@ export const ExecutionDetailPage: React.FC = () => {
     if (isLoading)
       return (
         <CenteredCardContent>
-          <Spinner $size={ThemeSize.Large} />
+          <Spinner $size={ThemeSize.Medium} />
         </CenteredCardContent>
       );
     if (isError)
@@ -95,7 +95,7 @@ export const ExecutionDetailPage: React.FC = () => {
             <Badge $variant={getBadgeVariantFromStatus(status)}>
               <Icon
                 $icon={getIconFromStatus(status)}
-                $size={ThemeSize.Medium}
+                $size={ThemeSize.Small}
               />
               {status}
             </Badge>

@@ -127,7 +127,7 @@ export const PlaybookDetailPage: React.FC = () => {
         <CardContainer>
           <CardBody>
             <CenteredCardContent>
-              <Spinner $size={ThemeSize.Large} />
+              <Spinner $size={ThemeSize.Medium} />
             </CenteredCardContent>
           </CardBody>
         </CardContainer>

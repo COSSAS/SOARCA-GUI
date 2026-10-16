@@ -142,9 +142,9 @@ export const MainPage: React.FC = () => {
               onClick={sidebarOpen ? closeSidebar : openSidebar}
             >
               {sidebarOpen ? (
-                <Icon $icon={IconX} $size={ThemeSize.ExtraLarge} />
+                <Icon $icon={IconX} $size={ThemeSize.Large} />
               ) : (
-                <Icon $icon={IconMenu2} $size={ThemeSize.ExtraLarge} />
+                <Icon $icon={IconMenu2} $size={ThemeSize.Large} />
               )}
             </MobileMenuButton>
           </Spacer>

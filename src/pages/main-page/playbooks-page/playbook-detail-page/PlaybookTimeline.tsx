@@ -52,7 +52,7 @@ export const PlaybookTimeline: React.FC<PlaybookTimelineProps> = ({
                     </StepCardTitle>
                     <Icon
                       $icon={isExpanded ? IconChevronDown : IconChevronRight}
-                      $size={ThemeSize.Medium}
+                      $size={ThemeSize.Small}
                     />
                   </StepCardHeader>
                   {isExpanded && (
