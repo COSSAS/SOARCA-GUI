@@ -134,7 +134,7 @@ export const ManualActionModal: React.FC<ManualActionModalProps> = ({
       aria-label="Manual action required"
     >
       <Modal.Header>
-        Manual action required
+        <Modal.Title>Manual action required</Modal.Title>
         <Modal.CloseButton onClick={onClose} />
       </Modal.Header>
       <Modal.Body>

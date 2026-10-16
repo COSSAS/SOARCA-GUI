@@ -2,30 +2,23 @@ import React from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 
-const StyledLink = styled.a<{
-  $variant?: "primary" | "subtle";
-}>`
+const StyledLink = styled.a<{ $subtle?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
 
   text-decoration: none;
 
-  ${({ $variant, theme }) => {
-    switch ($variant) {
-      case "subtle":
-        return `
-          color: ${theme.colors.text.tertiary};
-          &:hover { color: ${theme.colors.text.secondary}; }
-        `;
-      case "primary":
-      default:
-        return `
-          color: ${theme.colors.primary.main};
-          &:hover { color: ${theme.colors.primary.hover}; }
-        `;
-    }
-  }}
+  ${({ $subtle, theme }) =>
+    $subtle
+      ? `
+        color: ${theme.colors.text.tertiary};
+        &:hover { color: ${theme.colors.text.secondary}; }
+      `
+      : `
+        color: ${theme.colors.primary.main};
+        &:hover { color: ${theme.colors.primary.hover}; }
+      `}
 
   transition: all ${({ theme }) => theme.transitions.base};
 
@@ -44,8 +37,8 @@ interface LinkProps extends Omit<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
   "href"
 > {
-  /** Visual variant: "primary" (default) or "subtle". */
-  $variant?: "primary" | "subtle";
+  /** Muted text color instead of the primary color. */
+  $subtle?: boolean;
   /** Target path. Internal "/..." paths use navigate; others use normal navigation. */
   $to: string;
 }
@@ -55,13 +48,13 @@ interface LinkProps extends Omit<
  * Detects internal routes (starting with "/") and prevents default anchor behavior to use navigate() instead.
  * External URLs or non-path hrefs use standard anchor navigation. Supports all standard anchor attributes.
  * @param $to - Target path or URL. Paths starting with "/" use react-router navigate, others use normal anchor behavior.
- * @param $variant - Visual style: "primary" (brand color with hover effect) or "subtle" (muted text, lighter hover). Defaults to "primary".
+ * @param $subtle - When true, uses muted text with a lighter hover instead of the primary color. Defaults to false.
  * @example
  * // Internal navigation with primary styling
  * <Link $to="/dashboard">Go to Dashboard</Link>
  * @example
  * // External link with subtle styling
- * <Link $to="https://example.com" $variant="subtle" target="_blank">External Site</Link>
+ * <Link $to="https://example.com" $subtle target="_blank">External Site</Link>
  * @example
  * // Internal link with icon
  * <Link $to="/settings"><SettingsIcon /> Settings</Link>

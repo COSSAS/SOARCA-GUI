@@ -97,7 +97,7 @@ export const MonitoringPage: React.FC = () => {
     if (isLoading)
       return (
         <CenteredCardContent>
-          <Spinner $size={ThemeSize.Large} />
+          <Spinner $size={ThemeSize.Medium} />
         </CenteredCardContent>
       );
     if (isError)
@@ -133,7 +133,7 @@ export const MonitoringPage: React.FC = () => {
                 >
                   {r.status}
                   {r.hasActionRequired && (
-                    <Icon $icon={IconExclamationCircle} $size={ThemeSize.Medium} />
+                    <Icon $icon={IconExclamationCircle} $size={ThemeSize.Small} />
                   )}
                 </Badge>
               </Cell>

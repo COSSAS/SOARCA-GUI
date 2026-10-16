@@ -7,7 +7,6 @@ import logo from "@/assets/soarca-logo-cropped.svg";
 
 import {
   Button,
-  ButtonWidth,
   FormContainer,
   FormGroup,
   FormLabel,
@@ -47,14 +46,14 @@ export const LoginPage: React.FC = () => {
             <Button
               type="submit"
               $variant={ThemeVariant.Primary}
-              $width={ButtonWidth.Full}
+              $fullWidth
             >
               Log in
             </Button>
             <Button
               type="button"
               $variant={ThemeVariant.Primary}
-              $width={ButtonWidth.Full}
+              $fullWidth
             >
               <Icon $icon={IconLockOpen2} />
               Log in with OIDC
@@ -67,11 +66,11 @@ export const LoginPage: React.FC = () => {
             $align="center"
             $justify="space-between"
           >
-            <Link $to="/forgot-password" $variant="subtle">
+            <Link $to="/forgot-password" $subtle>
               <Icon $icon={IconKey} />
               Forgot password
             </Link>
-            <Link $to="/help" $variant="subtle">
+            <Link $to="/help" $subtle>
               <Icon $icon={IconHelpCircle} />
               Help
             </Link>

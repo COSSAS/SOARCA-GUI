@@ -34,9 +34,9 @@ export const PlaybookInfo = styled.div`
   margin-right: ${({ theme }) => theme.spacing.lg};
 `;
 
-export const PlaybookName = styled.h4`
+export const PlaybookName = styled.h3`
   color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.h4.font};
+  font: ${({ theme }) => theme.typography.h3.font};
 `;
 
 export const PlaybookDescription = styled.p`
@@ -94,8 +94,8 @@ export const TimelineStep = styled.div<{ $position: "top" | "bottom" }>`
 `;
 
 export const TimelineDot = styled.div<{ $type: string }>`
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
 
   border: 2px solid ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.radius.full};

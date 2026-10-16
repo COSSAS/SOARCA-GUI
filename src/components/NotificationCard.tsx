@@ -10,7 +10,7 @@ export interface NotificationCardProps extends React.HTMLAttributes<HTMLDivEleme
  * NotificationCard component for displaying themed alert messages and notifications.
  * Provides colored backgrounds, borders, and text using the same variants as Badge for visual consistency.
  * Useful for inline status messages, alerts, or informational blocks within the application.
- * @param $variant - Visual variant using ThemeVariant enum. Defaults to Info.
+ * @param $variant - Visual variant using ThemeVariant enum. Defaults to Primary.
  * @param children - Content to render inside the notification card. Can be text, elements, or complex components.
  * @example
  * // Success notification
@@ -24,7 +24,7 @@ export interface NotificationCardProps extends React.HTMLAttributes<HTMLDivEleme
  *   <p>Something went wrong. Please try again.</p>
  * </NotificationCard>
  * @example
- * // Info notification (default)
+ * // Primary notification (default)
  * <NotificationCard>
  *   <p>This is an informational message.</p>
  * </NotificationCard>
@@ -38,12 +38,12 @@ export const NotificationCard = styled.div<NotificationCardProps>`
 
   border-radius: ${({ theme }) => theme.radius.md};
   border: 1px solid
-    ${({ $variant = ThemeVariant.Info, theme }) =>
+    ${({ $variant = ThemeVariant.Primary, theme }) =>
       getVariantColors(theme, $variant).border};
 
-  background: ${({ $variant = ThemeVariant.Info, theme }) =>
+  background: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).bg};
-  color: ${({ $variant = ThemeVariant.Info, theme }) =>
+  color: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).text};
 
   font: ${({ theme }) => theme.typography.body.font};

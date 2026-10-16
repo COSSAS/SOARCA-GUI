@@ -15,7 +15,6 @@ import { triggerPlaybookById } from "@/api/trigger";
 import { formatErrorForToast, getErrorFromApiResponse } from "@/api/utils";
 import {
   Button,
-  ButtonWidth,
   CardBody,
   CardContainer,
   CardHeader,
@@ -127,7 +126,7 @@ export const PlaybookDetailPage: React.FC = () => {
         <CardContainer>
           <CardBody>
             <CenteredCardContent>
-              <Spinner $size={ThemeSize.Large} />
+              <Spinner $size={ThemeSize.Medium} />
             </CenteredCardContent>
           </CardBody>
         </CardContainer>
@@ -174,8 +173,7 @@ export const PlaybookDetailPage: React.FC = () => {
         <Spacer $direction="horizontal" $gap="sm">
           <Button
             $variant={ThemeVariant.Primary}
-            $size={ThemeSize.Small}
-            $width={ButtonWidth.Full}
+            $fullWidth
             $ghost
             onClick={() =>
               navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId!))
@@ -186,8 +184,7 @@ export const PlaybookDetailPage: React.FC = () => {
           </Button>
           <Button
             $variant={ThemeVariant.Error}
-            $size={ThemeSize.Small}
-            $width={ButtonWidth.Full}
+            $fullWidth
             $ghost
             onClick={() => setOpenDeleteConfirm(true)}
             disabled={deleteMutation.isPending}
@@ -197,8 +194,7 @@ export const PlaybookDetailPage: React.FC = () => {
           </Button>
           <Button
             $variant={ThemeVariant.Success}
-            $size={ThemeSize.Small}
-            $width={ButtonWidth.Full}
+            $fullWidth
             $ghost
             onClick={() =>
               hasExternalVars ? setOpenRunModal(true) : setOpenRunConfirm(true)
@@ -211,10 +207,10 @@ export const PlaybookDetailPage: React.FC = () => {
 
           <ExportButton
             $variant={ThemeVariant.Accent}
-            $size={ThemeSize.Small}
+            $fullWidth
             $ghost
             $data={playbook}
-            $filename={generatePlaybookFilename(playbook)}
+            $fileName={generatePlaybookFilename(playbook)}
             $format="json"
             $onSuccess={() => toast.success("Playbook exported")}
             $onError={(err) =>

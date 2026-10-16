@@ -6,16 +6,20 @@ const RadioGroupContainer = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
-const RadioLabel = styled.label<{ $disabled?: boolean }>`
+const RadioLabel = styled.label`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
 
-  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
-  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+  cursor: pointer;
 
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
+
+  &:has(input:disabled) {
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
+    cursor: not-allowed;
+  }
 `;
 
 const RadioInput = styled.input`
@@ -66,7 +70,7 @@ interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   $options: RadioOption[];
   $value: string;
   $onChange: (value: string) => void;
-  $disabled?: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -78,7 +82,7 @@ interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
  * @param $options - Array of { label, value } option objects to render as radio buttons.
  * @param $value - Currently selected option value (controlled component pattern).
  * @param $onChange - Callback fired with the newly selected value when user clicks an option.
- * @param $disabled - When true, disables all options in the group with reduced opacity and no-allowed cursor. Defaults to false.
+ * @param disabled - When true, disables all options in the group with reduced opacity and no-allowed cursor. Defaults to false.
  * @example
  * const [selected, setSelected] = useState("option1");
  * <RadioGroup
@@ -96,20 +100,20 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   $options,
   $value,
   $onChange,
-  $disabled = false,
+  disabled = false,
   ...rest
 }) => {
   return (
     <RadioGroupContainer {...rest}>
       {$options.map((option) => (
-        <RadioLabel key={option.value} $disabled={$disabled}>
+        <RadioLabel key={option.value}>
           <RadioInput
             type="radio"
             name={name}
             value={option.value}
             checked={$value === option.value}
             onChange={(e) => $onChange(e.target.value)}
-            disabled={$disabled}
+            disabled={disabled}
           />
           <span>{option.label}</span>
         </RadioLabel>

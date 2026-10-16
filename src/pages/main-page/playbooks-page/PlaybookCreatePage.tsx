@@ -120,8 +120,8 @@ export const PlaybookCreatePage: React.FC = () => {
                   setError("");
                 }}
                 $accept=".json"
-                $disabled={createMutation.isPending}
-                $error={error}
+                disabled={createMutation.isPending}
+                $hasError={!!error}
               />
             </>
           ) : (
@@ -136,8 +136,8 @@ export const PlaybookCreatePage: React.FC = () => {
                     setError(validation.error || "Invalid JSON");
                 }
               }}
-              $placeholder="Paste or write your CACAO playbook JSON here..."
-              $disabled={createMutation.isPending}
+              placeholder="Paste or write your CACAO playbook JSON here..."
+              disabled={createMutation.isPending}
               $hasError={!!error}
               $minHeight="400px"
             />

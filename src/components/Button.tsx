@@ -1,9 +1,6 @@
-import { Children } from "react";
 import styled from "styled-components";
-import { ControlLabel } from "./Typography";
 import {
-  ButtonWidth,
-  getThemeSizeValuesByThemeSize,
+  getControlSize,
   getVariantColors,
   ThemeSize,
   ThemeVariant,
@@ -13,85 +10,72 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   $variant?: ThemeVariant;
   $ghost?: boolean;
   $size?: ThemeSize;
-  $width?: ButtonWidth;
+  $fullWidth?: boolean;
 }
 
 /**
  * Button component with multiple variants, sizes, ghost mode (transparent background), and width options.
  * Supports all standard button HTML attributes and provides theme-based styling with smooth transitions.
  * Includes disabled state handling with reduced opacity and cursor changes.
- * @param $variant - Color variant: "primary" (main brand color), "secondary" (gray), "success" (green), "warning" (yellow), "error" (red), "info" (blue), "accent" (purple). Defaults to "info".
+ * @param $variant - Color variant: "primary" (blue), "success" (green), "warning" (yellow), "error" (red), "accent" (purple). Defaults to "primary".
  * @param $ghost - When true, renders with transparent background and colored border/text. Hover fills with solid color. Defaults to false.
- * @param $size - Size preset: "sm" (small padding), "md" (medium padding), "lg" (large padding). Affects padding and maintains consistent typography. Defaults to "md".
- * @param $width - Width mode: "full" (100% width, useful in forms), "auto" (content-based width). Defaults to "auto".
+ * @param $size - Size preset, shared with Input and Select: "sm" (28px, 14px text), "md" (34px), "lg" (42px). Defaults to "md".
+ * @param $fullWidth - When true the button takes the full width of its container, useful in forms. Defaults to false.
  * @example
  * // Primary full-width button
- * <Button onClick={handleSubmit}>Submit</Button>
+ * <Button $fullWidth onClick={handleSubmit}>Submit</Button>
  * @example
- * // Ghost error button with auto width
- * <Button $variant="error" $ghost $width="auto" disabled>Delete</Button>
+ * // Ghost error button
+ * <Button $variant="error" $ghost disabled>Delete</Button>
  * @example
  * // Large success button
  * <Button $variant="success" $size={ThemeSize.Large}>Complete Task</Button>
  */
-export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
-  children: Children.map(children, (child) =>
-    typeof child === "string" || typeof child === "number"
-      ? <ControlLabel>{child}</ControlLabel>
-      : child,
-  ),
-}))`
+export const Button = styled.button<ButtonProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: ${({ $size = ThemeSize.Medium }) =>
-    getThemeSizeValuesByThemeSize($size)};
 
-  ${({ $width }) => ($width === ButtonWidth.Full ? "width: 100%;" : "")}
+  ${({ $fullWidth }) => ($fullWidth ? "width: 100%;" : "")}
 
   ${({ $size = ThemeSize.Medium, theme }) => {
-    switch ($size) {
-      case ThemeSize.Small:
-        return `
-          padding: ${theme.spacing.xs} ${theme.spacing.sm};
-        `;
-      case ThemeSize.Medium:
-        return `
-          padding: ${theme.spacing.sm} ${theme.spacing.md};
-        `;
-      case ThemeSize.Large:
-      default:
-        return `
-          padding: ${theme.spacing.md} ${theme.spacing.lg};
-        `;
-    }
+    const { height, paddingX, gap } = getControlSize(theme, $size);
+    return `
+      gap: ${gap};
+      height: ${height};
+      padding: 0 ${paddingX};
+    `;
   }}
 
   border-radius: ${({ theme }) => theme.radius.md};
 
-  ${({ $variant = ThemeVariant.Info, $ghost, theme }) => {
+  ${({ $variant = ThemeVariant.Primary, $ghost, theme }) => {
     const colors = getVariantColors(theme, $variant);
+    const darken = (amount: string) =>
+      `color-mix(in srgb, ${colors.solidBg}, ${theme.colors.shade} ${amount})`;
+    const hoverBg = $ghost
+      ? colors.solidBg
+      : darken(theme.interactions.hoverDarken);
+    const activeBg = darken(theme.interactions.activeDarken);
+    const disabledBorder = $ghost
+      ? theme.colors.gray[500]
+      : theme.colors.gray[300];
 
+    // A filled button always has a border in the same color as its fill.
     return `
-      border: 1px solid ${colors.border};
+      border: 1px solid ${$ghost ? colors.border : colors.solidBg};
       background-color: ${$ghost ? "transparent" : colors.solidBg};
 
       color: ${$ghost ? colors.border : colors.solidText};
 
       &:hover:not(:disabled) {
-        background-color: color-mix(
-          in srgb,
-          ${colors.solidBg},
-          ${theme.colors.shade} ${theme.interactions.hoverDarken}
-        );
+        border-color: ${hoverBg};
+        background-color: ${hoverBg};
       }
 
       &:active:not(:disabled) {
-        background-color: color-mix(
-          in srgb,
-          ${colors.solidBg},
-          ${theme.colors.shade} ${theme.interactions.activeDarken}
-        );
+        border-color: ${activeBg};
+        background-color: ${activeBg};
       }
 
       ${
@@ -105,7 +89,7 @@ export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
       }
 
       &:disabled {
-        border-color: ${theme.colors.gray[500]};
+        border-color: ${disabledBorder};
         background-color: ${$ghost ? "transparent" : theme.colors.gray[300]};
         opacity: ${theme.interactions.disabledOpacity};
 
@@ -117,8 +101,9 @@ export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
   }}
 
   font: ${({ theme }) => theme.typography.bodyMedium.font};
+  font-size: ${({ $size = ThemeSize.Medium, theme }) =>
+    getControlSize(theme, $size).fontSize};
 
-  cursor: pointer;
   transition:
     background-color ${({ theme }) => theme.transitions.fast},
     border-color ${({ theme }) => theme.transitions.fast},

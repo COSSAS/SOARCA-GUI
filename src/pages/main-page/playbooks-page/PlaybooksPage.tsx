@@ -158,7 +158,7 @@ export const PlaybooksPage: React.FC = () => {
     if (isLoading)
       return (
         <CenteredCardContent>
-          <Spinner $size={ThemeSize.Large} />
+          <Spinner $size={ThemeSize.Medium} />
         </CenteredCardContent>
       );
     if (isError)
@@ -184,7 +184,6 @@ export const PlaybooksPage: React.FC = () => {
         <CardTitle>Playbooks</CardTitle>
         <Button
           $variant={ThemeVariant.Primary}
-          $size={ThemeSize.Small}
           onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
         >
           <Icon $icon={IconFilePlus} />

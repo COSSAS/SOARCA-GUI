@@ -4,22 +4,22 @@ import { BadgeShape, ThemeVariant, getVariantColors } from "./utils";
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   $variant?: ThemeVariant;
   $shape?: BadgeShape;
-  $isInteractive?: boolean;
+  $isClickable?: boolean;
 }
 
 /**
  * Badge component for compact status/label pills.
- * Displays colored badges with different variants (success, warning, error, info) and shapes.
+ * Displays colored badges with different variants (primary, success, warning, error, accent) and shapes.
  * Supports interactive mode with hover effects for clickable badges.
  * @param $variant - Visual variant using ThemeVariant enum.
  * @param $shape - Shape of the badge: BadgeShape.Pill (fully rounded ends) or BadgeShape.Rounded (medium border radius). Defaults to Pill.
- * @param $isInteractive - When true, adds hover/active states including translateY animation and shadow for clickable badges. Defaults to false.
+ * @param $isClickable - When true, adds hover/active states including translateY animation and shadow for clickable badges. Defaults to false.
  * @example
  *  // Simple success badge
  *  <Badge $variant={ThemeVariant.Success}>Active</Badge>
  * @example
  *  // Interactive warning badge with rounded shape
- *  <Badge $variant={ThemeVariant.Warning} $shape={BadgeShape.Rounded} $isInteractive>Click me</Badge>
+ *  <Badge $variant={ThemeVariant.Warning} $shape={BadgeShape.Rounded} $isClickable>Click me</Badge>
  */
 export const Badge = styled.span<BadgeProps>`
   display: inline-flex;
@@ -31,19 +31,19 @@ export const Badge = styled.span<BadgeProps>`
   border-radius: ${({ $shape = BadgeShape.Pill, theme }) =>
     $shape === BadgeShape.Rounded ? theme.radius.md : theme.radius.full};
   border: 1px solid
-    ${({ $variant = ThemeVariant.Info, theme }) =>
+    ${({ $variant = ThemeVariant.Primary, theme }) =>
       getVariantColors(theme, $variant).border};
 
   font: ${({ theme }) => theme.typography.small.font};
   line-height: ${({ theme }) => theme.fonts.lineHeight.mini};
 
-  background: ${({ $variant = ThemeVariant.Info, theme }) =>
+  background: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).bg};
-  color: ${({ $variant = ThemeVariant.Info, theme }) =>
+  color: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).text};
 
-  ${({ $isInteractive, theme }) =>
-    $isInteractive
+  ${({ $isClickable, theme }) =>
+    $isClickable
       ? `
         cursor: pointer;
         transition: transform ${theme.transitions.base},

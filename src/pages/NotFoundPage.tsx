@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 import soarcaBackground from "@/assets/soarca-background.jpg";
 import {
   Button,
-  ButtonWidth,
   Icon,
   PageContainer,
   ThemeVariant,
@@ -27,14 +26,14 @@ export const NotFoundPage: React.FC = () => {
           <Button
             $variant={ThemeVariant.Primary}
             $ghost
-            $width={ButtonWidth.Full}
+            $fullWidth
             onClick={() => navigate(-1)}
           >
             <Icon $icon={IconArrowLeft} />
             Go Back
           </Button>
           <Button
-            $width={ButtonWidth.Full}
+            $fullWidth
             onClick={() => navigate(PATHS.BASE)}
           >
             Take me home
@@ -64,7 +63,7 @@ const ErrorContainer = styled.div`
   box-shadow: ${({ theme }) => theme.shadows.base};
 
   /* Sizing */
-  width: 28rem;
+  width: 32rem;
   text-align: center;
 `;
 
@@ -73,14 +72,12 @@ const ErrorCode = styled.h1`
   font-size: 5rem;
   font-weight: ${({ theme }) => theme.fonts.weight.bold};
   color: ${({ theme }) => theme.colors.primary.main};
-  margin: 0;
   line-height: 1;
 `;
 
 const ErrorTitle = styled.h2`
   /* Typography */
   color: ${({ theme }) => theme.colors.text.primary};
-  margin: 0;
   font: ${({ theme }) => theme.typography.h2.font};
 `;
 
@@ -88,7 +85,6 @@ const ErrorDescription = styled.p`
   /* Typography & Layout */
   color: ${({ theme }) => theme.colors.text.secondary};
   max-width: 400px;
-  margin: 0;
   font: ${({ theme }) => theme.typography.body.font};
 `;
 

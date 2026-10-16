@@ -6,7 +6,6 @@ export const TimelineContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
-  padding: 0;
 `;
 
 export const TimelineRow = styled.div<{ $delay?: number }>`
@@ -37,26 +36,6 @@ export const TimelineIconContainer = styled.div`
   z-index: 2;
 `;
 
-export const SpinnerIconContainer = styled.div<{
-  $variant: "primary" | "warning";
-}>`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  background-color: ${({ theme, $variant }) =>
-    $variant === "warning"
-      ? theme.colors.warning.solidBg
-      : theme.colors.primary.main};
-  border: 1px solid
-    ${({ theme, $variant }) =>
-      $variant === "warning"
-        ? theme.colors.warning.border
-        : theme.colors.primary.main};
-`;
-
 export const TimelineLeftCell = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -80,18 +59,12 @@ export const TimelineItemWrapper = styled.div<{ $side: "left" | "right" }>`
 export const TimelineItem = styled.div`
   position: relative;
   width: fit-content;
-  padding: 0;
-  border: none;
-  background: transparent;
   box-shadow: none;
 `;
 
 export const UserReplyItem = styled.div`
   position: relative;
   width: fit-content;
-  padding: 0;
-  border: none;
-  background: transparent;
   box-shadow: none;
 `;
 
@@ -115,25 +88,17 @@ export const TimelineHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: ${({ theme }) => theme.spacing.md};
-  padding: 0;
-  border: none;
-  background: transparent;
 `;
 
 export const TimelineTitle = styled.h3`
-  margin: 0;
-  font: ${({ theme }) => theme.typography.body.font};
+  font: ${({ theme }) => theme.typography.h3.font};
   color: ${({ theme }) => theme.colors.text.primary};
-  font-weight: 500;
 `;
 
 export const TimelineMetaBadge = styled.div`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
-  padding: 0;
-  background: transparent;
-  border: none;
   border-radius: 0;
   font: ${({ theme }) => theme.typography.small.font};
   color: ${({ theme }) => theme.colors.text.secondary};
