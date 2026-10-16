@@ -174,7 +174,6 @@ export const PlaybookDetailPage: React.FC = () => {
         <Spacer $direction="horizontal" $gap="sm">
           <Button
             $variant={ThemeVariant.Primary}
-            $size={ThemeSize.Small}
             $width={ButtonWidth.Full}
             $ghost
             onClick={() =>
@@ -186,7 +185,6 @@ export const PlaybookDetailPage: React.FC = () => {
           </Button>
           <Button
             $variant={ThemeVariant.Error}
-            $size={ThemeSize.Small}
             $width={ButtonWidth.Full}
             $ghost
             onClick={() => setOpenDeleteConfirm(true)}
@@ -197,7 +195,6 @@ export const PlaybookDetailPage: React.FC = () => {
           </Button>
           <Button
             $variant={ThemeVariant.Success}
-            $size={ThemeSize.Small}
             $width={ButtonWidth.Full}
             $ghost
             onClick={() =>
@@ -211,7 +208,6 @@ export const PlaybookDetailPage: React.FC = () => {
 
           <ExportButton
             $variant={ThemeVariant.Accent}
-            $size={ThemeSize.Small}
             $ghost
             $data={playbook}
             $filename={generatePlaybookFilename(playbook)}

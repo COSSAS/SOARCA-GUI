@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContent,
-  ControlLabel,
   ExpandableText,
   FormLabel,
   Icon,
@@ -136,7 +135,7 @@ export const ExecutionDetailPage: React.FC = () => {
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
                         <Icon $icon={IconTimeline} />
-                        <ControlLabel>Timeline</ControlLabel>
+                        Timeline
                       </Spacer>
                     ),
                   },
@@ -145,7 +144,7 @@ export const ExecutionDetailPage: React.FC = () => {
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
                         <Icon $icon={IconInfoCircle} />
-                        <ControlLabel>Details</ControlLabel>
+                        Details
                       </Spacer>
                     ),
                   },

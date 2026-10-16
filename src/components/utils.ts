@@ -156,3 +156,36 @@ export const getThemeSizeValuesByThemeSize = (size: ThemeSize) => {
 export const getThemePixelSizeValuesByThemeSize = (size: ThemeSize) => {
   return THEME_PIXEL_SIZE_VALUES_BY_THEME_SIZE[size] ?? theme.size_pixels.md;
 };
+
+/**
+ * Dimensions shared by buttons, inputs and selects, so that controls of the
+ * same size have the same height: sm 28px, md 34px, lg 42px.
+ * @returns height, horizontal padding, gap between icon and label, and font size.
+ * @example
+ * const { height, paddingX } = getControlSize(theme, ThemeSize.Small);
+ */
+export const getControlSize = (themeObj: Theme, size: ThemeSize) => {
+  switch (size) {
+    case ThemeSize.Small:
+      return {
+        height: themeObj.control_height.sm,
+        paddingX: themeObj.spacing.sm,
+        gap: themeObj.spacing.xs,
+        fontSize: themeObj.fonts.size.sm,
+      };
+    case ThemeSize.Large:
+      return {
+        height: themeObj.control_height.lg,
+        paddingX: themeObj.spacing.md,
+        gap: themeObj.spacing.sm,
+        fontSize: themeObj.fonts.size.base,
+      };
+    default:
+      return {
+        height: themeObj.control_height.md,
+        paddingX: themeObj.spacing.sm,
+        gap: themeObj.spacing.sm,
+        fontSize: themeObj.fonts.size.base,
+      };
+  }
+};

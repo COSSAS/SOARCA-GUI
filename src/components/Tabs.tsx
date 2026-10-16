@@ -1,6 +1,5 @@
 import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
-import { ControlLabel } from "./Typography";
 import { TabsContext, TabsContextType, useTabs } from "./utils";
 
 interface TabOption {
@@ -124,9 +123,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, ...rest }) => {
           $active={tab.id === activeTab}
           onClick={() => selectTab(tab.id)}
         >
-          {typeof tab.label === "string" || typeof tab.label === "number"
-            ? <ControlLabel>{tab.label}</ControlLabel>
-            : tab.label}
+          {tab.label}
         </TabButton>
       ))}
     </TabsContainer>

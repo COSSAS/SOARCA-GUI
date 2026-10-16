@@ -1,9 +1,7 @@
-import { Children } from "react";
 import styled from "styled-components";
-import { ControlLabel } from "./Typography";
 import {
   ButtonWidth,
-  getThemeSizeValuesByThemeSize,
+  getControlSize,
   getVariantColors,
   ThemeSize,
   ThemeVariant,
@@ -22,7 +20,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * Includes disabled state handling with reduced opacity and cursor changes.
  * @param $variant - Color variant: "primary" (blue), "success" (green), "warning" (yellow), "error" (red), "accent" (purple). Defaults to "primary".
  * @param $ghost - When true, renders with transparent background and colored border/text. Hover fills with solid color. Defaults to false.
- * @param $size - Size preset: "sm" (small padding), "md" (medium padding), "lg" (large padding). Affects padding and maintains consistent typography. Defaults to "md".
+ * @param $size - Size preset, shared with Input and Select: "sm" (28px, 14px text), "md" (34px), "lg" (42px). Defaults to "md".
  * @param $width - Width mode: "full" (100% width, useful in forms), "auto" (content-based width). Defaults to "auto".
  * @example
  * // Primary full-width button
@@ -34,37 +32,20 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * // Large success button
  * <Button $variant="success" $size={ThemeSize.Large}>Complete Task</Button>
  */
-export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
-  children: Children.map(children, (child) =>
-    typeof child === "string" || typeof child === "number"
-      ? <ControlLabel>{child}</ControlLabel>
-      : child,
-  ),
-}))`
+export const Button = styled.button<ButtonProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: ${({ $size = ThemeSize.Medium }) =>
-    getThemeSizeValuesByThemeSize($size)};
 
   ${({ $width }) => ($width === ButtonWidth.Full ? "width: 100%;" : "")}
 
   ${({ $size = ThemeSize.Medium, theme }) => {
-    switch ($size) {
-      case ThemeSize.Small:
-        return `
-          padding: ${theme.spacing.xs} ${theme.spacing.sm};
-        `;
-      case ThemeSize.Medium:
-        return `
-          padding: ${theme.spacing.sm} ${theme.spacing.md};
-        `;
-      case ThemeSize.Large:
-      default:
-        return `
-          padding: ${theme.spacing.md} ${theme.spacing.lg};
-        `;
-    }
+    const { height, paddingX, gap } = getControlSize(theme, $size);
+    return `
+      gap: ${gap};
+      height: ${height};
+      padding: 0 ${paddingX};
+    `;
   }}
 
   border-radius: ${({ theme }) => theme.radius.md};
@@ -121,6 +102,8 @@ export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
   }}
 
   font: ${({ theme }) => theme.typography.bodyMedium.font};
+  font-size: ${({ $size = ThemeSize.Medium, theme }) =>
+    getControlSize(theme, $size).fontSize};
 
   cursor: pointer;
   transition:

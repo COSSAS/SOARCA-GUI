@@ -1,24 +1,38 @@
 import styled from "styled-components";
+import { getControlSize, ThemeSize } from "./utils";
+
+interface ControlSizeProps {
+  $size?: ThemeSize;
+}
 
 /**
  * Standard form input with theme-based styling, focus states, and validation support.
  * Provides hover and focus states with border color transitions and subtle shadows.
  * Automatically fills container width with proper box-sizing for predictable layouts.
+ * @param $size - Same sizes as Button, so an Input and a Button of the same size line up. Defaults to Medium.
  * @example
  * <Input type="text" placeholder="Enter your name" />
  * @example
- * <Input type="email" required disabled />
+ * <Input type="search" $size={ThemeSize.Small} placeholder="Search" />
  */
-export const Input = styled.input`
+export const Input = styled.input<ControlSizeProps>`
   width: 100%;
   box-sizing: border-box;
 
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.md};
+  ${({ $size = ThemeSize.Medium, theme }) => {
+    const { height, paddingX } = getControlSize(theme, $size);
+    return `
+      height: ${height};
+      padding: 0 ${paddingX};
+    `;
+  }};
 
   font: ${({ theme }) => theme.typography.body.font};
+  font-size: ${({ $size = ThemeSize.Medium, theme }) =>
+    getControlSize(theme, $size).fontSize};
   color: ${({ theme }) => theme.colors.text.primary};
   background: ${({ theme }) => theme.colors.background.primary};
 
@@ -50,7 +64,7 @@ export const Input = styled.input`
  * Styled select element keeping the same visuals as the `Input` component.
  * Option elements are styled where supported by the browser.
  */
-const StyledSelect = styled.select`
+const StyledSelect = styled.select<ControlSizeProps>`
   width: 100%;
   box-sizing: border-box;
   appearance: none;
@@ -59,10 +73,17 @@ const StyledSelect = styled.select`
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
-  padding: ${({ theme }) =>
-    `${theme.spacing.md} ${theme.spacing["2xl"]} ${theme.spacing.md} ${theme.spacing.md}`};
+  ${({ $size = ThemeSize.Medium, theme }) => {
+    const { height, paddingX } = getControlSize(theme, $size);
+    return `
+      height: ${height};
+      padding: 0 ${theme.spacing["2xl"]} 0 ${paddingX};
+    `;
+  }};
 
   font: ${({ theme }) => theme.typography.body.font};
+  font-size: ${({ $size = ThemeSize.Medium, theme }) =>
+    getControlSize(theme, $size).fontSize};
   color: ${({ theme }) => theme.colors.text.primary};
   background-color: ${({ theme }) => theme.colors.background.primary};
   background-image: ${({ theme }) => {
@@ -116,10 +137,9 @@ const StyledOption = styled.option`
   border-radius: ${({ theme }) => theme.radius.md};
 `;
 
-export interface SelectProps extends Omit<
-  React.SelectHTMLAttributes<HTMLSelectElement>,
-  "value"
-> {
+export interface SelectProps
+  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value">,
+    ControlSizeProps {
   $value?: string | number;
   $onChange?: (value: string) => void;
   $options: Array<{
@@ -137,6 +157,7 @@ export interface SelectProps extends Omit<
  * @param $onChange - Handler invoked with the selected value.
  * @param $options - Array of options to render: { value, label, disabled? }.
  * @param $placeholder - Optional placeholder entry rendered with empty value.
+ * @param $size - Same sizes as Button. Defaults to Medium.
  */
 export const Select: React.FC<SelectProps> = ({
   $value,

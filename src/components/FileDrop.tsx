@@ -191,7 +191,6 @@ export const FileDrop: React.FC<FileDropProps> = ({
               {$fileName}
               <Button
                 $variant={ThemeVariant.Error}
-                $size={ThemeSize.Small}
                 disabled={$disabled}
                 title="Remove file"
                 onClick={(e) => {

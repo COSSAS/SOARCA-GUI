@@ -1,6 +1,5 @@
 import React, { createContext, useContext } from "react";
 import styled from "styled-components";
-import { ControlLabel } from "./Typography";
 
 const PopoverContext = createContext<string | undefined>(undefined);
 
@@ -165,11 +164,7 @@ export const PopoverItem: React.FC<PopoverItemProps> = ({ children, ...props }) 
       popoverTargetAction="hide"
       {...props}
     >
-      {React.Children.map(children, (child) =>
-        typeof child === "string" || typeof child === "number"
-          ? <ControlLabel>{child}</ControlLabel>
-          : child,
-      )}
+      {children}
     </PopoverItemButton>
   );
 };

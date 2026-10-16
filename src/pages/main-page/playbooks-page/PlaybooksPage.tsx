@@ -184,7 +184,6 @@ export const PlaybooksPage: React.FC = () => {
         <CardTitle>Playbooks</CardTitle>
         <Button
           $variant={ThemeVariant.Primary}
-          $size={ThemeSize.Small}
           onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
         >
           <Icon $icon={IconFilePlus} />

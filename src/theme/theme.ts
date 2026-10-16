@@ -149,6 +149,12 @@ export const theme = {
     "3xl": "2rem", // 32px
     "4xl": "3rem", // 48px
   },
+  // Height of buttons, inputs and selects, so controls of the same size line up.
+  control_height: {
+    sm: "1.75rem", // 28px
+    md: "2.125rem", // 34px
+    lg: "2.625rem", // 42px
+  },
   size_pixels: {
     xs: 4,
     sm: 8,

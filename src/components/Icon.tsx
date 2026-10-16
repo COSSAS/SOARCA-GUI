@@ -1,6 +1,5 @@
 import type { TablerIcon } from "@tabler/icons-react";
 import styled from "styled-components";
-import { ControlLabel } from "./Typography";
 import {
   getThemePixelSizeValuesByThemeSize,
   getVariantColors,
@@ -36,11 +35,6 @@ const IconWrapper = styled.span<{
 
   ${({ $round }) => $round ? "border-radius: 50%;" : ""}
 
-  &:has(+ ${ControlLabel}),
-  ${ControlLabel} + & {
-    align-self: baseline;
-    translate: 0 calc(50% - 0.5cap);
-  }
 
   ${({ $variant, $ghost, $round, theme }) => {
     if (!$round || !$variant) return "";

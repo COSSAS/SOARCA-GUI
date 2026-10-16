@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import { formatErrorForToast } from "@/api/utils";
 import { Button } from "./Button";
 import Icon from "./Icon";
-import { ThemeSize } from "./utils";
 
 export interface CopyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   $text: string;
@@ -40,7 +39,6 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
     <Button
       type="button"
       $ghost
-      $size={ThemeSize.Small}
       onClick={handleClick}
       disabled={disabled}
       {...rest}
