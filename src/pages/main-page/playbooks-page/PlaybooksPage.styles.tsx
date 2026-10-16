@@ -144,6 +144,15 @@ export const PlaybookActions = styled.div`
   padding-left: ${({ theme }) => theme.spacing.md};
 `;
 
+export const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+
+  width: 100%;
+  max-width: 400px;
+`;
+
 export const PlaybookList = styled.div`
   display: flex;
   flex-direction: column;
