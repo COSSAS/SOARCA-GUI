@@ -87,7 +87,7 @@ const Body = styled.div`
  * Typically contains action buttons like Cancel/Confirm.
  * @example
  * <Modal.Footer>
- *   <Button $variant="secondary" onClick={onClose}>Cancel</Button>
+ *   <Button $variant="primary" $ghost onClick={onClose}>Cancel</Button>
  *   <Button onClick={handleSubmit}>Confirm</Button>
  * </Modal.Footer>
  */

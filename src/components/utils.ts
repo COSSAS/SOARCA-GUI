@@ -14,10 +14,8 @@ export const enum ThemeVariant {
   Success = "success",
   Warning = "warning",
   Error = "error",
-  Info = "info",
   Accent = "accent",
   Primary = "primary",
-  Secondary = "secondary",
 }
 
 /**
@@ -128,10 +126,8 @@ export const getVariantColors = (
     [ThemeVariant.Success]: "success",
     [ThemeVariant.Warning]: "warning",
     [ThemeVariant.Error]: "error",
-    [ThemeVariant.Info]: "info",
     [ThemeVariant.Primary]: "info",
     [ThemeVariant.Accent]: "accent",
-    [ThemeVariant.Secondary]: "accent",
   };
   return themeObj.colors[variantMap[variant]] as VariantColors;
 };

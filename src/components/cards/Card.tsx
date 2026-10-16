@@ -74,7 +74,7 @@ export const CardBody = styled.div`
  * Card footer section for actions, aligned to the right.
  * @example
  * <CardFooter>
- *   <Button $variant="secondary">Cancel</Button>
+ *   <Button $variant="primary" $ghost>Cancel</Button>
  *   <Button>Save</Button>
  * </CardFooter>
  */

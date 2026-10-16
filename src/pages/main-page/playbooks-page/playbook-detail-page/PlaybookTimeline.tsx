@@ -69,7 +69,7 @@ export const PlaybookTimeline: React.FC<PlaybookTimelineProps> = ({
                             <strong>Type</strong>
                           </Text>
                           <Text>
-                            <Badge $variant={ThemeVariant.Info}>
+                            <Badge $variant={ThemeVariant.Primary}>
                               {step.type}
                             </Badge>
                           </Text>

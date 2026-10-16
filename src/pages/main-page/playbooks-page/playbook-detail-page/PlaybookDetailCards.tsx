@@ -51,7 +51,7 @@ export const PlaybookMainDetails: React.FC<PlaybookMainDetailsProps> = ({
           <FormLabel>Type</FormLabel>
           <Text>
             {playbook_types?.map((type, idx) => (
-              <Badge key={idx} $variant={ThemeVariant.Info}>
+              <Badge key={idx} $variant={ThemeVariant.Primary}>
                 {type}
               </Badge>
             )) || "N/A"}
@@ -121,7 +121,7 @@ export const PlaybookAdditionalDetails: React.FC<
         <DetailsItem>
           <FormLabel>Impact</FormLabel>
           <Text>
-            <Badge $variant={ThemeVariant.Info}>{impact}</Badge>
+            <Badge $variant={ThemeVariant.Primary}>{impact}</Badge>
           </Text>
         </DetailsItem>
       )}
@@ -144,7 +144,7 @@ export const PlaybookAdditionalDetails: React.FC<
             {labels.map((label, idx) => (
               <Badge
                 key={idx}
-                $variant={ThemeVariant.Info}
+                $variant={ThemeVariant.Primary}
                 style={{ marginRight: "4px" }}
               >
                 {label}

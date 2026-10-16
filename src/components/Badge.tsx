@@ -9,7 +9,7 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 /**
  * Badge component for compact status/label pills.
- * Displays colored badges with different variants (success, warning, error, info) and shapes.
+ * Displays colored badges with different variants (primary, success, warning, error, accent) and shapes.
  * Supports interactive mode with hover effects for clickable badges.
  * @param $variant - Visual variant using ThemeVariant enum.
  * @param $shape - Shape of the badge: BadgeShape.Pill (fully rounded ends) or BadgeShape.Rounded (medium border radius). Defaults to Pill.
@@ -31,15 +31,15 @@ export const Badge = styled.span<BadgeProps>`
   border-radius: ${({ $shape = BadgeShape.Pill, theme }) =>
     $shape === BadgeShape.Rounded ? theme.radius.md : theme.radius.full};
   border: 1px solid
-    ${({ $variant = ThemeVariant.Info, theme }) =>
+    ${({ $variant = ThemeVariant.Primary, theme }) =>
       getVariantColors(theme, $variant).border};
 
   font: ${({ theme }) => theme.typography.small.font};
   line-height: ${({ theme }) => theme.fonts.lineHeight.mini};
 
-  background: ${({ $variant = ThemeVariant.Info, theme }) =>
+  background: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).bg};
-  color: ${({ $variant = ThemeVariant.Info, theme }) =>
+  color: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).text};
 
   ${({ $isInteractive, theme }) =>

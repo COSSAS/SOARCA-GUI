@@ -61,7 +61,7 @@ const IconWrapper = styled.span<{
  * Renders Tabler icons with theme sizes and optional round containers.
  * @param $icon - Tabler icon component from @tabler/icons-react
  * @param $size - ThemeSize enum (default: ThemeSize.Large, corrisponding to 16px)
- * @param $variant - "primary" | "secondary" | "success" | "warning" | "error" | "info" (only used with $round)
+ * @param $variant - "primary" | "success" | "warning" | "error" | "accent" (only used with $round)
  * @param $ghost - boolean (default: false) - renders transparent background with colored border (only used with $round)
  * @param $round - boolean (default: false) - renders icon in a round container with variant colors
  * @param $stroke - number (default: 2) - stroke width of the icon

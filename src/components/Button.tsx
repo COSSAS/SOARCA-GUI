@@ -20,7 +20,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * Button component with multiple variants, sizes, ghost mode (transparent background), and width options.
  * Supports all standard button HTML attributes and provides theme-based styling with smooth transitions.
  * Includes disabled state handling with reduced opacity and cursor changes.
- * @param $variant - Color variant: "primary" (main brand color), "secondary" (gray), "success" (green), "warning" (yellow), "error" (red), "info" (blue), "accent" (purple). Defaults to "info".
+ * @param $variant - Color variant: "primary" (blue), "success" (green), "warning" (yellow), "error" (red), "accent" (purple). Defaults to "primary".
  * @param $ghost - When true, renders with transparent background and colored border/text. Hover fills with solid color. Defaults to false.
  * @param $size - Size preset: "sm" (small padding), "md" (medium padding), "lg" (large padding). Affects padding and maintains consistent typography. Defaults to "md".
  * @param $width - Width mode: "full" (100% width, useful in forms), "auto" (content-based width). Defaults to "auto".
@@ -69,7 +69,7 @@ export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
 
   border-radius: ${({ theme }) => theme.radius.md};
 
-  ${({ $variant = ThemeVariant.Info, $ghost, theme }) => {
+  ${({ $variant = ThemeVariant.Primary, $ghost, theme }) => {
     const colors = getVariantColors(theme, $variant);
 
     return `

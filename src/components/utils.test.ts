@@ -20,16 +20,10 @@ describe("Component utility functions", () => {
       expect(getVariantColors(theme, ThemeVariant.Error)).toEqual(
         theme.colors.error,
       );
-      expect(getVariantColors(theme, ThemeVariant.Info)).toEqual(
-        theme.colors.info,
-      );
       expect(getVariantColors(theme, ThemeVariant.Primary)).toEqual(
         theme.colors.info,
       );
       expect(getVariantColors(theme, ThemeVariant.Accent)).toEqual(
-        theme.colors.accent,
-      );
-      expect(getVariantColors(theme, ThemeVariant.Secondary)).toEqual(
         theme.colors.accent,
       );
     });
@@ -44,16 +38,10 @@ describe("Component utility functions", () => {
       expect(getVariantColors(darkTheme, ThemeVariant.Error)).toEqual(
         darkTheme.colors.error,
       );
-      expect(getVariantColors(darkTheme, ThemeVariant.Info)).toEqual(
-        darkTheme.colors.info,
-      );
       expect(getVariantColors(darkTheme, ThemeVariant.Primary)).toEqual(
         darkTheme.colors.info,
       );
       expect(getVariantColors(darkTheme, ThemeVariant.Accent)).toEqual(
-        darkTheme.colors.accent,
-      );
-      expect(getVariantColors(darkTheme, ThemeVariant.Secondary)).toEqual(
         darkTheme.colors.accent,
       );
     });
@@ -72,7 +60,7 @@ describe("Component utility functions", () => {
         ThemeVariant.Success,
         ThemeVariant.Warning,
         ThemeVariant.Error,
-        ThemeVariant.Info,
+        ThemeVariant.Primary,
         ThemeVariant.Accent,
       ];
 

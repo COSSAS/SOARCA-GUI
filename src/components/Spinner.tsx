@@ -63,7 +63,7 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
  * @param $size - Size of the spinning element
  * @param $color - Custom hex/rgb color string for the spinning accent color. Overrides $variant if provided.
  * @param $trackColor - Custom hex/rgb color string for the background ring track. Uses theme colors if not specified.
- * @param $variant - Theme color variant: "primary", "success", "error", "warning", "info", "accent", "secondary". Determines accent color from theme. Defaults to "primary".
+ * @param $variant - Theme color variant: "primary", "success", "error", "warning", "accent". Determines accent color from theme. Defaults to "primary".
  * @param $withContainer - When true, wraps the spinner in a centered flex container with padding. Defaults to false.
  * @param className - Optional CSS class name for custom positioning or styling overrides.
  * @example

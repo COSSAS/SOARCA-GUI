@@ -69,9 +69,9 @@ export const theme = {
     },
     warning: {
       bg: "#fff7a3",
-      border: "#facc15",
+      border: "#eab308",
       text: "#ca8a04",
-      solidBg: "#facc15",
+      solidBg: "#eab308",
       solidText: "#ffffff",
     },
     accent: {
@@ -278,10 +278,10 @@ export const darkTheme: Theme = {
     },
     warning: {
       bg: "#2e2a1a",
-      border: "#facc15",
+      border: "#eab308",
       text: "#fde68a",
-      solidBg: "#facc15",
-      solidText: "#1f2937",
+      solidBg: "#eab308",
+      solidText: "#ffffff",
     },
     accent: {
       bg: "#2a1f3d",
