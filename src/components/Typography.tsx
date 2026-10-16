@@ -52,8 +52,8 @@ const ExpandToggle = styled.button`
 export interface ExpandableTextProps {
   $text: ReactNode;
   $lineClamp?: number;
-  $showMoreText?: string;
-  $showLessText?: string;
+  $showMoreLabel?: string;
+  $showLessLabel?: string;
 }
 
 /**
@@ -61,8 +61,8 @@ export interface ExpandableTextProps {
  * Clamps text to 2 lines by default with ellipsis, and adds a toggle button only when content overflows.
  * @param $text - Content to display.
  * @param $lineClamp - Number of lines to clamp when collapsed. Defaults to 2.
- * @param $showMoreText - Custom text for the expand button. Defaults to "Show more".
- * @param $showLessText - Custom text for the collapse button. Defaults to "Show less".
+ * @param $showMoreLabel - Custom label for the expand button. Defaults to "Show more".
+ * @param $showLessLabel - Custom label for the collapse button. Defaults to "Show less".
  * @example
  * // Simple text expansion
  * <ExpandableText $text="Very long text that will be clamped to 2 lines..." />
@@ -70,8 +70,8 @@ export interface ExpandableTextProps {
  * // Custom button labels
  * <ExpandableText
  *   $text={longDescription}
- *   $showMoreText="Read full description"
- *   $showLessText="Collapse"
+ *   $showMoreLabel="Read full description"
+ *   $showLessLabel="Collapse"
  * />
  * @example
  * <ExpandableText $text={<Text>Formatted content with <strong>bold</strong> text</Text>} />
@@ -79,8 +79,8 @@ export interface ExpandableTextProps {
 export const ExpandableText: React.FC<ExpandableTextProps> = ({
   $text,
   $lineClamp,
-  $showMoreText,
-  $showLessText,
+  $showMoreLabel,
+  $showLessLabel,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
@@ -114,8 +114,8 @@ export const ExpandableText: React.FC<ExpandableTextProps> = ({
       {isClamped && (
         <ExpandToggle onClick={() => setExpanded(!expanded)}>
           {expanded
-            ? $showLessText || "Show less"
-            : $showMoreText || "Show more"}
+            ? $showLessLabel || "Show less"
+            : $showMoreLabel || "Show more"}
         </ExpandToggle>
       )}
     </div>

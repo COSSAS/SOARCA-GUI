@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 import soarcaBackground from "@/assets/soarca-background.jpg";
 import {
   Button,
-  ButtonWidth,
   Icon,
   PageContainer,
   ThemeVariant,
@@ -27,14 +26,14 @@ export const NotFoundPage: React.FC = () => {
           <Button
             $variant={ThemeVariant.Primary}
             $ghost
-            $width={ButtonWidth.Full}
+            $fullWidth
             onClick={() => navigate(-1)}
           >
             <Icon $icon={IconArrowLeft} />
             Go Back
           </Button>
           <Button
-            $width={ButtonWidth.Full}
+            $fullWidth
             onClick={() => navigate(PATHS.BASE)}
           >
             Take me home

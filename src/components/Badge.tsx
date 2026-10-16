@@ -4,7 +4,7 @@ import { BadgeShape, ThemeVariant, getVariantColors } from "./utils";
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   $variant?: ThemeVariant;
   $shape?: BadgeShape;
-  $isInteractive?: boolean;
+  $isClickable?: boolean;
 }
 
 /**
@@ -13,13 +13,13 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
  * Supports interactive mode with hover effects for clickable badges.
  * @param $variant - Visual variant using ThemeVariant enum.
  * @param $shape - Shape of the badge: BadgeShape.Pill (fully rounded ends) or BadgeShape.Rounded (medium border radius). Defaults to Pill.
- * @param $isInteractive - When true, adds hover/active states including translateY animation and shadow for clickable badges. Defaults to false.
+ * @param $isClickable - When true, adds hover/active states including translateY animation and shadow for clickable badges. Defaults to false.
  * @example
  *  // Simple success badge
  *  <Badge $variant={ThemeVariant.Success}>Active</Badge>
  * @example
  *  // Interactive warning badge with rounded shape
- *  <Badge $variant={ThemeVariant.Warning} $shape={BadgeShape.Rounded} $isInteractive>Click me</Badge>
+ *  <Badge $variant={ThemeVariant.Warning} $shape={BadgeShape.Rounded} $isClickable>Click me</Badge>
  */
 export const Badge = styled.span<BadgeProps>`
   display: inline-flex;
@@ -42,8 +42,8 @@ export const Badge = styled.span<BadgeProps>`
   color: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).text};
 
-  ${({ $isInteractive, theme }) =>
-    $isInteractive
+  ${({ $isClickable, theme }) =>
+    $isClickable
       ? `
         cursor: pointer;
         transition: transform ${theme.transitions.base},

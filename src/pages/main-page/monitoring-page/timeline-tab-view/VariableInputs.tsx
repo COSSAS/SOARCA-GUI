@@ -35,8 +35,8 @@ const DictionaryInput: React.FC<{
     <CodeEditor
       $value={value}
       $onChange={handleChange}
-      $disabled={disabled}
-      $placeholder='{"key": "value"}'
+      disabled={disabled}
+      placeholder='{"key": "value"}'
       $hasError={hasError}
       $minHeight="100px"
     />

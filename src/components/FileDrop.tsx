@@ -72,8 +72,8 @@ export interface FileDropProps extends React.HTMLAttributes<HTMLDivElement> {
   $onChange: (content: string, filename?: string) => void;
   $onRemove?: () => void;
   $accept?: string;
-  $disabled?: boolean;
-  $error?: string;
+  disabled?: boolean;
+  $hasError?: boolean;
 }
 
 /**
@@ -85,8 +85,8 @@ export interface FileDropProps extends React.HTMLAttributes<HTMLDivElement> {
  * @param $onChange - Called with (content, filename) when a file is selected or dropped.
  * @param $onRemove - Optional callback when the remove button is clicked.
  * @param $accept - File extension filter (e.g. ".json"). Defaults to ".json".
- * @param $disabled - When true, disables interactions.
- * @param $error - Optional error message to display under the drop zone.
+ * @param disabled - When true, disables interactions.
+ * @param $hasError - When true the drop zone shows an error border. The page shows the error message itself.
  * @example
  * <FileDrop $onChange={(content, filename) => setFile(content)} $accept=".json" />
  */
@@ -95,8 +95,8 @@ export const FileDrop: React.FC<FileDropProps> = ({
   $onChange,
   $onRemove,
   $accept = ".json",
-  $disabled,
-  $error,
+  disabled,
+  $hasError = false,
   ...rest
 }) => {
   const [isDragActive, setIsDragActive] = useState(false);
@@ -122,7 +122,7 @@ export const FileDrop: React.FC<FileDropProps> = ({
     (e: React.DragEvent<HTMLLabelElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      if ($disabled) return;
+      if (disabled) return;
       setIsDragActive(false);
       const files = e.dataTransfer.files;
       if (files && files.length > 0) {
@@ -134,17 +134,17 @@ export const FileDrop: React.FC<FileDropProps> = ({
         readFile(file);
       }
     },
-    [$accept, $disabled, $onChange, readFile],
+    [$accept, disabled, $onChange, readFile],
   );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent<HTMLLabelElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      if ($disabled) return;
+      if (disabled) return;
       setIsDragActive(true);
     },
-    [$disabled],
+    [disabled],
   );
 
   const handleDragLeave = useCallback(
@@ -179,18 +179,18 @@ export const FileDrop: React.FC<FileDropProps> = ({
         accept={$accept}
         onChange={handleFileSelect}
         style={{ display: "none" }}
-        disabled={$disabled}
+        disabled={disabled}
       />
       <label
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => {
-          if ($disabled) return;
+          if (disabled) return;
           inputRef.current?.click();
         }}
       >
-        <DropZone $isDragActive={isDragActive} $hasError={!!$error}>
+        <DropZone $isDragActive={isDragActive} $hasError={$hasError}>
           <Icon $icon={IconUpload} $size={ThemeSize.Large} />
           <DropZoneText>Click to browse or drag a file here</DropZoneText>
           <DropZoneHint>Only {$accept} files are accepted</DropZoneHint>
@@ -199,7 +199,7 @@ export const FileDrop: React.FC<FileDropProps> = ({
               {$fileName}
               <Button
                 $variant={ThemeVariant.Error}
-                disabled={$disabled}
+                disabled={disabled}
                 title="Remove file"
                 onClick={(e) => {
                   e.preventDefault();

@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {
-  ButtonWidth,
   getControlSize,
   getVariantColors,
   ThemeSize,
@@ -11,7 +10,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   $variant?: ThemeVariant;
   $ghost?: boolean;
   $size?: ThemeSize;
-  $width?: ButtonWidth;
+  $fullWidth?: boolean;
 }
 
 /**
@@ -21,13 +20,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * @param $variant - Color variant: "primary" (blue), "success" (green), "warning" (yellow), "error" (red), "accent" (purple). Defaults to "primary".
  * @param $ghost - When true, renders with transparent background and colored border/text. Hover fills with solid color. Defaults to false.
  * @param $size - Size preset, shared with Input and Select: "sm" (28px, 14px text), "md" (34px), "lg" (42px). Defaults to "md".
- * @param $width - Width mode: "full" (100% width, useful in forms), "auto" (content-based width). Defaults to "auto".
+ * @param $fullWidth - When true the button takes the full width of its container, useful in forms. Defaults to false.
  * @example
  * // Primary full-width button
- * <Button onClick={handleSubmit}>Submit</Button>
+ * <Button $fullWidth onClick={handleSubmit}>Submit</Button>
  * @example
- * // Ghost error button with auto width
- * <Button $variant="error" $ghost $width="auto" disabled>Delete</Button>
+ * // Ghost error button
+ * <Button $variant="error" $ghost disabled>Delete</Button>
  * @example
  * // Large success button
  * <Button $variant="success" $size={ThemeSize.Large}>Complete Task</Button>
@@ -37,7 +36,7 @@ export const Button = styled.button<ButtonProps>`
   align-items: center;
   justify-content: center;
 
-  ${({ $width }) => ($width === ButtonWidth.Full ? "width: 100%;" : "")}
+  ${({ $fullWidth }) => ($fullWidth ? "width: 100%;" : "")}
 
   ${({ $size = ThemeSize.Medium, theme }) => {
     const { height, paddingX, gap } = getControlSize(theme, $size);

@@ -126,10 +126,10 @@ export const ExecutionDetailPage: React.FC = () => {
             <Text>No steps found for this execution.</Text>
           </NoStepsMessage>
         ) : (
-          <TabsProvider initialTab={TABS.timeline}>
+          <TabsProvider $initialTab={TABS.timeline}>
             <TabsSection>
               <Tabs
-                tabs={[
+                $tabs={[
                   {
                     id: TABS.timeline,
                     label: (

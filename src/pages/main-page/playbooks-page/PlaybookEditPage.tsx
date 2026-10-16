@@ -128,8 +128,8 @@ export const PlaybookEditPage: React.FC = () => {
                       setError(validation.error || "Invalid JSON");
                   }
                 }}
-                $placeholder="Edit your CACAO playbook JSON here..."
-                $disabled={updateMutation.isPending}
+                placeholder="Edit your CACAO playbook JSON here..."
+                disabled={updateMutation.isPending}
                 $hasError={!!error}
                 $minHeight="500px"
               />

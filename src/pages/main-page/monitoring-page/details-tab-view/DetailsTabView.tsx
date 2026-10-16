@@ -190,7 +190,7 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                         {Array.isArray(step.commands_b64) &&
                           step.commands_b64.length > 0 && (
                             <CopyButton
-                              $text={step.commands_b64
+                              $value={step.commands_b64
                                 .map((c) => decodeBase64(c) || c)
                                 .join("\n")}
                               title="Copy commands"
@@ -222,7 +222,7 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                         {step.variables &&
                           Object.keys(step.variables).length > 0 && (
                             <CopyButton
-                              $text={Object.entries(step.variables)
+                              $value={Object.entries(step.variables)
                                 .map(
                                   ([k, v]) =>
                                     `${v?.name || k} (${v?.type || "unknown"}): ${v?.value ?? ""}`,

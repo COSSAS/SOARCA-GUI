@@ -9,19 +9,19 @@ interface TabOption {
 
 export interface TabsProviderProps {
   children: ReactNode;
-  initialTab: string;
+  $initialTab: string;
 }
 
 /**
  * Provider component that manages tab state using React Context.
  * Must wrap the Tabs component and any child components that need to access tab state via useTabs hook.
  * Provides activeTab, selectTab, and isActive methods to all descendants through context.
- * @param initialTab - The id of the tab that should be active on mount. Must match one of the tab ids.
+ * @param $initialTab - The id of the tab that should be active on mount. Must match one of the tab ids.
  * @param children - Child components that will have access to tab context. Should include Tabs component and content that responds to tab changes.
  * @example
  * // Basic tabs with provider
- * <TabsProvider initialTab="overview">
- *   <Tabs tabs={[
+ * <TabsProvider $initialTab="overview">
+ *   <Tabs $tabs={[
  *     { id: "overview", label: "Overview" },
  *     { id: "details", label: "Details" }
  *   ]} />
@@ -36,9 +36,9 @@ export interface TabsProviderProps {
  */
 export const TabsProvider: React.FC<TabsProviderProps> = ({
   children,
-  initialTab,
+  $initialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState($initialTab);
 
   const value: TabsContextType = {
     activeTab,
@@ -50,7 +50,7 @@ export const TabsProvider: React.FC<TabsProviderProps> = ({
 };
 
 export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
-  tabs: TabOption[];
+  $tabs: TabOption[];
 }
 
 const TabsContainer = styled.div`
@@ -90,11 +90,11 @@ const TabButton = styled.button<{ $active: boolean }>`
  * Renders a horizontal list of tab buttons with active state.
  * Must be used within a `TabsProvider` to access tab state management.
  * Tab selection is controlled through the `useTabs` context.
- * @param tabs - Array of tab objects with unique stable id and display label. Each tab requires: { id: string, label: ReactNode }.
+ * @param $tabs - Array of tab objects with unique stable id and display label. Each tab requires: { id: string, label: ReactNode }.
  * @example
  * // Simple text tabs
- * <TabsProvider initialTab="timeline">
- *   <Tabs tabs={[
+ * <TabsProvider $initialTab="timeline">
+ *   <Tabs $tabs={[
  *     { id: "timeline", label: "Timeline" },
  *     { id: "detailed", label: "Detailed View" },
  *     { id: "summary", label: "Summary" }
@@ -102,17 +102,17 @@ const TabButton = styled.button<{ $active: boolean }>`
  * </TabsProvider>
  * @example
  * // Tabs with icons
- * <Tabs tabs={[
+ * <Tabs $tabs={[
  *   { id: "list", label: <><ListIcon /> List</> },
  *   { id: "grid", label: <><GridIcon /> Grid</> }
  * ]} />
  */
-export const Tabs: React.FC<TabsProps> = ({ tabs, ...rest }) => {
+export const Tabs: React.FC<TabsProps> = ({ $tabs, ...rest }) => {
   const { activeTab, selectTab } = useTabs();
 
   return (
     <TabsContainer {...rest}>
-      {tabs.map((tab) => (
+      {$tabs.map((tab) => (
         <TabButton
           key={tab.id}
           type="button"

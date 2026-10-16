@@ -19,7 +19,6 @@ import { PATHS, SOARCA_DOC_URL } from "@/utils";
 
 import {
   Button,
-  ButtonWidth,
   Icon,
   ImageContainer,
   Link,
@@ -90,7 +89,7 @@ export const MainPage: React.FC = () => {
           </SidebarLogoContainer>
           <Button
             $variant={ThemeVariant.Primary}
-            $width={ButtonWidth.Full}
+            $fullWidth
             onClick={() => handleNavigation(PATHS.PLAYBOOKS.NEW)}
           >
             <Icon $icon={IconFilePlus} />
@@ -117,7 +116,7 @@ export const MainPage: React.FC = () => {
         </SidebarNav>
         <SidebarFooter>
           <Link
-            $variant="subtle"
+            $subtle
             $to={SOARCA_DOC_URL}
             target="_blank"
             rel="help noopener noreferrer"

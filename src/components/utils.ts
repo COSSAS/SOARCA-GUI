@@ -39,11 +39,6 @@ export const enum BadgeShape {
   Rounded = "rounded",
 }
 
-export const enum ButtonWidth {
-  Full = "full",
-  Auto = "auto",
-}
-
 export const TabsContext = createContext<TabsContextType | undefined>(
   undefined,
 );
