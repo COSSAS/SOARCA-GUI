@@ -21,7 +21,6 @@ export const EditorContainer = styled.div`
 
 export const EditorTextarea = styled.textarea<{ $hasError: boolean }>`
   width: 100%;
-  box-sizing: border-box;
   min-height: 500px;
   padding: ${({ theme }) => theme.spacing.md};
   border-radius: ${({ theme }) => theme.radius.md};
@@ -30,7 +29,7 @@ export const EditorTextarea = styled.textarea<{ $hasError: boolean }>`
       $hasError ? theme.colors.error.border : theme.colors.border.medium};
   background-color: ${({ theme }) => theme.colors.background.secondary};
   color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.code_medium.font};
+  font: ${({ theme }) => theme.typography.code.font};
   resize: vertical;
   transition: all ${({ theme }) => theme.transitions.base};
 

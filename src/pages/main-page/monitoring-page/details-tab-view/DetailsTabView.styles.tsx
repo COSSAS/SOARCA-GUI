@@ -6,13 +6,6 @@ export const DetailedContainer = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
-export const DetailedItemHeaderRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing.md};
-`;
-
 export const DetailedItemSummary = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing.md};
@@ -23,8 +16,6 @@ export const DetailedItemSummary = styled.div`
 
 export const CodeBlock = styled.pre`
   width: 100%;
-  box-sizing: border-box;
-  margin: 0;
   background: ${({ theme }) => theme.colors.background.secondary};
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-radius: ${({ theme }) => theme.radius.md};
@@ -37,7 +28,6 @@ export const CodeBlock = styled.pre`
 
 export const VariableListContainer = styled.div`
   width: 100%;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.sm};
@@ -45,7 +35,6 @@ export const VariableListContainer = styled.div`
 
 export const VariableItemRow = styled.div`
   width: 100%;
-  box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing.md};
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
@@ -58,7 +47,6 @@ export const VariableItemRow = styled.div`
 export const VariableCellValue = styled.div`
   width: 100%;
   min-width: 0;
-  box-sizing: border-box;
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
   word-break: break-word;

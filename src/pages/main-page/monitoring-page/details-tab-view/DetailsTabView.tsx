@@ -45,7 +45,7 @@ const renderAutomatedIcon = (isAutomated: boolean | undefined) => {
       return (
         <Icon
           $icon={IconCheck}
-          $size={ThemeSize.Medium}
+          $size={ThemeSize.Small}
           $variant={ThemeVariant.Success}
           $round
         />
@@ -54,7 +54,7 @@ const renderAutomatedIcon = (isAutomated: boolean | undefined) => {
       return (
         <Icon
           $icon={IconX}
-          $size={ThemeSize.Medium}
+          $size={ThemeSize.Small}
           $variant={ThemeVariant.Error}
           $round
         />
@@ -109,7 +109,7 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                   $icon={getIconFromStepStatus(status)}
                   $round
                   $variant={getBadgeVariantFromStepStatus(status)}
-                  $size={ThemeSize.Medium}
+                  $size={ThemeSize.Small}
                 />
               </Spacer>
             }
@@ -125,7 +125,7 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                   <Badge $variant={getBadgeVariantFromStepStatus(status)}>
                     <Icon
                       $icon={getIconFromStepStatus(status)}
-                      $size={ThemeSize.Medium}
+                      $size={ThemeSize.Small}
                     />
                     {status}
                   </Badge>
@@ -190,7 +190,7 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                         {Array.isArray(step.commands_b64) &&
                           step.commands_b64.length > 0 && (
                             <CopyButton
-                              $text={step.commands_b64
+                              $value={step.commands_b64
                                 .map((c) => decodeBase64(c) || c)
                                 .join("\n")}
                               title="Copy commands"
@@ -222,7 +222,7 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                         {step.variables &&
                           Object.keys(step.variables).length > 0 && (
                             <CopyButton
-                              $text={Object.entries(step.variables)
+                              $value={Object.entries(step.variables)
                                 .map(
                                   ([k, v]) =>
                                     `${v?.name || k} (${v?.type || "unknown"}): ${v?.value ?? ""}`,
