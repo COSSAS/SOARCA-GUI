@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 export const PlaybookListItem = styled.div`
+  position: relative;
+
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing["2xl"]};
@@ -8,20 +10,30 @@ export const PlaybookListItem = styled.div`
   padding-left: ${({ theme }) => theme.spacing.lg};
   padding-right: ${({ theme }) => theme.spacing.lg};
 
-  border: 2px solid ${({ theme }) => theme.colors.palette.primary};
-  border-radius: ${({ theme }) => theme.radius.lg};
+  border: 1px solid ${({ theme }) => theme.colors.border.medium};
+  border-radius: ${({ theme }) => `0 ${theme.radius.sm} ${theme.radius.sm} 0`};
   background-color: ${({ theme }) => theme.colors.background.primary};
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+
+    width: 4px;
+
+    background-color: ${({ theme }) => theme.colors.palette.primary};
+  }
 
   cursor: pointer;
   transition:
     background-color ${({ theme }) => theme.transitions.base},
-    border-color ${({ theme }) => theme.transitions.base},
-    box-shadow ${({ theme }) => theme.transitions.base};
+    border-color ${({ theme }) => theme.transitions.base};
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.info.border};
     background-color: ${({ theme }) => theme.colors.info.bg};
-    box-shadow: ${({ theme }) => theme.shadows.md};
   }
 `;
 
