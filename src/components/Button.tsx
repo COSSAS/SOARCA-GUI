@@ -71,27 +71,31 @@ export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
 
   ${({ $variant = ThemeVariant.Primary, $ghost, theme }) => {
     const colors = getVariantColors(theme, $variant);
+    const darken = (amount: string) =>
+      `color-mix(in srgb, ${colors.solidBg}, ${theme.colors.shade} ${amount})`;
+    const hoverBg = $ghost
+      ? colors.solidBg
+      : darken(theme.interactions.hoverDarken);
+    const activeBg = darken(theme.interactions.activeDarken);
+    const disabledBorder = $ghost
+      ? theme.colors.gray[500]
+      : theme.colors.gray[300];
 
+    // A filled button always has a border in the same color as its fill.
     return `
-      border: 1px solid ${colors.border};
+      border: 1px solid ${$ghost ? colors.border : colors.solidBg};
       background-color: ${$ghost ? "transparent" : colors.solidBg};
 
       color: ${$ghost ? colors.border : colors.solidText};
 
       &:hover:not(:disabled) {
-        background-color: color-mix(
-          in srgb,
-          ${colors.solidBg},
-          ${theme.colors.shade} ${theme.interactions.hoverDarken}
-        );
+        border-color: ${hoverBg};
+        background-color: ${hoverBg};
       }
 
       &:active:not(:disabled) {
-        background-color: color-mix(
-          in srgb,
-          ${colors.solidBg},
-          ${theme.colors.shade} ${theme.interactions.activeDarken}
-        );
+        border-color: ${activeBg};
+        background-color: ${activeBg};
       }
 
       ${
@@ -105,7 +109,7 @@ export const Button = styled.button.attrs<ButtonProps>(({ children }) => ({
       }
 
       &:disabled {
-        border-color: ${theme.colors.gray[500]};
+        border-color: ${disabledBorder};
         background-color: ${$ghost ? "transparent" : theme.colors.gray[300]};
         opacity: ${theme.interactions.disabledOpacity};
 
