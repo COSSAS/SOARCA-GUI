@@ -21,7 +21,7 @@ const DropZone = styled.div<{
 
   text-align: center;
   cursor: pointer;
-  min-height: 400px;
+  min-height: 12rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,6 +35,15 @@ const DropZone = styled.div<{
   &:hover {
     border-color: ${({ theme }) => theme.colors.info.border};
     background-color: ${({ theme }) => theme.colors.info.bg};
+  }
+
+  /* Disabled state comes from the hidden file input right before the label. */
+  input:disabled + label & {
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
+    cursor: not-allowed;
+
+    border-color: ${({ theme }) => theme.colors.border.medium};
+    background-color: ${({ theme }) => theme.colors.background.secondary};
   }
 `;
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "./Button";
-import { ButtonWidth } from "./utils";
 import { downloadExport, ExportFormat } from "./export";
 
 export type { ExportFormat } from "./export";
@@ -43,12 +42,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
   };
 
   return (
-    <Button
-      type="button"
-      onClick={handleClick}
-      $width={buttonProps.$width ?? ButtonWidth.Full}
-      {...buttonProps}
-    >
+    <Button type="button" onClick={handleClick} {...buttonProps}>
       {children}
     </Button>
   );

@@ -208,6 +208,7 @@ export const PlaybookDetailPage: React.FC = () => {
 
           <ExportButton
             $variant={ThemeVariant.Accent}
+            $width={ButtonWidth.Full}
             $ghost
             $data={playbook}
             $filename={generatePlaybookFilename(playbook)}

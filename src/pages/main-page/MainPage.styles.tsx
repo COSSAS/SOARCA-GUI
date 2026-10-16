@@ -39,6 +39,7 @@ export const MainHeader = styled.header`
 export const MainContent = styled.main`
   flex: 1;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   padding: ${({ theme }) => theme.spacing.lg};
   min-width: 550px;
   background-color: ${({ theme }) => theme.colors.secondary.bg};

@@ -115,7 +115,7 @@ export const theme = {
       border: "#e5e7eb",
     },
     palette: {
-      primary: "#2d8cf0",
+      primary: "#3b82f6",
       primaryDark: "#1f5fad",
       secondary: "#27b3c7",
       tertiary: "#8bd5ff",
