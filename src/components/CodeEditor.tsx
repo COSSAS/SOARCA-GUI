@@ -12,7 +12,6 @@ const EditorTextarea = styled.textarea<{
   $minHeight?: string;
 }>`
   width: 100%;
-  box-sizing: border-box;
   min-height: ${({ $minHeight = "400px" }) => $minHeight};
 
   padding: ${({ theme }) => theme.spacing.md};

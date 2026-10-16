@@ -1,20 +1,6 @@
 import { IconInfoCircle } from "@tabler/icons-react";
 import styled from "styled-components";
 
-import { ModalCloseButton } from "@/components";
-
-export const StyledCloseButton = styled(ModalCloseButton)`
-  color: #ffffff;
-  opacity: 0.9;
-  font-size: 24px;
-  font-weight: bold;
-  transition: opacity 0.2s;
-
-  &:hover {
-    opacity: 1;
-  }
-`;
-
 export const StepSummary = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
@@ -28,7 +14,6 @@ export const StepName = styled.h3`
 export const StepDescription = styled.p`
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.secondary};
-  margin: 0;
   line-height: 1.5;
 `;
 

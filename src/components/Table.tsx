@@ -33,8 +33,6 @@ export const Table = styled.table`
 
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.table.rowText};
-
-  background: transparent;
 `;
 
 /**

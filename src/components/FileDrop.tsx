@@ -39,7 +39,6 @@ const DropZone = styled.div<{
 `;
 
 const DropZoneText = styled.p`
-  margin: 0;
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.secondary};
 `;

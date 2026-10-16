@@ -29,9 +29,9 @@ const IconWrapper = styled.span<{
   vertical-align: middle;
 
   height: ${({ $size, $round }) =>
-    $round ? `${$size + $size * 0.5}px` : `${$size}px`};
+    $round ? `${$size * 1.5}px` : `${$size}px`};
   width: ${({ $size, $round }) =>
-    $round ? `${$size + $size * 0.5}px` : `${$size}px`};
+    $round ? `${$size * 1.5}px` : `${$size}px`};
 
   ${({ $round }) => $round ? "border-radius: 50%;" : ""}
 

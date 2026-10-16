@@ -16,7 +16,6 @@ export interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
 export const Text = styled.p<TextProps>`
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ $color, theme }) => $color || theme.colors.text.secondary};
-  margin: 0;
 `;
 
 interface ExpandableTextContainerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -40,13 +39,8 @@ const ExpandableTextContainer = styled.div<ExpandableTextContainerProps>`
 `;
 
 const ExpandToggle = styled.button`
-  background: none;
-  border: none;
-
   color: ${({ theme }) => theme.colors.primary.main};
   font: ${({ theme }) => theme.typography.small.font};
-  cursor: pointer;
-  padding: 0;
   margin-top: ${({ theme }) => theme.spacing.xs};
   text-decoration: underline;
 

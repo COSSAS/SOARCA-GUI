@@ -21,7 +21,6 @@ export const EditorContainer = styled.div`
 
 export const EditorTextarea = styled.textarea<{ $hasError: boolean }>`
   width: 100%;
-  box-sizing: border-box;
   min-height: 500px;
   padding: ${({ theme }) => theme.spacing.md};
   border-radius: ${({ theme }) => theme.radius.md};

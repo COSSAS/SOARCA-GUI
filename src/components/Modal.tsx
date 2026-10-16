@@ -118,12 +118,7 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
 
-  border: none;
-  background: none;
-
   color: ${({ theme }) => theme.colors.primary.text};
-
-  cursor: pointer;
 `;
 
 /**

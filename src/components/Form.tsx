@@ -17,7 +17,6 @@ interface ControlSizeProps {
  */
 export const Input = styled.input<ControlSizeProps>`
   width: 100%;
-  box-sizing: border-box;
 
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
@@ -66,7 +65,6 @@ export const Input = styled.input<ControlSizeProps>`
  */
 const StyledSelect = styled.select<ControlSizeProps>`
   width: 100%;
-  box-sizing: border-box;
   appearance: none;
   -webkit-appearance: none;
 

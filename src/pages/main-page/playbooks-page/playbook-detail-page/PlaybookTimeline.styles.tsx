@@ -52,8 +52,8 @@ export const TimelineDotCenter = styled.div<{ $type: string }>`
   left: 50%;
   top: 24px;
   transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
   border-radius: ${({ theme }) => theme.radius.full};
   background-color: ${({ theme, $type }) => {
     switch ($type) {
@@ -105,7 +105,6 @@ export const StepCardHeader = styled.div<{ $expanded: boolean }>`
 `;
 
 export const StepCardTitle = styled.h3`
-  margin: 0;
   font: ${({ theme }) => theme.typography.h3.font};
   color: ${({ theme }) => theme.colors.text.primary};
 `;

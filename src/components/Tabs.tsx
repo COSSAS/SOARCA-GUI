@@ -67,9 +67,6 @@ const TabButton = styled.button<{ $active: boolean }>`
 
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
 
-  background: none;
-  border: none;
-
   border-bottom: 2px solid
     ${({ theme, $active }) =>
       $active ? theme.colors.primary.main : "transparent"};
@@ -78,7 +75,6 @@ const TabButton = styled.button<{ $active: boolean }>`
     $active ? theme.colors.primary.main : theme.colors.text.secondary};
   font: ${({ theme }) => theme.typography.body.font};
 
-  cursor: pointer;
   transition: all ${({ theme }) => theme.transitions.base};
 
   &:hover {

@@ -105,7 +105,6 @@ export const Button = styled.button<ButtonProps>`
   font-size: ${({ $size = ThemeSize.Medium, theme }) =>
     getControlSize(theme, $size).fontSize};
 
-  cursor: pointer;
   transition:
     background-color ${({ theme }) => theme.transitions.fast},
     border-color ${({ theme }) => theme.transitions.fast},

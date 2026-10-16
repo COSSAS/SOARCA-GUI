@@ -94,8 +94,8 @@ export const TimelineStep = styled.div<{ $position: "top" | "bottom" }>`
 `;
 
 export const TimelineDot = styled.div<{ $type: string }>`
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
 
   border: 2px solid ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.radius.full};

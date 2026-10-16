@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const DetailsGrid = styled.div`
   width: 100%;
-  box-sizing: border-box;
   display: grid;
   /* minmax(0, ...) stops long unbreakable values (IDs, commands) from
      widening a track and pushing content out of the grid */
