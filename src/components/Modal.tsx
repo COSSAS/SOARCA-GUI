@@ -42,12 +42,11 @@ const Dialog = styled.div`
 
 /**
  * Modal header section with info-colored background and consistent padding.
- * Displays at the top of the modal with a bottom border separator.
- * Commonly contains a title and optional close button.
+ * Contains a Modal.Title and optional close button.
  * @example
  * <Modal.Header>
- *   <h2>Confirm Action</h2>
- *   <ModalCloseButton onClick={onClose} />
+ *   <Modal.Title>Confirm action</Modal.Title>
+ *   <Modal.CloseButton onClick={onClose} />
  * </Modal.Header>
  */
 const Header = styled.div`
@@ -60,7 +59,15 @@ const Header = styled.div`
   background-color: ${({ theme }) => theme.colors.info.solidBg};
 
   color: ${({ theme }) => theme.colors.info.solidText};
-  font: ${({ theme }) => theme.typography.h3.font};
+`;
+
+/**
+ * Modal title, rendered as an h2.
+ * @example
+ * <Modal.Title>Run playbook</Modal.Title>
+ */
+const Title = styled.h2`
+  font: ${({ theme }) => theme.typography.h2.font};
 `;
 
 /**
@@ -150,16 +157,20 @@ interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
  * Renders with `showModal()` when `$isOpen` is true and handles Escape and backdrop clicks.
  * @param $isOpen - Controls whether the modal is visible.
  * @param $onClose - Callback invoked when the user requests to close the modal (Escape, backdrop click, or CloseButton).
- * @param children - Use `Modal.Header`, `Modal.Body`, and `Modal.Footer` to structure content.
+ * @param children - Use `Modal.Header` (with a `Modal.Title`), `Modal.Body`, and `Modal.Footer` to structure content.
  * @example
  * <Modal $isOpen={isOpen} $onClose={handleClose}>
- *   <Modal.Header>Title <Modal.CloseButton onClick={handleClose} /></Modal.Header>
+ *   <Modal.Header>
+ *     <Modal.Title>Title</Modal.Title>
+ *     <Modal.CloseButton onClick={handleClose} />
+ *   </Modal.Header>
  *   <Modal.Body>Content</Modal.Body>
  *   <Modal.Footer><Button onClick={handleClose}>Close</Button></Modal.Footer>
  * </Modal>
  */
 export const Modal: React.FC<ModalProps> & {
   Header: typeof Header;
+  Title: typeof Title;
   Body: typeof Body;
   Footer: typeof Footer;
   CloseButton: typeof ModalCloseButton;
@@ -208,6 +219,7 @@ export const Modal: React.FC<ModalProps> & {
 };
 
 Modal.Header = Header;
+Modal.Title = Title;
 Modal.Body = Body;
 Modal.Footer = Footer;
 Modal.CloseButton = ModalCloseButton;

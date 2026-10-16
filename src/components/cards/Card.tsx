@@ -57,7 +57,7 @@ export const CardHeader = styled.div<CardHeaderProps>`
 export const CardTitle = styled.h2`
   margin: 0;
 
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  font: ${({ theme }) => theme.typography.h2.font};
   color: ${({ theme }) => theme.colors.text.primary};
 `;
 /**

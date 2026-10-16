@@ -122,9 +122,8 @@ export const TimelineHeader = styled.div`
 
 export const TimelineTitle = styled.h3`
   margin: 0;
-  font: ${({ theme }) => theme.typography.body.font};
+  font: ${({ theme }) => theme.typography.h3.font};
   color: ${({ theme }) => theme.colors.text.primary};
-  font-weight: 500;
 `;
 
 export const TimelineMetaBadge = styled.div`

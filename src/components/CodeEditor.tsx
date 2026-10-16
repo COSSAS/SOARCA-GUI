@@ -24,7 +24,7 @@ const EditorTextarea = styled.textarea<{
 
   background-color: ${({ theme }) => theme.colors.background.secondary};
   color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.code_small.font};
+  font: ${({ theme }) => theme.typography.code.font};
 
   resize: vertical;
 

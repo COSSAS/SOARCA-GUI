@@ -37,9 +37,8 @@ export const Section = styled.div`
 `;
 
 export const SectionTitle = styled.h4`
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  font: ${({ theme }) => theme.typography.h4.font};
   color: ${({ theme }) => theme.colors.text.primary};
-  font-weight: 600;
   margin: 0 0 ${({ theme }) => theme.spacing.md} 0;
 `;
 

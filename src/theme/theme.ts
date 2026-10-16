@@ -9,10 +9,6 @@ const fonts = {
     sm: "0.875rem", // 14px
     base: "1rem", // 16px
     lg: "1.125rem", // 18px
-    xl: "1.25rem", // 20px
-    "2xl": "1.5rem", // 24px
-    "3xl": "1.875rem", // 30px
-    "4xl": "2.25rem", // 36px
   },
   weight: {
     normal: 400,
@@ -188,17 +184,14 @@ export const theme = {
     info: 3000,
   },
   typography: {
-    h1: {
-      font: `${fonts.weight.bold} ${fonts.size["4xl"]}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
-    },
     h2: {
-      font: `${fonts.weight.semibold} ${fonts.size["2xl"]}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
+      font: `${fonts.weight.semibold} ${fonts.size.lg}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
     h3: {
-      font: `${fonts.weight.semibold} ${fonts.size.xl}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
+      font: `${fonts.weight.semibold} ${fonts.size.base}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
     h4: {
-      font: `${fonts.weight.semibold} ${fonts.size.lg}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
+      font: `${fonts.weight.semibold} ${fonts.size.sm}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
     body: {
       font: `${fonts.weight.normal} ${fonts.size.base}/${fonts.lineHeight.normal} ${fonts.family.primary}`,
@@ -212,11 +205,8 @@ export const theme = {
     small: {
       font: `${fonts.weight.normal} ${fonts.size.xs}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
-    code_small: {
+    code: {
       font: `${fonts.weight.normal} ${fonts.size.sm}/${fonts.lineHeight.relaxed} ${fonts.family.mono}`,
-    },
-    code_medium: {
-      font: `${fonts.weight.normal} ${fonts.size.base}/${fonts.lineHeight.relaxed} ${fonts.family.mono}`,
     },
   },
   interactions: {

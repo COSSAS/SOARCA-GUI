@@ -104,9 +104,9 @@ export const StepCardHeader = styled.div<{ $expanded: boolean }>`
   }
 `;
 
-export const StepCardTitle = styled.h5`
+export const StepCardTitle = styled.h3`
   margin: 0;
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  font: ${({ theme }) => theme.typography.h3.font};
   color: ${({ theme }) => theme.colors.text.primary};
 `;
 

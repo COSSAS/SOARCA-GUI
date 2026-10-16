@@ -34,9 +34,9 @@ export const PlaybookInfo = styled.div`
   margin-right: ${({ theme }) => theme.spacing.lg};
 `;
 
-export const PlaybookName = styled.h4`
+export const PlaybookName = styled.h3`
   color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.h4.font};
+  font: ${({ theme }) => theme.typography.h3.font};
 `;
 
 export const PlaybookDescription = styled.p`
