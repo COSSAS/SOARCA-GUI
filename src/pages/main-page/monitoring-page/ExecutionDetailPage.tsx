@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContent,
-  ControlLabel,
   ExpandableText,
   FormLabel,
   Icon,
@@ -75,7 +74,7 @@ export const ExecutionDetailPage: React.FC = () => {
     if (isLoading)
       return (
         <CenteredCardContent>
-          <Spinner $size={ThemeSize.Large} />
+          <Spinner $size={ThemeSize.Medium} />
         </CenteredCardContent>
       );
     if (isError)
@@ -96,7 +95,7 @@ export const ExecutionDetailPage: React.FC = () => {
             <Badge $variant={getBadgeVariantFromStatus(status)}>
               <Icon
                 $icon={getIconFromStatus(status)}
-                $size={ThemeSize.Medium}
+                $size={ThemeSize.Small}
               />
               {status}
             </Badge>
@@ -127,16 +126,16 @@ export const ExecutionDetailPage: React.FC = () => {
             <Text>No steps found for this execution.</Text>
           </NoStepsMessage>
         ) : (
-          <TabsProvider initialTab={TABS.timeline}>
+          <TabsProvider $initialTab={TABS.timeline}>
             <TabsSection>
               <Tabs
-                tabs={[
+                $tabs={[
                   {
                     id: TABS.timeline,
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
                         <Icon $icon={IconTimeline} />
-                        <ControlLabel>Timeline</ControlLabel>
+                        Timeline
                       </Spacer>
                     ),
                   },
@@ -145,7 +144,7 @@ export const ExecutionDetailPage: React.FC = () => {
                     label: (
                       <Spacer $direction="horizontal" $gap="xs" $align="center">
                         <Icon $icon={IconInfoCircle} />
-                        <ControlLabel>Details</ControlLabel>
+                        Details
                       </Spacer>
                     ),
                   },

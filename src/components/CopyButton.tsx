@@ -5,31 +5,30 @@ import toast from "react-hot-toast";
 import { formatErrorForToast } from "@/api/utils";
 import { Button } from "./Button";
 import Icon from "./Icon";
-import { ThemeSize } from "./utils";
 
 export interface CopyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  $text: string;
+  $value: string;
 }
 
 /**
  * Small icon-only button to copy text to clipboard.
- * @param $text - The text to copy to clipboard.
+ * @param $value - The text to copy to the clipboard.
  * @param title - The tooltip/title for the button (default: "Copy").
  * @param disabled - Whether the button is disabled (default: false).
  * @example
- * <CopyButton $text="Some text to copy" />
+ * <CopyButton $value="Some text to copy" />
  */
 export const CopyButton: React.FC<CopyButtonProps> = ({
-  $text,
+  $value,
   disabled = false,
   ...rest
 }) => {
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (disabled || !$text) return;
+    if (disabled || !$value) return;
 
     try {
-      await navigator.clipboard.writeText($text);
+      await navigator.clipboard.writeText($value);
       toast.success("Copied to clipboard");
     } catch (err) {
       toast.error(formatErrorForToast(err, "Failed to copy to clipboard"));
@@ -40,7 +39,6 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
     <Button
       type="button"
       $ghost
-      $size={ThemeSize.Small}
       onClick={handleClick}
       disabled={disabled}
       {...rest}

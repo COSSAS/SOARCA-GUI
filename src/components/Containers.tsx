@@ -31,8 +31,6 @@ export const PageContainer = styled.div<PageContainerProps>`
     background-position: center;
     background-repeat: no-repeat;
   `}
-
-  padding: 0;
 `;
 
 export const CenteredCardContent = styled.div`

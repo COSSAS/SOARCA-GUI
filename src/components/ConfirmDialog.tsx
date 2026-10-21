@@ -52,7 +52,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       {...rest}
     >
       <Modal.Header>
-        {$title}
+        <Modal.Title>{$title}</Modal.Title>
         <Modal.CloseButton onClick={$onCancel} disabled={$isPending} />
       </Modal.Header>
       <Modal.Body>{$description}</Modal.Body>

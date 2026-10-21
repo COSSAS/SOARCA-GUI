@@ -21,7 +21,7 @@ export const MainHeader = styled.header`
   background-color: ${({ theme }) => theme.colors.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
   padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.xl};
-  min-height: 2rem;
+  min-height: 4rem;
 
   @media (max-width: 768px) {
     .mobile-logo {
@@ -39,6 +39,7 @@ export const MainHeader = styled.header`
 export const MainContent = styled.main`
   flex: 1;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   padding: ${({ theme }) => theme.spacing.lg};
   min-width: 550px;
   background-color: ${({ theme }) => theme.colors.secondary.bg};
@@ -46,11 +47,8 @@ export const MainContent = styled.main`
 
 export const MobileMenuButton = styled.button`
   display: none;
-  background: none;
-  border: none;
 
   color: ${({ theme }) => theme.colors.text.primary};
-  cursor: pointer;
 
   @media (max-width: 768px) {
     display: flex;

@@ -12,7 +12,6 @@ const EditorTextarea = styled.textarea<{
   $minHeight?: string;
 }>`
   width: 100%;
-  box-sizing: border-box;
   min-height: ${({ $minHeight = "400px" }) => $minHeight};
 
   padding: ${({ theme }) => theme.spacing.md};
@@ -24,7 +23,7 @@ const EditorTextarea = styled.textarea<{
 
   background-color: ${({ theme }) => theme.colors.background.secondary};
   color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.code_small.font};
+  font: ${({ theme }) => theme.typography.code.font};
 
   resize: vertical;
 
@@ -44,8 +43,8 @@ const EditorTextarea = styled.textarea<{
 export interface CodeEditorProps extends React.HTMLAttributes<HTMLDivElement> {
   $value: string;
   $onChange: (value: string) => void;
-  $placeholder?: string;
-  $disabled?: boolean;
+  placeholder?: string;
+  disabled?: boolean;
   $hasError?: boolean;
   $minHeight?: string;
 }
@@ -55,22 +54,22 @@ export interface CodeEditorProps extends React.HTMLAttributes<HTMLDivElement> {
  * It is a controlled component and relies on `$value` / `$onChange` for state.
  * @param $value - Current text content of the editor.
  * @param $onChange - Callback invoked with new text when the content changes.
- * @param $placeholder - Optional placeholder text when editor is empty.
- * @param $disabled - When true the editor is non-editable and shows disabled visuals.
+ * @param placeholder - Optional placeholder text when editor is empty.
+ * @param disabled - When true the editor is non-editable and shows disabled visuals.
  * @param $hasError - When true the editor displays an error border state.
  * @param $minHeight - Optional CSS min-height for the editor area (defaults to `400px`).
  * @example:
  * <CodeEditor
  *   $value={source}
  *   $onChange={setSource}
- *   $placeholder="Paste JSON here"
+ *   placeholder="Paste JSON here"
  * />
  */
 export const CodeEditor: React.FC<CodeEditorProps> = ({
   $value,
   $onChange,
-  $placeholder,
-  $disabled,
+  placeholder,
+  disabled,
   $hasError,
   $minHeight,
   ...rest
@@ -80,8 +79,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       <EditorTextarea
         value={$value}
         onChange={(e) => $onChange(e.target.value)}
-        placeholder={$placeholder}
-        disabled={$disabled}
+        placeholder={placeholder}
+        disabled={disabled}
         $hasError={$hasError}
         $minHeight={$minHeight}
       />

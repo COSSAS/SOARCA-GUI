@@ -11,7 +11,6 @@ import styled from "styled-components";
  * </CardContainer>
  */
 export const CardContainer = styled.div`
-  box-sizing: border-box;
   width: 100%;
 
   background: ${({ theme }) => theme.colors.background.primary};
@@ -55,9 +54,7 @@ export const CardHeader = styled.div<CardHeaderProps>`
  * <CardTitle>Execution Report</CardTitle>
  */
 export const CardTitle = styled.h2`
-  margin: 0;
-
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  font: ${({ theme }) => theme.typography.h2.font};
   color: ${({ theme }) => theme.colors.text.primary};
 `;
 /**
@@ -74,7 +71,7 @@ export const CardBody = styled.div`
  * Card footer section for actions, aligned to the right.
  * @example
  * <CardFooter>
- *   <Button $variant="secondary">Cancel</Button>
+ *   <Button $variant="primary" $ghost>Cancel</Button>
  *   <Button>Save</Button>
  * </CardFooter>
  */

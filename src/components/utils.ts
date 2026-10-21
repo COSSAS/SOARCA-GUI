@@ -14,57 +14,29 @@ export const enum ThemeVariant {
   Success = "success",
   Warning = "warning",
   Error = "error",
-  Info = "info",
   Accent = "accent",
   Primary = "primary",
-  Secondary = "secondary",
 }
 
 /**
- * This enum defines the size options available for theming components.
- * The sizes map to rem values defined in the theme size settings.
+ * Size options for components: buttons, form controls, icons and spinners.
+ * Controls map to theme.control_height, icons and spinners to theme.icon_size.
  */
 export const enum ThemeSize {
-  ExtraSmall = "xs",
   Small = "sm",
   Medium = "md",
   Large = "lg",
-  ExtraLarge = "xl",
-  TwoXL = "2xl",
-  ThreeXL = "3xl",
-  FourXL = "4xl",
 }
 
-const THEME_SIZE_VALUES_BY_THEME_SIZE: Record<ThemeSize, string> = {
-  [ThemeSize.ExtraSmall]: theme.size.xs,
-  [ThemeSize.Small]: theme.size.sm,
-  [ThemeSize.Medium]: theme.size.md,
-  [ThemeSize.Large]: theme.size.lg,
-  [ThemeSize.ExtraLarge]: theme.size.xl,
-  [ThemeSize.TwoXL]: theme.size["2xl"],
-  [ThemeSize.ThreeXL]: theme.size["3xl"],
-  [ThemeSize.FourXL]: theme.size["4xl"],
-};
-
-const THEME_PIXEL_SIZE_VALUES_BY_THEME_SIZE: Record<ThemeSize, number> = {
-  [ThemeSize.ExtraSmall]: theme.size_pixels.xs,
-  [ThemeSize.Small]: theme.size_pixels.sm,
-  [ThemeSize.Medium]: theme.size_pixels.md,
-  [ThemeSize.Large]: theme.size_pixels.lg,
-  [ThemeSize.ExtraLarge]: theme.size_pixels.xl,
-  [ThemeSize.TwoXL]: theme.size_pixels["2xl"],
-  [ThemeSize.ThreeXL]: theme.size_pixels["3xl"],
-  [ThemeSize.FourXL]: theme.size_pixels["4xl"],
+const ICON_PIXEL_SIZE_BY_THEME_SIZE: Record<ThemeSize, number> = {
+  [ThemeSize.Small]: theme.icon_size.sm,
+  [ThemeSize.Medium]: theme.icon_size.md,
+  [ThemeSize.Large]: theme.icon_size.lg,
 };
 
 export const enum BadgeShape {
   Pill = "pill",
   Rounded = "rounded",
-}
-
-export const enum ButtonWidth {
-  Full = "full",
-  Auto = "auto",
 }
 
 export const TabsContext = createContext<TabsContextType | undefined>(
@@ -128,35 +100,52 @@ export const getVariantColors = (
     [ThemeVariant.Success]: "success",
     [ThemeVariant.Warning]: "warning",
     [ThemeVariant.Error]: "error",
-    [ThemeVariant.Info]: "info",
     [ThemeVariant.Primary]: "info",
     [ThemeVariant.Accent]: "accent",
-    [ThemeVariant.Secondary]: "accent",
   };
   return themeObj.colors[variantMap[variant]] as VariantColors;
 };
 
 /**
- * Maps ThemeSize enum to actual size values from the theme.
+ * Maps ThemeSize to an icon size in pixels (Icon and Spinner): sm 12, md 16, lg 20.
  * @param size - The ThemeSize to map.
- * @returns The corresponding size value from the theme.
+ * @returns The icon size in pixels. Medium (16px) matches the body text.
  * @example
- * const sizeValue = getThemeSizeValuesByThemeSize(ThemeSize.Large);
+ * const px = getIconPixelSize(ThemeSize.Large); // 20
  */
-export const getThemeSizeValuesByThemeSize = (size: ThemeSize) => {
-  return THEME_SIZE_VALUES_BY_THEME_SIZE[size] ?? theme.size.md;
+export const getIconPixelSize = (size: ThemeSize) => {
+  return ICON_PIXEL_SIZE_BY_THEME_SIZE[size] ?? theme.icon_size.md;
 };
 
 /**
- * Unfortunately, sometimes we need pixel values instead of rem values. This is to perform some calculations.
- * when for example we want the container of an icon to be as big as the icon itself plus some percentage that
- * scales with the icon size.
- * This utility function maps ThemeSize to pixel values from the theme, so that, at least, we have a single source of truth for sizes.
- * @param size - The ThemeSize to map.
- * @returns The corresponding pixel size value from the theme.
+ * Dimensions shared by buttons, inputs and selects, so that controls of the
+ * same size have the same height: sm 28px, md 34px, lg 42px.
+ * @returns height, horizontal padding, gap between icon and label, and font size.
  * @example
- * const pixelSizeValue = getThemePixelSizeValuesByThemeSize(ThemeSize.Large); // returns "16px"
+ * const { height, paddingX } = getControlSize(theme, ThemeSize.Small);
  */
-export const getThemePixelSizeValuesByThemeSize = (size: ThemeSize) => {
-  return THEME_PIXEL_SIZE_VALUES_BY_THEME_SIZE[size] ?? theme.size_pixels.md;
+export const getControlSize = (themeObj: Theme, size: ThemeSize) => {
+  switch (size) {
+    case ThemeSize.Small:
+      return {
+        height: themeObj.control_height.sm,
+        paddingX: themeObj.spacing.sm,
+        gap: themeObj.spacing.xs,
+        fontSize: themeObj.fonts.size.sm,
+      };
+    case ThemeSize.Large:
+      return {
+        height: themeObj.control_height.lg,
+        paddingX: themeObj.spacing.md,
+        gap: themeObj.spacing.sm,
+        fontSize: themeObj.fonts.size.base,
+      };
+    default:
+      return {
+        height: themeObj.control_height.md,
+        paddingX: themeObj.spacing.sm,
+        gap: themeObj.spacing.sm,
+        fontSize: themeObj.fonts.size.base,
+      };
+  }
 };

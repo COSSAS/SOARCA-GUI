@@ -131,7 +131,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                   {status === StepExecutionStatus.Running ? (
                     <Spinner
                       $variant={ThemeVariant.Warning}
-                      $size={ThemeSize.Large}
+                      $size={ThemeSize.Medium}
                       $withContainer
                     />
                   ) : status === StepExecutionStatus.Executed ? (
@@ -157,7 +157,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                     <Icon
                       $icon={IconExclamationCircle}
                       $round
-                      $variant={ThemeVariant.Info}
+                      $variant={ThemeVariant.Primary}
                     />
                   </TimelineIconContainer>
                   <TimelineRightCell>
@@ -290,7 +290,7 @@ const UserPendingActionCard: React.FC<UserActionCardProps> = ({ onClick }) => {
   return (
     <UserPendingActionItem onClick={onClick}>
       <TimelineItem>
-        <NotificationCard $variant={ThemeVariant.Info}>
+        <NotificationCard $variant={ThemeVariant.Primary}>
           <Spacer $direction="vertical" $gap="xs" $align="start">
             <TimelineHeader>
               <TimelineTitle>User action required</TimelineTitle>

@@ -9,10 +9,6 @@ const fonts = {
     sm: "0.875rem", // 14px
     base: "1rem", // 16px
     lg: "1.125rem", // 18px
-    xl: "1.25rem", // 20px
-    "2xl": "1.5rem", // 24px
-    "3xl": "1.875rem", // 30px
-    "4xl": "2.25rem", // 36px
   },
   weight: {
     normal: 400,
@@ -69,9 +65,9 @@ export const theme = {
     },
     warning: {
       bg: "#fff7a3",
-      border: "#facc15",
+      border: "#eab308",
       text: "#ca8a04",
-      solidBg: "#facc15",
+      solidBg: "#eab308",
       solidText: "#ffffff",
     },
     accent: {
@@ -119,7 +115,7 @@ export const theme = {
       border: "#e5e7eb",
     },
     palette: {
-      primary: "#2d8cf0",
+      primary: "#3b82f6",
       primaryDark: "#1f5fad",
       secondary: "#27b3c7",
       tertiary: "#8bd5ff",
@@ -139,25 +135,16 @@ export const theme = {
     "2xl": "1.5rem", // 24px
     "3xl": "2rem", // 32px
   },
-  size: {
-    xs: "0.25rem", // 4px
-    sm: "0.5rem", // 8px
-    md: "0.75rem", // 12px
-    lg: "1rem", // 16px
-    xl: "1.25rem", // 20px
-    "2xl": "1.5rem", // 24px
-    "3xl": "2rem", // 32px
-    "4xl": "3rem", // 48px
+  // Height of buttons, inputs and selects, so controls of the same size line up.
+  control_height: {
+    sm: "1.75rem", // 28px
+    md: "2.125rem", // 34px
+    lg: "2.625rem", // 42px
   },
-  size_pixels: {
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 20,
-    "2xl": 24,
-    "3xl": 32,
-    "4xl": 48,
+  icon_size: {
+    sm: 12,
+    md: 16,
+    lg: 20,
   },
   radius: {
     sm: "0.25rem",
@@ -197,17 +184,14 @@ export const theme = {
     info: 3000,
   },
   typography: {
-    h1: {
-      font: `${fonts.weight.bold} ${fonts.size["4xl"]}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
-    },
     h2: {
-      font: `${fonts.weight.semibold} ${fonts.size["2xl"]}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
+      font: `${fonts.weight.semibold} ${fonts.size.lg}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
     h3: {
-      font: `${fonts.weight.semibold} ${fonts.size.xl}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
+      font: `${fonts.weight.semibold} ${fonts.size.base}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
     h4: {
-      font: `${fonts.weight.semibold} ${fonts.size.lg}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
+      font: `${fonts.weight.semibold} ${fonts.size.sm}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
     body: {
       font: `${fonts.weight.normal} ${fonts.size.base}/${fonts.lineHeight.normal} ${fonts.family.primary}`,
@@ -221,11 +205,8 @@ export const theme = {
     small: {
       font: `${fonts.weight.normal} ${fonts.size.xs}/${fonts.lineHeight.tight} ${fonts.family.primary}`,
     },
-    code_small: {
+    code: {
       font: `${fonts.weight.normal} ${fonts.size.sm}/${fonts.lineHeight.relaxed} ${fonts.family.mono}`,
-    },
-    code_medium: {
-      font: `${fonts.weight.normal} ${fonts.size.base}/${fonts.lineHeight.relaxed} ${fonts.family.mono}`,
     },
   },
   interactions: {
@@ -278,10 +259,10 @@ export const darkTheme: Theme = {
     },
     warning: {
       bg: "#2e2a1a",
-      border: "#facc15",
+      border: "#eab308",
       text: "#fde68a",
-      solidBg: "#facc15",
-      solidText: "#1f2937",
+      solidBg: "#eab308",
+      solidText: "#ffffff",
     },
     accent: {
       bg: "#2a1f3d",

@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 export const PlaybookListItem = styled.div`
+  position: relative;
+
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing["2xl"]};
@@ -8,20 +10,30 @@ export const PlaybookListItem = styled.div`
   padding-left: ${({ theme }) => theme.spacing.lg};
   padding-right: ${({ theme }) => theme.spacing.lg};
 
-  border: 2px solid ${({ theme }) => theme.colors.palette.primary};
-  border-radius: ${({ theme }) => theme.radius.lg};
+  border: 1px solid ${({ theme }) => theme.colors.border.medium};
+  border-radius: ${({ theme }) => `0 ${theme.radius.sm} ${theme.radius.sm} 0`};
   background-color: ${({ theme }) => theme.colors.background.primary};
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+
+    width: 4px;
+
+    background-color: ${({ theme }) => theme.colors.palette.primary};
+  }
 
   cursor: pointer;
   transition:
     background-color ${({ theme }) => theme.transitions.base},
-    border-color ${({ theme }) => theme.transitions.base},
-    box-shadow ${({ theme }) => theme.transitions.base};
+    border-color ${({ theme }) => theme.transitions.base};
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.info.border};
     background-color: ${({ theme }) => theme.colors.info.bg};
-    box-shadow: ${({ theme }) => theme.shadows.md};
   }
 `;
 
@@ -34,9 +46,9 @@ export const PlaybookInfo = styled.div`
   margin-right: ${({ theme }) => theme.spacing.lg};
 `;
 
-export const PlaybookName = styled.h4`
+export const PlaybookName = styled.h3`
   color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.h4.font};
+  font: ${({ theme }) => theme.typography.h3.font};
 `;
 
 export const PlaybookDescription = styled.p`
@@ -94,8 +106,8 @@ export const TimelineStep = styled.div<{ $position: "top" | "bottom" }>`
 `;
 
 export const TimelineDot = styled.div<{ $type: string }>`
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
 
   border: 2px solid ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.radius.full};
@@ -142,6 +154,15 @@ export const PlaybookActions = styled.div`
   align-items: center;
 
   padding-left: ${({ theme }) => theme.spacing.md};
+`;
+
+export const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+
+  width: 100%;
+  max-width: 400px;
 `;
 
 export const PlaybookList = styled.div`

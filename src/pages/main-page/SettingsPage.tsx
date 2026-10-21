@@ -67,7 +67,7 @@ export const SettingsPage: React.FC = () => {
         <CardBody>
           {isLoading ? (
             <CenteredCardContent>
-              <Spinner $size={ThemeSize.Large} />
+              <Spinner $size={ThemeSize.Medium} />
             </CenteredCardContent>
           ) : (
             <DetailsGrid>

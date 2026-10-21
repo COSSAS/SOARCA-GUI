@@ -1,6 +1,6 @@
 import { ThemeSize, ThemeVariant } from "@/components";
-import { useQuery } from "@tanstack/react-query";
 import { IconFilePlus } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -14,13 +14,16 @@ import {
   CardTitle,
   CenteredCardContent,
   Icon,
+  Input,
   Spinner,
   Text,
 } from "@/components";
 import { Playbook, Step } from "@/types";
 import { PATHS, sortByString } from "@/utils";
 
+import { PlaybookActionsMenu } from "./PlaybookActionsMenu";
 import {
+  HeaderActions,
   PlaybookActions,
   PlaybookDescription,
   PlaybookInfo,
@@ -34,8 +37,7 @@ import {
   TimelineStep,
   TimelineSteps,
 } from "./PlaybooksPage.styles";
-import { getOrderedSteps } from "./utils";
-import { PlaybookActionsMenu } from "./PlaybookActionsMenu";
+import { filterPlaybooks, getOrderedSteps } from "./utils";
 
 interface PlaybookTimelineProps {
   workflow: Record<string, Step>;
@@ -135,6 +137,7 @@ const PlaybookItem: React.FC<PlaybookItemProps> = ({ playbook, onClick }) => {
 
 export const PlaybooksPage: React.FC = () => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["playbooks"],
     queryFn: getPlaybooks,
@@ -142,7 +145,7 @@ export const PlaybooksPage: React.FC = () => {
   });
 
   const sortedPlaybooks = sortByString(
-    [...(data || [])],
+    [...filterPlaybooks(data || [], search)],
     (p) => p.name || "",
     true,
     false,
@@ -158,13 +161,19 @@ export const PlaybooksPage: React.FC = () => {
     if (isLoading)
       return (
         <CenteredCardContent>
-          <Spinner $size={ThemeSize.Large} />
+          <Spinner $size={ThemeSize.Medium} />
         </CenteredCardContent>
       );
     if (isError)
       return <Text>{parsedError?.message || "Could not load playbooks"}</Text>;
     if (sortedPlaybooks.length === 0)
-      return <Text>No playbooks available</Text>;
+      return (
+        <Text>
+          {search.trim()
+            ? `No playbooks match "${search.trim()}"`
+            : "No playbooks available"}
+        </Text>
+      );
     return (
       <PlaybookList>
         {sortedPlaybooks.map((playbook) => (
@@ -182,14 +191,24 @@ export const PlaybooksPage: React.FC = () => {
     <CardContainer>
       <CardHeader>
         <CardTitle>Playbooks</CardTitle>
-        <Button
-          $variant={ThemeVariant.Primary}
-          $size={ThemeSize.Small}
-          onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
-        >
-          <Icon $icon={IconFilePlus} />
-          New
-        </Button>
+        <HeaderActions>
+          <Input
+            id="playbooks-search"
+            type="search"
+            placeholder="Search by name, ID or type"
+            aria-label="Search playbooks"
+            value={search}
+            autoFocus
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button
+            $variant={ThemeVariant.Primary}
+            onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
+          >
+            <Icon $icon={IconFilePlus} />
+            New
+          </Button>
+        </HeaderActions>
       </CardHeader>
       <CardBody>{renderBody()}</CardBody>
     </CardContainer>

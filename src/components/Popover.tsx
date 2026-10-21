@@ -1,6 +1,5 @@
 import React, { createContext, useContext } from "react";
 import styled from "styled-components";
-import { ControlLabel } from "./Typography";
 
 const PopoverContext = createContext<string | undefined>(undefined);
 
@@ -13,13 +12,7 @@ const PopoverTrigger = styled.button<{ $anchorName: string }>`
 
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
 
-  border: 0;
   border-radius: ${({ theme }) => theme.radius.md};
-  background: transparent;
-
-  color: inherit;
-
-  cursor: pointer;
 
   &:hover {
     background: ${({ theme }) => theme.colors.info.bg};
@@ -38,7 +31,6 @@ const PopoverContent = styled.div<{ $anchorName: string }>`
   position-area: block-end span-inline-end;
   position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
 
-  box-sizing: border-box;
   inline-size: max-content;
   min-inline-size: min(10rem, calc(100vw - 1rem));
   max-inline-size: min(18rem, calc(100vw - 1rem));
@@ -75,20 +67,15 @@ const PopoverItemButton = styled.button`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
 
-  box-sizing: border-box;
   inline-size: 100%;
 
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
 
-  border: 0;
   border-radius: ${({ theme }) => theme.radius.md};
-  background: transparent;
 
   color: ${({ theme }) => theme.colors.info.border};
   font: ${({ theme }) => theme.typography.caption.font};
   text-align: start;
-
-  cursor: pointer;
 
   &:hover:not(:disabled) {
     background: color-mix(
@@ -165,11 +152,7 @@ export const PopoverItem: React.FC<PopoverItemProps> = ({ children, ...props }) 
       popoverTargetAction="hide"
       {...props}
     >
-      {React.Children.map(children, (child) =>
-        typeof child === "string" || typeof child === "number"
-          ? <ControlLabel>{child}</ControlLabel>
-          : child,
-      )}
+      {children}
     </PopoverItemButton>
   );
 };

@@ -91,7 +91,6 @@ export const NavItem = styled.a<{ $isActive?: boolean }>`
 
   border-radius: ${({ theme }) => theme.radius.md};
   color: ${({ theme }) => theme.colors.text.secondary};
-  border: none;
 
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
   gap: ${({ theme }) => theme.spacing.md};
