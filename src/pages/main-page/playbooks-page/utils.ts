@@ -102,6 +102,22 @@ export const getOrderedSteps = (
 };
 
 /**
+ * Case-insensitive search on name, id and playbook types.
+ */
+export const filterPlaybooks = (
+  playbooks: Playbook[],
+  query: string,
+): Playbook[] => {
+  const q = query.trim().toLowerCase();
+  if (!q) return playbooks;
+  return playbooks.filter((p) =>
+    [p.name, p.id, ...(p.playbook_types ?? [])].some((field) =>
+      field?.toLowerCase().includes(q),
+    ),
+  );
+};
+
+/**
  * Generates a safe filename for exporting a playbook.
  * Format: {id}-{modified-date}.json
  */
