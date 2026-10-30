@@ -4,6 +4,8 @@ import React from "react";
 import {
   Badge,
   CopyButton,
+  DetailsGrid,
+  DetailsItem,
   ExpandableCard,
   ExpandableText,
   FormLabel,
@@ -13,10 +15,6 @@ import {
   ThemeSize,
   ThemeVariant,
 } from "@/components";
-import {
-  DetailsGrid,
-  DetailsItem,
-} from "@/pages/main-page/monitoring-page/ExecutionDetailPage.styles";
 import {
   getBadgeVariantFromStepStatus,
   getIconFromStepStatus,

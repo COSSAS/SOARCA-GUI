@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { FormLabel, Link } from "@/components";
-import {
-  DetailsItem,
-  DetailsValue,
-} from "@/pages/main-page/monitoring-page/ExecutionDetailPage.styles";
+import { DetailsItem, DetailsValue, FormLabel, Link } from "@/components";
 import { MadeWithLove, PixelHeart } from "./Credits.styles";
 
 const TRIGGER = "credits";
