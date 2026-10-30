@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 import { getSystemStatus } from "@/api/status";
+import { useAuth } from "@/auth/AuthContext";
 import {
   Badge,
   CardBody,
@@ -9,6 +10,9 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContent,
+  DetailsGrid,
+  DetailsItem,
+  DetailsValue,
   FormLabel,
   RadioGroup,
   Spacer,
@@ -16,16 +20,13 @@ import {
   ThemeSize,
   ThemeVariant,
 } from "@/components";
-import {
-  DetailsGrid,
-  DetailsItem,
-  DetailsValue,
-} from "@/pages/main-page/monitoring-page/ExecutionDetailPage.styles";
 import { ThemeMode, useThemeMode } from "@/theme";
 import { formatDateTime, formatDuration } from "@/utils";
 import { CreditsEasterEgg } from "./Credits";
+import { AccountDetails } from "./AccountDetails";
 
 export const SettingsPage: React.FC = () => {
+  const { config, user } = useAuth();
   const { mode, setMode } = useThemeMode();
 
   const { data, isLoading, isError } = useQuery({
@@ -38,6 +39,18 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <Spacer $direction="vertical" $gap="lg">
+      {config?.authentication_enabled && user && (
+        <CardContainer>
+          <CardHeader>
+            <CardTitle>Your account</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <DetailsGrid>
+              <AccountDetails principal={user.principal} showPermissions />
+            </DetailsGrid>
+          </CardBody>
+        </CardContainer>
+      )}
       <CardContainer>
         <CardHeader>
           <CardTitle>Appearance</CardTitle>

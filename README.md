@@ -164,6 +164,44 @@ flowchart TB
    ```
    The app will be available at `http://localhost:HOST_PORT` with hot-reload enabled.
 
+### Enable sign-in
+
+The GUI has no sign-in settings of its own. At startup it reads
+`/api/auth/config` from SOARCA, which lists the identity providers users can
+sign in with. The GUI then signs the user in with the authorization code flow
+and PKCE, and sends the access token to SOARCA as a bearer token. No client
+secret is involved.
+
+1. Serve the GUI over HTTPS (see `VITE_ENABLE_HTTPS` above, or the Nginx image).
+   The GUI already forwards `/api/*` to SOARCA through `VITE_BACKEND_URL` or
+   `NGINX_BACKEND_URL`.
+2. Register a public client for the GUI at your identity provider with the
+   redirect URI `https://<GUI host>/login/callback`:
+   - **Microsoft Entra ID:** add a Single-page application platform, and grant
+     the delegated SOARCA API permission `access_as_user` with admin consent.
+   - **Other OIDC providers:** create a public client without a secret. SOARCA
+     checks that tokens are issued to `OIDC_CLIENT_ID`, so use that client.
+3. Configure SOARCA next to its existing auth settings:
+
+   ```yaml
+   AUTH_ENABLED: "true"
+   # Microsoft Entra ID
+   AUTH_ENTRA_PUBLIC_CLIENT_ID: "<GUI client ID>"
+   # or another OIDC provider
+   OIDC_ISSUER: "https://<provider>/"
+   OIDC_CLIENT_ID: "<GUI client ID>"
+   ```
+
+   If you set `AUTH_ENTRA_ALLOWED_CLIENT_IDS`, include the GUI client ID in it.
+
+Menus and actions follow the permissions SOARCA reports for the user; SOARCA
+enforces them. The tokens are stored in the browser's local storage, so every
+tab shares the sign-in. Signing out clears them in the GUI only; the session at
+the identity provider stays open.
+
+If a reverse proxy in front of SOARCA authenticates users and adds the bearer
+token, the GUI picks up the signed-in user without any extra settings.
+
 ### Production Mode
 
 Production mode builds optimized static assets and serves them via Nginx. We use this mode to publish Docker images and make releases, but it can be useful to run a production build locally through Vite as well by building the project locally and previewing it. Also this mode is supported for both local and Docker Container environment.

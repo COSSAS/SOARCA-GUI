@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
+import { AuthGate, PermissionGate } from "@/auth/AuthGate";
+import { Permissions } from "@/auth/permissions";
 
 import { ToasterSetup } from "./ToasterSetup";
 import { LoginPage } from "./pages/LoginPage";
@@ -20,26 +22,48 @@ function App() {
       <ToasterSetup />
       <Routes>
         <Route path={PATHS.LOGIN} element={<LoginPage />} />
+        <Route path={PATHS.LOGIN_CALLBACK} element={<LoginPage />} />
         <Route path={PATHS.NOT_FOUND} element={<NotFoundPage />} />
         <Route path={PATHS.BASE} element={<MainPage />}>
-          <Route index element={<Navigate to={PATHS.DASHBOARD} replace />} />
-          <Route
-            path={PATHS.DASHBOARD}
-            element={<PlaceholderPage content="⚠️ Dashboard coming soon!" />}
-          />
-          <Route path={PATHS.PLAYBOOKS.BASE} element={<PlaybooksPage />} />
-          <Route path={PATHS.PLAYBOOKS.NEW} element={<PlaybookCreatePage />} />
-          <Route path={PATHS.PLAYBOOKS.EDIT} element={<PlaybookEditPage />} />
-          <Route
-            path={PATHS.PLAYBOOKS.DETAIL}
-            element={<PlaybookDetailPage />}
-          />
-          <Route path={PATHS.MONITORING.BASE} element={<MonitoringPage />} />
-          <Route
-            path={PATHS.MONITORING.DETAIL}
-            element={<ExecutionDetailPage />}
-          />
-          <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
+          <Route element={<AuthGate />}>
+            <Route index element={<Navigate to={PATHS.DASHBOARD} replace />} />
+            <Route
+              path={PATHS.DASHBOARD}
+              element={<PlaceholderPage content="⚠️ Dashboard coming soon!" />}
+            />
+            <Route
+              element={<PermissionGate permission={Permissions.PlaybookRead} />}
+            >
+              <Route path={PATHS.PLAYBOOKS.BASE} element={<PlaybooksPage />} />
+              <Route
+                path={PATHS.PLAYBOOKS.DETAIL}
+                element={<PlaybookDetailPage />}
+              />
+              <Route
+                path={PATHS.MONITORING.BASE}
+                element={<MonitoringPage />}
+              />
+              <Route
+                path={PATHS.MONITORING.DETAIL}
+                element={<ExecutionDetailPage />}
+              />
+            </Route>
+            <Route
+              element={
+                <PermissionGate permission={Permissions.PlaybookWrite} />
+              }
+            >
+              <Route
+                path={PATHS.PLAYBOOKS.NEW}
+                element={<PlaybookCreatePage />}
+              />
+              <Route
+                path={PATHS.PLAYBOOKS.EDIT}
+                element={<PlaybookEditPage />}
+              />
+            </Route>
+            <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
+          </Route>
         </Route>
         <Route path="*" element={<Navigate to={PATHS.NOT_FOUND} replace />} />
       </Routes>

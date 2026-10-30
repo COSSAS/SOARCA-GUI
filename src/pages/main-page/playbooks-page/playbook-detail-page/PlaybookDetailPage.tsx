@@ -13,6 +13,8 @@ import { useNavigate, useParams } from "react-router";
 import { deletePlaybook, getPlaybookById } from "@/api/playbooks";
 import { triggerPlaybookById } from "@/api/trigger";
 import { formatErrorForToast, getErrorFromApiResponse } from "@/api/utils";
+import { RequirePermission } from "@/auth/AuthGate";
+import { Permissions } from "@/auth/permissions";
 import {
   Button,
   CardBody,
@@ -171,39 +173,47 @@ export const PlaybookDetailPage: React.FC = () => {
           Back to playbooks
         </Link>
         <Spacer $direction="horizontal" $gap="sm">
-          <Button
-            $variant={ThemeVariant.Primary}
-            $fullWidth
-            $ghost
-            onClick={() =>
-              navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId!))
-            }
-          >
-            <Icon $icon={IconPencil} />
-            Edit
-          </Button>
-          <Button
-            $variant={ThemeVariant.Error}
-            $fullWidth
-            $ghost
-            onClick={() => setOpenDeleteConfirm(true)}
-            disabled={deleteMutation.isPending}
-          >
-            <Icon $icon={IconTrash} />
-            Delete
-          </Button>
-          <Button
-            $variant={ThemeVariant.Success}
-            $fullWidth
-            $ghost
-            onClick={() =>
-              hasExternalVars ? setOpenRunModal(true) : setOpenRunConfirm(true)
-            }
-            disabled={mutation.isPending}
-          >
-            <Icon $icon={IconPlayerPlay} />
-            Run
-          </Button>
+          <RequirePermission permission={Permissions.PlaybookWrite}>
+            <Button
+              $variant={ThemeVariant.Primary}
+              $fullWidth
+              $ghost
+              onClick={() =>
+                navigate(
+                  PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId!),
+                )
+              }
+            >
+              <Icon $icon={IconPencil} />
+              Edit
+            </Button>
+            <Button
+              $variant={ThemeVariant.Error}
+              $fullWidth
+              $ghost
+              onClick={() => setOpenDeleteConfirm(true)}
+              disabled={deleteMutation.isPending}
+            >
+              <Icon $icon={IconTrash} />
+              Delete
+            </Button>
+          </RequirePermission>
+          <RequirePermission permission={Permissions.PlaybookExecute}>
+            <Button
+              $variant={ThemeVariant.Success}
+              $fullWidth
+              $ghost
+              onClick={() =>
+                hasExternalVars
+                  ? setOpenRunModal(true)
+                  : setOpenRunConfirm(true)
+              }
+              disabled={mutation.isPending}
+            >
+              <Icon $icon={IconPlayerPlay} />
+              Run
+            </Button>
+          </RequirePermission>
 
           <ExportButton
             $variant={ThemeVariant.Accent}

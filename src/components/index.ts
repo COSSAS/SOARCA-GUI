@@ -5,6 +5,7 @@ export * from "./CodeEditor";
 export * from "./ConfirmDialog";
 export * from "./Containers";
 export * from "./CopyButton";
+export * from "./Details";
 export * from "./ExportButton";
 export * from "./export";
 export * from "./FileDrop";
