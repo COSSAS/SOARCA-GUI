@@ -1,3 +1,4 @@
+export * from "./auth";
 export * from "./cacao";
 export * from "./common";
 export * from "./keymanagement";

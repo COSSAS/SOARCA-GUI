@@ -83,7 +83,6 @@ export const MonitoringPage: React.FC = () => {
     refetchInterval: (_, query) => (query.state.error ? 10000 : 1000),
     refetchIntervalInBackground: true,
     refetchOnWindowFocus: false,
-    retry: 3,
   });
 
   const rows = parseReportToRows(data || []) as PlaybookRow[];

@@ -1,19 +1,94 @@
+import { getAccessToken } from "@/auth/oidc";
 import { ErrorResponse } from "@/types";
+import { PATHS } from "@/utils";
 
-/**
- * Fetches from the API and handles errors uniformly.
- * @param url - API endpoint URL
- * @returns Parsed JSON response
- * @throws Error with parsed ErrorResponse if the response is not ok
- */
-export async function fetchFromApi<T>(url: string): Promise<T> {
-  const res = await fetch(url);
+const statusMessages: Partial<Record<number, string>> = {
+  401: "Please sign in again.",
+  403: "You do not have access to this resource.",
+  429: "Too many requests. Wait a moment and try again.",
+};
 
-  if (!res.ok) {
-    const parsed = (await res.json()) as ErrorResponse;
-    throw new Error(JSON.stringify(parsed));
+// A full page load clears data cached for the previous user.
+export function redirectToLogin(reason?: "expired") {
+  const params = new URLSearchParams({
+    return_to: location.pathname + location.search + location.hash,
+  });
+  if (reason) params.set("reason", reason);
+  window.location.assign(`${PATHS.LOGIN}?${params}`);
+}
+
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly details: ErrorResponse,
+  ) {
+    super(details.message);
+    this.name = "ApiError";
   }
-  return res.json() as T;
+}
+
+export function shouldRetryApiRequest(failures: number, error: unknown) {
+  return (
+    !(error instanceof ApiError && [401, 403].includes(error.status)) &&
+    failures < 3
+  );
+}
+
+export async function requestFromApi<T>(
+  url: string,
+  init: RequestInit = {},
+  readBody = true,
+): Promise<T> {
+  const headers = new Headers(init.headers);
+  const token = await getAccessToken();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  let res: Response;
+  try {
+    res = await fetch(url, { ...init, headers });
+  } catch {
+    throw new ApiError(0, {
+      status: 0,
+      "original-call": url,
+      message:
+        "Could not connect to SOARCA. Check your connection and try again.",
+    });
+  }
+  if (res.ok && (!readBody || res.status === 204 || res.status === 205)) {
+    return undefined as T;
+  }
+  let body: unknown;
+  try {
+    body = await res.json();
+  } catch {
+    if (res.ok) {
+      throw new ApiError(502, {
+        status: 502,
+        "original-call": url,
+        message: "SOARCA returned an unreadable response. Please try again.",
+      });
+    }
+  }
+  if (res.ok) return body as T;
+
+  if (res.status === 401 && !url.startsWith("/api/auth/")) {
+    redirectToLogin("expired");
+  }
+  const details = (typeof body === "object" && body) || {};
+  let message = "The request could not be completed. Please try again.";
+  if (res.status >= 500) {
+    message = "SOARCA could not complete the request. Please try again later.";
+  } else if ("message" in details && typeof details.message === "string") {
+    message = details.message;
+  }
+  throw new ApiError(res.status, {
+    "original-call": url,
+    status: res.status,
+    message: statusMessages[res.status] || message,
+  });
+}
+
+export function fetchFromApi<T>(url: string): Promise<T> {
+  return requestFromApi<T>(url);
 }
 
 export const enum HttpMutationMethod {
@@ -22,80 +97,25 @@ export const enum HttpMutationMethod {
   PATCH = "PATCH",
 }
 
-/**
- * Sends data to the API using the specified method and handles errors uniformly.
- * @param method - HTTP method (POST, PUT, PATCH) @see HttpMutationMethod.
- * @param url - API endpoint URL
- * @param body - Request body as a record
- * @returns Parsed JSON response
- * @throws Error with parsed ErrorResponse if the response is not ok
- */
-export async function mutationToApi<T>(
+export function mutationToApi<T>(
   method: HttpMutationMethod,
   url: string,
   body: Record<string, unknown>,
 ): Promise<T> {
-  const res = await fetch(url, {
-    method: method,
-    headers: {
-      "Content-Type": "application/json",
-    },
+  return requestFromApi<T>(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-
-  if (!res.ok) {
-    const parsed = (await res.json()) as ErrorResponse;
-    throw new Error(JSON.stringify(parsed));
-  }
-  const result = (await res.json()) as T;
-  return result;
 }
 
-/**
- * Deletes a resource at the specified URL and handles errors uniformly.
- * @param url - API endpoint URL
- * @throws Error with parsed ErrorResponse if the response is not ok
- * @example
- * await deleteToApi('/api/resource/1');
- */
-export async function deleteToApi(url: string): Promise<void> {
-  const res = await fetch(url, {
-    method: "DELETE",
-  });
-
-  if (!res.ok) {
-    const parsed = (await res.json()) as ErrorResponse;
-    throw new Error(JSON.stringify(parsed));
-  }
+export function deleteToApi(url: string): Promise<void> {
+  return requestFromApi<void>(url, { method: "DELETE" }, false);
 }
 
-/**
- * This utility function attempts to parse an Error object's message
- * as an ErrorResponse. If parsing fails, it returns an empty ErrorResponse object.
- * @param error - The Error object to parse
- * @returns Parsed ErrorResponse or an empty ErrorResponse object
- * @example
- * const errorResponse = apiErrorToErrorResponse(error);
- */
-export const getErrorFromApiResponse = (error: unknown): ErrorResponse => {
-  if (error instanceof Error) {
-    try {
-      return JSON.parse(error.message) as ErrorResponse;
-    } catch {
-      return {} as ErrorResponse;
-    }
-  }
-  return {} as ErrorResponse;
-};
+export const getErrorFromApiResponse = (error: unknown): ErrorResponse =>
+  error instanceof ApiError ? error.details : ({} as ErrorResponse);
 
-/**
- * Formats an error for display in a toast notification.
- * @param error - The error to format (any value; non-Error inputs use the default message)
- * @param defaultMessage - The default message to use if the error does not have a specific message
- * @returns Formatted error message string
- * @example
- * const message = formatErrorForToast(error, "An unexpected error occurred.");
- */
 export const formatErrorForToast = (
   error: unknown,
   defaultMessage: string,
