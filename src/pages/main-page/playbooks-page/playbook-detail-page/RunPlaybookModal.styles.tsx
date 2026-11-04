@@ -1,9 +1,9 @@
 import styled from "styled-components";
 
 export const Description = styled.p`
+  margin: 0 0 ${({ theme }) => theme.spacing.lg} 0;
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.secondary};
-  margin: 0 0 ${({ theme }) => theme.spacing.lg} 0;
 `;
 
 export {
