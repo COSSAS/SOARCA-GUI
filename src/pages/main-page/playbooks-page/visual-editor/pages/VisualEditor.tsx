@@ -11,13 +11,13 @@ import { ANIMATED_FIT_VIEW_OPTIONS } from "../canvas/constants";
 import { FlowCanvas } from "../canvas/FlowCanvas";
 import { setPositions, type Position } from "../model/coordinates";
 import { addStep, connect, duplicateStep, newStepId } from "../model/edits";
-import type { Link } from "../model/graph";
 import { autoLayout, NODE_GAP, NODE_WIDTH } from "../model/layout";
 import {
   canAddStep,
   canConnect,
   findSaveBlocker,
   getAllIssues,
+  type Link,
   PLAYBOOK_OWNER,
 } from "../model/rules";
 import type { CacaoSpec, PanelTab } from "../model/specs";
@@ -35,6 +35,7 @@ import { EditorLayout, Toolbar, ToolbarTitle } from "./VisualEditor.styles";
 
 type VisualEditorProps = {
   title: string;
+  saveLabel: string;
   initial: Playbook;
   spec: CacaoSpec;
   isSaving: boolean;
@@ -51,6 +52,7 @@ const toSize = (measured?: { width?: number; height?: number }) =>
 
 const EditorContent: React.FC<VisualEditorProps> = ({
   title,
+  saveLabel,
   initial,
   spec,
   isSaving,
@@ -116,7 +118,9 @@ const EditorContent: React.FC<VisualEditorProps> = ({
     requestAnimationFrame(() => fitView(ANIMATED_FIT_VIEW_OPTIONS));
   };
 
-  const showBlocker = (blocker: { ownerId: string; tab?: PanelTab }) => {
+  const showFirstError = () => {
+    const blocker = findSaveBlocker(issues, invalidDrafts);
+    if (!blocker) return;
     setSelectedIds(blocker.ownerId === PLAYBOOK_OWNER ? [] : [blocker.ownerId]);
     setActiveTab(blocker.tab);
     setRightCollapsed(false);
@@ -131,12 +135,6 @@ const EditorContent: React.FC<VisualEditorProps> = ({
   };
 
   const handleSave = () => {
-    const blocker = findSaveBlocker(issues, invalidDrafts);
-    if (blocker) {
-      toast.error(`Cannot save yet. ${blocker.message}`);
-      showBlocker(blocker);
-      return;
-    }
     const toSave = { ...playbook, modified: new Date().toISOString() };
     const validation = validatePlaybookJson(JSON.stringify(toSave));
     if (!validation.valid) {
@@ -144,6 +142,11 @@ const EditorContent: React.FC<VisualEditorProps> = ({
       return;
     }
     onSave(toSave, markSaved);
+  };
+
+  const handleChangeSpec = (version: string) => {
+    edit((current) => ({ ...current, spec_version: version }));
+    onChangeSpec?.(version);
   };
 
   return (
@@ -158,7 +161,9 @@ const EditorContent: React.FC<VisualEditorProps> = ({
           {errors > 0 && (
             <Badge
               $variant={ThemeVariant.Error}
-              title="Missing required fields or invalid JSON. These block saving"
+              $isClickable
+              title="SOARCA rejects the playbook until these are fixed. Click to show the first one"
+              onClick={showFirstError}
             >
               {errors} {errors === 1 ? "error" : "errors"}
             </Badge>
@@ -193,9 +198,9 @@ const EditorContent: React.FC<VisualEditorProps> = ({
             $variant={ThemeVariant.Success}
             $size={ThemeSize.Small}
             onClick={handleSave}
-            disabled={isSaving || !hasChanges}
+            disabled={isSaving || !hasChanges || errors > 0}
           >
-            Save
+            {saveLabel}
           </Button>
         </Toolbar>
 
@@ -236,13 +241,7 @@ const EditorContent: React.FC<VisualEditorProps> = ({
           onToggle={() => setRightCollapsed((collapsed) => !collapsed)}
           activeTab={activeTab}
           onSelectTab={setActiveTab}
-          onChangeSpec={
-            onChangeSpec &&
-            ((version) => {
-              edit((current) => ({ ...current, spec_version: version }));
-              onChangeSpec(version);
-            })
-          }
+          onChangeSpec={onChangeSpec && handleChangeSpec}
           ref={propertiesRef}
         />
       </EditorLayout>

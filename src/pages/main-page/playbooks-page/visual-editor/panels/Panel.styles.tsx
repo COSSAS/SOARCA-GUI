@@ -21,15 +21,10 @@ export const Hint = styled.p`
   color: ${({ theme }) => theme.colors.text.tertiary};
 `;
 
-export const ProblemList = styled.ul`
+export const IssueList = styled.ul`
   margin: 0;
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.xl}`};
-  border-radius: ${({ theme }) => theme.radius.md};
-
+  padding-left: ${({ theme }) => theme.spacing.lg};
   font: ${({ theme }) => theme.typography.caption.font};
-  color: ${({ theme }) => theme.colors.warning.text};
-
-  background: ${({ theme }) => theme.colors.warning.bg};
 `;
 
 export const TextArea = styled.textarea`
@@ -41,7 +36,7 @@ export const TextArea = styled.textarea`
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
-  font: ${({ theme }) => theme.typography.body.font};
+  font: ${({ theme }) => theme.typography.caption.font};
   color: ${({ theme }) => theme.colors.text.primary};
 
   background: ${({ theme }) => theme.colors.background.primary};
@@ -235,7 +230,20 @@ export const AddEntryButton = styled(Button)`
   white-space: nowrap;
 `;
 
-// The divider sits at the same distance from the last step as from the hint.
+/** Address type next to its values. */
+export const AddressRow = styled.div`
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: ${({ theme }) => theme.spacing.sm};
+`;
+
+/** Lets a select fill the rest of the add-entry form. */
+export const AddEntryName = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+// The divider sits at the same distance from the hint above as from the controls below.
 export const HelpSection = styled.section`
   display: flex;
   flex-direction: column;

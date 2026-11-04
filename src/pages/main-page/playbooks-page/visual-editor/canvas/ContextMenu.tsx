@@ -12,7 +12,10 @@ import {
 } from "./ContextMenu.styles";
 import { placeContextMenu, placeSubmenu } from "./menuPosition";
 
-type ContextMenuAction =
+// Allows diagonal pointer travel into a submenu, including when it flips left.
+const SUBMENU_CLOSE_DELAY_MS = 180;
+
+export type ContextMenuAction =
   | { type: "separator" }
   | {
       type: "item";
@@ -113,8 +116,7 @@ const ContextSubmenu = ({
   };
   const scheduleHide = () => {
     clearTimeout(closeTimer.current);
-    // Allow diagonal pointer travel into a submenu, including when it flips left.
-    closeTimer.current = setTimeout(hide, 180);
+    closeTimer.current = setTimeout(hide, SUBMENU_CLOSE_DELAY_MS);
   };
 
   return (

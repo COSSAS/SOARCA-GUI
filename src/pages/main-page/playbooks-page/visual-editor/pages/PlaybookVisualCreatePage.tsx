@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 
 import { createPlaybook } from "@/api/playbooks";
 import { formatErrorForToast } from "@/api/utils";
+import type { Playbook } from "@/types";
 import { PATHS } from "@/utils";
 
 import { createEmptyPlaybook } from "../model/edits";
@@ -32,21 +33,23 @@ export const PlaybookVisualCreatePage: React.FC = () => {
       toast.error(formatErrorForToast(err, "Failed to create playbook")),
   });
 
+  const save = (data: Playbook, onSaved: () => void) =>
+    createMutation.mutate(data, {
+      onSuccess: () => {
+        onSaved();
+        navigate(PATHS.PLAYBOOKS.BASE);
+      },
+    });
+
   return (
     <VisualEditor
       title="New playbook"
+      saveLabel="Create"
       initial={initial}
       spec={spec}
       onChangeSpec={changeSpec}
       isSaving={createMutation.isPending}
-      onSave={(data, onSaved) =>
-        createMutation.mutate(data, {
-          onSuccess: () => {
-            onSaved();
-            navigate(PATHS.PLAYBOOKS.BASE);
-          },
-        })
-      }
+      onSave={save}
       onCancel={() => navigate(PATHS.PLAYBOOKS.BASE)}
     />
   );

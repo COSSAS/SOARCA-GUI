@@ -14,7 +14,16 @@ export type SingleConnection =
 export type ConnectionKind = SingleConnection | "cases" | "next_steps";
 
 /** Where a reference field gets its options from. */
-export type ReferenceSource = "agents" | "targets" | "auth" | "steps" | "variables";
+export type ReferenceSource =
+  | "agents"
+  | "targets"
+  | "auth"
+  | "steps"
+  | "variables"
+  /** What SOARCA can run, see soarca.ts. */
+  | "agentTypes"
+  | "capabilities"
+  | "commandTypes";
 
 export type FieldKind =
   | "text"
@@ -34,15 +43,27 @@ export type FieldKind =
   /** Array of entries, each edited with `entry` fields. */
   | "items"
   /** Value of a variable. The input depends on the `type` of the same entry. */
-  | "variable-value";
+  | "variable-value"
+  /** Target address: one address type with its values, e.g. `{ ipv4: ["10.0.0.1"] }`. */
+  | "address"
+  /** HTTP headers, e.g. `{ Accept: ["application/json"] }`. */
+  | "headers";
 
 export type Field = {
   key: string;
   label: string;
   kind: FieldKind;
   required?: boolean;
+  /** Required only when the `type` of the same entry is one of these. */
+  requiredForTypes?: string[];
+  /** Shown only when the `type` of the same entry is one of these. */
+  forTypes?: string[];
+  /** Limits of a `number` field. */
+  min?: number;
+  max?: number;
   /** Suggested values of an open vocabulary. Other values are allowed. */
   vocabulary?: string[];
+  /** Where the options come from. Only these options can be picked. */
   source?: ReferenceSource;
   /** Fields of one entry for `entries` and `items`. Other entry fields are edited in the advanced tab. */
   entry?: Field[];

@@ -1,7 +1,7 @@
 import type { Playbook, Step } from "@/types";
 
 import { setPositions, type Position } from "./coordinates";
-import { getAllLinks, type Link } from "./graph";
+import { getAllLinks, type Link } from "./rules";
 import type { CacaoSpec, SingleConnection } from "./specs";
 
 // Every edit returns a new playbook and keeps all fields it does not touch.
@@ -57,10 +57,7 @@ export const updateStep = (
 });
 
 /** Points `kind` of the source step at the target. A link without a case key adds a new case. */
-export const connect = (
-  playbook: Playbook,
-  link: Omit<Link, "key"> & { key?: string },
-): Playbook => {
+export const connect = (playbook: Playbook, link: Link): Playbook => {
   const step = playbook.workflow[link.source];
   if (!step) return playbook;
 

@@ -13,10 +13,8 @@ import { ThemeVariant } from "@/components/utils";
 
 import type { CacaoSpec, Field, StepField } from "./types";
 
-// Open vocabularies from the spec. They are suggestions: other values are allowed.
+// Open vocabulary from the spec. These are suggestions: other values are allowed.
 const AGENT_TARGET_TYPES = [
-  "soarca",
-  "soarca-manual",
   "group",
   "individual",
   "location",
@@ -77,7 +75,13 @@ const argList = (key: "in_args" | "out_args", label: string): StepField => ({
   tab: "variables",
 });
 
-const agentTargetEntry = (extra: Field[] = []): Field[] => [
+const agentEntry: Field[] = [
+  { key: "name", label: "Capability", kind: "text", required: true, source: "capabilities" },
+  { key: "type", label: "Type", kind: "text", required: true, source: "agentTypes" },
+  { key: "description", label: "Description", kind: "text" },
+];
+
+const targetEntry: Field[] = [
   { key: "name", label: "Name", kind: "text", required: true },
   {
     key: "type",
@@ -87,8 +91,23 @@ const agentTargetEntry = (extra: Field[] = []): Field[] => [
     vocabulary: AGENT_TARGET_TYPES,
   },
   { key: "description", label: "Description", kind: "text" },
-  ...extra,
+  {
+    key: "address",
+    label: "Address",
+    kind: "address",
+    requiredForTypes: ["http-api", "linux", "net-address", "ssh"],
+  },
+  {
+    key: "authentication_info",
+    label: "Authentication",
+    kind: "reference",
+    source: "auth",
+  },
+  { key: "port", label: "Port", kind: "text" },
 ];
+
+/** Command types that send a request body and headers. */
+const HTTP_COMMAND_TYPES = ["http-api", "openc2-http"];
 
 /**
  * CACAO 2.0, based on the OASIS spec and the JSON schemas in the CACAO roaster
@@ -100,8 +119,8 @@ export const cacao20: CacaoSpec = {
   commonFields: [
     { key: "name", label: "Name", kind: "text", tab: "details" },
     { key: "description", label: "Description", kind: "textarea", tab: "details" },
-    { key: "delay", label: "Delay (ms)", kind: "number", tab: "execution" },
-    { key: "timeout", label: "Timeout (ms)", kind: "number", tab: "execution" },
+    { key: "delay", label: "Delay (ms)", kind: "number", min: 1, tab: "execution" },
+    { key: "timeout", label: "Timeout (ms)", kind: "number", min: 0, tab: "execution" },
     { key: "owner", label: "Owner", kind: "text", tab: "execution" },
     { ...variables("step_variables"), tab: "variables" },
   ],
@@ -161,9 +180,9 @@ export const cacao20: CacaoSpec = {
       ],
     },
     { key: "labels", label: "Labels", kind: "list", tab: "metadata" },
-    { key: "priority", label: "Priority (0-100)", kind: "number", tab: "metadata" },
-    { key: "severity", label: "Severity (0-100)", kind: "number", tab: "metadata" },
-    { key: "impact", label: "Impact (0-100)", kind: "number", tab: "metadata" },
+    { key: "priority", label: "Priority (0-100)", kind: "number", min: 0, max: 100, tab: "metadata" },
+    { key: "severity", label: "Severity (0-100)", kind: "number", min: 0, max: 100, tab: "metadata" },
+    { key: "impact", label: "Impact (0-100)", kind: "number", min: 0, max: 100, tab: "metadata" },
     { key: "valid_from", label: "Valid from", kind: "timestamp", tab: "metadata" },
     { key: "valid_until", label: "Valid until", kind: "timestamp", tab: "metadata" },
     { ...variables("playbook_variables"), tab: "resources" },
@@ -172,24 +191,16 @@ export const cacao20: CacaoSpec = {
       label: "Agents",
       kind: "entries",
       tab: "resources",
-      entry: agentTargetEntry(),
+      entry: agentEntry,
       itemLabel: "agent",
-      newEntry: { id: "typed-id", defaults: { type: "soarca" } },
+      newEntry: { id: "typed-id", defaults: { type: "soarca", name: "soarca-manual" } },
     },
     {
       key: "target_definitions",
       label: "Targets",
       kind: "entries",
       tab: "resources",
-      entry: agentTargetEntry([
-        {
-          key: "authentication_info",
-          label: "Authentication",
-          kind: "reference",
-          source: "auth",
-        },
-        { key: "port", label: "Port", kind: "text" },
-      ]),
+      entry: targetEntry,
       itemLabel: "target",
       newEntry: { id: "typed-id", defaults: { type: "net-address" } },
     },
@@ -270,22 +281,21 @@ export const cacao20: CacaoSpec = {
               label: "Type",
               kind: "text",
               required: true,
-              vocabulary: [
-                "manual",
-                "bash",
-                "caldera-cmd",
-                "elastic",
-                "http-api",
-                "jupyter",
-                "kestrel",
-                "openc2-http",
-                "powershell",
-                "sigma",
-                "ssh",
-                "yara",
-              ],
+              source: "commandTypes",
             },
             { key: "command", label: "Command", kind: "textarea", required: true },
+            {
+              key: "content",
+              label: "Body",
+              kind: "textarea",
+              forTypes: HTTP_COMMAND_TYPES,
+            },
+            {
+              key: "headers",
+              label: "Headers",
+              kind: "headers",
+              forTypes: HTTP_COMMAND_TYPES,
+            },
             { key: "description", label: "Description", kind: "text" },
           ],
         },

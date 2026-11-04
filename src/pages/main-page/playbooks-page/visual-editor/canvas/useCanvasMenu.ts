@@ -5,15 +5,29 @@ import type { Playbook } from "@/types";
 
 import type { CanvasEditor } from "../model/editor";
 import { connect, disconnect, disconnectAll, removeSteps } from "../model/edits";
-import { getAllLinks, getPorts, parseHandleId, type Link } from "../model/graph";
+import { getPorts, parseHandleId } from "../model/graph";
 import { NODE_HEIGHT, RANK_GAP } from "../model/layout";
-import { canAddStep, getConnectTargets } from "../model/rules";
+import {
+  canAddStep,
+  getAllLinks,
+  getConnectTargets,
+  type Link,
+} from "../model/rules";
 import type { CacaoSpec } from "../model/specs";
 import { ANIMATED_FIT_VIEW_OPTIONS } from "./constants";
-import type { ContextMenuEntry, ContextMenuState } from "./ContextMenu";
+import type {
+  ContextMenuAction,
+  ContextMenuEntry,
+  ContextMenuState,
+} from "./ContextMenu";
 import type { StepFlowNode } from "./StepNode";
 
 type MenuEvent = React.MouseEvent | MouseEvent;
+
+// Output ports are the handles on the bottom border of a step.
+const PORT_HANDLE_SELECTOR = ".react-flow__handle-bottom";
+// Enough of a step id to tell apart steps with the same name.
+const SHORT_ID_LENGTH = 6;
 
 /** Context menus of the editable canvas. Without an editor there are none. */
 export const useCanvasMenu = (
@@ -99,43 +113,41 @@ export const useCanvasMenu = (
     };
     const targets = getConnectTargets(playbook, spec, node.id, kind, key);
 
+    const newStepEntries: ContextMenuAction[] = Object.entries(spec.stepTypes)
+      .filter(([type]) => type !== "start")
+      .map(([type, definition]) => ({
+        type: "item",
+        label: definition.label,
+        disabled: !canAddStep(playbook, type),
+        onSelect: () =>
+          editor.onAddStep(type, newPosition, { source: node.id, kind, key }),
+      }));
+
+    const targetEntries: ContextMenuAction[] = targets.map((targetId) => {
+      const target = playbook.workflow[targetId];
+      const name =
+        target.name || spec.stepTypes[target.type]?.label || target.type;
+      return {
+        type: "item",
+        label: `${name} (${targetId.slice(-SHORT_ID_LENGTH)})`,
+        onSelect: () =>
+          editor.edit((p) =>
+            connect(p, { source: node.id, kind, key, target: targetId }),
+          ),
+      };
+    });
+
     open(event, [
       {
         type: "submenu",
         label: `Connect ${portLabel} to a new step`,
-        entries: Object.entries(spec.stepTypes)
-          .filter(([type]) => type !== "start")
-          .map(([type, definition]) => ({
-            type: "item",
-            label: definition.label,
-            disabled: !canAddStep(playbook, type),
-            onSelect: () =>
-              editor.onAddStep(type, newPosition, {
-                source: node.id,
-                kind,
-                key,
-              }),
-          })),
+        entries: newStepEntries,
       },
       {
         type: "submenu",
         label: "Connect to an existing step",
-        entries: targets.length
-          ? targets.map((targetId) => {
-              const target = playbook.workflow[targetId];
-              const name =
-                target.name ||
-                spec.stepTypes[target.type]?.label ||
-                target.type;
-              return {
-                type: "item",
-                label: `${name} (${targetId.slice(-6)})`,
-                onSelect: () =>
-                  editor.edit((p) =>
-                    connect(p, { source: node.id, kind, key, target: targetId }),
-                  ),
-              };
-            })
+        entries: targetEntries.length
+          ? targetEntries
           : [
               {
                 type: "item",
@@ -151,8 +163,8 @@ export const useCanvasMenu = (
   const openStepMenu = (event: MenuEvent, node: StepFlowNode) => {
     const handleId =
       event.target instanceof Element
-        ? event.target.closest<HTMLElement>(".react-flow__handle-bottom")
-            ?.dataset.handleid
+        ? event.target.closest<HTMLElement>(PORT_HANDLE_SELECTOR)?.dataset
+            .handleid
         : undefined;
     if (handleId) return openPortMenu(event, node, handleId);
 

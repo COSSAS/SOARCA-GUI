@@ -1,7 +1,7 @@
 import { IconChevronRight, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 
-import { Button, Icon, Input, ThemeSize, ThemeVariant } from "@/components";
+import { Button, Icon, Input, SearchSelect, ThemeSize, ThemeVariant } from "@/components";
 
 import { setField } from "../model/fields";
 import type { Field } from "../model/specs";
@@ -9,6 +9,7 @@ import { FieldInput } from "./FieldInput";
 import {
   AddEntryButton,
   AddEntryForm,
+  AddEntryName,
   EntryActions,
   EntryBody,
   EntryChevron,
@@ -20,7 +21,7 @@ import {
   FieldMessage,
   IssueCount,
 } from "./Panel.styles";
-import { useEntryIssues } from "./panelForm";
+import { useEntryIssues, useReferenceOptions } from "./panelForm";
 
 type Entry = Record<string, unknown>;
 type EntryPair = [id: string, entry: Entry];
@@ -46,9 +47,11 @@ const readEntries = (value: unknown, isList: boolean): EntryPair[] => {
 const writeEntries = (pairs: EntryPair[], isList: boolean): unknown =>
   isList ? pairs.map(([, entry]) => entry) : Object.fromEntries(pairs);
 
+const isVariableField = (field: Field) => field.newEntry?.id === "variable";
+
 /** `__name__` for variables, `type--uuid` for agents, targets and authentication. */
 const newEntryId = (field: Field, name: string): string =>
-  field.newEntry?.id === "variable"
+  isVariableField(field)
     ? `__${name.replace(/^_+|_+$/g, "").replace(/\s+/g, "_")}__`
     : `${field.newEntry?.defaults.type}--${crypto.randomUUID()}`;
 
@@ -83,6 +86,9 @@ const EntryRow: React.FC<EntryRowProps> = ({
   const issues = useEntryIssues(path);
   const blocking = issues.some((issue) => issue.blocking);
   const type = typeof entry.type === "string" ? entry.type : undefined;
+  const visibleFields = fields.filter(
+    (entryField) => !entryField.forTypes || (type && entryField.forTypes.includes(type)),
+  );
 
   return (
     <EntryItem>
@@ -103,13 +109,13 @@ const EntryRow: React.FC<EntryRowProps> = ({
       </EntryToggle>
       {open && (
         <EntryBody>
-          {fields.map((entryField) => (
+          {visibleFields.map((entryField) => (
             <FieldInput
               key={entryField.key}
               field={entryField}
               value={entry[entryField.key]}
               path={`${path}.${entryField.key}`}
-              valueType={type}
+              entryType={type}
               onChange={(next) => onChange(setField(entry, entryField.key, next))}
             />
           ))}
@@ -147,20 +153,28 @@ export const EntryListEditor: React.FC<EntryListEditorProps> = ({
   const isList = field.kind === "items";
   const pairs = readEntries(value, isList);
   const itemLabel = field.itemLabel ?? field.label.toLowerCase();
-  const isVariable = field.newEntry?.id === "variable";
+  const isVariable = isVariableField(field);
+  // Agents are named by their capability, so the name is picked from a list.
+  const nameField = field.entry?.find((entryField) => entryField.key === "name");
+  const nameSource = nameField?.source;
+  const nameOptions = useReferenceOptions(nameSource);
+  // Commands start with a type the step's agent can run.
+  const typeSource = field.entry?.find((entryField) => entryField.key === "type")?.source;
+  const firstType = useReferenceOptions(typeSource)[0]?.value;
 
   const save = (next: EntryPair[]) => onChange(writeEntries(next, isList));
 
   const add = () => {
     const defaults = field.newEntry?.defaults ?? {};
     if (isList) {
-      save([...pairs, [String(pairs.length), { ...defaults }]]);
+      const entry = firstType ? { ...defaults, type: firstType } : { ...defaults };
+      save([...pairs, [String(pairs.length), entry]]);
       setOpenId(String(pairs.length));
       return;
     }
     const trimmed = name.trim();
     if (!trimmed) {
-      setError("Enter a name first");
+      setError(nameSource ? `Pick a ${nameField?.label.toLowerCase()} first` : "Enter a name first");
       return;
     }
     const id = newEntryId(field, trimmed);
@@ -178,6 +192,11 @@ export const EntryListEditor: React.FC<EntryListEditorProps> = ({
   const remove = (id: string) => {
     save(pairs.filter(([other]) => other !== id));
     setOpenId(undefined);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    add();
   };
 
   return (
@@ -206,13 +225,19 @@ export const EntryListEditor: React.FC<EntryListEditorProps> = ({
           ))}
         </EntryList>
       )}
-      <AddEntryForm
-        onSubmit={(e) => {
-          e.preventDefault();
-          add();
-        }}
-      >
-        {!isList && (
+      <AddEntryForm onSubmit={handleSubmit}>
+        {!isList && nameSource && (
+          <AddEntryName>
+            <SearchSelect
+              $size={ThemeSize.Small}
+              $options={nameOptions}
+              $placeholder={nameField?.label}
+              $value={name || undefined}
+              $onChange={(next) => setName(next ?? "")}
+            />
+          </AddEntryName>
+        )}
+        {!isList && !nameSource && (
           <Input
             $size={ThemeSize.Small}
             placeholder="Name"

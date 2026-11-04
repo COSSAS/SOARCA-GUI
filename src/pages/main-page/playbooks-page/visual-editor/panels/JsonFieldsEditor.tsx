@@ -43,10 +43,11 @@ export const JsonFieldsEditor: React.FC<JsonFieldsEditorProps> = ({
   const { drafts, setDraft } = useJsonDrafts();
   const draftId = `${ownerId}/${path}`;
   const draft = drafts[draftId];
+  const error = draft?.error;
   // The typed text is kept while it is invalid or still matches the value, so
   // formatting is not reset while typing. Other changes show the new value.
   const text =
-    draft && (draft.error || sameJson(draft.text, value))
+    draft && (error || sameJson(draft.text, value))
       ? draft.text
       : JSON.stringify(value, null, 2);
 
@@ -56,13 +57,13 @@ export const JsonFieldsEditor: React.FC<JsonFieldsEditorProps> = ({
       setDraft(draftId, { ownerId, tab, text: next });
       onChange(parsed);
     } catch (err) {
-      const error = err instanceof Error ? err.message : "Invalid JSON";
-      setDraft(draftId, { ownerId, tab, text: next, error });
+      const message = err instanceof Error ? err.message : "Invalid JSON";
+      setDraft(draftId, { ownerId, tab, text: next, error: message });
     }
   };
 
   return (
-    <div data-invalid={!!draft?.error || undefined}>
+    <div data-invalid={!!error || undefined}>
       <SectionTitle as="label" htmlFor={id}>
         {label}
       </SectionTitle>
@@ -71,10 +72,10 @@ export const JsonFieldsEditor: React.FC<JsonFieldsEditorProps> = ({
         $inputId={id}
         $value={text}
         $onChange={handleChange}
-        $hasError={!!draft?.error}
-        $minHeight="8rem"
+        $hasError={!!error}
+        $minHeight="24rem"
       />
-      {draft?.error && <FieldMessage $blocking>{draft.error}</FieldMessage>}
+      {error && <FieldMessage $blocking>{error}</FieldMessage>}
     </div>
   );
 };

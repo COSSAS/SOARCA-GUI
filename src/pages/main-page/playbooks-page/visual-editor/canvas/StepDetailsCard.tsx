@@ -1,10 +1,11 @@
-import { IconHelp, IconX } from "@tabler/icons-react";
+import { IconX } from "@tabler/icons-react";
 
 import { Button, Icon, ThemeSize, ThemeVariant } from "@/components";
 import type { Step } from "@/types";
 
 import { getStepFields } from "../model/fields";
 import type { CacaoSpec, StepTypeDefinition } from "../model/specs";
+import { UNKNOWN_STEP_COLOR, UNKNOWN_STEP_ICON } from "./constants";
 import {
   DetailsBody,
   DetailsCard,
@@ -86,14 +87,14 @@ export const StepDetailsCard: React.FC<StepDetailsCardProps> = ({
       .map(([key, value]) => [toLabel(key), value] as const),
   ];
 
-  const color = definition?.color ?? ThemeVariant.Warning;
+  const color = definition?.color ?? UNKNOWN_STEP_COLOR;
 
   return (
     <DetailsCard $color={color}>
       <DetailsHeader>
         <DetailsHeading>
           <DetailsType>
-            <StepIcon icon={definition?.icon ?? IconHelp} $color={color} />
+            <StepIcon icon={definition?.icon ?? UNKNOWN_STEP_ICON} $color={color} />
             {typeLabel}
           </DetailsType>
           <DetailsTitle>{step.name || typeLabel}</DetailsTitle>

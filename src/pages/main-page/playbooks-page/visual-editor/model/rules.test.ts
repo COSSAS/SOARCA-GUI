@@ -8,7 +8,6 @@ import {
   findSaveBlocker,
   getAllIssues,
   getConnectTargets,
-  getStepIssues,
 } from "./rules";
 import { cacao20 } from "./specs/cacao-2.0";
 
@@ -43,9 +42,10 @@ describe("canConnect", () => {
 });
 
 describe("canAddStep", () => {
-  it("allows only one start step", () => {
+  it("allows one start step and only step types SOARCA runs", () => {
     expect(canAddStep(playbook, "start")).toBe(false);
     expect(canAddStep(playbook, "action")).toBe(true);
+    expect(canAddStep(playbook, "parallel")).toBe(false);
   });
 });
 
@@ -79,78 +79,84 @@ describe("getConnectTargets", () => {
   });
 });
 
-describe("getStepIssues", () => {
-  const issuesOf = (step: Record<string, unknown>) =>
-    getStepIssues(step as never, cacao20.stepTypes[step.type as string], cacao20);
-
-  it("reports missing required fields as blocking and missing links as warnings", () => {
-    expect(issuesOf({ type: "parallel", next_steps: ["end--1"] })).toEqual([
-      { message: 'Needs at least 2 "branches" connections', blocking: false },
-    ]);
-    expect(issuesOf({ type: "action" })).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ field: "agent", tab: "details", blocking: true }),
-        expect.objectContaining({ field: "commands", tab: "details", blocking: true }),
-      ]),
-    );
-  });
-
-  it("checks required fields inside each command", () => {
-    const step = {
-      type: "action",
-      agent: "soarca",
-      on_completion: "end--1",
-      commands: [{ type: "manual" }, { type: "bash", command_b64: "bHM=" }],
-    };
-    expect(issuesOf(step)).toEqual([
-      expect.objectContaining({ field: "commands.0.command", blocking: true }),
-    ]);
-  });
-});
-
-describe("findSaveBlocker", () => {
-  const complete = {
-    ...playbook,
+describe("getAllIssues", () => {
+  const action = {
+    type: "action",
+    agent: "soarca--1",
+    commands: [{ type: "manual", command: "Check the host" }],
+  };
+  // Accepted by SOARCA as is.
+  const valid = {
     name: "Example",
     created_by: "identity--1",
     workflow_start: "start--1",
+    agent_definitions: { "soarca--1": { type: "soarca", name: "soarca-manual" } },
     workflow: {
-      ...playbook.workflow,
-      "action--1": {
-        type: "action",
-        agent: "soarca",
-        commands: [{ type: "manual", command: "Check the host" }],
-        on_completion: "end--1",
-      },
+      "start--1": { type: "start", on_completion: "action--1" },
+      "action--1": { ...action, on_completion: "end--1" },
+      "end--1": { type: "end" },
     },
-  } as Playbook;
+  } as unknown as Playbook;
+  const withSteps = (steps: Record<string, unknown>) =>
+    ({ ...valid, workflow: { ...valid.workflow, ...steps } }) as Playbook;
+  const blockerOf = (changed: Playbook) =>
+    findSaveBlocker(getAllIssues(changed, cacao20), []);
 
-  it("allows saving with only warnings", () => {
-    const withWarning = {
-      ...complete,
-      workflow: { ...complete.workflow, "parallel--1": { type: "parallel" } },
-    } as Playbook;
-    expect(findSaveBlocker(getAllIssues(withWarning, cacao20), [])).toBeUndefined();
+  it("finds nothing in a playbook SOARCA accepts", () => {
+    expect(getAllIssues(valid, cacao20)).toEqual([]);
   });
 
-  it("points at the first missing required field", () => {
-    const unnamed = { ...complete, name: "" };
-    expect(findSaveBlocker(getAllIssues(unnamed, cacao20), [])).toEqual(
-      expect.objectContaining({ ownerId: "playbook", tab: "metadata", field: "name" }),
-    );
+  it.each([
+    ["an action without an agent", withSteps({ "action--1": { type: "action", on_completion: "end--1" } }), "action--1"],
+    ["an agent the playbook does not define", withSteps({ "action--1": { ...action, agent: "soarca--2", on_completion: "end--1" } }), "action--1"],
+    ["an if condition without a true branch", withSteps({ "if--1": { type: "if-condition", condition: "__a__:value = 1", on_false: "end--1" } }), "if--1"],
+    ["a step that leads nowhere", withSteps({ "action--2": action }), "action--2"],
+    ["a loop", withSteps({ "action--1": { ...action, on_completion: "action--2" }, "action--2": { ...action, on_completion: "action--1" } }), "action--2"],
+    ["a delay of 0", withSteps({ "action--1": { ...action, delay: 0, on_completion: "end--1" } }), "action--1"],
+    ["a priority above 100", { ...valid, priority: 101 } as Playbook, "playbook"],
+    ["an ssh target without an address", { ...valid, target_definitions: { "ssh--1": { type: "ssh", name: "Host" } } } as Playbook, "playbook"],
+    ["a start step that does not exist", { ...valid, workflow_start: "start--2" }, "playbook"],
+  ])("blocks saving %s, like SOARCA", (_, changed, ownerId) => {
+    expect(blockerOf(changed)).toEqual(expect.objectContaining({ ownerId }));
+  });
 
-    const noAgent = {
-      ...complete,
-      workflow: { ...complete.workflow, "action--1": { type: "action" } },
-    } as Playbook;
-    expect(findSaveBlocker(getAllIssues(noAgent, cacao20), [])).toEqual(
-      expect.objectContaining({ ownerId: "action--1", field: "agent" }),
+  it("only warns about what SOARCA accepts but cannot run", () => {
+    const changed = withSteps({
+      "action--1": { ...action, commands: [{ type: "ssh", command: "ls" }], on_completion: "end--1" },
+      "if--1": { type: "if-condition", condition: "a == b", on_true: "end--1" },
+      "parallel--1": { type: "parallel", next_steps: ["action--1", "end--1"] },
+    });
+    const issues = getAllIssues(changed, cacao20);
+    expect(issues.map((issue) => issue.ownerId).sort()).toEqual([
+      "action--1",
+      "if--1",
+      "parallel--1",
+    ]);
+    expect(findSaveBlocker(issues, [])).toBeUndefined();
+  });
+
+  it("checks required fields inside each command", () => {
+    const changed = withSteps({
+      "action--1": {
+        ...action,
+        commands: [{ type: "manual" }, { type: "manual", command_b64: "bHM=" }],
+        on_completion: "end--1",
+      },
+    });
+    expect(getAllIssues(changed, cacao20)).toEqual([
+      expect.objectContaining({ field: "commands.0.command", blocking: true }),
+    ]);
+  });
+
+  it("points the save blocker at the field", () => {
+    expect(blockerOf({ ...valid, name: "" })).toEqual(
+      expect.objectContaining({ ownerId: "playbook", tab: "metadata", field: "name" }),
     );
   });
 
   it("blocks saving while a JSON box has invalid JSON", () => {
     expect(
-      findSaveBlocker(getAllIssues(complete, cacao20), [
+      findSaveBlocker(getAllIssues(valid, cacao20), [
         { ownerId: "action--1", tab: "advanced" },
       ]),
     ).toEqual({ ownerId: "action--1", tab: "advanced", message: "Fix the invalid JSON" });

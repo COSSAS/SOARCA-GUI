@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 
 import { PANEL_WIDTH, panelWidth, type Side } from "./panelWidth";
 
+const PANEL_BORDERS_WIDTH = "2px";
 
 const fadeWhenCollapsed = css<{ $collapsed: boolean }>`
   opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
@@ -137,7 +138,7 @@ export const SidePanelContent = styled.div<{ $side: Side; $collapsed: boolean }>
   overflow-y: auto;
   flex: 1;
 
-  width: calc(${({ $side }) => PANEL_WIDTH[$side]} - 2px);
+  width: calc(${({ $side }) => PANEL_WIDTH[$side]} - ${PANEL_BORDERS_WIDTH});
   min-height: 0;
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg} ${theme.spacing.lg}`};
 

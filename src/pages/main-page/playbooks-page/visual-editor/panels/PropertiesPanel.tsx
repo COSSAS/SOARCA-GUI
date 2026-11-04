@@ -1,9 +1,10 @@
-import { IconHelp, IconTrash } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import type { Ref } from "react";
 
 import { Button, Icon, ThemeSize, ThemeVariant } from "@/components";
 import type { Playbook } from "@/types";
 
+import { UNKNOWN_STEP_COLOR, UNKNOWN_STEP_ICON } from "../canvas/constants";
 import { StepIcon } from "../canvas/StepIcon";
 import type { EditPlaybook } from "../model/editor";
 import { removeSteps } from "../model/edits";
@@ -70,8 +71,8 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         title={
           <>
             <StepIcon
-              icon={definition?.icon ?? IconHelp}
-              $color={definition?.color ?? ThemeVariant.Warning}
+              icon={definition?.icon ?? UNKNOWN_STEP_ICON}
+              $color={definition?.color ?? UNKNOWN_STEP_COLOR}
             />
             {definition?.label ?? step.type}
           </>

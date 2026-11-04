@@ -24,9 +24,9 @@ import type { Playbook } from "@/types";
 import { setPositions, type Position } from "../model/coordinates";
 import type { CanvasEditor } from "../model/editor";
 import { connect, disconnect, removeSteps } from "../model/edits";
-import { parseHandleId, playbookToGraph, type Link } from "../model/graph";
+import { parseHandleId, playbookToGraph } from "../model/graph";
 import { getPositions, type Size } from "../model/layout";
-import { canConnect } from "../model/rules";
+import { canConnect, type Link } from "../model/rules";
 import type { CacaoSpec } from "../model/specs";
 import { getConnectionColor } from "./colors";
 import { FIT_VIEW_OPTIONS, STEP_TYPE_MIME } from "./constants";
@@ -46,6 +46,7 @@ const DELETE_KEYS = ["Backspace", "Delete"];
 const MULTI_SELECTION_KEYS = ["Control", "Meta"];
 // Node positions are midpoints, as in the CACAO Layout extension.
 const NODE_ORIGIN: [number, number] = [0.5, 0.5];
+const MIN_ZOOM = 0.2;
 
 type FlowCanvasProps = {
   playbook: Playbook;
@@ -146,6 +147,20 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
     }
   };
 
+  const handleNodeClick = (_: React.MouseEvent, node: StepFlowNode) => {
+    // In the editor, React Flow selects on click and reports it through onNodesChange.
+    if (editor) return;
+    setReadOnlySelectedId((selectedId) =>
+      selectedId === node.id ? undefined : node.id,
+    );
+  };
+
+  const handlePaneClick = () => {
+    editor?.onSelect([]);
+    setReadOnlySelectedId(undefined);
+    setSelectedEdgeId(undefined);
+  };
+
   const handleDrop = (event: React.DragEvent) => {
     const type = event.dataTransfer.getData(STEP_TYPE_MIME);
     if (!editor || !type) return;
@@ -175,19 +190,9 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         onEdgesChange={handleEdgesChange}
         onConnect={(c) => editor?.edit((p) => connect(p, toLink(c)))}
         isValidConnection={(c) => canConnect(playbook, spec, toLink(c))}
-        onNodeClick={(_, node) => {
-          // In the editor, React Flow selects on click and reports it through onNodesChange.
-          if (editor) return;
-          setReadOnlySelectedId((selectedId) =>
-            selectedId === node.id ? undefined : node.id,
-          );
-        }}
+        onNodeClick={handleNodeClick}
         onEdgeClick={(_, edge) => setSelectedEdgeId(edge.id)}
-        onPaneClick={() => {
-          editor?.onSelect([]);
-          setReadOnlySelectedId(undefined);
-          setSelectedEdgeId(undefined);
-        }}
+        onPaneClick={handlePaneClick}
         {...menu.handlers}
         selectionKeyCode="Shift"
         multiSelectionKeyCode={MULTI_SELECTION_KEYS}
@@ -196,7 +201,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         nodesDraggable={!readOnly}
         nodesConnectable={!readOnly}
         deleteKeyCode={readOnly ? null : DELETE_KEYS}
-        minZoom={0.2}
+        minZoom={MIN_ZOOM}
         fitView
         fitViewOptions={FIT_VIEW_OPTIONS}
       >

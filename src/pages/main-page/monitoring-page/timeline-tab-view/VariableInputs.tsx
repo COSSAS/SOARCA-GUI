@@ -1,4 +1,4 @@
-import { CodeEditor, Input, Select } from "@/components";
+import { CodeEditor, Input, Select, ThemeSize } from "@/components";
 
 interface VariableInputProps {
   /** Id of the control, for a label's htmlFor. */
@@ -7,6 +7,7 @@ interface VariableInputProps {
   type: string;
   value: string;
   disabled?: boolean;
+  $size?: ThemeSize;
   onChange: (key: string, value: string) => void;
 }
 
@@ -61,6 +62,7 @@ export const VariableInput: React.FC<VariableInputProps> = ({
   type,
   value,
   disabled,
+  $size,
   onChange,
 }) => {
   const change = (next: string) => onChange(variableKey, next);
@@ -70,6 +72,7 @@ export const VariableInput: React.FC<VariableInputProps> = ({
       return (
         <Select
           id={id}
+          $size={$size}
           $value={value}
           onChange={(e) => change(e.target.value)}
           disabled={disabled}
@@ -84,6 +87,7 @@ export const VariableInput: React.FC<VariableInputProps> = ({
       return (
         <Input
           id={id}
+          $size={$size}
           type="text"
           value={value}
           onChange={(e) => {
@@ -112,6 +116,7 @@ export const VariableInput: React.FC<VariableInputProps> = ({
       return (
         <Input
           id={id}
+          $size={$size}
           type={format.inputType ?? "text"}
           step={format.step}
           value={value}

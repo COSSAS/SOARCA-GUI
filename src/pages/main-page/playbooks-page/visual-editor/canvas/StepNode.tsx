@@ -1,4 +1,4 @@
-import { IconAlertTriangle, IconHelp } from "@tabler/icons-react";
+import { IconAlertTriangle } from "@tabler/icons-react";
 import {
   Position,
   useConnection,
@@ -8,7 +8,7 @@ import {
 } from "@xyflow/react";
 import { memo, useEffect, useRef } from "react";
 
-import { Icon, ThemeSize, ThemeVariant } from "@/components";
+import { Icon, ThemeSize } from "@/components";
 
 import {
   getPorts,
@@ -17,6 +17,7 @@ import {
   type StepNodeData,
 } from "../model/graph";
 import { getNodeWidth, spreadFraction } from "../model/layout";
+import { UNKNOWN_STEP_COLOR, UNKNOWN_STEP_ICON } from "./constants";
 import { StepIcon } from "./StepIcon";
 import {
   IncomingHandle,
@@ -37,7 +38,7 @@ export const StepNode = memo(function StepNode({
   selected,
 }: NodeProps<StepFlowNode>) {
   const { step, definition, issues, readOnly } = data;
-  const color = definition?.color ?? ThemeVariant.Warning;
+  const color = definition?.color ?? UNKNOWN_STEP_COLOR;
   const typeLabel = definition?.label ?? step.type;
   const ports = getPorts(data);
   // While a connection is dragged from another step, this whole step is a drop target
@@ -89,7 +90,7 @@ export const StepNode = memo(function StepNode({
           />
         ))}
       <NodeHeader>
-        <StepIcon icon={definition?.icon ?? IconHelp} $color={color} />
+        <StepIcon icon={definition?.icon ?? UNKNOWN_STEP_ICON} $color={color} />
         <NodeType>{typeLabel}</NodeType>
         {issues.length > 0 && (
           <IssueMarker
