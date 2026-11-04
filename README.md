@@ -166,11 +166,11 @@ flowchart TB
 
 ### Enable sign-in
 
-The GUI has no sign-in settings of its own. At startup it reads
-`/api/auth/config` from SOARCA, which lists the identity providers users can
-sign in with. The GUI then signs the user in with the authorization code flow
-and PKCE, and sends the access token to SOARCA as a bearer token. No client
-secret is involved.
+The GUI reads its login providers from `/auth-config.json`, a file you deploy
+next to the GUI. It signs the user in with the authorization code flow and
+PKCE, and sends the access token to SOARCA as a bearer token. No client secret
+is involved. The GUI then asks SOARCA for the user's permissions through
+`/api/principal/permissions`.
 
 1. Serve the GUI over HTTPS (see `VITE_ENABLE_HTTPS` above, or the Nginx image).
    The GUI already forwards `/api/*` to SOARCA through `VITE_BACKEND_URL` or
@@ -179,20 +179,30 @@ secret is involved.
    redirect URI `https://<GUI host>/login/callback`:
    - **Microsoft Entra ID:** add a Single-page application platform, and grant
      the delegated SOARCA API permission `access_as_user` with admin consent.
+     If SOARCA sets `AUTH_ENTRA_ALLOWED_CLIENT_IDS`, add the GUI client ID to it.
    - **Other OIDC providers:** create a public client without a secret. SOARCA
-     checks that tokens are issued to `OIDC_CLIENT_ID`, so use that client.
-3. Configure SOARCA next to its existing auth settings:
+     checks the token audience against `OIDC_CLIENT_ID`, so the provider must
+     issue the GUI's tokens for that audience.
+3. Copy `config/auth-config.example.json` to `config/auth-config.json` and fill
+   in one entry per provider. `issuer` must be the same issuer SOARCA is
+   configured with, trailing slash included. `scopes` is optional. The
+   provider with id `entra` gets the Microsoft icon, the others a lock icon.
+   For Entra, `scopes` must contain the SOARCA API scope, for example
+   `api://<SOARCA API client ID>/access_as_user`.
+4. Make the file available to the GUI:
+   - `npm run dev`, `npm run preview` and the development container serve
+     `config/auth-config.json` from the project directory.
+   - The production container reads `/app/config/auth-config.json`. Compose
+     mounts `SOARCA_GUI_CONFIG_DIR` (default `./config`) there.
 
-   ```yaml
-   AUTH_ENABLED: "true"
-   # Microsoft Entra ID
-   AUTH_ENTRA_PUBLIC_CLIENT_ID: "<GUI client ID>"
-   # or another OIDC provider
-   OIDC_ISSUER: "https://<provider>/"
-   OIDC_CLIENT_ID: "<GUI client ID>"
-   ```
+   The file is read when the login page opens, so changes need no rebuild or
+   restart. If the file is missing or invalid, the login page shows the
+   reason instead of the provider buttons.
 
-   If you set `AUTH_ENTRA_ALLOWED_CLIENT_IDS`, include the GUI client ID in it.
+SOARCA's own auth settings (`AUTH_ENABLED`, `OIDC_ISSUER`, `OIDC_CLIENT_ID`,
+the `AUTH_ENTRA_*` variables and role mapping) are described in the
+[SOARCA authentication documentation](https://cossas.github.io/SOARCA/docs/installation-configuration/authentication/).
+When SOARCA runs with `AUTH_ENABLED=false`, the GUI skips sign-in.
 
 Menus and actions follow the permissions SOARCA reports for the user; SOARCA
 enforces them. The tokens are stored in the browser's local storage, so every
@@ -356,6 +366,7 @@ flowchart TB
    - `NGINX_BACKEND_URL`: `https://host.docker.internal:8080/`
    - `NGINX_SERVER_PORT`: `8081`
    - `NGINX_PROXY_SSL_VERIFY`: `off`, to support SOARCA's generated self-signed certificate
+   - `SOARCA_GUI_CONFIG_DIR`: `./config` - host directory with `auth-config.json`, mounted read-only at `/app/config`
    - `DOCKER_HOST_PORT`: `8081` - port on the host mapped to the `NGINX_SERVER_PORT`
 
 2. **Pull and start the container:**
