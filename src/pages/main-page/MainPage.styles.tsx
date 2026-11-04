@@ -3,16 +3,14 @@ import { Spacer } from "@/components";
 
 // Stays last in the header, after the mobile-only reordering below.
 export const AccountMenu = styled.div`
-  order: 3;
   flex: 0 0 2.5rem;
-
+  order: 3;
   height: 2.5rem;
 
   > button {
     width: 100%;
     height: 100%;
     padding: 0;
-
     border-radius: ${({ theme }) => theme.radius.full};
   }
 `;
@@ -28,39 +26,37 @@ export const AccountAvatar = styled.span`
 
   width: 100%;
   height: 100%;
-
   border-radius: ${({ theme }) => theme.radius.full};
-  background: ${({ theme }) => theme.colors.info.solidBg};
 
-  color: ${({ theme }) => theme.colors.info.solidText};
   font: ${({ theme }) => theme.typography.bodyMedium.font};
+  color: ${({ theme }) => theme.colors.info.solidText};
+
+  background: ${({ theme }) => theme.colors.info.solidBg};
 `;
 
 export const MainWrapper = styled.div`
-  display: flex;
-
-  height: 100vh;
   overflow: hidden;
+  display: flex;
+  height: 100vh;
 `;
 
 export const ContentArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-
   overflow: hidden;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 `;
 
 export const MainHeader = styled.header`
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  flex-shrink: 0;
 
   min-height: 4rem;
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
-
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+
   background-color: ${({ theme }) => theme.colors.background.primary};
 
   @media (max-width: 768px) {
@@ -77,19 +73,19 @@ export const MainHeader = styled.header`
 `;
 
 export const MainContent = styled.main`
+  scrollbar-gutter: stable;
+
+  overflow-y: auto;
   flex: 1;
 
   min-width: 550px;
   padding: ${({ theme }) => theme.spacing.lg};
-  overflow-y: auto;
-  scrollbar-gutter: stable;
 
   background-color: ${({ theme }) => theme.colors.secondary.bg};
 `;
 
 export const MobileMenuButton = styled.button`
   display: none;
-
   color: ${({ theme }) => theme.colors.text.primary};
 
   @media (max-width: 768px) {
@@ -103,10 +99,11 @@ export const Overlay = styled.div<{ $isOpen: boolean }>`
   display: none;
 
   @media (max-width: 768px) {
-    display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
     position: fixed;
-    inset: 0;
     z-index: ${({ theme }) => theme.zIndex.overlay};
+    inset: 0;
+
+    display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
 
     background-color: ${({ theme }) => theme.colors.background.overlay};
     backdrop-filter: blur(${({ theme }) => theme.effects.backdropBlur});

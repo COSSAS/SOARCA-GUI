@@ -26,12 +26,13 @@ const IconWrapper = styled.span<{
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  vertical-align: middle;
 
-  height: ${({ $size, $round }) =>
-    $round ? `${$size * 1.5}px` : `${$size}px`};
   width: ${({ $size, $round }) =>
     $round ? `${$size * 1.5}px` : `${$size}px`};
+  height: ${({ $size, $round }) =>
+    $round ? `${$size * 1.5}px` : `${$size}px`};
+
+  vertical-align: middle;
 
   ${({ $round }) => $round ? "border-radius: 50%;" : ""}
 

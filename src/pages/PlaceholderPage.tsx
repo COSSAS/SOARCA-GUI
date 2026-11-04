@@ -7,9 +7,9 @@ interface PlaceholderPageProps {
 
 const PlaceholderContainer = styled.div`
   padding: ${({ theme }) => theme.spacing.xl};
-  background: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.radius.md};
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
+  border-radius: ${({ theme }) => theme.radius.md};
+  background: ${({ theme }) => theme.colors.background.primary};
 `;
 
 const PlaceholderText = styled(Text)`

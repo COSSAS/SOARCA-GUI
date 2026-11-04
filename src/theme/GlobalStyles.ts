@@ -13,9 +13,9 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   button {
-    background: none;
-    border: none;
     cursor: pointer;
+    border: none;
+    background: none;
   }
 
   /* Headings are chosen for document structure; their look comes from theme.typography. */
@@ -38,14 +38,14 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   html, body, #root {
-    height: 100%;
     width: 100%;
+    height: 100%;
   }
 
   body {
-    background-color: ${({ theme }) => theme.colors.background.primary};
-    color: ${({ theme }) => theme.colors.text.primary};
     font-family: ${({ theme }) => theme.fonts.family.primary};
+    color: ${({ theme }) => theme.colors.text.primary};
+    background-color: ${({ theme }) => theme.colors.background.primary};
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
@@ -59,8 +59,8 @@ export const GlobalStyles = createGlobalStyle`
 
   /* Firefox */
   * {
-    scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
   }
 
   /* WebKit (Chrome, Edge, Safari) */
@@ -70,15 +70,15 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   *::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
     border-radius: var(--scrollbar-radius);
+    background: var(--scrollbar-track);
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-    border-radius: var(--scrollbar-radius);
-    border: 3px solid var(--scrollbar-track);
     min-height: 28px;
+    border: 3px solid var(--scrollbar-track);
+    border-radius: var(--scrollbar-radius);
+    background-color: var(--scrollbar-thumb);
   }
 
   *::-webkit-scrollbar-thumb:hover {

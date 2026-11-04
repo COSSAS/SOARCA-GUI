@@ -1,21 +1,28 @@
 import styled from "styled-components";
 
 export const PlaybookListItem = styled.div`
+  cursor: pointer;
+
   position: relative;
 
   display: flex;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing["2xl"]};
+  align-items: center;
 
-  padding-left: ${({ theme }) => theme.spacing.lg};
   padding-right: ${({ theme }) => theme.spacing.lg};
-
+  padding-left: ${({ theme }) => theme.spacing.lg};
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => `0 ${theme.radius.sm} ${theme.radius.sm} 0`};
+
   background-color: ${({ theme }) => theme.colors.background.primary};
+
+  transition:
+    background-color ${({ theme }) => theme.transitions.base},
+    border-color ${({ theme }) => theme.transitions.base};
 
   &::before {
     content: "";
+
     position: absolute;
     top: -1px;
     bottom: -1px;
@@ -25,11 +32,6 @@ export const PlaybookListItem = styled.div`
 
     background-color: ${({ theme }) => theme.colors.palette.primary};
   }
-
-  cursor: pointer;
-  transition:
-    background-color ${({ theme }) => theme.transitions.base},
-    border-color ${({ theme }) => theme.transitions.base};
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.info.border};
@@ -47,18 +49,18 @@ export const PlaybookInfo = styled.div`
 `;
 
 export const PlaybookName = styled.h3`
-  color: ${({ theme }) => theme.colors.text.primary};
   font: ${({ theme }) => theme.typography.h3.font};
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 export const PlaybookDescription = styled.p`
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 
-  color: ${({ theme }) => theme.colors.text.secondary};
   font: ${({ theme }) => theme.typography.caption.font};
+  color: ${({ theme }) => theme.colors.text.secondary};
   text-overflow: ellipsis;
   word-wrap: break-word;
 `;
@@ -101,16 +103,16 @@ export const TimelineStep = styled.div<{ $position: "top" | "bottom" }>`
 
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
+  align-items: center;
 `;
 
 export const TimelineDot = styled.div<{ $type: string }>`
   width: 16px;
   height: 16px;
-
   border: 2px solid ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.radius.full};
+
   background-color: ${({ theme, $type }) => {
     switch ($type) {
       case "if-condition":
@@ -141,8 +143,8 @@ export const TimelineLabel = styled.span<{ $position: "top" | "bottom" }>`
 
   max-width: 125px;
 
-  color: ${({ theme }) => theme.colors.text.secondary};
   font: ${({ theme }) => theme.typography.caption.font};
+  color: ${({ theme }) => theme.colors.text.secondary};
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -152,14 +154,13 @@ export const PlaybookActions = styled.div`
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-
   padding-left: ${({ theme }) => theme.spacing.md};
 `;
 
 export const HeaderActions = styled.div`
   display: flex;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
+  align-items: center;
 
   width: 100%;
   max-width: 400px;

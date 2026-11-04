@@ -35,16 +35,15 @@ export const NotificationCard = styled.div<NotificationCardProps>`
   gap: ${({ theme }) => theme.spacing.xs};
 
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
-
-  border-radius: ${({ theme }) => theme.radius.md};
   border: 1px solid
     ${({ $variant = ThemeVariant.Primary, theme }) =>
       getVariantColors(theme, $variant).border};
+  border-radius: ${({ theme }) => theme.radius.md};
 
-  background: ${({ $variant = ThemeVariant.Primary, theme }) =>
-    getVariantColors(theme, $variant).bg};
+  font: ${({ theme }) => theme.typography.body.font};
   color: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).text};
 
-  font: ${({ theme }) => theme.typography.body.font};
+  background: ${({ $variant = ThemeVariant.Primary, theme }) =>
+    getVariantColors(theme, $variant).bg};
 `;

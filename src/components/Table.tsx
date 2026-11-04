@@ -27,9 +27,10 @@ import styled from "styled-components";
  * </Table>
  */
 export const Table = styled.table`
-  width: 100%;
-  border-collapse: separate;
   border-spacing: 0 ${({ theme }) => theme.spacing.xs};
+  border-collapse: separate;
+
+  width: 100%;
 
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.table.rowText};
@@ -49,9 +50,9 @@ export const TableHead = styled.thead`
   text-align: left;
 
   & > tr {
-    background: transparent;
     border-top: 1px solid ${({ theme }) => theme.colors.table.headerBg};
     border-bottom: 1px solid ${({ theme }) => theme.colors.table.headerBg};
+    background: transparent;
   }
 `;
 
@@ -70,15 +71,14 @@ export interface HeaderCellProps extends React.ThHTMLAttributes<HTMLTableCellEle
  * <HeaderCell $width="150px" $alignContent="center">Centered</HeaderCell>
  */
 export const HeaderCell = styled.th<HeaderCellProps>`
-  background: ${({ theme }) => theme.colors.table.headerBg};
-
+  width: ${({ $width }) => $width || "auto"};
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
 
   font: ${({ theme }) => theme.typography.bodyMedium.font};
   color: ${({ theme }) => theme.colors.table.headerText};
-
-  width: ${({ $width }) => $width || "auto"};
   text-align: ${({ $alignContent }) => $alignContent || "left"};
+
+  background: ${({ theme }) => theme.colors.table.headerBg};
 
   &:first-child {
     border-top-left-radius: ${({ theme }) => theme.radius.md};
@@ -114,6 +114,11 @@ export interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
  * <Row $isClickable onClick={() => alert('clicked')}><Cell>Data</Cell></Row>
  */
 export const Row = styled.tr<RowProps>`
+  border-radius: ${({ theme }) => theme.radius.md};
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  transition:
+    box-shadow ${({ theme }) => theme.transitions.base},
+    background ${({ theme }) => theme.transitions.base};
   &:nth-child(even) {
     background-color: ${({ theme }) => theme.colors.table.rowEvenBg};
   }
@@ -121,15 +126,9 @@ export const Row = styled.tr<RowProps>`
     background-color: ${({ theme }) => theme.colors.table.rowOddBg};
   }
 
-  border-radius: ${({ theme }) => theme.radius.md};
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
-  transition:
-    box-shadow ${({ theme }) => theme.transitions.base},
-    background ${({ theme }) => theme.transitions.base};
-
   &:hover {
-    background: ${({ theme }) => `${theme.colors.primary.main}14`};
     cursor: ${({ $isClickable }) => ($isClickable ? "pointer" : "default")};
+    background: ${({ theme }) => `${theme.colors.primary.main}14`};
   }
 `;
 
@@ -146,11 +145,11 @@ export interface CellProps extends React.TdHTMLAttributes<HTMLTableCellElement> 
  */
 export const Cell = styled.td<CellProps>`
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
-
   border-top: 1px solid ${({ theme }) => theme.colors.table.border};
   border-bottom: 1px solid ${({ theme }) => theme.colors.table.border};
-  text-align: ${({ $alignContent }) => $alignContent || "left"};
+
   color: ${({ theme }) => theme.colors.table.rowText};
+  text-align: ${({ $alignContent }) => $alignContent || "left"};
 
   &:first-child {
     border-left: 1px solid ${({ theme }) => theme.colors.table.border};
@@ -171,8 +170,7 @@ export const Cell = styled.td<CellProps>`
  */
 export const EmptyState = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
-
-  text-align: center;
-  color: ${({ theme }) => theme.colors.text.secondary};
   font: ${({ theme }) => theme.typography.body.font};
+  color: ${({ theme }) => theme.colors.text.secondary};
+  text-align: center;
 `;

@@ -7,30 +7,34 @@ const RadioGroupContainer = styled.div`
 `;
 
 const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
-
   cursor: pointer;
+
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.xs};
+  align-items: center;
 
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
 
   &:has(input:disabled) {
-    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
     cursor: not-allowed;
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
   }
 `;
 
 const RadioInput = styled.input`
-  appearance: none;
+  cursor: pointer;
+
+  position: relative;
+
   width: 18px;
   height: 18px;
   border: 2px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: 50%;
+
+  appearance: none;
   outline: none;
-  cursor: pointer;
-  position: relative;
+
   transition: all ${({ theme }) => theme.transitions.base};
 
   &:hover:not(:disabled) {
@@ -44,13 +48,16 @@ const RadioInput = styled.input`
 
   &:checked::after {
     content: "";
+
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
     width: 6px;
     height: 6px;
     border-radius: 50%;
+
     background: ${({ theme }) => theme.colors.background.primary};
   }
 

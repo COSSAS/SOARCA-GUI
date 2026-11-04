@@ -210,11 +210,12 @@ export const LoginPage: React.FC = () => {
   );
 };
 const LoginCard = styled.div`
-  width: 100%;
-  max-width: 28rem;
   overflow: hidden;
 
+  width: 100%;
+  max-width: 28rem;
   border-radius: ${({ theme }) => theme.radius.lg};
+
   background: ${({ theme }) => theme.colors.background.primary};
   box-shadow: ${({ theme }) => theme.shadows.base};
 `;
@@ -222,14 +223,13 @@ const LoginCard = styled.div`
 const LoginCardHeader = styled.div`
   padding: ${({ theme }) => theme.spacing["3xl"]}
     ${({ theme }) => theme.spacing.xl};
-
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
 const LoginCardBody = styled.div`
   display: grid;
-  align-content: start;
   gap: ${({ theme }) => theme.spacing.xl};
+  align-content: start;
 
   min-height: 10rem;
   padding: ${({ theme }) => theme.spacing.xl};
@@ -243,7 +243,6 @@ const ProviderPrompt = styled(Text)`
 const ProviderOptions = styled.div`
   display: grid;
   align-items: center;
-
   min-height: 2.125rem;
 `;
 
@@ -261,28 +260,27 @@ const ProviderButton = styled(Button)`
   }
 
   .provider-arrow {
-    opacity: 0;
     transform: translateX(-${({ theme }) => theme.spacing.xs});
-
+    opacity: 0;
     transition:
       opacity ${({ theme }) => theme.transitions.base},
       transform ${({ theme }) => theme.transitions.base};
   }
 
   &:is(:hover, :focus-visible):not([aria-disabled="true"]) .provider-arrow {
-    opacity: 1;
     transform: translateX(0);
+    opacity: 1;
   }
 
   &[aria-disabled="true"] {
-    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
     pointer-events: none;
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
   }
 
   @media (prefers-reduced-motion: reduce) {
     .provider-arrow {
-      transition: none;
       transform: none;
+      transition: none;
     }
   }
 `;
@@ -290,17 +288,20 @@ const ProviderButton = styled(Button)`
 const ProviderIdentity = styled.span`
   display: inline-flex;
   grid-column: 2;
+  gap: inherit;
   align-items: center;
   justify-content: center;
-  gap: inherit;
 `;
 
 const VisuallyHidden = styled.span`
   position: absolute;
-  width: 1px;
-  height: 1px;
+
   overflow: hidden;
 
-  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+
   white-space: nowrap;
+
+  clip-path: inset(50%);
 `;

@@ -17,7 +17,6 @@ interface ControlSizeProps {
  */
 export const Input = styled.input<ControlSizeProps>`
   width: 100%;
-
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
@@ -33,28 +32,29 @@ export const Input = styled.input<ControlSizeProps>`
   font-size: ${({ $size = ThemeSize.Medium, theme }) =>
     getControlSize(theme, $size).fontSize};
   color: ${({ theme }) => theme.colors.text.primary};
+
   background: ${({ theme }) => theme.colors.background.primary};
 
   transition: border-color ${({ theme }) => theme.transitions.base};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary.hover};
-  }
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary.main};
-    box-shadow:
-      0 0 8px 0px ${({ theme }) => theme.colors.primary.main}20,
-      0 0 12px 0px ${({ theme }) => theme.colors.primary.main}10;
-  }
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.text.placeholder};
   }
 
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary.hover};
+  }
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.primary.main};
+    outline: none;
+    box-shadow:
+      0 0 8px 0px ${({ theme }) => theme.colors.primary.main}20,
+      0 0 12px 0px ${({ theme }) => theme.colors.primary.main}10;
+  }
+
   &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+    opacity: 0.5;
     background: ${({ theme }) => theme.colors.background.secondary};
   }
 `;
@@ -65,9 +65,6 @@ export const Input = styled.input<ControlSizeProps>`
  */
 const StyledSelect = styled.select<ControlSizeProps>`
   width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
@@ -83,6 +80,9 @@ const StyledSelect = styled.select<ControlSizeProps>`
   font-size: ${({ $size = ThemeSize.Medium, theme }) =>
     getControlSize(theme, $size).fontSize};
   color: ${({ theme }) => theme.colors.text.primary};
+
+  -webkit-appearance: none;
+  appearance: none;
   background-color: ${({ theme }) => theme.colors.background.primary};
   background-image: ${({ theme }) => {
     const color = theme.colors.text.tertiary.replace("#", "%23");
@@ -97,26 +97,28 @@ const StyledSelect = styled.select<ControlSizeProps>`
     border-color: ${({ theme }) => theme.colors.primary.hover};
   }
   &:focus {
-    outline: none;
     border-color: ${({ theme }) => theme.colors.primary.main};
+    outline: none;
     box-shadow:
       0 0 8px 0px ${({ theme }) => theme.colors.primary.main}20,
       0 0 12px 0px ${({ theme }) => theme.colors.primary.main}10;
   }
 
   &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+    opacity: 0.5;
     background-color: ${({ theme }) => theme.colors.background.secondary};
   }
 
   & > option {
-    font: ${({ theme }) => theme.typography.body.font};
     padding: ${({ theme }) => `${theme.spacing.md}`};
+    border-radius: ${({ theme }) => theme.radius.md};
+
+    font: ${({ theme }) => theme.typography.body.font};
     line-height: 1.75;
     color: ${({ theme }) => theme.colors.text.primary};
+
     background: ${({ theme }) => theme.colors.background.primary};
-    border-radius: ${({ theme }) => theme.radius.md};
   }
 
   & > option:hover {
@@ -125,14 +127,14 @@ const StyledSelect = styled.select<ControlSizeProps>`
 `;
 
 const StyledOption = styled.option`
-  font: ${({ theme }) => theme.typography.body.font};
-
   padding: ${({ theme }) => `${theme.spacing.md}`};
-  line-height: 1.75;
-
-  color: ${({ theme }) => theme.colors.text.primary};
-  background: ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.radius.md};
+
+  font: ${({ theme }) => theme.typography.body.font};
+  line-height: 1.75;
+  color: ${({ theme }) => theme.colors.text.primary};
+
+  background: ${({ theme }) => theme.colors.background.primary};
 `;
 
 export interface SelectProps
@@ -199,7 +201,6 @@ export const Select: React.FC<SelectProps> = ({
 export const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-
   gap: ${({ theme }) => theme.spacing.sm};
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 
