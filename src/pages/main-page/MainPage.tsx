@@ -18,7 +18,7 @@ import logoSmall from "@/assets/soarca-logo-small.svg";
 import { useAuth } from "@/auth/AuthContext";
 import { RequirePermission } from "@/auth/AuthGate";
 import { Permissions, type Permission } from "@/auth/permissions";
-import type { AuthPrincipal } from "@/types";
+import type { SessionUser } from "@/types";
 import { PATHS, SOARCA_DOC_URL } from "@/utils";
 
 import {
@@ -78,10 +78,8 @@ const NAV_ROUTES: NavRoute[] = [
   { path: PATHS.SETTINGS, label: "Settings (Beta)", icon: IconSettings },
 ];
 
-const initial = (principal: AuthPrincipal) =>
-  (principal.name?.trim() || principal.email || "?")
-    .charAt(0)
-    .toLocaleUpperCase();
+const initial = (user: SessionUser) =>
+  (user.name?.trim() || user.email || "?").charAt(0).toLocaleUpperCase();
 
 export const MainPage: React.FC = () => {
   const auth = useAuth();
@@ -172,14 +170,14 @@ export const MainPage: React.FC = () => {
               )}
             </MobileMenuButton>
           </Spacer>
-          {auth.config?.authentication_enabled && auth.user && (
+          {auth.user && !auth.user.anonymous && (
             <AccountMenu>
               <Popover
                 id="account-menu"
                 $label="Account menu"
                 $trigger={
                   <AccountAvatar aria-hidden="true">
-                    {initial(auth.user.principal)}
+                    {initial(auth.user)}
                   </AccountAvatar>
                 }
               >
@@ -188,7 +186,7 @@ export const MainPage: React.FC = () => {
                   $align="stretch"
                   $gap="md"
                 >
-                  <AccountDetails principal={auth.user.principal} />
+                  <AccountDetails user={auth.user} />
                   <Button
                     $variant={ThemeVariant.Error}
                     $fullWidth

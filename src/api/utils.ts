@@ -8,6 +8,9 @@ const statusMessages: Partial<Record<number, string>> = {
   429: "Too many requests. Wait a moment and try again.",
 };
 
+// A signed-out user gets 401 here, which is not an expired session.
+export const PRINCIPAL_URL = "/api/principal/permissions";
+
 // A full page load clears data cached for the previous user.
 export function redirectToLogin(reason?: "expired") {
   const params = new URLSearchParams({
@@ -70,7 +73,7 @@ export async function requestFromApi<T>(
   }
   if (res.ok) return body as T;
 
-  if (res.status === 401 && !url.startsWith("/api/auth/")) {
+  if (res.status === 401 && url !== PRINCIPAL_URL) {
     redirectToLogin("expired");
   }
   const details = (typeof body === "object" && body) || {};

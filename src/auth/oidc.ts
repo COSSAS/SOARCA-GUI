@@ -11,30 +11,12 @@ async function withSignInLock<T>(task: () => Promise<T>): Promise<T> {
   return navigator.locks.request("soarca.auth", task);
 }
 
-// The stored value may come from an earlier GUI version or another backend.
-function parseProvider(stored: string): SignInProvider | undefined {
-  try {
-    const provider = JSON.parse(stored);
-    const valid =
-      typeof provider.issuer === "string" &&
-      typeof provider.client_id === "string" &&
-      Array.isArray(provider.scopes);
-    return valid ? provider : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
 // Follows the stored provider, which a sign-in in another tab can change.
 function userManager() {
   const stored = localStorage.getItem(providerKey);
   if (!stored) return undefined;
   if (current?.stored !== stored) {
-    const provider = parseProvider(stored);
-    if (!provider) {
-      localStorage.removeItem(providerKey);
-      return undefined;
-    }
+    const provider: SignInProvider = JSON.parse(stored);
     const manager = new UserManager({
       authority: provider.issuer,
       client_id: provider.client_id,
@@ -59,9 +41,8 @@ function userManager() {
 export async function signIn(provider: SignInProvider, returnTo: string) {
   const manager = await withSignInLock(async () => {
     localStorage.setItem(providerKey, JSON.stringify(provider));
-    return userManager();
+    return userManager()!;
   });
-  if (!manager) throw new Error("SOARCA published an unusable provider");
   await manager.signinRedirect({ state: returnTo, prompt: "select_account" });
 }
 
@@ -78,6 +59,14 @@ export function signOut() {
   return withSignInLock(async () => {
     await userManager()?.removeUser();
     localStorage.removeItem(providerKey);
+  });
+}
+
+// For display only; SOARCA decides access from the token, not from these claims.
+export function getProfile(): Promise<{ name?: string; email?: string }> {
+  return withSignInLock(async () => {
+    const profile = (await userManager()?.getUser())?.profile;
+    return { name: profile?.name, email: profile?.email };
   });
 }
 

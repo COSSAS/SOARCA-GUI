@@ -3,6 +3,7 @@ import React from "react";
 
 import { getSystemStatus } from "@/api/status";
 import { useAuth } from "@/auth/AuthContext";
+import { Permissions } from "@/auth/permissions";
 import {
   Badge,
   CardBody,
@@ -14,9 +15,11 @@ import {
   DetailsItem,
   DetailsValue,
   FormLabel,
+  NotificationCard,
   RadioGroup,
   Spacer,
   Spinner,
+  Text,
   ThemeSize,
   ThemeVariant,
 } from "@/components";
@@ -26,7 +29,8 @@ import { CreditsEasterEgg } from "./Credits";
 import { AccountDetails } from "./AccountDetails";
 
 export const SettingsPage: React.FC = () => {
-  const { config, user } = useAuth();
+  const { user, can } = useAuth();
+  const canReadStatus = can(Permissions.StatusRead);
   const { mode, setMode } = useThemeMode();
 
   const { data, isLoading, isError } = useQuery({
@@ -35,19 +39,29 @@ export const SettingsPage: React.FC = () => {
     refetchInterval: 5000,
     refetchIntervalInBackground: true,
     refetchOnWindowFocus: false,
+    enabled: canReadStatus,
   });
 
   return (
     <Spacer $direction="vertical" $gap="lg">
-      {config?.authentication_enabled && user && (
+      {user && (
         <CardContainer>
           <CardHeader>
             <CardTitle>Your account</CardTitle>
           </CardHeader>
           <CardBody>
-            <DetailsGrid>
-              <AccountDetails principal={user.principal} showPermissions />
-            </DetailsGrid>
+            {user.anonymous ? (
+              <Spacer $direction="vertical" $align="start">
+                <NotificationCard $variant={ThemeVariant.Warning} role="status">
+                  Sign-in is turned off on this SOARCA server. Everyone who can
+                  reach this GUI has full access, without signing in.
+                </NotificationCard>
+              </Spacer>
+            ) : (
+              <DetailsGrid>
+                <AccountDetails user={user} detailed />
+              </DetailsGrid>
+            )}
           </CardBody>
         </CardContainer>
       )}
@@ -78,7 +92,9 @@ export const SettingsPage: React.FC = () => {
           <CardTitle>SOARCA information</CardTitle>
         </CardHeader>
         <CardBody>
-          {isLoading ? (
+          {!canReadStatus ? (
+            <Text>Your account cannot view SOARCA status details.</Text>
+          ) : isLoading ? (
             <CenteredCardContent>
               <Spinner $size={ThemeSize.Medium} />
             </CenteredCardContent>

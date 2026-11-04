@@ -43,6 +43,20 @@ export function AuthStatus() {
   );
 }
 
+export function NoAccess() {
+  const { logout } = useAuth();
+  return (
+    <NotificationCard $variant={ThemeVariant.Warning} role="alert">
+      <CardTitle>No access to SOARCA</CardTitle>
+      <Text>
+        You are signed in, but your account has no SOARCA role. Ask your
+        administrator to assign one, then sign in again.
+      </Text>
+      <Button onClick={logout}>Log out</Button>
+    </NotificationCard>
+  );
+}
+
 export function AuthGate() {
   const auth = useAuth();
   const location = useLocation();
@@ -50,6 +64,13 @@ export function AuthGate() {
     return (
       <CenteredCardContent>
         <AuthStatus />
+      </CenteredCardContent>
+    );
+  }
+  if (auth.noAccess) {
+    return (
+      <CenteredCardContent>
+        <NoAccess />
       </CenteredCardContent>
     );
   }

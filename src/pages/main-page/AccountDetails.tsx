@@ -1,39 +1,37 @@
 import { DetailsItem, DetailsValue, FormLabel } from "@/components";
-import type { AuthPrincipal } from "@/types";
+import type { SessionUser } from "@/types";
 
 interface AccountDetailsProps {
-  principal: AuthPrincipal;
-  showPermissions?: boolean;
+  user: SessionUser;
+  detailed?: boolean;
 }
 
 export const AccountDetails = ({
-  principal,
-  showPermissions = false,
+  user,
+  detailed = false,
 }: AccountDetailsProps) => (
   <>
     <DetailsItem>
       <FormLabel>Full name</FormLabel>
-      <DetailsValue>{principal.name || "Not provided"}</DetailsValue>
+      <DetailsValue>{user.name || "Not provided"}</DetailsValue>
     </DetailsItem>
     <DetailsItem>
       <FormLabel>Email</FormLabel>
-      <DetailsValue>{principal.email || "Not provided"}</DetailsValue>
+      <DetailsValue>{user.email || "Not provided"}</DetailsValue>
     </DetailsItem>
-    <DetailsItem>
-      <FormLabel>Roles</FormLabel>
-      <DetailsValue>
-        {principal.roles?.join(", ") || "None assigned"}
-      </DetailsValue>
-    </DetailsItem>
-    {showPermissions && (
-      <DetailsItem>
-        <FormLabel>Permissions</FormLabel>
-        <DetailsValue>
-          {Object.keys(principal.permissions)
-            .filter((permission) => principal.permissions[permission])
-            .join(", ") || "None assigned"}
-        </DetailsValue>
-      </DetailsItem>
+    {detailed && (
+      <>
+        <DetailsItem>
+          <FormLabel>Account ID</FormLabel>
+          <DetailsValue>{user.subject}</DetailsValue>
+        </DetailsItem>
+        <DetailsItem>
+          <FormLabel>Permissions</FormLabel>
+          <DetailsValue>
+            {user.permissions.join(", ") || "None assigned"}
+          </DetailsValue>
+        </DetailsItem>
+      </>
     )}
   </>
 );

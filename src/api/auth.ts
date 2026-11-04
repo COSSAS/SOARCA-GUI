@@ -1,13 +1,21 @@
-import { ApiError, fetchFromApi } from "@/api/utils";
-import type { AuthConfig, CurrentUser } from "@/types";
+import { ApiError, fetchFromApi, PRINCIPAL_URL } from "@/api/utils";
+import type { PrincipalPermissions } from "@/types";
 
-export const getAuthConfig = () => fetchFromApi<AuthConfig>("/api/auth/config");
+export type PrincipalResult =
+  | { status: "authenticated"; principal: PrincipalPermissions }
+  | { status: "signed-out" }
+  // Signed in, but the account has no SOARCA role.
+  | { status: "forbidden" };
 
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export async function getPrincipal(): Promise<PrincipalResult> {
   try {
-    return await fetchFromApi<CurrentUser>("/api/auth/me");
+    const principal = await fetchFromApi<PrincipalPermissions>(PRINCIPAL_URL);
+    return { status: "authenticated", principal };
   } catch (error) {
-    if (error instanceof ApiError && error.status === 401) return null;
+    if (error instanceof ApiError && error.status === 401)
+      return { status: "signed-out" };
+    if (error instanceof ApiError && error.status === 403)
+      return { status: "forbidden" };
     throw error;
   }
 }

@@ -9,12 +9,13 @@ import { useEffect, useState } from "react";
 import { Navigate, useMatch, useSearchParams } from "react-router";
 import styled from "styled-components";
 
-import { getCurrentUser, safeReturnPath } from "@/api/auth";
+import { getPrincipal, safeReturnPath } from "@/api/auth";
 import soarcaBackground from "@/assets/soarca-background.jpg";
 import logoDark from "@/assets/soarca-logo-cropped-dark.svg";
 import logo from "@/assets/soarca-logo-cropped.svg";
 import { useAuth } from "@/auth/AuthContext";
-import { AuthStatus } from "@/auth/AuthGate";
+import { AuthStatus, NoAccess } from "@/auth/AuthGate";
+import { loadAuthConfig } from "@/auth/config";
 import { completeSignIn, signIn, signOut } from "@/auth/oidc";
 
 import {
@@ -55,7 +56,8 @@ export const LoginPage: React.FC = () => {
     queryFn: async () => {
       const path = await completeSignIn();
       // The provider signed the user in, but SOARCA may still reject the token.
-      if (!(await getCurrentUser())) {
+      // A valid token without a SOARCA role continues to the no-access screen.
+      if ((await getPrincipal()).status === "signed-out") {
         await signOut();
         throw new Error("SOARCA rejected the sign-in");
       }
@@ -67,6 +69,13 @@ export const LoginPage: React.FC = () => {
     staleTime: Infinity,
   });
 
+  const config = useQuery({
+    queryKey: ["auth", "config"],
+    queryFn: loadAuthConfig,
+    enabled: !isCallback && !auth.isLoading && !auth.user && !auth.noAccess,
+    retry: false,
+  });
+
   useEffect(() => {
     const resetPending = () => setPendingProvider(null);
     window.addEventListener("pageshow", resetPending);
@@ -75,7 +84,7 @@ export const LoginPage: React.FC = () => {
 
   const startSignIn = (provider: SignInProvider) => {
     if (pendingProvider) return;
-    setPendingProvider(provider.issuer);
+    setPendingProvider(provider.id);
     signIn(provider, returnTo).catch(() => {
       setPendingProvider(null);
       setParams(
@@ -109,7 +118,9 @@ export const LoginPage: React.FC = () => {
           </Spacer>
         </LoginCardHeader>
         <LoginCardBody>
-          <ProviderPrompt>Choose a login provider</ProviderPrompt>
+          {!auth.noAccess && !config.isError && (
+            <ProviderPrompt>Choose a login provider</ProviderPrompt>
+          )}
           <ProviderOptions>
             {isCallback ? (
               <Spacer $direction="vertical" $align="center">
@@ -117,6 +128,12 @@ export const LoginPage: React.FC = () => {
               </Spacer>
             ) : auth.isLoading || auth.isError ? (
               <AuthStatus />
+            ) : auth.noAccess ? (
+              <NoAccess />
+            ) : config.isLoading ? (
+              <Spacer $direction="vertical" $align="center">
+                <Spinner role="status" aria-label="Loading login providers" />
+              </Spacer>
             ) : (
               <FormContainer>
                 {signInError !== null && (
@@ -134,14 +151,14 @@ export const LoginPage: React.FC = () => {
                     Your session has ended. Select a provider to sign in again.
                   </NotificationCard>
                 )}
-                {auth.config?.providers.length ? (
-                  auth.config.providers.map((provider) => (
+                {config.data ? (
+                  config.data.map((provider) => (
                     <ProviderButton
-                      key={provider.issuer}
+                      key={provider.id}
                       type="button"
                       $fullWidth
                       disabled={pendingProvider !== null}
-                      aria-busy={pendingProvider === provider.issuer}
+                      aria-busy={pendingProvider === provider.id}
                       onClick={() => startSignIn(provider)}
                     >
                       <ProviderIdentity>
@@ -152,13 +169,9 @@ export const LoginPage: React.FC = () => {
                               : IconLockOpen2
                           }
                         />
-                        <span>
-                          {provider.id === "entra"
-                            ? "Microsoft Entra"
-                            : "Single sign-on"}
-                        </span>
+                        <span>{provider.label}</span>
                       </ProviderIdentity>
-                      {pendingProvider === provider.issuer ? (
+                      {pendingProvider === provider.id ? (
                         <Spinner
                           role="status"
                           aria-label="Redirecting to sign in"
@@ -173,12 +186,12 @@ export const LoginPage: React.FC = () => {
                     </ProviderButton>
                   ))
                 ) : (
-                  <NotificationCard
-                    $variant={ThemeVariant.Warning}
-                    role="status"
-                  >
-                    Sign-in is currently unavailable. Please try again later or
-                    contact your administrator.
+                  <NotificationCard $variant={ThemeVariant.Error} role="alert">
+                    Could not read the sign-in settings of this GUI:{" "}
+                    {config.error instanceof Error
+                      ? config.error.message
+                      : "unknown error"}
+                    . Contact your administrator.
                   </NotificationCard>
                 )}
               </FormContainer>

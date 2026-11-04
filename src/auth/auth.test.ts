@@ -1,11 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { getCurrentUser, safeReturnPath } from "@/api/auth";
+import { safeReturnPath } from "@/api/auth";
 import { getPlaybooks } from "@/api/playbooks";
 import { ApiError, shouldRetryApiRequest } from "@/api/utils";
 import { getAccessToken, signOut } from "@/auth/oidc";
-import { hasPermission, Permissions } from "@/auth/permissions";
-import type { AuthPrincipal } from "@/types";
+import { loadSession } from "@/auth/session";
 
 const location = {
   origin: "https://soarca.test",
@@ -85,15 +84,66 @@ describe("signing in", () => {
 });
 
 describe("session check", () => {
-  test("treats 401 from /me as signed out without redirecting", async () => {
+  test("returns who is signed in, what they may do and their profile", async () => {
+    signInWith({
+      access_token: "token-123",
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      profile: { name: "Ada Lovelace", email: "ada@example.test" },
+    });
+    const principal = {
+      subject: "user",
+      provider: "entra",
+      permissions: ["playbook:read"],
+    };
+    vi.stubGlobal("fetch", respond(200, principal));
+    await expect(loadSession()).resolves.toEqual({
+      user: {
+        ...principal,
+        anonymous: false,
+        name: "Ada Lovelace",
+        email: "ada@example.test",
+      },
+      noAccess: false,
+    });
+  });
+
+  test("lets everyone in as anonymous when SOARCA has authentication disabled", async () => {
+    const principal = {
+      subject: "anonymous",
+      provider: "anonymous",
+      permissions: ["status:read", "playbook:read"],
+    };
+    const fetch = respond(200, principal);
+    vi.stubGlobal("fetch", fetch);
+    await expect(loadSession()).resolves.toEqual({
+      user: { ...principal, anonymous: true },
+      noAccess: false,
+    });
+    const init: RequestInit = fetch.mock.calls[0][1];
+    expect(new Headers(init.headers).get("Authorization")).toBeNull();
+  });
+
+  test("treats 401 as signed out without redirecting", async () => {
     vi.stubGlobal("fetch", respond(401, { message: "unauthorized" }));
-    await expect(getCurrentUser()).resolves.toBeNull();
+    await expect(loadSession()).resolves.toEqual({
+      user: null,
+      noAccess: false,
+    });
+    expect(location.assign).not.toHaveBeenCalled();
+  });
+
+  test("treats 403 as signed in without a SOARCA role", async () => {
+    vi.stubGlobal("fetch", respond(403, { message: "forbidden" }));
+    await expect(loadSession()).resolves.toEqual({
+      user: null,
+      noAccess: true,
+    });
     expect(location.assign).not.toHaveBeenCalled();
   });
 
   test("surfaces a server failure instead of treating it as signed out", async () => {
     vi.stubGlobal("fetch", respond(503));
-    await expect(getCurrentUser()).rejects.toMatchObject({ status: 503 });
+    await expect(loadSession()).rejects.toMatchObject({ status: 503 });
   });
 });
 
@@ -177,15 +227,6 @@ describe("signed-in requests", () => {
     expect(await authorization()).toBeNull();
     expect(storage.size).toBe(0);
   });
-
-  test("ignore a provider stored in an unusable format", async () => {
-    storage.set(
-      "soarca.auth.provider",
-      JSON.stringify({ id: "entra", label: "Sign in with Microsoft" }),
-    );
-    expect(await authorization()).toBeNull();
-    expect(storage.has("soarca.auth.provider")).toBe(false);
-  });
 });
 
 describe("token refresh", () => {
@@ -246,34 +287,5 @@ describe("token refresh", () => {
 
     await Promise.all([token, signedOut]);
     expect(storage.size).toBe(0);
-  });
-});
-
-describe("permissions", () => {
-  const principal = (permissions: Record<string, boolean>): AuthPrincipal => ({
-    provider: "entra",
-    subject: "user",
-    roles: null,
-    permissions,
-  });
-
-  test("grants only what the user has", () => {
-    const reader = principal({ [Permissions.PlaybookRead]: true });
-    expect(hasPermission(reader, Permissions.PlaybookRead)).toBe(true);
-    expect(hasPermission(reader, Permissions.PlaybookWrite)).toBe(false);
-    expect(
-      hasPermission(
-        principal({ [Permissions.PlaybookExecute]: false }),
-        Permissions.PlaybookExecute,
-      ),
-    ).toBe(false);
-    expect(hasPermission(undefined, Permissions.PlaybookRead)).toBe(false);
-  });
-
-  test("admins can do everything", () => {
-    const admin = principal({ [Permissions.Admin]: true });
-    for (const permission of Object.values(Permissions)) {
-      expect(hasPermission(admin, permission)).toBe(true);
-    }
   });
 });

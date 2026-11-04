@@ -1,10 +1,10 @@
 import { createContext, useContext } from "react";
-import type { AuthConfig, CurrentUser } from "@/types";
+import type { SessionUser } from "@/types";
 import type { Permission } from "@/auth/permissions";
 
 export interface AuthState {
-  config: AuthConfig | undefined;
-  user: CurrentUser | null | undefined;
+  user: SessionUser | null | undefined;
+  noAccess: boolean;
   isLoading: boolean;
   isError: boolean;
   can: (permission: Permission) => boolean;
