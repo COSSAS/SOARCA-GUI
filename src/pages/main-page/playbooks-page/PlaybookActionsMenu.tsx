@@ -4,6 +4,7 @@ import {
   IconFileCode,
   IconPencil,
   IconPlayerPlay,
+  IconSitemap,
   IconTrash,
 } from "@tabler/icons-react";
 import React, { useState } from "react";
@@ -122,11 +123,21 @@ export const PlaybookActionsMenu: React.FC<PlaybookActionsMenuProps> = ({
         <RequirePermission permission={Permissions.PlaybookWrite}>
           <PopoverItem
             onClick={() =>
+              navigate(
+                PATHS.PLAYBOOKS.VISUAL_EDIT.replace(":playbookId", playbook.id),
+              )
+            }
+          >
+            <Icon $icon={IconSitemap} />
+            Edit visually
+          </PopoverItem>
+          <PopoverItem
+            onClick={() =>
               navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbook.id))
             }
           >
             <Icon $icon={IconPencil} />
-            Edit
+            Edit JSON
           </PopoverItem>
         </RequirePermission>
         <PlaybookActionItem $variant={ThemeVariant.Accent} onClick={handleExport}>

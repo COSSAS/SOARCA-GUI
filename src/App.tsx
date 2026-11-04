@@ -1,8 +1,10 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import { AuthGate, PermissionGate } from "@/auth/AuthGate";
 import { Permissions } from "@/auth/permissions";
 
 import { ToasterSetup } from "./ToasterSetup";
+import { Spinner, ThemeSize } from "./components";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
@@ -15,6 +17,22 @@ import { PlaybookEditPage } from "./pages/main-page/playbooks-page/PlaybookEditP
 import { PlaybooksPage } from "./pages/main-page/playbooks-page/PlaybooksPage";
 import { PlaybookDetailPage } from "./pages/main-page/playbooks-page/playbook-detail-page/PlaybookDetailPage";
 import { PATHS } from "./utils";
+
+// The visual editor pulls in React Flow, so it is only loaded when opened.
+const PlaybookVisualEditPage = lazy(() =>
+  import(
+    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualEditPage"
+  ).then((m) => ({ default: m.PlaybookVisualEditPage })),
+);
+const PlaybookVisualCreatePage = lazy(() =>
+  import(
+    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualCreatePage"
+  ).then((m) => ({ default: m.PlaybookVisualCreatePage })),
+);
+
+const withSuspense = (page: React.ReactNode) => (
+  <Suspense fallback={<Spinner $size={ThemeSize.Medium} />}>{page}</Suspense>
+);
 
 function App() {
   return (
