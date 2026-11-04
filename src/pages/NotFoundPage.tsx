@@ -48,55 +48,57 @@ const ErrorContainer = styled.div`
   /* Layout */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
 
   /* Spacing */
   gap: ${({ theme }) => theme.spacing["2xl"]};
-  padding: ${({ theme }) => theme.spacing["3xl"]};
-
-  /* Colors & Background */
-  background-color: ${({ theme }) => theme.colors.background.primary};
-
-  /* Shape & Visuals */
-  border-radius: ${({ theme }) => theme.radius.lg};
-  box-shadow: ${({ theme }) => theme.shadows.base};
+  align-items: center;
+  justify-content: center;
 
   /* Sizing */
   width: 32rem;
+  padding: ${({ theme }) => theme.spacing["3xl"]};
+
+  /* Shape & Visuals */
+  border-radius: ${({ theme }) => theme.radius.lg};
+
   text-align: center;
+
+  /* Colors & Background */
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  box-shadow: ${({ theme }) => theme.shadows.base};
 `;
 
 const ErrorCode = styled.h1`
   /* Typography */
   font-size: 5rem;
   font-weight: ${({ theme }) => theme.fonts.weight.bold};
-  color: ${({ theme }) => theme.colors.primary.main};
   line-height: 1;
+  color: ${({ theme }) => theme.colors.primary.main};
 `;
 
 const ErrorTitle = styled.h2`
+  font: ${({ theme }) => theme.typography.h2.font};
   /* Typography */
   color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.h2.font};
 `;
 
 const ErrorDescription = styled.p`
-  /* Typography & Layout */
-  color: ${({ theme }) => theme.colors.text.secondary};
   max-width: 400px;
   font: ${({ theme }) => theme.typography.body.font};
+  /* Typography & Layout */
+  color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
 const ButtonGroup = styled.div`
   /* Layout */
   display: flex;
+  flex-wrap: wrap;
 
   /* Spacing */
   gap: ${({ theme }) => theme.spacing.lg};
-  margin-top: ${({ theme }) => theme.spacing.lg};
 
   /* Alignment */
   justify-content: center;
-  flex-wrap: wrap;
+
+  margin-top: ${({ theme }) => theme.spacing.lg};
 `;

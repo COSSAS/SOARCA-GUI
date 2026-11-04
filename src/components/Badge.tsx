@@ -23,24 +23,23 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
  */
 export const Badge = styled.span<BadgeProps>`
   display: inline-flex;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
+  align-items: center;
 
   padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.sm}`};
-
-  border-radius: ${({ $shape = BadgeShape.Pill, theme }) =>
-    $shape === BadgeShape.Rounded ? theme.radius.md : theme.radius.full};
   border: 1px solid
     ${({ $variant = ThemeVariant.Primary, theme }) =>
       getVariantColors(theme, $variant).border};
+  border-radius: ${({ $shape = BadgeShape.Pill, theme }) =>
+    $shape === BadgeShape.Rounded ? theme.radius.md : theme.radius.full};
 
   font: ${({ theme }) => theme.typography.small.font};
   line-height: ${({ theme }) => theme.fonts.lineHeight.mini};
+  color: ${({ $variant = ThemeVariant.Primary, theme }) =>
+    getVariantColors(theme, $variant).text};
 
   background: ${({ $variant = ThemeVariant.Primary, theme }) =>
     getVariantColors(theme, $variant).bg};
-  color: ${({ $variant = ThemeVariant.Primary, theme }) =>
-    getVariantColors(theme, $variant).text};
 
   ${({ $isClickable, theme }) =>
     $isClickable

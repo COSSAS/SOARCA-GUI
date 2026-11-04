@@ -52,6 +52,7 @@ const StatusDot = styled.div<{
   $isReconnecting: boolean;
 }>`
   position: relative;
+
   width: 10px;
   height: 10px;
   border-radius: ${({ theme }) => theme.radius.full};
@@ -63,10 +64,9 @@ const StatusDot = styled.div<{
         ? getVariantColors(theme, ThemeVariant.Warning).solidBg
         : getVariantColors(theme, ThemeVariant.Error).solidBg};
 
-  animation: ${({ $isOnline, $isReconnecting }) =>
-    $isOnline || $isReconnecting
-      ? css`
-          ${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        `
-      : "none"};
+  ${({ $isOnline, $isReconnecting }) =>
+    ($isOnline || $isReconnecting) &&
+    css`
+      animation: ${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    `}
 `;

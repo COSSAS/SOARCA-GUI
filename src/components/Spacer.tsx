@@ -28,9 +28,7 @@ export const Spacer = styled.div<SpacerProps>`
   flex-direction: ${({ $direction }) =>
     $direction === "vertical" ? "column" : "row"};
   flex-wrap: ${({ $wrap = false }) => ($wrap ? "wrap" : "nowrap")};
-
   gap: ${({ $gap = "md", theme }) => theme.spacing[$gap]};
-
   align-items: ${({ $align = "center" }) => {
     switch ($align) {
       case "start":
@@ -45,7 +43,6 @@ export const Spacer = styled.div<SpacerProps>`
         return "center";
     }
   }};
-
   justify-content: ${({ $justify = "center" }) => {
     switch ($justify) {
       case "start":

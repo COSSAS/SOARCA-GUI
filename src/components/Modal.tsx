@@ -5,37 +5,37 @@ import { IconX } from "@tabler/icons-react";
 import { Icon } from "./Icon";
 
 const Overlay = styled.dialog`
+  overflow: hidden;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 
   width: 100%;
   max-width: none;
   height: 100%;
   max-height: none;
-
   border: 0;
-  background: transparent;
 
-  &[open] {
-    display: flex;
-  }
+  background: transparent;
 
   &::backdrop {
     background: ${({ theme }) => theme.colors.background.overlay};
     backdrop-filter: blur(${({ theme }) => theme.effects.backdropBlur});
   }
+
+  &[open] {
+    display: flex;
+  }
 `;
 
 const Dialog = styled.div`
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 
   width: min(640px, 90vw);
   max-height: 90vh;
-
   border-radius: ${({ theme }) => theme.radius.lg};
+
   background: ${({ theme }) => theme.colors.background.primary};
   box-shadow: ${({ theme }) => theme.shadows.lg};
 `;
@@ -56,9 +56,9 @@ const Header = styled.div`
 
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
 
-  background-color: ${({ theme }) => theme.colors.info.solidBg};
-
   color: ${({ theme }) => theme.colors.info.solidText};
+
+  background-color: ${({ theme }) => theme.colors.info.solidBg};
 `;
 
 /**
@@ -81,11 +81,9 @@ const Title = styled.h2`
  */
 const Body = styled.div`
   overflow: auto;
-
   padding: ${({ theme }) => theme.spacing.lg};
-
-  color: ${({ theme }) => theme.colors.text.primary};
   font: ${({ theme }) => theme.typography.body.font};
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 /**
@@ -100,11 +98,10 @@ const Body = styled.div`
  */
 const Footer = styled.div`
   display: flex;
-  justify-content: flex-end;
   gap: ${({ theme }) => theme.spacing.sm};
+  justify-content: flex-end;
 
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
-
   border-top: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
@@ -117,7 +114,6 @@ const Footer = styled.div`
 const CloseButton = styled.button`
   display: flex;
   align-items: center;
-
   color: ${({ theme }) => theme.colors.primary.text};
 `;
 

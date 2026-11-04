@@ -82,21 +82,21 @@ export const LoginPage: React.FC = () => {
 };
 
 const LoginCard = styled.div`
+  overflow: hidden;
+
   width: 100%;
   max-width: 28rem;
-  background: ${({ theme }) => theme.colors.background.primary};
-  border-radius: ${({ theme }) => theme.radius.lg};
-  border-top: 1px solid transparent;
-
   margin: 0 auto;
-  box-shadow: ${({ theme }) => theme.shadows.base};
+  border-top: 1px solid transparent;
+  border-radius: ${({ theme }) => theme.radius.lg};
 
-  overflow: hidden;
+  background: ${({ theme }) => theme.colors.background.primary};
+  box-shadow: ${({ theme }) => theme.shadows.base};
 `;
 
 const LoginCardHeader = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
   padding: ${({ theme }) => theme.spacing["3xl"]} ${({ theme }) => theme.spacing.xl};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
 const LoginCardBody = styled.div`
@@ -104,7 +104,7 @@ const LoginCardBody = styled.div`
 `;
 
 const LoginCardFooter = styled.div`
+  padding: ${({ theme }) => theme.spacing.xl};
   border-top: 1px solid ${({ theme }) => theme.colors.border.light};
   background-color: ${({ theme }) => theme.colors.background.tertiary};
-  padding: ${({ theme }) => theme.spacing.xl};
 `;

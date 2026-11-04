@@ -33,13 +33,12 @@ const SpinnerContainer = styled.div<{ $variant: ThemeVariant; $px: number }>`
 
   width: ${({ $px }) => `${$px}px`};
   height: ${({ $px }) => `${$px}px`};
-
+  border: 1px solid
+    ${({ $variant, theme }) => getVariantColors(theme, $variant).solidBg};
   border-radius: 50%;
 
   background-color: ${({ $variant, theme }) =>
     getVariantColors(theme, $variant).solidBg};
-  border: 1px solid
-    ${({ $variant, theme }) => getVariantColors(theme, $variant).solidBg};
 `;
 
 export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {

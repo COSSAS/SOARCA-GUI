@@ -39,9 +39,9 @@ const ExpandableTextContainer = styled.div<ExpandableTextContainerProps>`
 `;
 
 const ExpandToggle = styled.button`
-  color: ${({ theme }) => theme.colors.primary.main};
-  font: ${({ theme }) => theme.typography.small.font};
   margin-top: ${({ theme }) => theme.spacing.xs};
+  font: ${({ theme }) => theme.typography.small.font};
+  color: ${({ theme }) => theme.colors.primary.main};
   text-decoration: underline;
 
   &:hover {
@@ -135,7 +135,7 @@ export interface ImageContainerProps extends React.ImgHTMLAttributes<HTMLImageEl
  */
 export const ImageContainer = styled.img<ImageContainerProps>`
   display: block;
+  aspect-ratio: auto;
   width: ${({ $width }) => $width || "15rem"};
   height: auto;
-  aspect-ratio: auto;
 `;
