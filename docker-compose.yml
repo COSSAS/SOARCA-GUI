@@ -13,6 +13,7 @@ services:
       - "${DOCKER_HOST_PORT:-8081}:${NGINX_SERVER_PORT:-8081}"
     volumes:
       - soarca-certs:/app/certs:ro
+      - ${SOARCA_GUI_CONFIG_DIR:-./config}:/app/config:ro
     environment:
       - NODE_ENV=production
       - NGINX_BACKEND_URL=${NGINX_BACKEND_URL:-https://host.docker.internal:8080/}

@@ -28,3 +28,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Deployment specific sign-in providers (see config/auth-config.example.json)
+config/auth-config.json
