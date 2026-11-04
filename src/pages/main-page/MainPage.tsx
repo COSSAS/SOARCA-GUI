@@ -1,10 +1,12 @@
 import {
   IconActivity,
   IconBook,
+  IconChevronLeft,
+  IconChevronRight,
   IconFilePlus,
   IconHome,
-  IconLayoutDashboard,
   IconMenu2,
+  IconNotebook,
   IconSettings,
   IconX,
   type TablerIcon,
@@ -18,15 +20,17 @@ import logoSmall from "@/assets/soarca-logo-small.svg";
 import { PATHS, SOARCA_DOC_URL } from "@/utils";
 
 import {
-  Button,
   Icon,
   ImageContainer,
-  Link,
   NavItem,
   Sidebar,
   SidebarFooter,
   SidebarHeader,
-  SidebarLogoContainer,
+  SidebarAction,
+  SidebarActionLabel,
+  SidebarLabel,
+  SidebarLogo,
+  SidebarLogos,
   SidebarNav,
   Spacer,
   ThemeSize,
@@ -51,21 +55,27 @@ interface NavRoute {
 }
 
 const NAV_ROUTES: NavRoute[] = [
-  { path: PATHS.DASHBOARD, label: "Dashboard (Soon™)", icon: IconHome },
-  {
-    path: PATHS.PLAYBOOKS.BASE,
-    label: "Playbooks (Beta)",
-    icon: IconLayoutDashboard,
-  },
+  { path: PATHS.DASHBOARD, label: "Dashboard", icon: IconHome },
+  { path: PATHS.PLAYBOOKS.BASE, label: "Playbooks", icon: IconNotebook },
   { path: PATHS.MONITORING.BASE, label: "Monitoring", icon: IconActivity },
-  { path: PATHS.SETTINGS, label: "Settings (Beta)", icon: IconSettings },
+  { path: PATHS.SETTINGS, label: "Settings", icon: IconSettings },
 ];
+
+const COLLAPSED_KEY = "soarca-sidebar-collapsed";
 
 export const MainPage: React.FC = () => {
   const navigate = useNavigate();
   const { resolved } = useThemeMode();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(
+    () => localStorage.getItem(COLLAPSED_KEY) === "true",
+  );
+
+  const toggleCollapsed = () => {
+    localStorage.setItem(COLLAPSED_KEY, String(!collapsed));
+    setCollapsed(!collapsed);
+  };
 
   const openSidebar = () => setSidebarOpen(true);
   const closeSidebar = () => setSidebarOpen(false);
@@ -78,23 +88,30 @@ export const MainPage: React.FC = () => {
   return (
     <MainWrapper>
       <Overlay $isOpen={sidebarOpen} onClick={closeSidebar} />
-      <Sidebar $isOpen={sidebarOpen}>
+      <Sidebar $isOpen={sidebarOpen} $collapsed={collapsed}>
         <SidebarHeader>
-          <SidebarLogoContainer>
-            <ImageContainer
+          <SidebarLogos>
+            <SidebarLogo
               src={resolved === "dark" ? logoDark : logo}
               alt="SOARCA Logo"
-              $width="11.5rem"
+              $hidden={collapsed}
             />
-          </SidebarLogoContainer>
-          <Button
+            <SidebarLogo
+              src={logoSmall}
+              alt=""
+              $small
+              $hidden={!collapsed}
+            />
+          </SidebarLogos>
+          <SidebarAction
             $variant={ThemeVariant.Primary}
             $fullWidth
+            title={collapsed ? "New playbook" : undefined}
             onClick={() => handleNavigation(PATHS.PLAYBOOKS.NEW)}
           >
             <Icon $icon={IconFilePlus} />
-            New playbook
-          </Button>
+            <SidebarActionLabel $hidden={collapsed}>New playbook</SidebarActionLabel>
+          </SidebarAction>
         </SidebarHeader>
         <SidebarNav>
           {NAV_ROUTES.map((route) => (
@@ -107,23 +124,31 @@ export const MainPage: React.FC = () => {
                 (route.path === PATHS.PLAYBOOKS.BASE &&
                   location.pathname.includes(PATHS.PLAYBOOKS.BASE))
               }
+              title={collapsed ? route.label : undefined}
               onClick={() => handleNavigation(route.path)}
             >
               <Icon $icon={route.icon} />
-              {route.label}
+              <SidebarLabel $hidden={collapsed}>{route.label}</SidebarLabel>
             </NavItem>
           ))}
         </SidebarNav>
         <SidebarFooter>
-          <Link
-            $subtle
-            $to={SOARCA_DOC_URL}
+          <NavItem
+            href={SOARCA_DOC_URL}
             target="_blank"
             rel="help noopener noreferrer"
+            title="Docs"
           >
             <Icon $icon={IconBook} />
-            Docs
-          </Link>
+          </NavItem>
+          <NavItem
+            as="button"
+            type="button"
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={toggleCollapsed}
+          >
+            <Icon $icon={collapsed ? IconChevronRight : IconChevronLeft} />
+          </NavItem>
         </SidebarFooter>
       </Sidebar>
       <ContentArea>

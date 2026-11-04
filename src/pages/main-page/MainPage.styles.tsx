@@ -1,16 +1,16 @@
 import styled from "styled-components";
 
 export const MainWrapper = styled.div`
-  height: 100vh;
-  display: flex;
   overflow: hidden;
+  display: flex;
+  height: 100vh;
 `;
 
 export const ContentArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
   overflow: hidden;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 `;
 
 export const MainHeader = styled.header`
@@ -18,10 +18,11 @@ export const MainHeader = styled.header`
   align-items: center;
   justify-content: space-between;
 
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-  padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.xl};
   min-height: 4rem;
+  padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.xl};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+
+  background-color: ${({ theme }) => theme.colors.background.primary};
 
   @media (max-width: 768px) {
     .mobile-logo {
@@ -37,17 +38,19 @@ export const MainHeader = styled.header`
 `;
 
 export const MainContent = styled.main`
-  flex: 1;
-  overflow-y: auto;
   scrollbar-gutter: stable;
-  padding: ${({ theme }) => theme.spacing.lg};
+
+  overflow-y: auto;
+  flex: 1;
+
   min-width: 550px;
+  padding: ${({ theme }) => theme.spacing.lg};
+
   background-color: ${({ theme }) => theme.colors.secondary.bg};
 `;
 
 export const MobileMenuButton = styled.button`
   display: none;
-
   color: ${({ theme }) => theme.colors.text.primary};
 
   @media (max-width: 768px) {
@@ -61,11 +64,13 @@ export const Overlay = styled.div<{ $isOpen: boolean }>`
   display: none;
 
   @media (max-width: 768px) {
-    display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
     position: fixed;
+    z-index: ${({ theme }) => theme.zIndex.overlay};
     inset: 0;
+
+    display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
+
     background-color: ${({ theme }) => theme.colors.background.overlay};
     backdrop-filter: blur(${({ theme }) => theme.effects.backdropBlur});
-    z-index: ${({ theme }) => theme.zIndex.overlay};
   }
 `;
