@@ -1,216 +1,126 @@
 import { CodeEditor, Input, Select } from "@/components";
-import React, { useState } from "react";
 
 interface VariableInputProps {
+  /** Id of the control, for a label's htmlFor. */
+  id?: string;
   variableKey: string;
   type: string;
   value: string;
-  disabled: boolean;
+  disabled?: boolean;
   onChange: (key: string, value: string) => void;
 }
 
-const DictionaryInput: React.FC<{
-  variableKey: string;
-  value: string;
-  disabled: boolean;
-  onChange: (key: string, value: string) => void;
-}> = ({ variableKey, value, disabled, onChange }) => {
-  const [hasError, setHasError] = useState(false);
-
-  const handleChange = (val: string) => {
-    if (val.trim() === "") {
-      setHasError(false);
-    } else {
-      try {
-        JSON.parse(val);
-        setHasError(false);
-      } catch {
-        setHasError(true);
-      }
-    }
-    onChange(variableKey, val);
-  };
-
-  return (
-    <CodeEditor
-      $value={value}
-      $onChange={handleChange}
-      disabled={disabled}
-      placeholder='{"key": "value"}'
-      $hasError={hasError}
-      $minHeight="100px"
-    />
-  );
+type TextFormat = {
+  inputType?: "number" | "url";
+  step?: string;
+  placeholder: string;
+  pattern?: string;
 };
 
+const INTEGER_FORMAT: TextFormat = {
+  inputType: "number",
+  step: "1",
+  placeholder: "Enter integer value",
+  pattern: "^-?\\d+$",
+};
+
+const TEXT_FORMATS: Record<string, TextFormat> = {
+  integer: INTEGER_FORMAT,
+  long: INTEGER_FORMAT,
+  float: { inputType: "number", step: "any", placeholder: "Enter float value", pattern: "^-?\\d+(\\.\\d+)?$" },
+  "ipv4-addr": { placeholder: "192.168.1.1", pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$" },
+  "ipv6-addr": {
+    placeholder: "2001:0db8:85a3::8a2e:0370:7334",
+    pattern: "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$",
+  },
+  "mac-addr": { placeholder: "00:1A:2B:3C:4D:5E", pattern: "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" },
+  uri: { inputType: "url", placeholder: "https://example.com" },
+  uuid: {
+    placeholder: "550e8400-e29b-41d4-a716-446655440000",
+    pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+  },
+  hash: { placeholder: "Hash value (hex string)", pattern: "^[a-fA-F0-9]+$" },
+  "md5-hash": { placeholder: "MD5 hash (32 characters)", pattern: "^[a-fA-F0-9]{32}$" },
+  "sha256-hash": { placeholder: "SHA-256 hash (64 characters)", pattern: "^[a-fA-F0-9]{64}$" },
+};
+
+const isInvalidJson = (text: string) => {
+  if (text.trim() === "") return false;
+  try {
+    JSON.parse(text);
+    return false;
+  } catch {
+    return true;
+  }
+};
+
+/** Input for a CACAO variable value. The control and its checks depend on the variable type. */
 export const VariableInput: React.FC<VariableInputProps> = ({
+  id,
   variableKey,
   type,
   value,
   disabled,
   onChange,
 }) => {
+  const change = (next: string) => onChange(variableKey, next);
+
   switch (type) {
     case "bool":
       return (
         <Select
-          id="select"
+          id={id}
           $value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
+          onChange={(e) => change(e.target.value)}
           disabled={disabled}
+          $placeholder="Not set"
           $options={[
             { value: "true", label: "True" },
             { value: "false", label: "False" },
           ]}
         />
       );
-    case "integer":
-    case "long":
-      return (
-        <Input
-          type="number"
-          step="1"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="Enter integer value"
-          pattern="^-?\d+$"
-        />
-      );
-    case "float":
-      return (
-        <Input
-          type="number"
-          step="any"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="Enter float value"
-          pattern="^-?\d+(\.\d+)?$"
-        />
-      );
     case "hexstring":
       return (
         <Input
+          id={id}
           type="text"
           value={value}
           onChange={(e) => {
             const val = e.target.value;
-            if (val === "" || /^0x[0-9a-fA-F]*$/.test(val)) {
-              onChange(variableKey, val);
-            }
+            if (val === "" || /^0x[0-9a-fA-F]*$/.test(val)) change(val);
           }}
           disabled={disabled}
           placeholder="0x..."
           pattern="^0x[0-9a-fA-F]*$"
         />
       );
-    case "ipv4-addr":
-      return (
-        <Input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="192.168.1.1"
-          pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
-        />
-      );
-    case "ipv6-addr":
-      return (
-        <Input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="2001:0db8:85a3::8a2e:0370:7334"
-          pattern="^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$"
-        />
-      );
-    case "mac-addr":
-      return (
-        <Input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="00:1A:2B:3C:4D:5E"
-          pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
-        />
-      );
-    case "uri":
-      return (
-        <Input
-          type="url"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="https://example.com"
-        />
-      );
-    case "uuid":
-      return (
-        <Input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="550e8400-e29b-41d4-a716-446655440000"
-          pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-        />
-      );
     case "dictionary":
       return (
-        <DictionaryInput
-          variableKey={variableKey}
-          value={value}
+        <CodeEditor
+          $inputId={id}
+          $value={value}
+          $onChange={change}
           disabled={disabled}
-          onChange={onChange}
+          placeholder='{"key": "value"}'
+          $hasError={isInvalidJson(value)}
+          $minHeight="100px"
         />
       );
-    case "hash":
+    default: {
+      const format: TextFormat = TEXT_FORMATS[type] ?? { placeholder: "Enter value" };
       return (
         <Input
-          type="text"
+          id={id}
+          type={format.inputType ?? "text"}
+          step={format.step}
           value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
+          onChange={(e) => change(e.target.value)}
           disabled={disabled}
-          placeholder="Hash value (hex string)"
-          pattern="^[a-fA-F0-9]+$"
+          placeholder={format.placeholder}
+          pattern={format.pattern}
         />
       );
-    case "md5-hash":
-      return (
-        <Input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="MD5 hash (32 characters)"
-          pattern="^[a-fA-F0-9]{32}$"
-        />
-      );
-    case "sha256-hash":
-      return (
-        <Input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="SHA-256 hash (64 characters)"
-          pattern="^[a-fA-F0-9]{64}$"
-        />
-      );
-    case "string":
-    default:
-      return (
-        <Input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(variableKey, e.target.value)}
-          disabled={disabled}
-          placeholder="Enter value"
-        />
-      );
+    }
   }
 };

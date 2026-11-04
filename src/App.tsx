@@ -1,6 +1,8 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router";
 
 import { ToasterSetup } from "./ToasterSetup";
+import { Spinner, ThemeSize } from "./components";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
@@ -13,6 +15,22 @@ import { PlaybookEditPage } from "./pages/main-page/playbooks-page/PlaybookEditP
 import { PlaybooksPage } from "./pages/main-page/playbooks-page/PlaybooksPage";
 import { PlaybookDetailPage } from "./pages/main-page/playbooks-page/playbook-detail-page/PlaybookDetailPage";
 import { PATHS } from "./utils";
+
+// The visual editor pulls in React Flow, so it is only loaded when opened.
+const PlaybookVisualEditPage = lazy(() =>
+  import(
+    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualEditPage"
+  ).then((m) => ({ default: m.PlaybookVisualEditPage })),
+);
+const PlaybookVisualCreatePage = lazy(() =>
+  import(
+    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualCreatePage"
+  ).then((m) => ({ default: m.PlaybookVisualCreatePage })),
+);
+
+const withSuspense = (page: React.ReactNode) => (
+  <Suspense fallback={<Spinner $size={ThemeSize.Medium} />}>{page}</Suspense>
+);
 
 function App() {
   return (
@@ -30,6 +48,14 @@ function App() {
           <Route path={PATHS.PLAYBOOKS.BASE} element={<PlaybooksPage />} />
           <Route path={PATHS.PLAYBOOKS.NEW} element={<PlaybookCreatePage />} />
           <Route path={PATHS.PLAYBOOKS.EDIT} element={<PlaybookEditPage />} />
+          <Route
+            path={PATHS.PLAYBOOKS.VISUAL_NEW}
+            element={withSuspense(<PlaybookVisualCreatePage />)}
+          />
+          <Route
+            path={PATHS.PLAYBOOKS.VISUAL_EDIT}
+            element={withSuspense(<PlaybookVisualEditPage />)}
+          />
           <Route
             path={PATHS.PLAYBOOKS.DETAIL}
             element={<PlaybookDetailPage />}

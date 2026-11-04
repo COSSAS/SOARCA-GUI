@@ -346,6 +346,28 @@ flowchart TB
 
 Usage of SOARCA-GUI is described here: https://cossas.github.io/SOARCA/docs/
 
+### Visual playbook editor
+
+- Collapse either side panel with its chevron button. A primary-coloured canvas-facing border marks a collapsed panel.
+- Right-click the canvas, a step, a connection or a connection badge for its actions. Hover a submenu or use the arrow keys to open its choices.
+- Hold Shift and drag to select several steps, then drag the selection to move them together.
+- Ctrl-click (Cmd-click on macOS) adds a step to the selection or removes it. The "Controls" section under the step list has the full list of controls.
+- The properties panel groups fields in tabs. A step has Details, Execution, Variables and Advanced. The playbook has Metadata, Resources and Advanced. Fields without a form input, such as extensions, are edited as JSON in the Advanced tab.
+- The editor sets `id`, `created_by`, `created` and `modified` itself, so the panel does not show them.
+- Lists such as playbook types and labels use searchable selects. Type a new value and press Enter to add one that is not in the list.
+- Variables, agents, targets and authentication info are rows that expand one at a time. The input for a variable's value follows its type.
+- Valid from and valid until are shown and typed in your local time zone. The playbook stores them in UTC.
+- Fields with a red asterisk are required by CACAO 2.0. Save is blocked while a required field is empty or a JSON box has invalid JSON. It then opens the step and tab with the problem. Missing connections are warnings and do not block saving.
+- The read-only diagram supports panning and step details. Use its zoom buttons to change the zoom.
+- Leaving the visual editor with unsaved changes asks for confirmation, including in-app navigation, reloads and closing the tab.
+
+## Acknowledgements
+
+The visual playbook editor was written from scratch for SOARCA-GUI, using these projects as a reference for CACAO concepts:
+
+- [CACAO Roaster](https://github.com/opencybersecurityalliance/cacao-roaster) by the Open Cybersecurity Alliance (Apache-2.0), a browser-based editor for CACAO v2.0 playbooks.
+- [CACAO Layout Extension](https://github.com/cyentific-rni/cacao-layout-extension) by Cyentific AS, now maintained by the [OASIS CACAO TC](https://github.com/oasis-tcs/cacao) (MIT, Copyright (c) 2023 Cyentific). The editor stores step positions under this extension's id (`extension-definition--418ee24c-9cb1-46d9-afa5-309e01aabc7f`).
+
 ## Contributing
 
 Want to contribute to this project? Please keep in mind the following rules:

@@ -191,6 +191,7 @@ export type Playbook = {
   name: string;
   playbook_extensions?: Extensions;
   playbook_types?: string[]; // e.g. investigation
+  playbook_activities?: string[];
   playbook_variables?: Variables;
   priority?: number;
   severity?: number;

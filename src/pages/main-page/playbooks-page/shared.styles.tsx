@@ -2,11 +2,12 @@ import styled from "styled-components";
 
 // Shared layout components
 export const TwoColumnLayout = styled.div`
-  width: 100%;
   display: grid;
   grid-template-columns: 40% 60%;
   gap: ${({ theme }) => theme.spacing.lg};
   align-items: start;
+
+  width: 100%;
 
   @media (max-width: 1200px) {
     grid-template-columns: 1fr;
@@ -20,40 +21,46 @@ export const EditorContainer = styled.div`
 `;
 
 export const EditorTextarea = styled.textarea<{ $hasError: boolean }>`
+  resize: vertical;
+
   width: 100%;
   min-height: 500px;
   padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.radius.md};
   border: 2px solid
     ${({ theme, $hasError }) =>
       $hasError ? theme.colors.error.border : theme.colors.border.medium};
-  background-color: ${({ theme }) => theme.colors.background.secondary};
-  color: ${({ theme }) => theme.colors.text.primary};
+  border-radius: ${({ theme }) => theme.radius.md};
+
   font: ${({ theme }) => theme.typography.code.font};
-  resize: vertical;
+  color: ${({ theme }) => theme.colors.text.primary};
+
+  background-color: ${({ theme }) => theme.colors.background.secondary};
+
   transition: all ${({ theme }) => theme.transitions.base};
 
   &:focus {
-    outline: none;
     border-color: ${({ theme, $hasError }) =>
       $hasError ? theme.colors.error.border : theme.colors.info.border};
     background-color: ${({ theme }) => theme.colors.background.primary};
+    outline: none;
   }
 
   &:disabled {
-    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
     cursor: not-allowed;
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
   }
 `;
 
 export const ErrorMessage = styled.div`
-  color: ${({ theme }) => theme.colors.error.text};
-  font: ${({ theme }) => theme.typography.body.font};
   margin-bottom: ${({ theme }) => theme.spacing.md};
   padding: ${({ theme }) => theme.spacing.sm};
-  background-color: ${({ theme }) => theme.colors.error.bg};
   border: 1px solid ${({ theme }) => theme.colors.error.border};
   border-radius: ${({ theme }) => theme.radius.sm};
+
+  font: ${({ theme }) => theme.typography.body.font};
+  color: ${({ theme }) => theme.colors.error.text};
+
+  background-color: ${({ theme }) => theme.colors.error.bg};
 `;
 
 export const ActionButtons = styled.div`

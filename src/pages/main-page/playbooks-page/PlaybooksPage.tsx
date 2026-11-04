@@ -1,5 +1,5 @@
 import { ThemeSize, ThemeVariant } from "@/components";
-import { IconFilePlus } from "@tabler/icons-react";
+import { IconFilePlus, IconSitemap } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -201,6 +201,14 @@ export const PlaybooksPage: React.FC = () => {
             autoFocus
             onChange={(e) => setSearch(e.target.value)}
           />
+          <Button
+            $variant={ThemeVariant.Primary}
+            $ghost
+            onClick={() => navigate(PATHS.PLAYBOOKS.VISUAL_NEW)}
+          >
+            <Icon $icon={IconSitemap} />
+            New visual
+          </Button>
           <Button
             $variant={ThemeVariant.Primary}
             onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}

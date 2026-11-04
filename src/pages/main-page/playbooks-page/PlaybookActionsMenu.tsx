@@ -4,6 +4,7 @@ import {
   IconFileCode,
   IconPencil,
   IconPlayerPlay,
+  IconSitemap,
   IconTrash,
 } from "@tabler/icons-react";
 import React, { useState } from "react";
@@ -119,11 +120,21 @@ export const PlaybookActionsMenu: React.FC<PlaybookActionsMenuProps> = ({
       >
         <PopoverItem
           onClick={() =>
+            navigate(
+              PATHS.PLAYBOOKS.VISUAL_EDIT.replace(":playbookId", playbook.id),
+            )
+          }
+        >
+          <Icon $icon={IconSitemap} />
+          Edit visually
+        </PopoverItem>
+        <PopoverItem
+          onClick={() =>
             navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbook.id))
           }
         >
           <Icon $icon={IconPencil} />
-          Edit
+          Edit JSON
         </PopoverItem>
         <PlaybookActionItem $variant={ThemeVariant.Accent} onClick={handleExport}>
           <Icon $icon={IconFileCode} />
