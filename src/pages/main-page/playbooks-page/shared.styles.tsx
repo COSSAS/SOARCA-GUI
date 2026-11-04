@@ -68,9 +68,3 @@ export const ActionButtons = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
   justify-content: flex-end;
 `;
-
-export const EditorHint = styled.p`
-  margin: 0 0 ${({ theme }) => theme.spacing.md};
-  font: ${({ theme }) => theme.typography.body.font};
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;

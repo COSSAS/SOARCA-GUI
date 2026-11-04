@@ -2,8 +2,10 @@ import styled from "styled-components";
 
 import type { StepColor } from "../model/specs";
 import { getStepColors } from "./colors";
+import { StepTypeText } from "./StepNode.styles";
 
 // Matches the look of a step on the canvas: type-coloured top border, square corners.
+// z-index 5 is the layer of React Flow's panels.
 export const DetailsCard = styled.aside<{ $color: StepColor }>`
   position: absolute;
   z-index: 5;
@@ -13,8 +15,8 @@ export const DetailsCard = styled.aside<{ $color: StepColor }>`
   display: flex;
   flex-direction: column;
 
-  width: min(24rem, calc(100% - 2rem));
-  max-height: calc(100% - 2rem);
+  width: min(24rem, calc(100% - ${({ theme }) => theme.spacing["3xl"]}));
+  max-height: calc(100% - ${({ theme }) => theme.spacing["3xl"]});
   border: 1px solid ${({ theme }) => theme.colors.border.light};
   border-top: ${({ theme, $color }) =>
     `${theme.spacing.xs} solid ${getStepColors(theme, $color).solidBg}`};
@@ -41,15 +43,10 @@ export const DetailsHeading = styled.div`
   min-width: 0;
 `;
 
-export const DetailsType = styled.div`
+export const DetailsType = styled(StepTypeText)`
   display: flex;
   gap: ${({ theme }) => theme.spacing.sm};
   align-items: center;
-
-  font: ${({ theme }) => theme.typography.small.font};
-  color: ${({ theme }) => theme.colors.text.tertiary};
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 `;
 
 export const DetailsTitle = styled.h3`

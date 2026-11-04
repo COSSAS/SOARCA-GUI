@@ -4,6 +4,7 @@ import type { SearchSelectOption } from "@/components";
 import type { Playbook, Step } from "@/types";
 
 import type { Issue } from "../model/rules";
+import { getReferenceOptions } from "../model/references";
 import type { PanelTab, ReferenceSource } from "../model/specs";
 
 /** What the inputs of one properties panel share. */
@@ -33,40 +34,10 @@ export const usePanelIssue = (path: string): Issue | undefined =>
 export const useEntryIssues = (path: string): Issue[] =>
   usePanelForm().issues.filter((issue) => issue.field?.startsWith(`${path}.`));
 
-const fromDefinitions = (definitions: Record<string, { name?: string }> = {}) =>
-  Object.entries(definitions).map(([id, definition]) => ({
-    value: id,
-    label: definition.name || id,
-  }));
-
-const getReferenceOptions = (
-  playbook: Playbook,
-  source: ReferenceSource,
-  step?: Step,
-): SearchSelectOption[] => {
-  switch (source) {
-    case "agents":
-      return fromDefinitions(playbook.agent_definitions);
-    case "targets":
-      return fromDefinitions(playbook.target_definitions);
-    case "auth":
-      return fromDefinitions(playbook.authentication_info_definitions);
-    case "steps":
-      return fromDefinitions(playbook.workflow);
-    case "variables":
-      return [
-        ...new Set([
-          ...Object.keys(playbook.playbook_variables ?? {}),
-          ...Object.keys(step?.step_variables ?? {}),
-        ]),
-      ].map((name) => ({ value: name, label: name }));
-  }
-};
-
 /**
- * Options for a reference input. They come from the playbook for now. When the
- * backend can list agents, variables and secrets, fetch them here with useQuery
- * and add them to the result, so every reference input gets them.
+ * Options for a reference input. They come from the playbook and soarca.ts for
+ * now. When the backend can list agents, variables and secrets, fetch them here
+ * with useQuery and add them to the result, so every reference input gets them.
  */
 export const useReferenceOptions = (
   source: ReferenceSource | undefined,

@@ -4,19 +4,13 @@ import type { Position } from "./coordinates";
 import {
   CONNECTION_LABELS,
   countLinks,
+  getAllIssues,
+  getAllLinks,
   getBlockedConnections,
-  getStepIssues,
   type Issue,
+  type Link,
 } from "./rules";
 import type { CacaoSpec, ConnectionKind, StepTypeDefinition } from "./specs";
-
-/** One arrow in the diagram: `source` points to `target` through `kind` (and the case `key` for switches). */
-export type Link = {
-  source: string;
-  kind: ConnectionKind;
-  key?: string;
-  target: string;
-};
 
 export type StepNodeData = {
   step: Step;
@@ -76,37 +70,6 @@ export const parseHandleId = (
     : { kind: kind as ConnectionKind };
 };
 
-/** All outgoing links of a step, for the connections its type allows. */
-export const getLinks = (
-  stepId: string,
-  step: Step,
-  definition: StepTypeDefinition | undefined,
-): Link[] =>
-  (definition?.connections ?? []).flatMap((kind): Link[] => {
-    if (kind === "cases") {
-      return Object.entries(step.cases ?? {}).map(([key, target]) => ({
-        source: stepId,
-        kind,
-        key,
-        target,
-      }));
-    }
-    if (kind === "next_steps") {
-      return (step.next_steps ?? []).map((target) => ({
-        source: stepId,
-        kind,
-        target,
-      }));
-    }
-    const target = step[kind];
-    return target ? [{ source: stepId, kind, target }] : [];
-  });
-
-export const getAllLinks = (playbook: Playbook, spec: CacaoSpec): Link[] =>
-  Object.entries(playbook.workflow).flatMap(([id, step]) =>
-    getLinks(id, step, spec.stepTypes[step.type]),
-  );
-
 const toEdge = (link: Link): GraphEdge => ({
   id: [link.source, link.kind, link.key ?? link.target].join(SEPARATOR),
   source: link.source,
@@ -157,9 +120,19 @@ export const getPorts = ({
 // node data. The same data object lets the memoized StepNode skip re-rendering.
 const nodeDataCache = new WeakMap<Step, { spec: CacaoSpec; data: StepNodeData }>();
 
+const sameIssues = (a: Issue[], b: Issue[]) =>
+  a.length === b.length &&
+  a.every(
+    (issue, i) =>
+      issue.message === b[i].message &&
+      issue.field === b[i].field &&
+      issue.blocking === b[i].blocking,
+  );
+
 const getNodeData = (
   step: Step,
   spec: CacaoSpec,
+  issues: Issue[],
   incoming: number,
   readOnly: boolean,
 ): StepNodeData => {
@@ -167,15 +140,16 @@ const getNodeData = (
   if (
     cached?.spec === spec &&
     cached.data.incoming === incoming &&
-    cached.data.readOnly === readOnly
+    cached.data.readOnly === readOnly &&
+    sameIssues(cached.data.issues, issues)
   )
     return cached.data;
 
   const definition = spec.stepTypes[step.type];
-  const data = {
+  const data: StepNodeData = {
     step,
     definition,
-    issues: getStepIssues(step, definition, spec),
+    issues,
     blocked: getBlockedConnections(step, spec),
     incoming,
     readOnly,
@@ -194,6 +168,7 @@ export const playbookToGraph = (
   const links = getAllLinks(playbook, spec).filter(
     (link) => playbook.workflow[link.target],
   );
+  const issues = getAllIssues(playbook, spec);
   const incoming: Record<string, Link[]> = {};
   for (const link of links) (incoming[link.target] ??= []).push(link);
 
@@ -215,7 +190,13 @@ export const playbookToGraph = (
       id,
       type: "step",
       position: positions[id] ?? { x: 0, y: 0 },
-      data: getNodeData(step, spec, incoming[id]?.length ?? 0, readOnly),
+      data: getNodeData(
+        step,
+        spec,
+        issues.filter((issue) => issue.ownerId === id),
+        incoming[id]?.length ?? 0,
+        readOnly,
+      ),
     }),
   );
 

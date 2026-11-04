@@ -131,13 +131,11 @@ export const Tabs: React.FC<TabsProps> = ({
   const { activeTab, selectTab } = useTabs();
 
   return (
-    <TabsContainer role="tablist" $size={$size} {...rest}>
+    <TabsContainer $size={$size} {...rest}>
       {$tabs.map((tab) => (
         <TabButton
           key={tab.id}
           type="button"
-          role="tab"
-          aria-selected={tab.id === activeTab}
           $active={tab.id === activeTab}
           $size={$size}
           onClick={() => selectTab(tab.id)}

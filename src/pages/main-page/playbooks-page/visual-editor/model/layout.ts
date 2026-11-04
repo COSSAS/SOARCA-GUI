@@ -3,8 +3,8 @@ import { Graph, layout } from "@dagrejs/dagre";
 import type { Playbook } from "@/types";
 
 import { getStoredPosition, type Position } from "./coordinates";
-import { getAllLinks, getLinks, getPorts, toHandleId } from "./graph";
-import { getBlockedConnections } from "./rules";
+import { getPorts, toHandleId } from "./graph";
+import { getAllLinks, getBlockedConnections, getLinks } from "./rules";
 import type { CacaoSpec } from "./specs";
 
 export const NODE_WIDTH = 240;
@@ -63,7 +63,7 @@ const mirror = (positions: Record<string, Position>) =>
     Object.entries(positions).map(([id, { x, y }]) => [id, { x: -x, y }]),
   );
 
-type Segment = { from: string; to: string; a: Position; b: Position };
+type Segment = { to: string; a: Position; b: Position };
 
 const side = (p: Position, q: Position, r: Position) =>
   Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
@@ -91,7 +91,6 @@ export const countCrossings = (
         getNodeWidth(ports.length);
       const source = positions[link.source];
       return {
-        from: link.source,
         to: link.target,
         a: { x: source.x + port, y: source.y },
         b: positions[link.target],

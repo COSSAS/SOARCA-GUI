@@ -1,6 +1,6 @@
 import { useId } from "react";
 
-import { Badge, FormGroup, FormLabel, Select } from "@/components";
+import { Badge, FormGroup, FormLabel, Select, ThemeSize } from "@/components";
 import type { Playbook } from "@/types";
 
 import type { EditPlaybook } from "../model/editor";
@@ -10,7 +10,7 @@ import {
   setExtraFields,
   setField,
 } from "../model/fields";
-import { getPlaybookIssues, PLAYBOOK_OWNER } from "../model/rules";
+import { getAllIssues, PLAYBOOK_OWNER } from "../model/rules";
 import {
   PLAYBOOK_TABS,
   SUPPORTED_SPEC_VERSIONS,
@@ -18,8 +18,9 @@ import {
   type PanelTab,
 } from "../model/specs";
 import { FieldInput } from "./FieldInput";
+import { IssueNotices } from "./IssueNotices";
 import { JsonFieldsEditor } from "./JsonFieldsEditor";
-import { Hint, PanelBody, PanelTabContent, ProblemList, SpecBadgeRow } from "./Panel.styles";
+import { Hint, PanelBody, PanelTabContent, SpecBadgeRow } from "./Panel.styles";
 import { PanelFormContext } from "./panelForm";
 import { PanelTabs } from "./PanelTabs";
 
@@ -51,6 +52,7 @@ const SpecVersionField: React.FC<{
       <FormLabel htmlFor={id}>CACAO version</FormLabel>
       <Select
         id={id}
+        $size={ThemeSize.Small}
         $value={version}
         $onChange={onChange}
         $options={SUPPORTED_SPEC_VERSIONS.map((value) => ({ value, label: value }))}
@@ -68,7 +70,9 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
   onSelectTab,
   onChangeSpec,
 }) => {
-  const issues = getPlaybookIssues(playbook, spec);
+  const issues = getAllIssues(playbook, spec).filter(
+    (issue) => issue.ownerId === PLAYBOOK_OWNER,
+  );
   const playbookProblems = issues.filter((issue) => !issue.field);
   const tab = PLAYBOOK_TABS.find((candidate) => candidate === activeTab) ?? "metadata";
   const owned = getOwnedPlaybookKeys(spec);
@@ -79,13 +83,7 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
     >
       <PanelBody>
         <Hint>Select a step to edit it, or drag a new step onto the canvas.</Hint>
-        {playbookProblems.length > 0 && (
-          <ProblemList>
-            {playbookProblems.map((issue) => (
-              <li key={issue.message}>{issue.message}</li>
-            ))}
-          </ProblemList>
-        )}
+        <IssueNotices issues={playbookProblems} />
 
         <PanelTabs tabs={PLAYBOOK_TABS} onSelectTab={onSelectTab} />
 
@@ -110,7 +108,7 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
           {tab === "advanced" && (
             <JsonFieldsEditor
               label="Other fields"
-              hint="Other playbook fields, as JSON."
+              hint="Other playbook fields, as JSON. SOARCA keeps only CACAO 2.0 fields and drops the rest when you save."
               path="advanced"
               value={getExtraFields(playbook, owned)}
               onChange={(extra) => edit((p) => setExtraFields(p, owned, extra))}

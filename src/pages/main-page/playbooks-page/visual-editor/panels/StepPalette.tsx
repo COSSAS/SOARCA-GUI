@@ -8,6 +8,7 @@ import { StepIcon } from "../canvas/StepIcon";
 import type { Position } from "../model/coordinates";
 import { findFreeSpot } from "../model/layout";
 import { canAddStep } from "../model/rules";
+import { isStepTypeSupported } from "../model/soarca";
 import type { CacaoSpec } from "../model/specs";
 import {
   HelpItem,
@@ -17,7 +18,7 @@ import {
   PaletteList,
 } from "./Panel.styles";
 
-const CONTROLS = [
+const CONTROLS: [keys: string, action: string][] = [
   ["Click", "Select a step"],
   ["Ctrl or Cmd + click", "Add a step to the selection, or remove it"],
   ["Shift + drag", "Select the steps in an area"],
@@ -27,6 +28,8 @@ const CONTROLS = [
   ["Scroll", "Zoom"],
   ["Drag the canvas", "Move around"],
 ];
+
+const CENTER_ANIMATION_MS = 300;
 
 type StepPaletteProps = {
   playbook: Playbook;
@@ -47,7 +50,7 @@ export const StepPalette: React.FC<StepPaletteProps> = ({
     onAddStep(type, position);
     setCenter(position.x, position.y, {
       zoom: getZoom(),
-      duration: 300,
+      duration: CENTER_ANIMATION_MS,
     });
   };
 
@@ -59,6 +62,7 @@ export const StepPalette: React.FC<StepPaletteProps> = ({
             key={type}
             draggable
             disabled={!canAddStep(playbook, type)}
+            title={isStepTypeSupported(type) ? undefined : "SOARCA does not run this step yet"}
             onDragStart={(e) => e.dataTransfer.setData(STEP_TYPE_MIME, type)}
             onClick={() => handleClick(type)}
           >
@@ -66,9 +70,9 @@ export const StepPalette: React.FC<StepPaletteProps> = ({
             {definition.label}
           </PaletteItem>
         ))}
+        <Hint>Drag a step onto the canvas, or click to add it.</Hint>
       </PaletteList>
       <HelpSection>
-        <Hint>Drag a step onto the canvas, or click to add it.</Hint>
         {CONTROLS.map(([keys, action]) => (
           <HelpItem key={keys}>
             <Badge $shape={BadgeShape.Rounded}>{keys}</Badge>

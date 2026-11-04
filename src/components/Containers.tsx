@@ -33,9 +33,11 @@ export const PageContainer = styled.div<PageContainerProps>`
   `}
 `;
 
+/** Centers its content, such as a loading spinner, in the space it is given. */
 export const CenteredCardContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
   min-height: 12rem;
 `;

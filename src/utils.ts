@@ -15,9 +15,8 @@ export const PATHS = {
     BASE: "/playbooks",
     DETAIL: "/playbooks/:playbookId",
     EDIT: "/playbooks/:playbookId/edit",
-    VISUAL_EDIT: "/playbooks/:playbookId/visual-edit",
     NEW: "/playbooks/new",
-    VISUAL_NEW: "/playbooks/new/visual",
+    UPLOAD: "/playbooks/upload",
   },
   MONITORING: {
     BASE: "/monitoring",

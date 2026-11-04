@@ -19,6 +19,8 @@ type CommonProps = {
   /** Lets the user type a value that is not in the options. */
   $creatable?: boolean;
   $placeholder?: string;
+  /** Shown in the open menu when there are no options. */
+  $emptyMessage?: string;
   $size?: ThemeSize;
   /** Shows the error border. */
   $invalid?: boolean;
@@ -87,9 +89,11 @@ const useSelectStyles = (size: ThemeSize, invalid: boolean) => {
           : "none",
         transition: `border-color ${theme.transitions.base}`,
       }),
+      // No vertical padding inside, so minHeight sets the height like on Input and Button.
       valueContainer: (base) => ({ ...base, padding: `2px ${paddingX}` }),
-      dropdownIndicator: (base) => ({ ...base, padding: theme.spacing.xs }),
-      clearIndicator: (base) => ({ ...base, padding: theme.spacing.xs }),
+      input: (base) => ({ ...base, margin: 0, padding: 0 }),
+      dropdownIndicator: (base) => ({ ...base, padding: `0 ${theme.spacing.xs}` }),
+      clearIndicator: (base) => ({ ...base, padding: `0 ${theme.spacing.xs}` }),
       multiValue: (base) => ({ ...base, borderRadius: theme.radius.sm }),
       multiValueLabel: (base) => ({ ...base, color: theme.colors.info.text }),
       menu: (base) => ({
@@ -122,7 +126,14 @@ const useSelectStyles = (size: ThemeSize, invalid: boolean) => {
  * <SearchSelect $multi $creatable $options={[]} $value={labels} $onChange={setLabels} />
  */
 export const SearchSelect: React.FC<SearchSelectProps> = (props) => {
-  const { $options, $creatable, $placeholder, $size = ThemeSize.Medium, $invalid = false } = props;
+  const {
+    $options,
+    $creatable,
+    $placeholder,
+    $emptyMessage,
+    $size = ThemeSize.Medium,
+    $invalid = false,
+  } = props;
   const { styles, selectTheme } = useSelectStyles($size, $invalid);
   const toOption = (value: string): Option =>
     $options.find((option) => option.value === value) ?? { value, label: value };
@@ -143,6 +154,7 @@ export const SearchSelect: React.FC<SearchSelectProps> = (props) => {
       if (props.$multi) props.$onChange(values);
       else props.$onChange(values[0]);
     },
+    noOptionsMessage: $emptyMessage ? () => $emptyMessage : undefined,
     menuPortalTarget: document.body,
     menuPlacement: "auto",
     styles,

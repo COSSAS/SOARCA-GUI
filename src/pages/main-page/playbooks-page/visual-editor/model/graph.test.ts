@@ -14,8 +14,9 @@ import {
   duplicateStep,
   removeSteps,
 } from "./edits";
-import { getAllLinks, getPorts, playbookToGraph } from "./graph";
+import { getPorts, playbookToGraph, toIncomingHandleId } from "./graph";
 import { autoLayout, countCrossings, getPositions } from "./layout";
+import { getAllLinks } from "./rules";
 import { cacao20 } from "./specs/cacao-2.0";
 
 const mockPlaybooks = import.meta.glob<Playbook>("/mock-playbooks/*.json", {
@@ -95,7 +96,10 @@ describe("graph round trip", () => {
     const into = edges.filter((edge) => edge.target === "action--1");
     expect(
       Object.fromEntries(into.map((edge) => [edge.source, edge.targetHandle])),
-    ).toEqual({ "parallel--1": "in::0", "switch-condition--1": "in::1" });
+    ).toEqual({
+      "parallel--1": toIncomingHandleId(0),
+      "switch-condition--1": toIncomingHandleId(1),
+    });
     expect(nodes.find((node) => node.id === "action--1")?.data.incoming).toBe(2);
     expect(
       edges.find((edge) => edge.target === "while-condition--1")?.targetHandle,

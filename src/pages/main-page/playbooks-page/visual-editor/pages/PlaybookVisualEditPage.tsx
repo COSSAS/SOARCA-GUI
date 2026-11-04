@@ -40,6 +40,14 @@ export const PlaybookVisualEditPage: React.FC = () => {
       toast.error(formatErrorForToast(err, "Failed to update playbook")),
   });
 
+  const save = (data: Playbook, onSaved: () => void) =>
+    updateMutation.mutate(data, {
+      onSuccess: () => {
+        onSaved();
+        navigate(detailPath);
+      },
+    });
+
   if (isLoading)
     return (
       <CenteredCardContent>
@@ -57,29 +65,17 @@ export const PlaybookVisualEditPage: React.FC = () => {
     );
 
   const spec = getSpec(playbook.spec_version);
-  if (!spec)
-    return (
-      <UnsupportedSpec
-        version={playbook.spec_version}
-        jsonEditorPath={PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId)}
-      />
-    );
+  if (!spec) return <UnsupportedSpec version={playbook.spec_version} />;
 
   return (
     <VisualEditor
       key={playbook.id}
       title={`Edit playbook: ${playbook.name}`}
+      saveLabel="Save"
       initial={playbook}
       spec={spec}
       isSaving={updateMutation.isPending}
-      onSave={(data, onSaved) =>
-        updateMutation.mutate(data, {
-          onSuccess: () => {
-            onSaved();
-            navigate(detailPath);
-          },
-        })
-      }
+      onSave={save}
       onCancel={() => navigate(detailPath)}
     />
   );

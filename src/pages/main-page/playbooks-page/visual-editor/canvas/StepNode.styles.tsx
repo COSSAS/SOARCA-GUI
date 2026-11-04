@@ -5,6 +5,9 @@ import { PORT_GAP } from "../model/layout";
 import type { ConnectionKind, StepColor } from "../model/specs";
 import { getConnectionColor, getStepColors, tint } from "./colors";
 
+/** Badges stay this far apart, so neighbours never touch. */
+const PORT_BADGE_SPACING = 8;
+
 export const NodeCard = styled.div<{
   $color: StepColor;
   $selected: boolean;
@@ -51,20 +54,23 @@ const ellipsis = css`
   white-space: nowrap;
 `;
 
+/** The small uppercase step type label, also used by StepDetailsCard. */
+export const StepTypeText = styled.span`
+  font: ${({ theme }) => theme.typography.small.font};
+  color: ${({ theme }) => theme.colors.text.tertiary};
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+`;
+
 export const IssueMarker = styled.span<{ $blocking: boolean }>`
   display: inline-flex;
   color: ${({ theme, $blocking }) =>
     $blocking ? theme.colors.error.text : theme.colors.warning.text};
 `;
 
-export const NodeType = styled.span`
+export const NodeType = styled(StepTypeText)`
   ${ellipsis}
   flex: 1;
-
-  font: ${({ theme }) => theme.typography.small.font};
-  color: ${({ theme }) => theme.colors.text.tertiary};
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 `;
 
 export const NodeTitle = styled.div`
@@ -90,7 +96,7 @@ export const PortHandle = styled(Handle)<{
 
         width: auto;
         min-width: 0;
-        max-width: ${PORT_GAP - 8}px;
+        max-width: ${PORT_GAP - PORT_BADGE_SPACING}px;
         height: auto;
         min-height: 0;
         padding: 0 ${theme.spacing.sm};

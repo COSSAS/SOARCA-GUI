@@ -1,7 +1,7 @@
 import type { Playbook } from "@/types";
 
 import type { Position } from "./coordinates";
-import type { Link } from "./graph";
+import type { Link } from "./rules";
 
 /** Applies one of the pure edits from edits.ts: `edit((p) => removeSteps(p, [id]))`. */
 export type EditPlaybook = (change: (playbook: Playbook) => Playbook) => void;
