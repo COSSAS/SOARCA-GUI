@@ -6,6 +6,8 @@ import { useNavigate } from "react-router";
 
 import { getPlaybooks } from "@/api/playbooks";
 import { getErrorFromApiResponse } from "@/api/utils";
+import { RequirePermission } from "@/auth/AuthGate";
+import { Permissions } from "@/auth/permissions";
 import {
   Button,
   CardBody,
@@ -201,13 +203,15 @@ export const PlaybooksPage: React.FC = () => {
             autoFocus
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Button
-            $variant={ThemeVariant.Primary}
-            onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
-          >
-            <Icon $icon={IconFilePlus} />
-            New
-          </Button>
+          <RequirePermission permission={Permissions.PlaybookWrite}>
+            <Button
+              $variant={ThemeVariant.Primary}
+              onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}
+            >
+              <Icon $icon={IconFilePlus} />
+              New
+            </Button>
+          </RequirePermission>
         </HeaderActions>
       </CardHeader>
       <CardBody>{renderBody()}</CardBody>

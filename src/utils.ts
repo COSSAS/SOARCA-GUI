@@ -23,6 +23,7 @@ export const PATHS = {
   },
   SETTINGS: "/settings",
   LOGIN: "/login",
+  LOGIN_CALLBACK: "/login/callback",
   NOT_FOUND: "/are-you-lost",
 };
 
@@ -38,7 +39,7 @@ export const PATHS = {
  * @example
  * sortByString(users, user => user.name, true, false);
  */
-export const sortByString = <T,>(
+export const sortByString = <T>(
   array: T[],
   keyExtractor: (item: T) => string,
   ascending: boolean = true,
@@ -66,7 +67,7 @@ export const sortByString = <T,>(
  * @example
  * sortByNumber(products, product => product.price, false);
  */
-export const sortByNumber = <T,>(
+export const sortByNumber = <T>(
   array: T[],
   keyExtractor: (item: T) => number | undefined,
   ascending: boolean = true,

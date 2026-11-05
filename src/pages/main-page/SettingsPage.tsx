@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 import { getSystemStatus } from "@/api/status";
+import { useAuth } from "@/auth/AuthContext";
+import { Permissions } from "@/auth/permissions";
 import {
   Badge,
   CardBody,
@@ -9,23 +11,26 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContent,
-  FormLabel,
-  RadioGroup,
-  Spacer,
-  Spinner,
-  ThemeSize,
-  ThemeVariant,
-} from "@/components";
-import {
   DetailsGrid,
   DetailsItem,
   DetailsValue,
-} from "@/pages/main-page/monitoring-page/ExecutionDetailPage.styles";
+  FormLabel,
+  NotificationCard,
+  RadioGroup,
+  Spacer,
+  Spinner,
+  Text,
+  ThemeSize,
+  ThemeVariant,
+} from "@/components";
 import { ThemeMode, useThemeMode } from "@/theme";
 import { formatDateTime, formatDuration } from "@/utils";
 import { CreditsEasterEgg } from "./Credits";
+import { AccountDetails } from "./AccountDetails";
 
 export const SettingsPage: React.FC = () => {
+  const { user, can } = useAuth();
+  const canReadStatus = can(Permissions.StatusRead);
   const { mode, setMode } = useThemeMode();
 
   const { data, isLoading, isError } = useQuery({
@@ -34,10 +39,32 @@ export const SettingsPage: React.FC = () => {
     refetchInterval: 5000,
     refetchIntervalInBackground: true,
     refetchOnWindowFocus: false,
+    enabled: canReadStatus,
   });
 
   return (
     <Spacer $direction="vertical" $gap="lg">
+      {user && (
+        <CardContainer>
+          <CardHeader>
+            <CardTitle>Your account</CardTitle>
+          </CardHeader>
+          <CardBody>
+            {user.anonymous ? (
+              <Spacer $direction="vertical" $align="start">
+                <NotificationCard $variant={ThemeVariant.Warning} role="status">
+                  Sign-in is turned off on this SOARCA server. Everyone who can
+                  reach this GUI has full access, without signing in.
+                </NotificationCard>
+              </Spacer>
+            ) : (
+              <DetailsGrid>
+                <AccountDetails user={user} detailed />
+              </DetailsGrid>
+            )}
+          </CardBody>
+        </CardContainer>
+      )}
       <CardContainer>
         <CardHeader>
           <CardTitle>Appearance</CardTitle>
@@ -65,7 +92,9 @@ export const SettingsPage: React.FC = () => {
           <CardTitle>SOARCA information</CardTitle>
         </CardHeader>
         <CardBody>
-          {isLoading ? (
+          {!canReadStatus ? (
+            <Text>Your account cannot view SOARCA status details.</Text>
+          ) : isLoading ? (
             <CenteredCardContent>
               <Spinner $size={ThemeSize.Medium} />
             </CenteredCardContent>

@@ -12,6 +12,9 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContent,
+  DetailsGrid,
+  DetailsItem,
+  DetailsValue,
   ExpandableText,
   FormLabel,
   Icon,
@@ -31,9 +34,6 @@ import {
 } from "@/pages/main-page/monitoring-page/utils";
 import { PlaybookExecutionReport, StepExecutionReport } from "@/types";
 import {
-  DetailsGrid,
-  DetailsItem,
-  DetailsValue,
   NoStepsMessage,
   ResponsiveLayout,
   TabContent,

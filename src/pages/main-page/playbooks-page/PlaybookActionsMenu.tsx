@@ -14,6 +14,8 @@ import styled from "styled-components";
 import { deletePlaybook } from "@/api/playbooks";
 import { triggerPlaybookById } from "@/api/trigger";
 import { formatErrorForToast } from "@/api/utils";
+import { RequirePermission } from "@/auth/AuthGate";
+import { Permissions } from "@/auth/permissions";
 import {
   ConfirmDialog,
   downloadExport,
@@ -117,34 +119,40 @@ export const PlaybookActionsMenu: React.FC<PlaybookActionsMenuProps> = ({
         $label={`Actions for ${playbook.name}`}
         $trigger={<Icon $icon={IconDotsVertical} />}
       >
-        <PopoverItem
-          onClick={() =>
-            navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbook.id))
-          }
-        >
-          <Icon $icon={IconPencil} />
-          Edit
-        </PopoverItem>
+        <RequirePermission permission={Permissions.PlaybookWrite}>
+          <PopoverItem
+            onClick={() =>
+              navigate(PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbook.id))
+            }
+          >
+            <Icon $icon={IconPencil} />
+            Edit
+          </PopoverItem>
+        </RequirePermission>
         <PlaybookActionItem $variant={ThemeVariant.Accent} onClick={handleExport}>
           <Icon $icon={IconFileCode} />
           Export
         </PlaybookActionItem>
-        <PlaybookActionItem
-          $variant={ThemeVariant.Success}
-          onClick={() => setDialog(hasExternalVars ? "variables" : "run")}
-          disabled={runMutation.isPending}
-        >
-          <Icon $icon={IconPlayerPlay} />
-          Run
-        </PlaybookActionItem>
-        <PlaybookActionItem
-          $variant={ThemeVariant.Error}
-          onClick={() => setDialog("delete")}
-          disabled={deleteMutation.isPending}
-        >
-          <Icon $icon={IconTrash} />
-          Delete
-        </PlaybookActionItem>
+        <RequirePermission permission={Permissions.PlaybookExecute}>
+          <PlaybookActionItem
+            $variant={ThemeVariant.Success}
+            onClick={() => setDialog(hasExternalVars ? "variables" : "run")}
+            disabled={runMutation.isPending}
+          >
+            <Icon $icon={IconPlayerPlay} />
+            Run
+          </PlaybookActionItem>
+        </RequirePermission>
+        <RequirePermission permission={Permissions.PlaybookWrite}>
+          <PlaybookActionItem
+            $variant={ThemeVariant.Error}
+            onClick={() => setDialog("delete")}
+            disabled={deleteMutation.isPending}
+          >
+            <Icon $icon={IconTrash} />
+            Delete
+          </PlaybookActionItem>
+        </RequirePermission>
       </Popover>
 
       <ConfirmDialog

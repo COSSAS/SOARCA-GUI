@@ -164,6 +164,86 @@ flowchart TB
    ```
    The app will be available at `http://localhost:HOST_PORT` with hot-reload enabled.
 
+### Enable sign-in
+
+The GUI reads its login providers from `/auth-config.json`, a file you deploy
+next to the GUI. It signs the user in with the authorization code flow and
+PKCE, and sends the access token to SOARCA as a bearer token. No client secret
+is involved. The GUI then asks SOARCA for the user's permissions through
+`/api/principal/permissions`.
+
+1. Serve the GUI over HTTPS (see `VITE_ENABLE_HTTPS` above, or the Nginx image).
+   The GUI already forwards `/api/*` to SOARCA through `VITE_BACKEND_URL` or
+   `NGINX_BACKEND_URL`.
+2. Register a public client for the GUI at your identity provider with the
+   redirect URI `https://<GUI host>/login/callback`:
+   - **Microsoft Entra ID:** add a Single-page application platform, and grant
+     the delegated SOARCA API permission `access_as_user` with admin consent.
+     If SOARCA sets `AUTH_ENTRA_ALLOWED_CLIENT_IDS`, add the GUI client ID to it.
+   - **Other OIDC providers:** create a public client without a secret. SOARCA
+     checks the token audience against `OIDC_CLIENT_ID`, so the provider must
+     issue the GUI's tokens for that audience.
+3. Copy `config/auth-config.example.json` to `config/auth-config.json` and fill
+   in one entry per provider. `issuer` must be the same issuer SOARCA is
+   configured with, trailing slash included. `scopes` is optional.
+   For Entra, `scopes` must contain the SOARCA API scope, for example
+   `api://<SOARCA API client ID>/access_as_user`.
+
+   `icon` is optional and sets the icon on the provider's login button. Without
+   it the button shows `lock`. Any other value makes the login page show an
+   error that lists the allowed names.
+
+   | `icon`      | Icon on the button                                                  |
+   | ----------- | ------------------------------------------------------------------- |
+   | `microsoft` | Windows logo ([`IconBrandWindows`](https://tabler.io/icons/icon/brand-windows)) |
+   | `authentik` | OAuth logo ([`IconBrandOauth`](https://tabler.io/icons/icon/brand-oauth)); Tabler has no Authentik logo |
+   | `lock`      | Open padlock ([`IconLockOpen2`](https://tabler.io/icons/icon/lock-open-2)) |
+
+   Earlier versions picked the Windows logo for a provider with `"id": "entra"`.
+   That no longer happens, so add `"icon": "microsoft"` to keep it.
+4. Register `https://<GUI host>/login` at the provider as the address to
+   return to after sign-out (`post_logout_redirect_uri`). For Entra, add it as
+   an extra redirect URI of the Single-page application platform. Without it
+   the provider may refuse the sign-out or stay on its own page afterwards.
+   For Entra, also add the optional ID token claim `login_hint` (Token
+   configuration in the app registration). The GUI passes it back on
+   sign-out, so Entra skips its "pick an account to sign out" screen.
+5. Make the file available to the GUI:
+   - `npm run dev`, `npm run preview` and the development container serve
+     `config/auth-config.json` from the project directory.
+   - The production container reads `/app/config/auth-config.json`. Compose
+     mounts `SOARCA_GUI_CONFIG_DIR` (default `./config`) there.
+
+   The file is read when the login page opens, so changes need no rebuild or
+   restart. If the file is missing or invalid, the login page shows the
+   reason instead of the provider buttons.
+
+SOARCA's own auth settings (`AUTH_ENABLED`, `OIDC_ISSUER`, `OIDC_CLIENT_ID`,
+the `AUTH_ENTRA_*` variables and role mapping) are described in the
+[SOARCA authentication documentation](https://cossas.github.io/SOARCA/docs/installation-configuration/authentication/).
+When SOARCA runs with `AUTH_ENABLED=false`, the GUI skips sign-in. In that
+mode the GUI also works over plain HTTP. Sign-in itself needs HTTPS, because
+the browser only offers the PKCE crypto and cross-tab locks on secure pages.
+
+Menus and actions follow the permissions SOARCA reports for the user; SOARCA
+enforces them. The tokens are stored in the browser's local storage, so every
+tab shares the sign-in. Signing out clears them and then sends the browser to
+the provider's end-session endpoint, which ends the session there and returns
+to the login page. If the provider's discovery document has no
+`end_session_endpoint`, the GUI only clears its own tokens and the provider
+session stays open. If the provider cannot be reached, the GUI still clears
+its tokens and the login page says the provider session may still be open. If
+the GUI cannot clear its tokens, it shows an error and the user stays signed in.
+
+Authentik's default provider invalidation flow ends only the session for the
+GUI. The user's Authentik login stays active, so the next sign-in skips the
+password. Configure a different invalidation flow on the Authentik provider
+if users must be signed out of Authentik too. Authentik also ignores
+`prompt=select_account`, so it never shows an account picker.
+
+If a reverse proxy in front of SOARCA authenticates users and adds the bearer
+token, the GUI picks up the signed-in user without any extra settings.
+
 ### Production Mode
 
 Production mode builds optimized static assets and serves them via Nginx. We use this mode to publish Docker images and make releases, but it can be useful to run a production build locally through Vite as well by building the project locally and previewing it. Also this mode is supported for both local and Docker Container environment.
@@ -318,6 +398,7 @@ flowchart TB
    - `NGINX_BACKEND_URL`: `https://host.docker.internal:8080/`
    - `NGINX_SERVER_PORT`: `8081`
    - `NGINX_PROXY_SSL_VERIFY`: `off`, to support SOARCA's generated self-signed certificate
+   - `SOARCA_GUI_CONFIG_DIR`: `./config` - host directory with `auth-config.json`, mounted read-only at `/app/config`
    - `DOCKER_HOST_PORT`: `8081` - port on the host mapped to the `NGINX_SERVER_PORT`
 
 2. **Pull and start the container:**

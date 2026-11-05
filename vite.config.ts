@@ -4,8 +4,30 @@ import fs from "node:fs";
 import type { ServerOptions as HttpsServerOptions } from "node:https";
 import path from "node:path";
 import sbom from "rollup-plugin-sbom";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type Connect, type Plugin } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+
+// Serves config/auth-config.json at runtime, like nginx does in production,
+// so provider changes need no rebuild.
+const authConfig = (): Plugin => {
+  const serve: Connect.NextHandleFunction = (req, res, next) => {
+    if (req.url?.split("?")[0] !== "/auth-config.json") return next();
+    res.setHeader("Cache-Control", "no-store");
+    const file = path.resolve("config/auth-config.json");
+    if (!fs.existsSync(file)) {
+      res.statusCode = 404;
+      res.end();
+      return;
+    }
+    res.setHeader("Content-Type", "application/json");
+    res.end(fs.readFileSync(file));
+  };
+  return {
+    name: "soarca-auth-config",
+    configureServer: (server) => void server.middlewares.use(serve),
+    configurePreviewServer: (server) => void server.middlewares.use(serve),
+  };
+};
 
 /**
  * Resolve the app version.
@@ -60,7 +82,7 @@ export default defineConfig(({ mode }) => {
   );
 
   return {
-    plugins: [react(), tsconfigPaths(), sbom()],
+    plugins: [react(), tsconfigPaths(), sbom(), authConfig()],
     define: {
       __APP_VERSION__: JSON.stringify(getAppVersion()),
     },

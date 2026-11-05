@@ -6,6 +6,8 @@ import {
 } from "@tabler/icons-react";
 import React, { useState } from "react";
 
+import { useAuth } from "@/auth/AuthContext";
+import { Permissions } from "@/auth/permissions";
 import {
   Icon,
   NotificationCard,
@@ -86,6 +88,7 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
   executionId,
   onRefetch,
 }) => {
+  const { can } = useAuth();
   // We use this state to pass the right step to the manual action modal
   // when the user clicks on the "User action required" card
   const [selectedActionStep, setSelectedActionStep] =
@@ -162,9 +165,16 @@ export const TimelineTabView: React.FC<TimelineViewProps> = ({
                   </TimelineIconContainer>
                   <TimelineRightCell>
                     <TimelineItemWrapper $side="right">
-                      <UserPendingActionCard
-                        onClick={() => setSelectedActionStep(step)}
-                      />
+                      {can(Permissions.PlaybookExecute) ? (
+                        <UserPendingActionCard
+                          onClick={() => setSelectedActionStep(step)}
+                        />
+                      ) : (
+                        <NotificationCard $variant={ThemeVariant.Warning}>
+                          Manual action pending. You cannot respond to this
+                          action.
+                        </NotificationCard>
+                      )}
                     </TimelineItemWrapper>
                   </TimelineRightCell>
                 </TimelineRow>

@@ -2,6 +2,8 @@ import React from "react";
 
 import {
   Badge,
+  DetailsGrid,
+  DetailsItem,
   FormLabel,
   Link,
   Spacer,
@@ -10,10 +12,6 @@ import {
 } from "@/components";
 import { Playbook } from "@/types";
 
-import {
-  DetailsGrid,
-  DetailsItem,
-} from "@/pages/main-page/monitoring-page/ExecutionDetailPage.styles";
 import { theme } from "@/theme";
 import { formatDateTime } from "@/utils";
 
