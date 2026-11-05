@@ -1,6 +1,7 @@
 // Export all styled components for easy importing
 export * from "./Badge";
 export * from "./Button";
+export * from "./CodeBlock";
 export * from "./CodeEditor";
 export * from "./ConfirmDialog";
 export * from "./Containers";
