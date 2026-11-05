@@ -134,11 +134,19 @@ export const SidePanelToggle = styled.button`
 `;
 
 // Fixed width so the content does not reflow while the panel animates.
-export const SidePanelContent = styled.div<{ $side: Side; $collapsed: boolean }>`
+// A wide panel has the width of the right panel on either side.
+export const SidePanelContent = styled.div<{
+  $side: Side;
+  $wide?: boolean;
+  $collapsed: boolean;
+}>`
   overflow-y: auto;
   flex: 1;
 
-  width: calc(${({ $side }) => PANEL_WIDTH[$side]} - ${PANEL_BORDERS_WIDTH});
+  width: calc(
+    ${({ $side, $wide }) => PANEL_WIDTH[$wide ? "right" : $side]} -
+      ${PANEL_BORDERS_WIDTH}
+  );
   min-height: 0;
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg} ${theme.spacing.lg}`};
 

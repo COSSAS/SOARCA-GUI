@@ -1,6 +1,13 @@
 import type { ReactNode } from "react";
 
-import { Badge, CopyButton, Link, ThemeVariant } from "@/components";
+import {
+  Badge,
+  CodeBlock,
+  CopyButton,
+  Link,
+  Spacer,
+  ThemeVariant,
+} from "@/components";
 import type { Playbook } from "@/types";
 import { formatDateTime } from "@/utils";
 
@@ -16,11 +23,11 @@ import {
   IdValue,
   ReferenceItem,
 } from "./PlaybookDetailPage.styles";
-import { SectionTitle } from "../visual-editor/panels/Panel.styles";
+import { FieldMessage, SectionTitle } from "../visual-editor/panels/Panel.styles";
 
 // Labels match the playbook fields of the visual editor.
 
-const DetailField = ({
+export const DetailField = ({
   label,
   wide,
   children,
@@ -36,6 +43,24 @@ const DetailField = ({
 );
 
 const NotSet = () => <EmptyText>Not set</EmptyText>;
+
+/** Read-only code with a copy button, and an optional warning under it. */
+export const CodeField = ({
+  label,
+  code,
+  warning,
+}: {
+  label: string;
+  code: string;
+  warning?: string;
+}) => (
+  <DetailField label={label} wide>
+    <Spacer $direction="vertical" $gap="xs" $align="stretch" $justify="start">
+      <CodeBlock $code={code} $copyable $maxHeight="20rem" />
+      {warning && <FieldMessage>{warning}</FieldMessage>}
+    </Spacer>
+  </DetailField>
+);
 
 const BadgeField = ({
   label,
@@ -81,7 +106,7 @@ const DateField = ({ label, value }: { label: string; value?: string }) => (
   </DetailField>
 );
 
-const Section = ({ title, children }: { title: string; children: ReactNode }) => (
+export const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <DetailSection>
     <SectionTitle>{title}</SectionTitle>
     <FieldGrid>{children}</FieldGrid>

@@ -6,7 +6,7 @@ import {
   IconPlayerPlay,
   IconTrash,
 } from "@tabler/icons-react";
-import React, { lazy, Suspense, useState } from "react";
+import React, { Suspense, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 
@@ -28,59 +28,28 @@ import {
   Link,
   Spacer,
   Spinner,
-  Tabs,
-  TabsProvider,
   Text,
   ThemeSize,
   ThemeVariant,
-  useTabs,
 } from "@/components";
 import { Execution, Playbook } from "@/types";
 import { PATHS } from "@/utils";
 
 import { generatePlaybookFilename } from "../utils";
-import { CollapsibleSidePanel } from "../visual-editor/panels/CollapsibleSidePanel";
-import { PanelBody, PanelTabBar, PanelTabContent } from "../visual-editor/panels/Panel.styles";
 import {
-  DetailBody,
   DetailHeader,
   DetailPage,
-  DiagramFrame,
   PageTitle,
   TitleRow,
 } from "./PlaybookDetailPage.styles";
-import {
-  PlaybookDescription,
-  PlaybookOverview,
-  PlaybookReferences,
-} from "./PlaybookDetails";
+import { PlaybookPanels } from "./PlaybookPanels";
 import { RunPlaybookModal } from "./RunPlaybookModal";
-
-// Loaded on demand because it pulls in React Flow.
-const PlaybookDiagram = lazy(() =>
-  import("../visual-editor/pages/PlaybookDiagram").then((m) => ({
-    default: m.PlaybookDiagram,
-  })),
-);
 
 const loading = (
   <CenteredCardContent>
     <Spinner $size={ThemeSize.Medium} />
   </CenteredCardContent>
 );
-
-const DETAIL_TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "description", label: "Description" },
-  { id: "references", label: "References" },
-];
-
-const DetailTabContent = ({ playbook }: { playbook: Playbook }) => {
-  const { activeTab } = useTabs();
-  if (activeTab === "description") return <PlaybookDescription playbook={playbook} />;
-  if (activeTab === "references") return <PlaybookReferences playbook={playbook} />;
-  return <PlaybookOverview playbook={playbook} />;
-};
 
 export const PlaybookDetailPage: React.FC = () => {
   const navigate = useNavigate();
@@ -96,7 +65,6 @@ export const PlaybookDetailPage: React.FC = () => {
   const [openRunConfirm, setOpenRunConfirm] = useState(false);
   const [openRunModal, setOpenRunModal] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
-  const [panelCollapsed, setPanelCollapsed] = useState(false);
 
   const navigateToExecution = (data: Execution) => {
     if (data?.execution_id) {
@@ -228,29 +196,7 @@ export const PlaybookDetailPage: React.FC = () => {
         </Spacer>
       </DetailHeader>
 
-      <DetailBody $panelCollapsed={panelCollapsed}>
-        <DiagramFrame>
-          <PlaybookDiagram playbook={playbook} />
-        </DiagramFrame>
-        <CollapsibleSidePanel
-          side="right"
-          label="details"
-          title="Details"
-          collapsed={panelCollapsed}
-          onToggle={() => setPanelCollapsed(!panelCollapsed)}
-        >
-          <TabsProvider $initialTab="overview">
-            <PanelBody>
-              <PanelTabBar>
-                <Tabs $size={ThemeSize.Small} $tabs={DETAIL_TABS} />
-              </PanelTabBar>
-              <PanelTabContent>
-                <DetailTabContent playbook={playbook} />
-              </PanelTabContent>
-            </PanelBody>
-          </TabsProvider>
-        </CollapsibleSidePanel>
-      </DetailBody>
+      <PlaybookPanels key={playbook.id} playbook={playbook} />
       <ConfirmDialog
         $isOpen={openRunConfirm}
         $title="Run playbook"

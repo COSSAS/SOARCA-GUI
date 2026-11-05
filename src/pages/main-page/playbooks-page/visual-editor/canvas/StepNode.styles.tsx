@@ -54,8 +54,8 @@ const ellipsis = css`
   white-space: nowrap;
 `;
 
-/** The small uppercase step type label, also used by StepDetailsCard. */
-export const StepTypeText = styled.span`
+/** The small uppercase step type label. */
+const StepTypeText = styled.span`
   font: ${({ theme }) => theme.typography.small.font};
   color: ${({ theme }) => theme.colors.text.tertiary};
   text-transform: uppercase;

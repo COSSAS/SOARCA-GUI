@@ -40,17 +40,26 @@ export const PageTitle = styled.h2`
   white-space: nowrap;
 `;
 
-export const DetailBody = styled.div<{ $panelCollapsed: boolean }>`
+// The step panel on the left is wide, so commands and scripts fit.
+export const DetailBody = styled.div<{
+  $stepCollapsed: boolean;
+  $detailsCollapsed: boolean;
+}>`
   display: grid;
   grid-template-columns:
+    ${({ $stepCollapsed }) => panelWidth("right", $stepCollapsed)}
     minmax(0, 1fr)
-    ${({ $panelCollapsed }) => panelWidth("right", $panelCollapsed)};
+    ${({ $detailsCollapsed }) => panelWidth("right", $detailsCollapsed)};
   flex: 1;
   gap: ${({ theme }) => theme.spacing.lg};
 
   min-height: 0;
 
   transition: grid-template-columns ${({ theme }) => theme.transitions.base};
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 export const DiagramFrame = styled.div`

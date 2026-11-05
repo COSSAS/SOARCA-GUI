@@ -33,7 +33,6 @@ import { FIT_VIEW_OPTIONS, STEP_TYPE_MIME } from "./constants";
 import { ContextMenu } from "./ContextMenu";
 import { CanvasWrapper } from "./FlowCanvas.styles";
 import { nodeTypes } from "./nodeTypes";
-import { StepDetailsCard } from "./StepDetailsCard";
 import type { StepFlowNode } from "./StepNode";
 import { useCanvasMenu } from "./useCanvasMenu";
 
@@ -53,6 +52,9 @@ type FlowCanvasProps = {
   spec: CacaoSpec;
   /** Leave out for a read-only diagram. */
   editor?: CanvasEditor;
+  /** Selected step of a read-only diagram. */
+  selectedStepId?: string;
+  onSelectStep?: (stepId: string | undefined) => void;
 };
 
 const toLink = (connection: Connection | Edge) => ({
@@ -66,12 +68,13 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   playbook,
   spec,
   editor,
+  selectedStepId,
+  onSelectStep,
 }) => {
   const { screenToFlowPosition } = useReactFlow();
   const theme = useTheme();
   const [selectedEdgeId, setSelectedEdgeId] = useState<string>();
   const [showMinimap, setShowMinimap] = useState(true);
-  const [readOnlySelectedId, setReadOnlySelectedId] = useState<string>();
   const readOnly = !editor;
   // The line drawn while connecting has the colour of the port it starts from.
   const draggedKind = useConnection((connection) =>
@@ -99,9 +102,9 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         measured: sizes[node.id],
         selected: editorSelectedIds
           ? editorSelectedIds.includes(node.id)
-          : node.id === readOnlySelectedId,
+          : node.id === selectedStepId,
       })),
-    [graph.nodes, sizes, editorSelectedIds, readOnlySelectedId],
+    [graph.nodes, sizes, editorSelectedIds, selectedStepId],
   );
   const edges = useMemo(
     (): Edge<Link>[] =>
@@ -150,14 +153,12 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   const handleNodeClick = (_: React.MouseEvent, node: StepFlowNode) => {
     // In the editor, React Flow selects on click and reports it through onNodesChange.
     if (editor) return;
-    setReadOnlySelectedId((selectedId) =>
-      selectedId === node.id ? undefined : node.id,
-    );
+    onSelectStep?.(selectedStepId === node.id ? undefined : node.id);
   };
 
   const handlePaneClick = () => {
     editor?.onSelect([]);
-    setReadOnlySelectedId(undefined);
+    onSelectStep?.(undefined);
     setSelectedEdgeId(undefined);
   };
 
@@ -172,9 +173,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   };
 
   const menu = useCanvasMenu(playbook, spec, editor);
-  const readOnlySelected = readOnly
-    ? graph.nodes.find((node) => node.id === readOnlySelectedId)
-    : undefined;
 
   return (
     <CanvasWrapper onContextMenu={(event) => event.preventDefault()}>
@@ -219,14 +217,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         {!readOnly && showMinimap && <MiniMap pannable zoomable />}
       </ReactFlow>
       {editor && <ContextMenu menu={menu.menu} onClose={menu.closeMenu} />}
-      {readOnlySelected && (
-        <StepDetailsCard
-          step={readOnlySelected.data.step}
-          definition={readOnlySelected.data.definition}
-          spec={spec}
-          onClose={() => setReadOnlySelectedId(undefined)}
-        />
-      )}
     </CanvasWrapper>
   );
 };
