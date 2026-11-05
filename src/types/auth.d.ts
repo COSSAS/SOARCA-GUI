@@ -1,3 +1,5 @@
+import type { ProviderIcon } from "@/auth/login";
+
 // A public client registered for the GUI at an identity provider, read from
 // the GUI's auth-config.json.
 export interface SignInProvider {
@@ -6,6 +8,7 @@ export interface SignInProvider {
   issuer: string;
   client_id: string;
   scopes: string[];
+  icon: ProviderIcon;
 }
 
 // GET /principal/permissions.

@@ -3,7 +3,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { safeReturnPath } from "@/api/auth";
 import { getPlaybooks } from "@/api/playbooks";
 import { ApiError, shouldRetryApiRequest } from "@/api/utils";
-import { getAccessToken, signOut } from "@/auth/oidc";
+import {
+  clearSignIn,
+  getAccessToken,
+  getProfile,
+  signOut,
+} from "@/auth/oidc";
 import { loadSession } from "@/auth/session";
 
 const location = {
@@ -123,6 +128,26 @@ describe("session check", () => {
     expect(new Headers(init.headers).get("Authorization")).toBeNull();
   });
 
+  test("works over plain HTTP, where the browser has no navigator.locks", async () => {
+    vi.stubGlobal("location", { ...location, origin: "http://10.0.0.5:8081" });
+    vi.stubGlobal("navigator", {});
+    const principal = {
+      subject: "anonymous",
+      provider: "anonymous",
+      permissions: ["playbook:read"],
+    };
+    vi.stubGlobal("fetch", respond(200, principal));
+    await expect(loadSession()).resolves.toMatchObject({
+      user: { anonymous: true },
+    });
+
+    vi.stubGlobal("fetch", respond(200, []));
+    await expect(getPlaybooks()).resolves.toEqual([]);
+    await expect(getProfile()).resolves.toEqual({});
+    await expect(clearSignIn()).resolves.toBeUndefined();
+    await expect(signOut()).resolves.toBe("/login");
+  });
+
   test("treats 401 as signed out without redirecting", async () => {
     vi.stubGlobal("fetch", respond(401, { message: "unauthorized" }));
     await expect(loadSession()).resolves.toEqual({
@@ -223,9 +248,131 @@ describe("signed-in requests", () => {
   });
 
   test("stop carrying it after sign-out", async () => {
-    await signOut();
+    vi.stubGlobal("fetch", serveDiscovery({}));
+    await freshSignOut();
     expect(await authorization()).toBeNull();
     expect(storage.size).toBe(0);
+  });
+});
+
+const serveDiscovery = (metadata: object) =>
+  vi.fn(async () => Response.json({ issuer: provider.issuer, ...metadata }));
+
+// signOut through a new module instance, so the discovery document it loads
+// is not cached for later tests.
+const freshSignOut = async () => {
+  vi.resetModules();
+  return (await import("@/auth/oidc")).signOut();
+};
+
+describe("sign-out", () => {
+  const endSession = `${provider.issuer}/logout`;
+
+  beforeEach(() =>
+    signInWith({
+      access_token: "token-123",
+      id_token: "id-token-123",
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+    }),
+  );
+
+  test("ends the session at the provider and returns to login", async () => {
+    vi.stubGlobal(
+      "fetch",
+      serveDiscovery({ end_session_endpoint: endSession }),
+    );
+
+    const target = new URL(await freshSignOut());
+
+    expect(target.origin + target.pathname).toBe(endSession);
+    expect(Object.fromEntries(target.searchParams)).toEqual({
+      client_id: provider.client_id,
+      id_token_hint: "id-token-123",
+      post_logout_redirect_uri: "https://soarca.test/login",
+    });
+    expect(storage.size).toBe(0);
+  });
+
+  test("passes Entra's login_hint claim back as logout_hint", async () => {
+    signInWith({
+      access_token: "token-123",
+      id_token: "id-token-123",
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      profile: { login_hint: "hint-abc" },
+    });
+    vi.stubGlobal(
+      "fetch",
+      serveDiscovery({ end_session_endpoint: endSession }),
+    );
+
+    const target = new URL(await freshSignOut());
+
+    expect(target.searchParams.get("logout_hint")).toBe("hint-abc");
+  });
+
+  test("goes straight to login when the provider has no end-session endpoint", async () => {
+    vi.stubGlobal("fetch", serveDiscovery({}));
+    await expect(freshSignOut()).resolves.toBe("/login");
+    expect(storage.size).toBe(0);
+  });
+
+  test("goes straight to login when nobody is signed in", async () => {
+    storage.clear();
+    const fetch = vi.fn();
+    vi.stubGlobal("fetch", fetch);
+    await expect(freshSignOut()).resolves.toBe("/login");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  test("still clears the tokens when the provider cannot be reached", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
+    await expect(freshSignOut()).resolves.toBe(
+      "/login?error=provider_sign_out_failed",
+    );
+    expect(storage.size).toBe(0);
+  });
+
+  test("fails, keeping the user signed in, when the tokens cannot be cleared", async () => {
+    vi.stubGlobal("navigator", {});
+    await expect(freshSignOut()).rejects.toThrow();
+    expect(storage.has(userKey)).toBe(true);
+  });
+});
+
+describe("return path", () => {
+  const sessionStore = new Map<string, string>();
+
+  beforeEach(() => {
+    const win: Record<string, unknown> = { location, addEventListener: vi.fn() };
+    win.self = win;
+    vi.stubGlobal("window", win);
+    vi.stubGlobal("sessionStorage", {
+      getItem: (key: string) => sessionStore.get(key) ?? null,
+      setItem: (key: string, value: string) => sessionStore.set(key, value),
+      removeItem: (key: string) => sessionStore.delete(key),
+    });
+    vi.stubGlobal(
+      "fetch",
+      serveDiscovery({ authorization_endpoint: `${provider.issuer}/authorize` }),
+    );
+  });
+
+  afterEach(() => sessionStore.clear());
+
+  test("signIn saves it for this tab, and it can be taken once", async () => {
+    vi.resetModules();
+    const { signIn, takeReturnPath } = await import("@/auth/oidc");
+
+    // The redirect never resolves in a browser, because the page unloads.
+    void signIn({ ...provider, label: "Entra", icon: "microsoft" }, "/x?y#z");
+    await vi.waitFor(() => expect(location.assign).toHaveBeenCalled());
+
+    const authorize = new URL(location.assign.mock.calls[0][0]);
+    expect(authorize.origin + authorize.pathname).toBe(
+      `${provider.issuer}/authorize`,
+    );
+    expect(takeReturnPath()).toBe("/x?y#z");
+    expect(takeReturnPath()).toBeNull();
   });
 });
 

@@ -1,22 +1,23 @@
-import {
-  IconArrowRight,
-  IconBrandWindows,
-  IconLockOpen2,
-} from "@tabler/icons-react";
+import { IconArrowRight } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ErrorResponse } from "oidc-client-ts";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Navigate, useMatch, useSearchParams } from "react-router";
 import styled from "styled-components";
 
-import { getPrincipal, safeReturnPath } from "@/api/auth";
+import { safeReturnPath } from "@/api/auth";
 import soarcaBackground from "@/assets/soarca-background.jpg";
 import logoDark from "@/assets/soarca-logo-cropped-dark.svg";
 import logo from "@/assets/soarca-logo-cropped.svg";
-import { useAuth } from "@/auth/AuthContext";
+import { useAuth, type AuthState } from "@/auth/AuthContext";
 import { AuthStatus, NoAccess } from "@/auth/AuthGate";
 import { loadAuthConfig } from "@/auth/config";
-import { completeSignIn, signIn, signOut } from "@/auth/oidc";
+import {
+  providerIcons,
+  signInErrorMessage,
+  type SignInError,
+} from "@/auth/login";
+import { signIn } from "@/auth/oidc";
+import { finishSignIn } from "@/auth/session";
 
 import {
   Button,
@@ -34,12 +35,25 @@ import { useThemeMode } from "@/theme";
 import type { SignInProvider } from "@/types";
 import { PATHS } from "@/utils";
 
-const signInErrors: Record<string, string> = {
-  sign_in_denied:
-    "Sign-in was cancelled or not allowed. Try again, or contact your administrator if you need access.",
-  provider_unavailable:
-    "The login provider is temporarily unavailable. Please try again later.",
-};
+type LoginView =
+  | "callback"
+  | "session"
+  | "noAccess"
+  | "loadingProviders"
+  | "configError"
+  | "providers";
+
+function loginView(
+  isCallback: boolean,
+  auth: AuthState,
+  config: { data?: unknown; isError: boolean },
+): LoginView {
+  if (isCallback) return "callback";
+  if (auth.isLoading || auth.isError) return "session";
+  if (auth.noAccess) return "noAccess";
+  if (config.data) return "providers";
+  return config.isError ? "configError" : "loadingProviders";
+}
 
 export const LoginPage: React.FC = () => {
   const { resolved } = useThemeMode();
@@ -51,18 +65,13 @@ export const LoginPage: React.FC = () => {
   const signInError = params.get("error");
   const isCallback = useMatch(PATHS.LOGIN_CALLBACK) !== null;
 
+  // finishSignIn never rejects; every failure resolves to a login URL.
   const callback = useQuery({
     queryKey: ["auth", "callback"],
     queryFn: async () => {
-      const path = await completeSignIn();
-      // The provider signed the user in, but SOARCA may still reject the token.
-      // A valid token without a SOARCA role continues to the no-access screen.
-      if ((await getPrincipal()).status === "signed-out") {
-        await signOut();
-        throw new Error("SOARCA rejected the sign-in");
-      }
+      const target = await finishSignIn();
       await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
-      return safeReturnPath(path);
+      return target;
     },
     enabled: isCallback,
     retry: false,
@@ -87,25 +96,93 @@ export const LoginPage: React.FC = () => {
     setPendingProvider(provider.id);
     signIn(provider, returnTo).catch(() => {
       setPendingProvider(null);
-      setParams(
-        { return_to: returnTo, error: "provider_unavailable" },
-        { replace: true },
-      );
+      const error: SignInError = "provider_unavailable";
+      setParams({ return_to: returnTo, error }, { replace: true });
     });
   };
 
   if (isCallback) {
     if (callback.isSuccess) return <Navigate to={callback.data} replace />;
-    if (callback.isError) {
-      const denied =
-        callback.error instanceof ErrorResponse &&
-        callback.error.error === "access_denied";
-      const error = denied ? "sign_in_denied" : "sign_in_failed";
-      return <Navigate to={`${PATHS.LOGIN}?error=${error}`} replace />;
-    }
   } else if (auth.user) {
     return <Navigate to={returnTo} replace />;
   }
+
+  const view = loginView(isCallback, auth, config);
+
+  const withNotices = (content: ReactNode) => (
+    <FormContainer>
+      {signInError !== null && (
+        <NotificationCard $variant={ThemeVariant.Error} role="alert">
+          {signInErrorMessage(signInError)}
+        </NotificationCard>
+      )}
+      {params.get("reason") === "expired" && (
+        <NotificationCard $variant={ThemeVariant.Warning} role="status">
+          Your session has ended. Select a provider to sign in again.
+        </NotificationCard>
+      )}
+      {content}
+    </FormContainer>
+  );
+
+  const renderBody = () => {
+    switch (view) {
+      case "callback":
+        return <CenteredSpinner role="status" aria-label="Signing in" />;
+      case "session":
+        return <AuthStatus />;
+      case "noAccess":
+        return <NoAccess />;
+      case "loadingProviders":
+        return (
+          <CenteredSpinner role="status" aria-label="Loading login providers" />
+        );
+      case "configError":
+        return withNotices(
+          <NotificationCard $variant={ThemeVariant.Error} role="alert">
+            Could not read the sign-in settings of this GUI:{" "}
+            {config.error instanceof Error
+              ? config.error.message
+              : "unknown error"}
+            . Contact your administrator.
+          </NotificationCard>,
+        );
+      case "providers":
+        return withNotices(
+          <>
+            {config.data?.map((provider) => (
+              <ProviderButton
+                key={provider.id}
+                type="button"
+                $fullWidth
+                // aria-disabled instead of disabled keeps keyboard focus
+                // on the clicked button; startSignIn ignores the clicks.
+                aria-disabled={pendingProvider !== null}
+                onClick={() => startSignIn(provider)}
+              >
+                <ProviderIdentity>
+                  <Icon $icon={providerIcons[provider.icon]} />
+                  <span>{provider.label}</span>
+                </ProviderIdentity>
+                {pendingProvider === provider.id ? (
+                  <Spinner aria-hidden="true" />
+                ) : (
+                  <Icon
+                    $icon={IconArrowRight}
+                    className="provider-arrow"
+                    aria-hidden="true"
+                  />
+                )}
+              </ProviderButton>
+            ))}
+            <VisuallyHidden role="status">
+              {pendingProvider !== null && "Redirecting to sign in"}
+            </VisuallyHidden>
+          </>,
+        );
+    }
+  };
+
   return (
     <PageContainer $backgroundImage={soarcaBackground}>
       <LoginCard>
@@ -118,91 +195,15 @@ export const LoginPage: React.FC = () => {
           </Spacer>
         </LoginCardHeader>
         <LoginCardBody>
-          {!auth.noAccess && !config.isError && (
+          {view === "providers" && (
             <ProviderPrompt>Choose a login provider</ProviderPrompt>
           )}
-          <ProviderOptions>
-            {isCallback ? (
-              <Spacer $direction="vertical" $align="center">
-                <Spinner role="status" aria-label="Signing in" />
-              </Spacer>
-            ) : auth.isLoading || auth.isError ? (
-              <AuthStatus />
-            ) : auth.noAccess ? (
-              <NoAccess />
-            ) : config.isLoading ? (
-              <Spacer $direction="vertical" $align="center">
-                <Spinner role="status" aria-label="Loading login providers" />
-              </Spacer>
-            ) : (
-              <FormContainer>
-                {signInError !== null && (
-                  <NotificationCard $variant={ThemeVariant.Error} role="alert">
-                    {Object.hasOwn(signInErrors, signInError)
-                      ? signInErrors[signInError]
-                      : "We could not complete your sign-in. Please try again. If the problem continues, contact your administrator."}
-                  </NotificationCard>
-                )}
-                {params.get("reason") === "expired" && (
-                  <NotificationCard
-                    $variant={ThemeVariant.Warning}
-                    role="status"
-                  >
-                    Your session has ended. Select a provider to sign in again.
-                  </NotificationCard>
-                )}
-                {config.data ? (
-                  config.data.map((provider) => (
-                    <ProviderButton
-                      key={provider.id}
-                      type="button"
-                      $fullWidth
-                      disabled={pendingProvider !== null}
-                      aria-busy={pendingProvider === provider.id}
-                      onClick={() => startSignIn(provider)}
-                    >
-                      <ProviderIdentity>
-                        <Icon
-                          $icon={
-                            provider.id === "entra"
-                              ? IconBrandWindows
-                              : IconLockOpen2
-                          }
-                        />
-                        <span>{provider.label}</span>
-                      </ProviderIdentity>
-                      {pendingProvider === provider.id ? (
-                        <Spinner
-                          role="status"
-                          aria-label="Redirecting to sign in"
-                        />
-                      ) : (
-                        <Icon
-                          $icon={IconArrowRight}
-                          className="provider-arrow"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </ProviderButton>
-                  ))
-                ) : (
-                  <NotificationCard $variant={ThemeVariant.Error} role="alert">
-                    Could not read the sign-in settings of this GUI:{" "}
-                    {config.error instanceof Error
-                      ? config.error.message
-                      : "unknown error"}
-                    . Contact your administrator.
-                  </NotificationCard>
-                )}
-              </FormContainer>
-            )}
-          </ProviderOptions>
+          <ProviderOptions>{renderBody()}</ProviderOptions>
         </LoginCardBody>
       </LoginCard>
     </PageContainer>
   );
 };
-
 const LoginCard = styled.div`
   width: 100%;
   max-width: 28rem;
@@ -241,6 +242,10 @@ const ProviderOptions = styled.div`
   min-height: 2.125rem;
 `;
 
+const CenteredSpinner = styled(Spinner)`
+  justify-self: center;
+`;
+
 const ProviderButton = styled(Button)`
   display: grid;
   grid-template-columns: 1.5rem minmax(0, 1fr) 1.5rem;
@@ -259,9 +264,14 @@ const ProviderButton = styled(Button)`
       transform ${({ theme }) => theme.transitions.base};
   }
 
-  &:is(:hover, :focus-visible):not(:disabled) .provider-arrow {
+  &:is(:hover, :focus-visible):not([aria-disabled="true"]) .provider-arrow {
     opacity: 1;
     transform: translateX(0);
+  }
+
+  &[aria-disabled="true"] {
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
+    pointer-events: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -278,4 +288,14 @@ const ProviderIdentity = styled.span`
   align-items: center;
   justify-content: center;
   gap: inherit;
+`;
+
+const VisuallyHidden = styled.span`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+
+  clip-path: inset(50%);
+  white-space: nowrap;
 `;

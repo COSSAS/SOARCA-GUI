@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuth } from "@/auth/AuthContext";
+import { loginUrl } from "@/auth/login";
 import type { Permission } from "@/auth/permissions";
 import {
   Button,
@@ -76,12 +77,7 @@ export function AuthGate() {
   }
   if (!auth.user) {
     const returnTo = location.pathname + location.search + location.hash;
-    return (
-      <Navigate
-        to={`${PATHS.LOGIN}?${new URLSearchParams({ return_to: returnTo })}`}
-        replace
-      />
-    );
+    return <Navigate to={loginUrl({ returnTo })} replace />;
   }
   return <Outlet />;
 }

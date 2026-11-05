@@ -1,6 +1,6 @@
+import { loginUrl } from "@/auth/login";
 import { getAccessToken } from "@/auth/oidc";
 import { ErrorResponse } from "@/types";
-import { PATHS } from "@/utils";
 
 const statusMessages: Partial<Record<number, string>> = {
   401: "Please sign in again.",
@@ -13,11 +13,8 @@ export const PRINCIPAL_URL = "/api/principal/permissions";
 
 // A full page load clears data cached for the previous user.
 export function redirectToLogin(reason?: "expired") {
-  const params = new URLSearchParams({
-    return_to: location.pathname + location.search + location.hash,
-  });
-  if (reason) params.set("reason", reason);
-  window.location.assign(`${PATHS.LOGIN}?${params}`);
+  const returnTo = location.pathname + location.search + location.hash;
+  window.location.assign(loginUrl({ returnTo, reason }));
 }
 
 export class ApiError extends Error {

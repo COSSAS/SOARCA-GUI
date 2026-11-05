@@ -1,3 +1,4 @@
+import { isProviderIcon, providerIcons } from "@/auth/login";
 import type { SignInProvider } from "@/types";
 
 const nonEmptyString = (value: unknown): value is string =>
@@ -22,6 +23,7 @@ function parseProvider(value: unknown, index: number): SignInProvider {
     issuer,
     client_id,
     scopes = [],
+    icon = "lock",
   } = value as Record<string, unknown>;
   if (!nonEmptyString(id)) throw new Error(`${where}.id is required`);
   if (!nonEmptyString(label)) throw new Error(`${where}.label is required`);
@@ -34,12 +36,18 @@ function parseProvider(value: unknown, index: number): SignInProvider {
   if (!Array.isArray(scopes) || !scopes.every(nonEmptyString)) {
     throw new Error(`${where}.scopes must be a list of scopes`);
   }
+  if (!isProviderIcon(icon)) {
+    throw new Error(
+      `${where}.icon must be one of: ${Object.keys(providerIcons).join(", ")}`,
+    );
+  }
   return {
     id,
     label,
     issuer,
     client_id,
     scopes,
+    icon,
   };
 }
 

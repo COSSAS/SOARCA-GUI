@@ -5,13 +5,15 @@
       "label": "Microsoft Entra",
       "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0",
       "client_id": "<gui-spa-client-id>",
-      "scopes": ["api://<soarca-api-client-id>/access_as_user"]
+      "scopes": ["api://<soarca-api-client-id>/access_as_user"],
+      "icon": "microsoft"
     },
     {
       "id": "authentik",
       "label": "Single sign-on",
       "issuer": "https://<authentik-host>/application/o/<soarca-slug>/",
-      "client_id": "<gui-public-client-id>"
+      "client_id": "<gui-public-client-id>",
+      "icon": "authentik"
     }
   ]
 }

@@ -5,7 +5,6 @@ import { redirectToLogin } from "@/api/utils";
 import { AuthContext } from "@/auth/AuthContext";
 import { signOut } from "@/auth/oidc";
 import { loadSession } from "@/auth/session";
-import { PATHS } from "@/utils";
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const session = useQuery({
@@ -45,7 +44,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
         isError: session.isLoadingError,
         can: (permission) => user?.permissions.includes(permission) ?? false,
         logout: () =>
-          void signOut().then(() => window.location.assign(PATHS.LOGIN)),
+          void signOut().then(
+            (url) => window.location.assign(url),
+            () =>
+              toast.error("Could not sign you out. Please try again.", {
+                id: "sign-out",
+              }),
+          ),
         retry: () => void session.refetch(),
       }}
     >

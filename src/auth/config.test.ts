@@ -14,6 +14,7 @@ const entra = {
   issuer: "https://login.microsoftonline.com/tenant/v2.0",
   client_id: "gui-client",
   scopes: ["api://soarca/access_as_user"],
+  icon: "microsoft",
 };
 
 afterEach(() => vi.unstubAllGlobals());
@@ -42,8 +43,35 @@ describe("auth-config.json", () => {
         issuer: "https://auth.example/application/o/soarca/",
         client_id: "soarca-gui",
         scopes: [],
+        icon: "lock",
       },
     ]);
+  });
+
+  test("lets any provider id pick an icon", async () => {
+    serve(
+      200,
+      JSON.stringify({
+        providers: [
+          { ...entra, id: "azure" },
+          { ...entra, id: "company-sso", icon: "authentik" },
+        ],
+      }),
+    );
+    const providers = await loadAuthConfig();
+    expect(providers.map((provider) => provider.icon)).toEqual([
+      "microsoft",
+      "authentik",
+    ]);
+  });
+
+  test("shows the lock when no icon is set, even for id entra", async () => {
+    serve(
+      200,
+      JSON.stringify({ providers: [{ ...entra, icon: undefined }] }),
+    );
+    const [provider] = await loadAuthConfig();
+    expect(provider.icon).toBe("lock");
   });
 
   test("reports a missing file", async () => {
@@ -78,6 +106,11 @@ describe("auth-config.json", () => {
       "the same id twice",
       JSON.stringify({ providers: [entra, entra] }),
       /used twice/,
+    ],
+    [
+      "an unknown icon",
+      JSON.stringify({ providers: [{ ...entra, icon: "azure" }] }),
+      /providers\[0\]\.icon must be one of: microsoft, authentik, lock/,
     ],
   ])("rejects a file %s", async (_case, body, message) => {
     serve(200, body);
