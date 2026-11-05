@@ -45,6 +45,11 @@ function CurrentPage() {
   return <p>Landed on {pathname + search}</p>;
 }
 
+function CurrentLocation() {
+  const { pathname, search } = useLocation();
+  return <span data-testid="current-location">{pathname + search}</span>;
+}
+
 function renderLogin(path: string, auth: Partial<AuthState> = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -68,6 +73,7 @@ function renderLogin(path: string, auth: Partial<AuthState> = {}) {
         <ThemeProvider theme={theme}>
           <AuthContext.Provider value={authState}>
             <MemoryRouter initialEntries={[path]}>
+              <CurrentLocation />
               <Routes>
                 <Route path={PATHS.LOGIN} element={<LoginPage />} />
                 <Route path={PATHS.LOGIN_CALLBACK} element={<LoginPage />} />
@@ -84,6 +90,7 @@ function renderLogin(path: string, auth: Partial<AuthState> = {}) {
 const providerButtons = () => screen.getAllByRole("button");
 
 beforeEach(() => {
+  vi.stubGlobal("isSecureContext", true);
   vi.mocked(loadAuthConfig).mockResolvedValue([entra, authentik]);
   vi.mocked(signIn).mockReturnValue(new Promise(() => {}));
 });
@@ -91,6 +98,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("LoginPage providers", () => {
@@ -126,6 +134,25 @@ describe("LoginPage providers", () => {
     expect(screen.getByRole("status").textContent).toBe(
       "Redirecting to sign in",
     );
+  });
+
+  it("explains that sign-in requires HTTPS in an insecure context", async () => {
+    vi.stubGlobal("isSecureContext", false);
+    renderLogin(`${PATHS.LOGIN}?return_to=%2Fplaybooks%2F1`);
+    await screen.findByText(prompt);
+
+    fireEvent.click(providerButtons()[0]);
+
+    expect(
+      await screen.findByText(signInErrorMessage("secure_context_required")),
+    ).toBeTruthy();
+    expect(signIn).not.toHaveBeenCalled();
+    const location = new URL(
+      screen.getByTestId("current-location").textContent!,
+      "https://soarca.test",
+    );
+    expect(location.searchParams.get("return_to")).toBe("/playbooks/1");
+    expect(providerButtons()[0].getAttribute("aria-disabled")).toBe("false");
   });
 
   it("enables the buttons again when the user comes back with the back button", async () => {

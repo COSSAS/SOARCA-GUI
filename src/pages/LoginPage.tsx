@@ -93,6 +93,11 @@ export const LoginPage: React.FC = () => {
 
   const startSignIn = (provider: SignInProvider) => {
     if (pendingProvider) return;
+    if (!window.isSecureContext) {
+      const error: SignInError = "secure_context_required";
+      setParams({ return_to: returnTo, error }, { replace: true });
+      return;
+    }
     setPendingProvider(provider.id);
     signIn(provider, returnTo).catch(() => {
       setPendingProvider(null);

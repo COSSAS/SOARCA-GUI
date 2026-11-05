@@ -26,6 +26,8 @@ export const signInErrors = {
     "Sign-in was cancelled or not allowed. Try again, or contact your administrator if you need access.",
   provider_unavailable:
     "The login provider is temporarily unavailable. Please try again later.",
+  secure_context_required:
+    "Sign-in requires HTTPS. Use localhost for local development.",
   provider_sign_out_failed:
     "You are signed out of SOARCA, but the login provider could not be reached to end its session. It may sign you in again without asking.",
 };
