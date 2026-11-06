@@ -78,7 +78,7 @@ export const PlaybookCreatePage: React.FC = () => {
 
       <CardContainer>
         <CardHeader>
-          <CardTitle>Create new playbook</CardTitle>
+          <CardTitle>Upload playbook</CardTitle>
         </CardHeader>
         <CardBody>
           <MethodSelector>
@@ -159,7 +159,7 @@ export const PlaybookCreatePage: React.FC = () => {
               onClick={handleSubmit}
               disabled={!canSubmit}
             >
-              Create playbook
+              Upload
             </Button>
           </ActionButtons>
         </CardBody>

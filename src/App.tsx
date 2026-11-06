@@ -1,8 +1,10 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import { AuthGate, PermissionGate } from "@/auth/AuthGate";
 import { Permissions } from "@/auth/permissions";
 
 import { ToasterSetup } from "./ToasterSetup";
+import { CenteredCardContent, Spinner, ThemeSize } from "./components";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
@@ -11,10 +13,33 @@ import { SettingsPage } from "./pages/main-page/SettingsPage";
 import { ExecutionDetailPage } from "./pages/main-page/monitoring-page/ExecutionDetailPage";
 import { MonitoringPage } from "./pages/main-page/monitoring-page/MonitoringPage";
 import { PlaybookCreatePage } from "./pages/main-page/playbooks-page/PlaybookCreatePage";
-import { PlaybookEditPage } from "./pages/main-page/playbooks-page/PlaybookEditPage";
 import { PlaybooksPage } from "./pages/main-page/playbooks-page/PlaybooksPage";
 import { PlaybookDetailPage } from "./pages/main-page/playbooks-page/playbook-detail-page/PlaybookDetailPage";
 import { PATHS } from "./utils";
+
+// The visual editor pulls in React Flow, so it is only loaded when opened.
+const PlaybookVisualEditPage = lazy(() =>
+  import(
+    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualEditPage"
+  ).then((m) => ({ default: m.PlaybookVisualEditPage })),
+);
+const PlaybookVisualCreatePage = lazy(() =>
+  import(
+    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualCreatePage"
+  ).then((m) => ({ default: m.PlaybookVisualCreatePage })),
+);
+
+const withSuspense = (page: React.ReactNode) => (
+  <Suspense
+    fallback={
+      <CenteredCardContent>
+        <Spinner $size={ThemeSize.Medium} />
+      </CenteredCardContent>
+    }
+  >
+    {page}
+  </Suspense>
+);
 
 function App() {
   return (
@@ -54,12 +79,16 @@ function App() {
               }
             >
               <Route
-                path={PATHS.PLAYBOOKS.NEW}
+                path={PATHS.PLAYBOOKS.UPLOAD}
                 element={<PlaybookCreatePage />}
               />
               <Route
+                path={PATHS.PLAYBOOKS.NEW}
+                element={withSuspense(<PlaybookVisualCreatePage />)}
+              />
+              <Route
                 path={PATHS.PLAYBOOKS.EDIT}
-                element={<PlaybookEditPage />}
+                element={withSuspense(<PlaybookVisualEditPage />)}
               />
             </Route>
             <Route path={PATHS.SETTINGS} element={<SettingsPage />} />

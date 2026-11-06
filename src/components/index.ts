@@ -16,6 +16,7 @@ export * from "./Modal";
 export * from "./NotificationCard";
 export * from "./Popover";
 export * from "./RadioGroup";
+export * from "./SearchSelect";
 export * from "./Sidebar";
 export * from "./Spacer";
 export * from "./Spinner";

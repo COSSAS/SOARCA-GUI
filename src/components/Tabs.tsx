@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
-import { TabsContext, TabsContextType, useTabs } from "./utils";
+import { TabsContext, TabsContextType, ThemeSize, useTabs } from "./utils";
 
 interface TabOption {
   id: string;
@@ -10,6 +10,9 @@ interface TabOption {
 export interface TabsProviderProps {
   children: ReactNode;
   $initialTab: string;
+  /** Makes the tabs controlled: the parent keeps the active tab. */
+  $activeTab?: string;
+  $onSelectTab?: (tabId: string) => void;
 }
 
 /**
@@ -37,12 +40,18 @@ export interface TabsProviderProps {
 export const TabsProvider: React.FC<TabsProviderProps> = ({
   children,
   $initialTab,
+  $activeTab,
+  $onSelectTab,
 }) => {
-  const [activeTab, setActiveTab] = useState($initialTab);
+  const [ownActiveTab, setOwnActiveTab] = useState($initialTab);
+  const activeTab = $activeTab ?? ownActiveTab;
 
   const value: TabsContextType = {
     activeTab,
-    selectTab: (tabId: string) => setActiveTab(tabId),
+    selectTab: (tabId: string) => {
+      setOwnActiveTab(tabId);
+      $onSelectTab?.(tabId);
+    },
     isActive: (tabId: string) => tabId === activeTab,
   };
 
@@ -51,37 +60,44 @@ export const TabsProvider: React.FC<TabsProviderProps> = ({
 
 export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   $tabs: TabOption[];
+  /** Small tabs fit narrow panels. Defaults to Medium. */
+  $size?: ThemeSize;
 }
 
-const TabsContainer = styled.div`
+const TabsContainer = styled.div<{ $size: ThemeSize }>`
   display: flex;
-
-  gap: ${({ theme }) => theme.spacing.lg};
+  gap: ${({ theme, $size }) =>
+    $size === ThemeSize.Small ? 0 : theme.spacing.lg};
 `;
 
-const TabButton = styled.button<{ $active: boolean }>`
+const TabButton = styled.button<{ $active: boolean; $size: ThemeSize }>`
   display: flex;
+  gap: ${({ theme }) => theme.spacing.xs};
   align-items: center;
   justify-content: center;
-  gap: ${({ theme }) => theme.spacing.xs};
 
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
-
+  padding: ${({ theme, $size }) =>
+    $size === ThemeSize.Small
+      ? `${theme.spacing.xs} ${theme.spacing.sm}`
+      : `${theme.spacing.sm} ${theme.spacing.md}`};
   border-bottom: 2px solid
     ${({ theme, $active }) =>
       $active ? theme.colors.primary.main : "transparent"};
 
+  font: ${({ theme, $size }) =>
+    $size === ThemeSize.Small
+      ? theme.typography.caption.font
+      : theme.typography.body.font};
   color: ${({ theme, $active }) =>
     $active ? theme.colors.primary.main : theme.colors.text.secondary};
-  font: ${({ theme }) => theme.typography.body.font};
 
   transition: all ${({ theme }) => theme.transitions.base};
 
   &:hover {
-    color: ${({ theme, $active }) =>
-      $active ? theme.colors.primary.hover : theme.colors.text.primary};
     border-bottom-color: ${({ theme, $active }) =>
       $active ? theme.colors.primary.hover : "none"};
+    color: ${({ theme, $active }) =>
+      $active ? theme.colors.primary.hover : theme.colors.text.primary};
   }
 `;
 
@@ -107,16 +123,21 @@ const TabButton = styled.button<{ $active: boolean }>`
  *   { id: "grid", label: <><GridIcon /> Grid</> }
  * ]} />
  */
-export const Tabs: React.FC<TabsProps> = ({ $tabs, ...rest }) => {
+export const Tabs: React.FC<TabsProps> = ({
+  $tabs,
+  $size = ThemeSize.Medium,
+  ...rest
+}) => {
   const { activeTab, selectTab } = useTabs();
 
   return (
-    <TabsContainer {...rest}>
+    <TabsContainer $size={$size} {...rest}>
       {$tabs.map((tab) => (
         <TabButton
           key={tab.id}
           type="button"
           $active={tab.id === activeTab}
+          $size={$size}
           onClick={() => selectTab(tab.id)}
         >
           {tab.label}

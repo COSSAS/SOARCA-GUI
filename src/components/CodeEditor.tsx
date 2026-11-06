@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 const EditorContainer = styled.div`
   width: 100%;
-
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
@@ -11,32 +10,31 @@ const EditorTextarea = styled.textarea<{
   $hasError?: boolean;
   $minHeight?: string;
 }>`
+  resize: vertical;
+
   width: 100%;
   min-height: ${({ $minHeight = "400px" }) => $minHeight};
-
   padding: ${({ theme }) => theme.spacing.md};
-
-  border-radius: ${({ theme }) => theme.radius.md};
   border: 2px solid
     ${({ theme, $hasError }) =>
       $hasError ? theme.colors.error.border : theme.colors.border.medium};
+  border-radius: ${({ theme }) => theme.radius.md};
+
+  font: ${({ theme }) => theme.typography.code.font};
+  color: ${({ theme }) => theme.colors.text.primary};
 
   background-color: ${({ theme }) => theme.colors.background.secondary};
-  color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.code.font};
-
-  resize: vertical;
 
   &:focus {
-    outline: none;
     border-color: ${({ theme, $hasError }) =>
       $hasError ? theme.colors.error.border : theme.colors.info.border};
     background-color: ${({ theme }) => theme.colors.background.primary};
+    outline: none;
   }
 
   &:disabled {
-    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
     cursor: not-allowed;
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
   }
 `;
 
@@ -47,6 +45,8 @@ export interface CodeEditorProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
   $hasError?: boolean;
   $minHeight?: string;
+  /** Id of the textarea, so a label can point to it. */
+  $inputId?: string;
 }
 
 /**
@@ -58,6 +58,7 @@ export interface CodeEditorProps extends React.HTMLAttributes<HTMLDivElement> {
  * @param disabled - When true the editor is non-editable and shows disabled visuals.
  * @param $hasError - When true the editor displays an error border state.
  * @param $minHeight - Optional CSS min-height for the editor area (defaults to `400px`).
+ * @param $inputId - Optional id of the textarea, for a `<label htmlFor>`.
  * @example:
  * <CodeEditor
  *   $value={source}
@@ -72,11 +73,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   disabled,
   $hasError,
   $minHeight,
+  $inputId,
   ...rest
 }) => {
   return (
     <EditorContainer {...rest}>
       <EditorTextarea
+        id={$inputId}
         value={$value}
         onChange={(e) => $onChange(e.target.value)}
         placeholder={placeholder}

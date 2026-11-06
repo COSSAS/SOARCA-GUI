@@ -1,5 +1,5 @@
 import { ThemeSize, ThemeVariant } from "@/components";
-import { IconFilePlus } from "@tabler/icons-react";
+import { IconFilePlus, IconUpload } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -204,6 +204,14 @@ export const PlaybooksPage: React.FC = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
           <RequirePermission permission={Permissions.PlaybookWrite}>
+            <Button
+              $variant={ThemeVariant.Primary}
+              $ghost
+              onClick={() => navigate(PATHS.PLAYBOOKS.UPLOAD)}
+            >
+              <Icon $icon={IconUpload} />
+              Upload
+            </Button>
             <Button
               $variant={ThemeVariant.Primary}
               onClick={() => navigate(PATHS.PLAYBOOKS.NEW)}

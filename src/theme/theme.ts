@@ -77,6 +77,30 @@ export const theme = {
       solidBg: "#6a5ac7",
       solidText: "#ffffff",
     },
+    // Extra hues with the same shape as the variants above, for when five variants are not enough.
+    hues: {
+      cyan: {
+        bg: "#cffafe",
+        border: "#0891b2",
+        text: "#155e75",
+        solidBg: "#0891b2",
+        solidText: "#ffffff",
+      },
+      orange: {
+        bg: "#ffedd5",
+        border: "#ea580c",
+        text: "#9a3412",
+        solidBg: "#ea580c",
+        solidText: "#ffffff",
+      },
+      magenta: {
+        bg: "#fae8ff",
+        border: "#c026d3",
+        text: "#86198f",
+        solidBg: "#c026d3",
+        solidText: "#ffffff",
+      },
+    },
     gray: {
       50: "#f9fafb",
       100: "#f3f4f6",
@@ -270,6 +294,29 @@ export const darkTheme: Theme = {
       text: "#c4b5fd",
       solidBg: "#8b7cf7",
       solidText: "#ffffff",
+    },
+    hues: {
+      cyan: {
+        bg: "#142a2e",
+        border: "#06b6d4",
+        text: "#67e8f9",
+        solidBg: "#06b6d4",
+        solidText: "#ffffff",
+      },
+      orange: {
+        bg: "#2e1f14",
+        border: "#f97316",
+        text: "#fdba74",
+        solidBg: "#f97316",
+        solidText: "#ffffff",
+      },
+      magenta: {
+        bg: "#2e1a33",
+        border: "#d946ef",
+        text: "#f0abfc",
+        solidBg: "#d946ef",
+        solidText: "#ffffff",
+      },
     },
     gray: {
       50: "#111827",
