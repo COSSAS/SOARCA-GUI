@@ -12,12 +12,13 @@ const ToggleButton = styled.span`
 `;
 
 const ToggleIconWrapper = styled.span<{ $expanded: boolean }>`
+  transform: rotate(${({ $expanded }) => ($expanded ? "180deg" : "0deg")});
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   transition: transform ${({ theme }) => theme.transitions.base};
-  transform: rotate(${({ $expanded }) => ($expanded ? "180deg" : "0deg")});
 `;
 
 export interface ExpandableCardProps extends React.HTMLAttributes<HTMLDivElement> {

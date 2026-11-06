@@ -7,6 +7,16 @@ const DropZone = styled.div<{
   $isDragActive: boolean;
   $hasError: boolean;
 }>`
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.md};
+  align-items: center;
+  justify-content: center;
+
+  min-height: 12rem;
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
   border: 2px dashed
     ${({ theme, $isDragActive, $hasError }) =>
       $hasError
@@ -16,16 +26,7 @@ const DropZone = styled.div<{
           : theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-
   text-align: center;
-  cursor: pointer;
-  min-height: 12rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 
   background-color: ${({ theme, $isDragActive }) =>
     $isDragActive ? theme.colors.info.bg : theme.colors.background.secondary};
@@ -39,10 +40,9 @@ const DropZone = styled.div<{
 
   /* Disabled state comes from the hidden file input right before the label. */
   input:disabled + label & {
-    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
     cursor: not-allowed;
-
     border-color: ${({ theme }) => theme.colors.border.medium};
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
     background-color: ${({ theme }) => theme.colors.background.secondary};
   }
 `;
@@ -58,13 +58,14 @@ const DropZoneHint = styled.span`
 `;
 
 const FileName = styled.div`
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
-  color: ${({ theme }) => theme.colors.text.primary};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  align-items: center;
 
   margin-top: ${({ theme }) => theme.spacing.md};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
+
+  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 export interface FileDropProps extends React.HTMLAttributes<HTMLDivElement> {

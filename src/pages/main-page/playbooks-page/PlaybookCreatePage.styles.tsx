@@ -7,20 +7,24 @@ export const MethodSelector = styled.div`
 `;
 
 export const MethodButton = styled.button<{ $active: boolean }>`
-  flex: 1;
   display: flex;
+  flex: 1;
+  gap: ${({ theme }) => theme.spacing.sm};
   align-items: center;
   justify-content: center;
-  gap: ${({ theme }) => theme.spacing.sm};
+
   padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.radius.md};
   border: 2px solid
     ${({ theme, $active }) =>
       $active ? theme.colors.info.border : theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.radius.md};
+
+  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  color: ${({ theme }) => theme.colors.text.primary};
+
   background-color: ${({ theme, $active }) =>
     $active ? theme.colors.info.bg : theme.colors.background.primary};
-  color: ${({ theme }) => theme.colors.text.primary};
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
+
   transition: all ${({ theme }) => theme.transitions.base};
 
   &:hover {
@@ -29,7 +33,7 @@ export const MethodButton = styled.button<{ $active: boolean }>`
   }
 
   &:disabled {
-    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
     cursor: not-allowed;
+    opacity: ${({ theme }) => theme.interactions.disabledOpacity};
   }
 `;

@@ -17,8 +17,8 @@ export interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement>
 export const PageContainer = styled.div<PageContainerProps>`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
   min-height: 100vh;
 
@@ -38,6 +38,7 @@ export const CenteredCardContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
   height: 100%;
   min-height: 12rem;
 `;

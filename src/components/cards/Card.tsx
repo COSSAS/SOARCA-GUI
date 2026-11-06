@@ -12,12 +12,10 @@ import styled from "styled-components";
  */
 export const CardContainer = styled.div`
   width: 100%;
-
-  background: ${({ theme }) => theme.colors.background.primary};
-
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
   border-radius: ${({ theme }) => theme.radius.md};
 
+  background: ${({ theme }) => theme.colors.background.primary};
   box-shadow: ${({ theme }) => theme.shadows.sm};
 `;
 
@@ -37,16 +35,15 @@ export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
  * </CardHeader>
  */
 export const CardHeader = styled.div<CardHeaderProps>`
+  cursor: ${({ $isClickable }) => ($isClickable ? "pointer" : "default")};
+
   display: flex;
+  gap: ${({ theme }) => theme.spacing.lg};
   align-items: center;
   justify-content: space-between;
 
-  gap: ${({ theme }) => theme.spacing.lg};
   padding: ${({ theme }) => theme.spacing.lg};
-
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-
-  cursor: ${({ $isClickable }) => ($isClickable ? "pointer" : "default")};
 `;
 /**
  * Card title component typically used within CardHeader for consistent heading styling.
@@ -77,11 +74,10 @@ export const CardBody = styled.div`
  */
 export const CardFooter = styled.div`
   display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
   align-items: center;
   justify-content: flex-end;
 
-  gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => theme.spacing.md};
-
   border-top: 1px solid ${({ theme }) => theme.colors.border.light};
 `;

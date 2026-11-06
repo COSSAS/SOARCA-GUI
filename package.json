@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . && npm run lint:css",
+    "lint:css": "stylelint \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
     "test": "vitest"
   },
@@ -39,8 +40,11 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "jsdom": "^30.1.3",
+    "postcss-styled-syntax": "^0.7.4",
     "rolldown": "^1.2.16",
     "rollup-plugin-sbom": "^3.0.1",
+    "stylelint": "^17.16.0",
+    "stylelint-config-clean-order": "^10.0.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",

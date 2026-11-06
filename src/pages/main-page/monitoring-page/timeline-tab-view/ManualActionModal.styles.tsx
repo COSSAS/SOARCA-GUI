@@ -6,15 +6,15 @@ export const StepSummary = styled.div`
 `;
 
 export const StepName = styled.h3`
+  margin: 0 0 ${({ theme }) => theme.spacing.xs} 0;
   font: ${({ theme }) => theme.typography.h3.font};
   color: ${({ theme }) => theme.colors.text.primary};
-  margin: 0 0 ${({ theme }) => theme.spacing.xs} 0;
 `;
 
 export const StepDescription = styled.p`
   font: ${({ theme }) => theme.typography.body.font};
-  color: ${({ theme }) => theme.colors.text.secondary};
   line-height: 1.5;
+  color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
 export const Section = styled.div`
@@ -22,28 +22,30 @@ export const Section = styled.div`
 `;
 
 export const SectionTitle = styled.h4`
+  margin: 0 0 ${({ theme }) => theme.spacing.md} 0;
   font: ${({ theme }) => theme.typography.h4.font};
   color: ${({ theme }) => theme.colors.text.primary};
-  margin: 0 0 ${({ theme }) => theme.spacing.md} 0;
 `;
 
 export const CommandText = styled.div`
-  font: ${({ theme }) => theme.typography.body.font};
-  color: ${({ theme }) => theme.colors.text.primary};
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-break: break-word;
   padding: ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.background.tertiary};
   border-left: 3px solid ${({ theme }) => theme.colors.primary.main};
   border-radius: ${({ theme }) => theme.radius.sm};
+
+  font: ${({ theme }) => theme.typography.body.font};
+  line-height: 1.5;
+  color: ${({ theme }) => theme.colors.text.primary};
+  word-break: break-word;
+  white-space: pre-wrap;
+
+  background: ${({ theme }) => theme.colors.background.tertiary};
 `;
 
 export const VariableList = styled.div`
   display: grid;
   grid-template-columns: max-content 1fr;
-  column-gap: ${({ theme }) => theme.spacing.lg};
   row-gap: ${({ theme }) => theme.spacing.md};
+  column-gap: ${({ theme }) => theme.spacing.lg};
   align-items: center;
 `;
 
@@ -53,9 +55,10 @@ export const VariableRow = styled.div`
 
 export const VariableLabel = styled.div`
   display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.xs};
   flex-shrink: 0;
+  gap: ${({ theme }) => theme.spacing.xs};
+  align-items: center;
+
   font: ${({ theme }) => theme.typography.body.font};
   color: ${({ theme }) => theme.colors.text.primary};
 `;
@@ -65,21 +68,24 @@ export const VariableName = styled.span`
 `;
 
 export const VariableType = styled.span`
-  color: ${({ theme }) => theme.colors.text.tertiary};
   font-style: italic;
+  color: ${({ theme }) => theme.colors.text.tertiary};
 `;
 
 export const InfoIcon = styled(IconInfoCircle)`
+  cursor: help;
+
+  flex-shrink: 0;
+
   width: 16px;
   height: 16px;
+
   color: ${({ theme }) => theme.colors.text.tertiary};
-  cursor: help;
-  flex-shrink: 0;
 `;
 
 export const InfoIconWrapper = styled.div`
-  display: inline-flex;
   cursor: help;
+  display: inline-flex;
 `;
 
 export const VariableInputContainer = styled.div`

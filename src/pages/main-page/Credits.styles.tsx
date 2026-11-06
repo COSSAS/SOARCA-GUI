@@ -11,13 +11,13 @@ const rotate = keyframes`
 
 export const PixelHeart = styled.span`
   display: inline-block;
+  margin: 0 4px;
   font-size: 16px;
   animation: ${rotate} 3s linear infinite;
-  margin: 0 4px;
 `;
 
 export const MadeWithLove = styled.div`
   display: flex;
-  align-items: center;
   gap: 4px;
+  align-items: center;
 `;

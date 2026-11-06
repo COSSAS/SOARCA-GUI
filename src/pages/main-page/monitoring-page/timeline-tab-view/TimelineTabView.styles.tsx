@@ -13,39 +13,44 @@ export const TimelineRow = styled.div<{ $delay?: number }>`
   grid-template-columns: 1fr auto 1fr;
   gap: ${({ theme }) => theme.spacing.lg};
   align-items: center;
+
+  opacity: 0;
+
   animation: ${fadeInSlide} 0.4s ease-out forwards;
   animation-delay: ${({ $delay = 0 }) => $delay}s;
-  opacity: 0;
 `;
 
 export const TimelineCenterLine = styled.div`
   position: absolute;
-  left: 50%;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: ${({ theme }) => theme.colors.border.medium};
+  left: 50%;
   transform: translateX(-50%);
+
+  width: 2px;
+
+  background: ${({ theme }) => theme.colors.border.medium};
 `;
 
 export const TimelineIconContainer = styled.div`
   position: relative;
+  z-index: 2;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
 `;
 
 export const TimelineLeftCell = styled.div`
+  position: relative;
   display: flex;
   justify-content: flex-end;
-  position: relative;
 `;
 
 export const TimelineRightCell = styled.div`
+  position: relative;
   display: flex;
   justify-content: flex-start;
-  position: relative;
 `;
 
 export const TimelineSpacer = styled.div``;
@@ -77,17 +82,18 @@ export const ResponseList = styled.div`
 
 export const ResponseItem = styled.div`
   display: flex;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
+  align-items: center;
+
   font: ${({ theme }) => theme.typography.small.font};
   color: ${({ theme }) => theme.colors.success.text};
 `;
 
 export const TimelineHeader = styled.div`
   display: flex;
+  gap: ${({ theme }) => theme.spacing.md};
   align-items: center;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 export const TimelineTitle = styled.h3`
@@ -97,9 +103,11 @@ export const TimelineTitle = styled.h3`
 
 export const TimelineMetaBadge = styled.div`
   display: inline-flex;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
+  align-items: center;
+
   border-radius: 0;
+
   font: ${({ theme }) => theme.typography.small.font};
   color: ${({ theme }) => theme.colors.text.secondary};
 `;

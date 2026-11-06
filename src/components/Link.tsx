@@ -4,11 +4,11 @@ import styled from "styled-components";
 
 const StyledLink = styled.a<{ $subtle?: boolean }>`
   display: inline-flex;
-  align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
+  align-items: center;
 
+  font: ${({ theme }) => theme.typography.body.font};
   text-decoration: none;
-
   ${({ $subtle, theme }) =>
     $subtle
       ? `
@@ -21,8 +21,6 @@ const StyledLink = styled.a<{ $subtle?: boolean }>`
       `}
 
   transition: all ${({ theme }) => theme.transitions.base};
-
-  font: ${({ theme }) => theme.typography.body.font};
 
   svg {
     flex-shrink: 0;

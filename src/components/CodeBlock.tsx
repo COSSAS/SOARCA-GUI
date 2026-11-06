@@ -11,6 +11,7 @@ const CodeContainer = styled.div`
 
 const Pre = styled.pre<{ $maxHeight?: string; $copyable?: boolean }>`
   counter-reset: line;
+
   overflow-y: auto;
 
   max-height: ${({ $maxHeight = "none" }) => $maxHeight};
@@ -30,8 +31,8 @@ const Pre = styled.pre<{ $maxHeight?: string; $copyable?: boolean }>`
 const Line = styled.span<{ $numbered: boolean }>`
   display: block;
   padding-inline: ${({ theme }) => theme.spacing.md};
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
+  white-space: pre-wrap;
 
   ${({ $numbered, theme }) =>
     $numbered &&
@@ -43,10 +44,12 @@ const Line = styled.span<{ $numbered: boolean }>`
 
       &::before {
         content: counter(line);
+        user-select: none;
+
         padding-right: ${theme.spacing.sm};
+
         color: ${theme.colors.text.tertiary};
         text-align: right;
-        user-select: none;
       }
     `}
 `;
