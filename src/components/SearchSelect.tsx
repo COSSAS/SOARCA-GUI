@@ -38,7 +38,9 @@ export type SearchSelectProps = CommonProps &
 
 type Option = SearchSelectOption;
 
-const toValues = (selected: MultiValue<Option> | SingleValue<Option>): string[] => {
+const toValues = (
+  selected: MultiValue<Option> | SingleValue<Option>,
+): string[] => {
   if (!selected) return [];
   return "value" in selected
     ? [selected.value]
@@ -92,7 +94,10 @@ const useSelectStyles = (size: ThemeSize, invalid: boolean) => {
       // No vertical padding inside, so minHeight sets the height like on Input and Button.
       valueContainer: (base) => ({ ...base, padding: `2px ${paddingX}` }),
       input: (base) => ({ ...base, margin: 0, padding: 0 }),
-      dropdownIndicator: (base) => ({ ...base, padding: `0 ${theme.spacing.xs}` }),
+      dropdownIndicator: (base) => ({
+        ...base,
+        padding: `0 ${theme.spacing.xs}`,
+      }),
       clearIndicator: (base) => ({ ...base, padding: `0 ${theme.spacing.xs}` }),
       multiValue: (base) => ({ ...base, borderRadius: theme.radius.sm }),
       multiValueLabel: (base) => ({ ...base, color: theme.colors.info.text }),
@@ -136,7 +141,10 @@ export const SearchSelect: React.FC<SearchSelectProps> = (props) => {
   } = props;
   const { styles, selectTheme } = useSelectStyles($size, $invalid);
   const toOption = (value: string): Option =>
-    $options.find((option) => option.value === value) ?? { value, label: value };
+    $options.find((option) => option.value === value) ?? {
+      value,
+      label: value,
+    };
 
   const selectProps: ReactSelectProps<Option, boolean> = {
     inputId: props.inputId,

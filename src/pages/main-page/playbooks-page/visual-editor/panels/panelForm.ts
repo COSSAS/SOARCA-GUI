@@ -22,7 +22,8 @@ export const PanelFormContext = createContext<PanelForm | undefined>(undefined);
 
 export const usePanelForm = (): PanelForm => {
   const form = useContext(PanelFormContext);
-  if (!form) throw new Error("usePanelForm must be used inside a PanelFormContext");
+  if (!form)
+    throw new Error("usePanelForm must be used inside a PanelFormContext");
   return form;
 };
 

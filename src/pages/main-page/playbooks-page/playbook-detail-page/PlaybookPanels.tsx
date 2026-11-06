@@ -4,7 +4,11 @@ import { Tabs, TabsProvider, ThemeSize, useTabs } from "@/components";
 import type { Playbook } from "@/types";
 
 import { CollapsibleSidePanel } from "../visual-editor/panels/CollapsibleSidePanel";
-import { PanelBody, PanelTabBar, PanelTabContent } from "../visual-editor/panels/Panel.styles";
+import {
+  PanelBody,
+  PanelTabBar,
+  PanelTabContent,
+} from "../visual-editor/panels/Panel.styles";
 import { DetailBody, DiagramFrame } from "./PlaybookDetailPage.styles";
 import {
   PlaybookDescription,
@@ -28,8 +32,10 @@ const DETAIL_TABS = [
 
 const DetailTabContent = ({ playbook }: { playbook: Playbook }) => {
   const { activeTab } = useTabs();
-  if (activeTab === "description") return <PlaybookDescription playbook={playbook} />;
-  if (activeTab === "references") return <PlaybookReferences playbook={playbook} />;
+  if (activeTab === "description")
+    return <PlaybookDescription playbook={playbook} />;
+  if (activeTab === "references")
+    return <PlaybookReferences playbook={playbook} />;
   return <PlaybookOverview playbook={playbook} />;
 };
 
@@ -48,7 +54,10 @@ export const PlaybookPanels = ({ playbook }: { playbook: Playbook }) => {
   };
 
   return (
-    <DetailBody $stepCollapsed={stepCollapsed} $detailsCollapsed={detailsCollapsed}>
+    <DetailBody
+      $stepCollapsed={stepCollapsed}
+      $detailsCollapsed={detailsCollapsed}
+    >
       <CollapsibleSidePanel
         side="left"
         wide

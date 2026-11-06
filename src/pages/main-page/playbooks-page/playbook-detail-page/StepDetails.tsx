@@ -39,7 +39,9 @@ export const StepDetails = ({
 }) => {
   const step = stepId ? playbook.workflow[stepId] : undefined;
   if (!stepId || !step)
-    return <EmptyText>Select a step in the diagram to see its details.</EmptyText>;
+    return (
+      <EmptyText>Select a step in the diagram to see its details.</EmptyText>
+    );
 
   const { typeLabel, details } = getStepDetails(step, playbook);
 

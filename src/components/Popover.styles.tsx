@@ -25,7 +25,10 @@ export const PopoverContent = styled.div<{ $anchorName: string }>`
   inset: auto;
   position-anchor: ${({ $anchorName }) => $anchorName};
   position-area: block-end span-inline-end;
-  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  position-try-fallbacks:
+    flip-block,
+    flip-inline,
+    flip-block flip-inline;
 
   inline-size: max-content;
   min-inline-size: min(10rem, calc(100vw - 1rem));
@@ -48,7 +51,8 @@ export const PopoverContent = styled.div<{ $anchorName: string }>`
   }
 
   @media (max-width: 20rem), (max-height: 20rem) {
-    inset: auto ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.sm} auto;
+    inset: auto ${({ theme }) => theme.spacing.sm}
+      ${({ theme }) => theme.spacing.sm} auto;
     position-area: none;
     max-block-size: calc(100dvh - 1rem);
     margin: 0;
@@ -72,7 +76,8 @@ export const PopoverItemButton = styled.button`
   &:hover:not(:disabled) {
     background: color-mix(
       in srgb,
-      ${({ theme }) => theme.colors.info.solidBg} ${({ theme }) => theme.interactions.subtleMix},
+      ${({ theme }) => theme.colors.info.solidBg}
+        ${({ theme }) => theme.interactions.subtleMix},
       ${({ theme }) => theme.colors.background.primary}
     );
   }

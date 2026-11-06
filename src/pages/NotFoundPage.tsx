@@ -2,12 +2,7 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
 import soarcaBackground from "@/assets/soarca-background.jpg";
-import {
-  Button,
-  Icon,
-  PageContainer,
-  ThemeVariant,
-} from "@/components";
+import { Button, Icon, PageContainer, ThemeVariant } from "@/components";
 import { PATHS } from "@/utils";
 import styled from "styled-components";
 
@@ -32,10 +27,7 @@ export const NotFoundPage: React.FC = () => {
             <Icon $icon={IconArrowLeft} />
             Go Back
           </Button>
-          <Button
-            $fullWidth
-            onClick={() => navigate(PATHS.BASE)}
-          >
+          <Button $fullWidth onClick={() => navigate(PATHS.BASE)}>
             Take me home
           </Button>
         </ButtonGroup>

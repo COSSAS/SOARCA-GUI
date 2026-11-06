@@ -22,8 +22,14 @@ describe("setField", () => {
       ...step,
       description: "Runs a scan",
     });
-    expect(setField(step, "name", "  ")).toEqual({ type: "action", custom_field: 1 });
-    expect(setField(step, "custom_field", [])).toEqual({ type: "action", name: "Scan" });
+    expect(setField(step, "name", "  ")).toEqual({
+      type: "action",
+      custom_field: 1,
+    });
+    expect(setField(step, "custom_field", [])).toEqual({
+      type: "action",
+      name: "Scan",
+    });
   });
 });
 
@@ -66,13 +72,20 @@ describe("JSON box of the playbook", () => {
       x_note: "keep me editable",
     } as unknown as Playbook;
 
-    expect(getExtraFields(playbook, owned)).toEqual({ x_note: "keep me editable" });
+    expect(getExtraFields(playbook, owned)).toEqual({
+      x_note: "keep me editable",
+    });
     expect(
       setExtraFields(playbook, owned, {
         id: "playbook--2",
         created_by: "identity--2",
         workflow: { a: 1 },
       }),
-    ).toEqual({ id: "playbook--1", created_by: "identity--1", name: "Example", workflow: {} });
+    ).toEqual({
+      id: "playbook--1",
+      created_by: "identity--1",
+      name: "Example",
+      workflow: {},
+    });
   });
 });

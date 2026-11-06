@@ -78,8 +78,10 @@ export const Spinner: React.FC<SpinnerProps> = ({
   ...rest
 }) => {
   const colors = getVariantColors(useTheme(), $variant);
-  const arcColor = $color || ($withContainer ? colors.solidText : colors.solidBg);
-  const trackColor = $trackColor || ($withContainer ? colors.solidText : colors.bg);
+  const arcColor =
+    $color || ($withContainer ? colors.solidText : colors.solidBg);
+  const trackColor =
+    $trackColor || ($withContainer ? colors.solidText : colors.bg);
   const trackOpacity = $withContainer && !$trackColor ? 0.35 : 1;
 
   const pixelSize = getIconPixelSize($size);

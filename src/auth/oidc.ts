@@ -65,7 +65,10 @@ export async function signIn(provider: SignInProvider, returnTo: string) {
 }
 
 export async function completeSignIn(): Promise<void> {
-  const user = await ifSignedIn((manager) => manager.signinCallback(), undefined);
+  const user = await ifSignedIn(
+    (manager) => manager.signinCallback(),
+    undefined,
+  );
   if (!user) throw new Error("No sign-in in progress");
 }
 
@@ -111,7 +114,10 @@ export async function signOut(): Promise<string> {
   if (!endpoint) return PATHS.LOGIN;
   const url = new URL(endpoint);
   url.searchParams.set("client_id", manager.settings.client_id);
-  url.searchParams.set("post_logout_redirect_uri", location.origin + PATHS.LOGIN);
+  url.searchParams.set(
+    "post_logout_redirect_uri",
+    location.origin + PATHS.LOGIN,
+  );
   if (idToken) url.searchParams.set("id_token_hint", idToken);
   // Entra puts login_hint in the ID token when the app enables that optional
   // claim. Passing it back skips Entra's "pick an account to sign out" screen.

@@ -42,7 +42,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   onChangeSpec,
   ref,
 }) => {
-  const panel = { side: "right", label: "properties", collapsed, onToggle, ref } as const;
+  const panel = {
+    side: "right",
+    label: "properties",
+    collapsed,
+    onToggle,
+    ref,
+  } as const;
   const tabs = { activeTab, onSelectTab };
 
   if (selectedIds.length > 1)

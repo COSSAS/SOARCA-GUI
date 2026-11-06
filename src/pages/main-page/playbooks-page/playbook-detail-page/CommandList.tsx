@@ -5,7 +5,13 @@ import { Description } from "./PlaybookDetailPage.styles";
 import { CodeField, DetailField, Section } from "./PlaybookDetails";
 import { readContent, readText } from "./stepFields";
 
-const CommandSection = ({ command, title }: { command: Command; title: string }) => {
+const CommandSection = ({
+  command,
+  title,
+}: {
+  command: Command;
+  title: string;
+}) => {
   const body = readText(command.command, command.command_b64);
   const content = readText(command.content, command.content_b64);
   const formatted = content && readContent(content.text);
@@ -16,7 +22,9 @@ const CommandSection = ({ command, title }: { command: Command; title: string })
       <DetailField label="Type">
         <Badge $variant={ThemeVariant.Primary}>{command.type}</Badge>
       </DetailField>
-      {command.version && <DetailField label="Version">{command.version}</DetailField>}
+      {command.version && (
+        <DetailField label="Version">{command.version}</DetailField>
+      )}
       {command.playbook_activity && (
         <DetailField label="Playbook activity" wide>
           {command.playbook_activity}
@@ -45,7 +53,9 @@ const CommandSection = ({ command, title }: { command: Command; title: string })
         <CodeField
           label={content.decoded ? "Content (decoded from base64)" : "Content"}
           code={formatted.code}
-          warning={formatted.invalid ? "This content is not valid JSON." : undefined}
+          warning={
+            formatted.invalid ? "This content is not valid JSON." : undefined
+          }
         />
       )}
     </Section>

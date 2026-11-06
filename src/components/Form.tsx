@@ -138,7 +138,8 @@ const StyledOption = styled.option`
 `;
 
 export interface SelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value">,
+  extends
+    Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value">,
     ControlSizeProps {
   $value?: string | number;
   $onChange?: (value: string) => void;

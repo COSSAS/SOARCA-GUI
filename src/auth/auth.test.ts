@@ -3,12 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { safeReturnPath } from "@/api/auth";
 import { getPlaybooks } from "@/api/playbooks";
 import { ApiError, shouldRetryApiRequest } from "@/api/utils";
-import {
-  clearSignIn,
-  getAccessToken,
-  getProfile,
-  signOut,
-} from "@/auth/oidc";
+import { clearSignIn, getAccessToken, getProfile, signOut } from "@/auth/oidc";
 import { loadSession } from "@/auth/session";
 
 const location = {
@@ -343,7 +338,10 @@ describe("return path", () => {
   const sessionStore = new Map<string, string>();
 
   beforeEach(() => {
-    const win: Record<string, unknown> = { location, addEventListener: vi.fn() };
+    const win: Record<string, unknown> = {
+      location,
+      addEventListener: vi.fn(),
+    };
     win.self = win;
     vi.stubGlobal("window", win);
     vi.stubGlobal("sessionStorage", {
@@ -353,7 +351,9 @@ describe("return path", () => {
     });
     vi.stubGlobal(
       "fetch",
-      serveDiscovery({ authorization_endpoint: `${provider.issuer}/authorize` }),
+      serveDiscovery({
+        authorization_endpoint: `${provider.issuer}/authorize`,
+      }),
     );
   });
 

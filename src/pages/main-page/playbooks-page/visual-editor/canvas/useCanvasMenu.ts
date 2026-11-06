@@ -4,7 +4,12 @@ import { useState } from "react";
 import type { Playbook } from "@/types";
 
 import type { CanvasEditor } from "../model/editor";
-import { connect, disconnect, disconnectAll, removeSteps } from "../model/edits";
+import {
+  connect,
+  disconnect,
+  disconnectAll,
+  removeSteps,
+} from "../model/edits";
 import { getPorts, parseHandleId } from "../model/graph";
 import { NODE_HEIGHT, RANK_GAP } from "../model/layout";
 import {

@@ -38,11 +38,19 @@ export const getStepDetails = (step: Step, playbook: Playbook) => {
   const known = new Set<string>(fields.map((field) => field.key));
   const details: StepDetail[] = [
     ...fields
-      .filter((field) => !OMITTED_FIELDS.has(field.key) && step[field.key] !== undefined)
-      .map((field) => ({ key: field.key, label: field.label, value: step[field.key] })),
+      .filter(
+        (field) =>
+          !OMITTED_FIELDS.has(field.key) && step[field.key] !== undefined,
+      )
+      .map((field) => ({
+        key: field.key,
+        label: field.label,
+        value: step[field.key],
+      })),
     ...Object.entries(step)
       .filter(
-        ([key, value]) => !known.has(key) && !OMITTED_FIELDS.has(key) && value !== undefined,
+        ([key, value]) =>
+          !known.has(key) && !OMITTED_FIELDS.has(key) && value !== undefined,
       )
       .map(([key, value]) => ({ key, label: toLabel(key), value })),
   ];

@@ -8,7 +8,11 @@ export type StepColor = ThemeVariant | keyof Theme["colors"]["hues"];
 
 /** Step fields that point to exactly one other step. */
 export type SingleConnection =
-  "on_completion" | "on_success" | "on_failure" | "on_true" | "on_false";
+  | "on_completion"
+  | "on_success"
+  | "on_failure"
+  | "on_true"
+  | "on_false";
 
 /** `cases` and `next_steps` point to many steps, the others to one. */
 export type ConnectionKind = SingleConnection | "cases" | "next_steps";
@@ -70,17 +74,28 @@ export type Field = {
   /** Name of one entry in buttons and titles, e.g. "agent". */
   itemLabel?: string;
   /** How "Add" builds a new entry. `id` is only used by `entries`, to turn the typed name into a key. */
-  newEntry?: { id?: "variable" | "typed-id"; defaults: Record<string, unknown> };
+  newEntry?: {
+    id?: "variable" | "typed-id";
+    defaults: Record<string, unknown>;
+  };
 };
 
-export const STEP_TABS = ["details", "execution", "variables", "advanced"] as const;
+export const STEP_TABS = [
+  "details",
+  "execution",
+  "variables",
+  "advanced",
+] as const;
 export const PLAYBOOK_TABS = ["metadata", "resources", "advanced"] as const;
 export type StepTab = (typeof STEP_TABS)[number];
 export type PlaybookTab = (typeof PLAYBOOK_TABS)[number];
 export type PanelTab = StepTab | PlaybookTab;
 
 export type StepField = Field & { key: keyof Step & string; tab: StepTab };
-export type PlaybookField = Field & { key: keyof Playbook & string; tab: PlaybookTab };
+export type PlaybookField = Field & {
+  key: keyof Playbook & string;
+  tab: PlaybookTab;
+};
 
 export type StepTypeDefinition = {
   label: string;

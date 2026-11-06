@@ -185,9 +185,7 @@ export const PlaybookDetailPage: React.FC = () => {
             $format="json"
             $onSuccess={() => toast.success("Playbook exported")}
             $onError={(err) =>
-              toast.error(
-                formatErrorForToast(err, "Failed to export playbook"),
-              )
+              toast.error(formatErrorForToast(err, "Failed to export playbook"))
             }
           >
             <Icon $icon={IconFileCode} />

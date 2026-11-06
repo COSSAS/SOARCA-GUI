@@ -94,7 +94,8 @@ const ContextSubmenu = ({
     const submenu = ref.current;
     const trigger = triggerRef.current;
     const parent = trigger?.closest("[popover]");
-    if (!submenu || !trigger || !parent || submenu.matches(":popover-open")) return;
+    if (!submenu || !trigger || !parent || submenu.matches(":popover-open"))
+      return;
 
     submenu.showPopover();
     const box = submenu.getBoundingClientRect();
@@ -121,7 +122,12 @@ const ContextSubmenu = ({
 
   return (
     <div onMouseEnter={show} onMouseLeave={scheduleHide}>
-      <SubmenuTrigger ref={triggerRef} type="button" $open={open} onClick={show}>
+      <SubmenuTrigger
+        ref={triggerRef}
+        type="button"
+        $open={open}
+        onClick={show}
+      >
         <span>{entry.label}</span>
         <Icon $icon={IconChevronRight} $size={ThemeSize.Small} />
       </SubmenuTrigger>
@@ -157,7 +163,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ menu, onClose }) => {
       element.showPopover();
       element.focus();
     }
-    element.querySelectorAll<HTMLElement>("[popover]:popover-open")
+    element
+      .querySelectorAll<HTMLElement>("[popover]:popover-open")
       .forEach((submenu) => submenu.hidePopover());
 
     const { left, top } = placeContextMenu(

@@ -89,7 +89,10 @@ export const getPorts = ({
   definition,
   blocked,
   readOnly,
-}: Pick<StepNodeData, "step" | "definition" | "blocked" | "readOnly">): Port[] =>
+}: Pick<
+  StepNodeData,
+  "step" | "definition" | "blocked" | "readOnly"
+>): Port[] =>
   (definition?.connections ?? [])
     .flatMap((kind): Port[] => {
       if (blocked.includes(kind)) return [];
@@ -118,7 +121,10 @@ export const getPorts = ({
 
 // Edits replace only the steps they change, so an unchanged step object can keep its
 // node data. The same data object lets the memoized StepNode skip re-rendering.
-const nodeDataCache = new WeakMap<Step, { spec: CacaoSpec; data: StepNodeData }>();
+const nodeDataCache = new WeakMap<
+  Step,
+  { spec: CacaoSpec; data: StepNodeData }
+>();
 
 const sameIssues = (a: Issue[], b: Issue[]) =>
   a.length === b.length &&

@@ -76,7 +76,8 @@ const EditorContent: React.FC<VisualEditorProps> = ({
   );
   const issues = getAllIssues(playbook, spec);
   const invalidDrafts = getInvalidDrafts(jsonDrafts.drafts, playbook);
-  const errors = issues.filter((issue) => issue.blocking).length + invalidDrafts.length;
+  const errors =
+    issues.filter((issue) => issue.blocking).length + invalidDrafts.length;
   const warnings = issues.filter((issue) => !issue.blocking).length;
 
   const handleAddStep = (
@@ -91,7 +92,9 @@ const EditorContent: React.FC<VisualEditorProps> = ({
       const withStep = addStep(current, id, step, position);
       if (!from) return withStep;
       const link = { ...from, target: id };
-      return canConnect(withStep, spec, link) ? connect(withStep, link) : current;
+      return canConnect(withStep, spec, link)
+        ? connect(withStep, link)
+        : current;
     });
     setSelectedIds([id]);
   };
@@ -126,7 +129,8 @@ const EditorContent: React.FC<VisualEditorProps> = ({
     setRightCollapsed(false);
     // Wait for the panel to show the tab, then focus the first invalid field or row.
     requestAnimationFrame(() => {
-      const target = propertiesRef.current?.querySelector<HTMLElement>("[data-invalid]");
+      const target =
+        propertiesRef.current?.querySelector<HTMLElement>("[data-invalid]");
       const control = target?.matches("button")
         ? target
         : target?.querySelector<HTMLElement>("input, textarea, select, button");

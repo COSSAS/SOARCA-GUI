@@ -100,7 +100,9 @@ describe("graph round trip", () => {
       "parallel--1": toIncomingHandleId(0),
       "switch-condition--1": toIncomingHandleId(1),
     });
-    expect(nodes.find((node) => node.id === "action--1")?.data.incoming).toBe(2);
+    expect(nodes.find((node) => node.id === "action--1")?.data.incoming).toBe(
+      2,
+    );
     expect(
       edges.find((edge) => edge.target === "while-condition--1")?.targetHandle,
     ).toBeUndefined();
@@ -109,8 +111,11 @@ describe("graph round trip", () => {
   it("keeps the node data of steps an edit did not change", () => {
     const toData = (playbook: Playbook) =>
       Object.fromEntries(
-        playbookToGraph(playbook, cacao20, getPositions(playbook, cacao20))
-          .nodes.map((node) => [node.id, node.data]),
+        playbookToGraph(
+          playbook,
+          cacao20,
+          getPositions(playbook, cacao20),
+        ).nodes.map((node) => [node.id, node.data]),
       );
     const before = toData(branching);
     const after = toData(
@@ -194,7 +199,10 @@ describe("step actions", () => {
       ...branching,
       workflow: {
         ...branching.workflow,
-        "action--1": { ...branching.workflow["action--1"], uuid: "uuid-source" },
+        "action--1": {
+          ...branching.workflow["action--1"],
+          uuid: "uuid-source",
+        },
       },
     };
     const result = duplicateStep(
@@ -219,8 +227,11 @@ describe("step actions", () => {
     });
     expect(source.workflow["action--1"].uuid).toBe("uuid-source");
     expect(getStoredPosition(duplicate)).toEqual({ x: 400, y: 300 });
-    expect(getAllLinks(result, cacao20).filter((link) => link.source === "action--copy"))
-      .toHaveLength(2);
+    expect(
+      getAllLinks(result, cacao20).filter(
+        (link) => link.source === "action--copy",
+      ),
+    ).toHaveLength(2);
   });
 
   it("disconnects all links to and from a step without removing the step", () => {
@@ -239,13 +250,10 @@ describe("step actions", () => {
 
   it("does not duplicate a second start step", () => {
     expect(
-      duplicateStep(
-        branching,
-        "start--1",
-        "start--copy",
-        "uuid-copy",
-        { x: 400, y: 300 },
-      ),
+      duplicateStep(branching, "start--1", "start--copy", "uuid-copy", {
+        x: 400,
+        y: 300,
+      }),
     ).toBe(branching);
   });
 });

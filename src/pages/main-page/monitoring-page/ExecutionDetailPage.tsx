@@ -1,5 +1,9 @@
 import { QueryObserverResult, useQuery } from "@tanstack/react-query";
-import { IconArrowLeft, IconInfoCircle, IconTimeline } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconInfoCircle,
+  IconTimeline,
+} from "@tabler/icons-react";
 import React from "react";
 import { useParams } from "react-router";
 
@@ -93,10 +97,7 @@ export const ExecutionDetailPage: React.FC = () => {
           <DetailsItem>
             <FormLabel>Status</FormLabel>
             <Badge $variant={getBadgeVariantFromStatus(status)}>
-              <Icon
-                $icon={getIconFromStatus(status)}
-                $size={ThemeSize.Small}
-              />
+              <Icon $icon={getIconFromStatus(status)} $size={ThemeSize.Small} />
               {status}
             </Badge>
           </DetailsItem>

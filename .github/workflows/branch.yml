@@ -2,19 +2,18 @@ name: Branch
 
 on:
   push:
-    branches:    
-      - '**'
+    branches:
+      - "**"
   pull_request:
-    branches:    
-      - '**'
+    branches:
+      - "**"
 
 env:
- BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   check-branch-name:
     runs-on: ubuntu-latest
     steps:
       - name: Check for branch name
-        run: 
-          if [[ $BRANCH_NAME =~ (feature|bugfix|hotfix|development|dependabot|release|master)\/* ]]; then exit 0; else exit 1; fi
+        run: if [[ $BRANCH_NAME =~ (feature|bugfix|hotfix|development|dependabot|release|master)\/* ]]; then exit 0; else exit 1; fi

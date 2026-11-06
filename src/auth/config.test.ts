@@ -66,10 +66,7 @@ describe("auth-config.json", () => {
   });
 
   test("shows the lock when no icon is set, even for id entra", async () => {
-    serve(
-      200,
-      JSON.stringify({ providers: [{ ...entra, icon: undefined }] }),
-    );
+    serve(200, JSON.stringify({ providers: [{ ...entra, icon: undefined }] }));
     const [provider] = await loadAuthConfig();
     expect(provider.icon).toBe("lock");
   });

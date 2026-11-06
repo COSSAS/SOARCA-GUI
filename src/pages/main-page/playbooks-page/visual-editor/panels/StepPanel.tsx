@@ -37,7 +37,11 @@ type CaseNameInputProps = {
 };
 
 /** Renames on blur. An empty or taken name goes back to the old one. */
-const CaseNameInput: React.FC<CaseNameInputProps> = ({ name, isTaken, onRename }) => {
+const CaseNameInput: React.FC<CaseNameInputProps> = ({
+  name,
+  isTaken,
+  onRename,
+}) => {
   const [text, setText] = useState(name);
   const commit = () => {
     const next = text.trim();
@@ -69,8 +73,11 @@ export const StepPanel: React.FC<StepPanelProps> = ({
     (issue) => issue.ownerId === stepId,
   );
   const stepProblems = issues.filter((issue) => !issue.field);
-  const tab = STEP_TABS.find((candidate) => candidate === activeTab) ?? "details";
-  const tabFields = getStepFields(spec, definition).filter((field) => field.tab === tab);
+  const tab =
+    STEP_TABS.find((candidate) => candidate === activeTab) ?? "details";
+  const tabFields = getStepFields(spec, definition).filter(
+    (field) => field.tab === tab,
+  );
   const cases = step.cases;
   const editStep = (change: (current: Step) => Step) =>
     edit((p) => updateStep(p, stepId, change(p.workflow[stepId])));
@@ -108,7 +115,9 @@ export const StepPanel: React.FC<StepPanelProps> = ({
                   <CaseNameInput
                     name={key}
                     isTaken={(name) => name in cases}
-                    onRename={(name) => edit((p) => renameCase(p, stepId, key, name))}
+                    onRename={(name) =>
+                      edit((p) => renameCase(p, stepId, key, name))
+                    }
                   />
                 </FormGroup>
               ))}

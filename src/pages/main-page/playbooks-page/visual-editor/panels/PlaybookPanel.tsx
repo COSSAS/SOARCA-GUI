@@ -55,7 +55,10 @@ const SpecVersionField: React.FC<{
         $size={ThemeSize.Small}
         $value={version}
         $onChange={onChange}
-        $options={SUPPORTED_SPEC_VERSIONS.map((value) => ({ value, label: value }))}
+        $options={SUPPORTED_SPEC_VERSIONS.map((value) => ({
+          value,
+          label: value,
+        }))}
       />
     </FormGroup>
   );
@@ -74,7 +77,8 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
     (issue) => issue.ownerId === PLAYBOOK_OWNER,
   );
   const playbookProblems = issues.filter((issue) => !issue.field);
-  const tab = PLAYBOOK_TABS.find((candidate) => candidate === activeTab) ?? "metadata";
+  const tab =
+    PLAYBOOK_TABS.find((candidate) => candidate === activeTab) ?? "metadata";
   const owned = getOwnedPlaybookKeys(spec);
 
   return (
@@ -82,7 +86,9 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
       value={{ playbook, ownerId: PLAYBOOK_OWNER, tab, issues }}
     >
       <PanelBody>
-        <Hint>Select a step to edit it, or drag a new step onto the canvas.</Hint>
+        <Hint>
+          Select a step to edit it, or drag a new step onto the canvas.
+        </Hint>
         <IssueNotices issues={playbookProblems} />
 
         <PanelTabs tabs={PLAYBOOK_TABS} onSelectTab={onSelectTab} />
@@ -90,7 +96,10 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
         <PanelTabContent>
           <div>
             {tab === "metadata" && (
-              <SpecVersionField version={spec.version} onChange={onChangeSpec} />
+              <SpecVersionField
+                version={spec.version}
+                onChange={onChangeSpec}
+              />
             )}
             {spec.playbookFields
               .filter((field) => field.tab === tab)
@@ -100,7 +109,9 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
                   field={field}
                   value={playbook[field.key]}
                   path={field.key}
-                  onChange={(value) => edit((p) => setField(p, field.key, value))}
+                  onChange={(value) =>
+                    edit((p) => setField(p, field.key, value))
+                  }
                 />
               ))}
           </div>

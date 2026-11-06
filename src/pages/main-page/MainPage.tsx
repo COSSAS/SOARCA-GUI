@@ -121,12 +121,7 @@ export const MainPage: React.FC = () => {
               alt="SOARCA Logo"
               $hidden={collapsed}
             />
-            <SidebarLogo
-              src={logoSmall}
-              alt=""
-              $small
-              $hidden={!collapsed}
-            />
+            <SidebarLogo src={logoSmall} alt="" $small $hidden={!collapsed} />
           </SidebarLogos>
           <RequirePermission permission={Permissions.PlaybookWrite}>
             <SidebarAction
@@ -136,7 +131,9 @@ export const MainPage: React.FC = () => {
               onClick={() => handleNavigation(PATHS.PLAYBOOKS.NEW)}
             >
               <Icon $icon={IconFilePlus} />
-              <SidebarActionLabel $hidden={collapsed}>New playbook</SidebarActionLabel>
+              <SidebarActionLabel $hidden={collapsed}>
+                New playbook
+              </SidebarActionLabel>
             </SidebarAction>
           </RequirePermission>
         </SidebarHeader>

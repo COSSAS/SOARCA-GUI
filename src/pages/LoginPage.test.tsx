@@ -105,9 +105,10 @@ describe("LoginPage providers", () => {
   it("lists the providers under the prompt", async () => {
     renderLogin(PATHS.LOGIN);
     expect(await screen.findByText(prompt)).toBeTruthy();
-    expect(
-      providerButtons().map((button) => button.textContent),
-    ).toEqual(["Microsoft Entra", "Authentik"]);
+    expect(providerButtons().map((button) => button.textContent)).toEqual([
+      "Microsoft Entra",
+      "Authentik",
+    ]);
   });
 
   it("shows a spinner and no prompt while the providers load", () => {

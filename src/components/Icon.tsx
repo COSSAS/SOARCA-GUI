@@ -27,15 +27,13 @@ const IconWrapper = styled.span<{
   align-items: center;
   justify-content: center;
 
-  width: ${({ $size, $round }) =>
-    $round ? `${$size * 1.5}px` : `${$size}px`};
+  width: ${({ $size, $round }) => ($round ? `${$size * 1.5}px` : `${$size}px`)};
   height: ${({ $size, $round }) =>
     $round ? `${$size * 1.5}px` : `${$size}px`};
 
   vertical-align: middle;
 
-  ${({ $round }) => $round ? "border-radius: 50%;" : ""}
-
+  ${({ $round }) => ($round ? "border-radius: 50%;" : "")}
 
   ${({ $variant, $ghost, $round, theme }) => {
     if (!$round || !$variant) return "";
@@ -49,7 +47,6 @@ const IconWrapper = styled.span<{
       color: ${$ghost ? colors.border : colors.solidText};
     `;
   }}
-
 `;
 
 /**

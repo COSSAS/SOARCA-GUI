@@ -52,7 +52,10 @@ export const Popover: React.FC<PopoverProps> = ({
 
 export type PopoverItemProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export const PopoverItem: React.FC<PopoverItemProps> = ({ children, ...props }) => {
+export const PopoverItem: React.FC<PopoverItemProps> = ({
+  children,
+  ...props
+}) => {
   const targetId = useContext(PopoverContext);
 
   return (

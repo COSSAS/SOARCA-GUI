@@ -62,7 +62,11 @@ export const StepPalette: React.FC<StepPaletteProps> = ({
             key={type}
             draggable
             disabled={!canAddStep(playbook, type)}
-            title={isStepTypeSupported(type) ? undefined : "SOARCA does not run this step yet"}
+            title={
+              isStepTypeSupported(type)
+                ? undefined
+                : "SOARCA does not run this step yet"
+            }
             onDragStart={(e) => e.dataTransfer.setData(STEP_TYPE_MIME, type)}
             onClick={() => handleClick(type)}
           >
