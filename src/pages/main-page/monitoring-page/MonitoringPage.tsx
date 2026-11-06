@@ -40,7 +40,9 @@ import {
   formatDateTime,
   formatDuration,
   groupBy,
+  parseDate,
   PATHS,
+  sortByNumber,
 } from "@/utils";
 
 interface PlaybookRow {
@@ -62,7 +64,12 @@ const hasOngoingManualActions = (report: PlaybookExecutionReport): boolean => {
 const parseReportToRows = (
   reports: PlaybookExecutionReport[],
 ): PlaybookRow[] => {
-  return reports.map((report) => {
+  const newestFirst = sortByNumber(
+    [...reports],
+    (report) => parseDate(report.started)?.getTime(),
+    false,
+  );
+  return newestFirst.map((report) => {
     const status = getPlaybookStatusFromSoarcaStatus(report.status);
     return {
       id: report.execution_id,
