@@ -415,7 +415,7 @@ flowchart TB
 - `npm run dev` - Start Vite dev server with hot-reload
 - `npm run build` - Type-check and create production bundle
 - `npm run preview` - Serve the production build locally (Vite preview server)
-- `npm run lint` - Run ESLint, then Stylelint (CSS property order)
+- `npm run lint` - Run oxlint, then Stylelint (CSS property order)
 - `npm run lint:css` - Run only Stylelint; add `-- --fix` to reorder properties automatically
 - `npm test` - Run unit tests (Vitest)
 

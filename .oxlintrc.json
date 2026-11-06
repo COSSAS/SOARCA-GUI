@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "react"],
+  "env": { "browser": true },
+  "ignorePatterns": ["dist"],
+  "rules": {
+    "react/rules-of-hooks": "error"
+  }
+}
