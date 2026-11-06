@@ -1,48 +1,46 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-type SidebarWidth = "compact" | "normal" | "wide";
-
-const sidebarWidths: Record<SidebarWidth, string> = {
-  compact: "200px",
-  normal: "280px",
-  wide: "350px",
-};
+import { Button } from "./Button";
 
 export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   $isOpen: boolean;
-  $maxWidth?: SidebarWidth;
+  $collapsed?: boolean;
 }
 
 /**
- * Sidebar component with responsive behavior and customizable max-width.
- * The sidebar will always attempt to fit its content but will not exceed the specified max-width.
+ * App sidebar. On desktop it can collapse to an icon rail. The icons keep their
+ * place in both states, so only the width animates and the labels get clipped.
  * @param $isOpen - Controls sidebar visibility on mobile (default: false)
- * @param $maxWidth - Sidebar max-width: "compact" | "normal" | "wide" (default: "normal")
+ * @param $collapsed - Shows only icons (default: false)
  */
 export const Sidebar = styled.aside<SidebarProps>`
-  overflow-y: auto;
+  overflow: hidden auto;
   display: flex;
   flex-direction: column;
-
-  width: auto;
-  max-width: ${({ $maxWidth = "normal" }) => sidebarWidths[$maxWidth]};
-
+  flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing.lg};
-  padding: ${({ theme }) => theme.spacing.lg};
 
-  border-right: 1px solid ${({ theme }) => theme.colors.border.light};
+  width: ${({ $collapsed }) => ($collapsed ? "4.5rem" : "15rem")};
+  padding: ${({ theme }) => theme.spacing.lg};
+  border-right: ${({ theme, $collapsed }) =>
+    $collapsed
+      ? `2px solid ${theme.colors.primary.main}`
+      : `1px solid ${theme.colors.border.light}`};
+
+  white-space: nowrap;
 
   background-color: ${({ theme }) => theme.colors.background.primary};
 
-  transition: width ${({ theme }) => theme.transitions.slow};
+  transition: width ${({ theme }) => theme.transitions.base};
 
   @media (max-width: 768px) {
     position: fixed;
-    left: 0;
+    z-index: ${({ theme }) => theme.zIndex.sticky};
     top: 0;
     bottom: 0;
-    z-index: ${({ theme }) => theme.zIndex.sticky};
+    left: 0;
     transform: translateX(${({ $isOpen }) => ($isOpen ? "0" : "-100%")});
+
     transition: transform ${({ theme }) => theme.transitions.slow};
   }
 `;
@@ -50,27 +48,65 @@ export const Sidebar = styled.aside<SidebarProps>`
 export const SidebarHeader = styled.div`
   display: flex;
   flex-direction: column;
-
   gap: ${({ theme }) => theme.spacing.lg};
+
   padding-top: ${({ theme }) => theme.spacing.lg};
   padding-bottom: ${({ theme }) => theme.spacing.xl};
-
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
 export const SidebarNav = styled.nav`
   display: flex;
   flex-direction: column;
-
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
-export const SidebarLogoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const fade = css<{ $hidden: boolean }>`
+  opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
+  transition: opacity ${({ theme }) => theme.transitions.base};
+`;
 
-  padding: ${({ theme }) => theme.spacing.md};
+// Both logos stay mounted and cross-fade. The small one is centered on the icon column.
+export const SidebarLogos = styled.div`
+  position: relative;
+  height: 2rem;
+`;
+
+export const SidebarLogo = styled.img<{ $hidden: boolean; $small?: boolean }>`
+  position: absolute;
+  top: 0;
+  left: ${({ theme, $small }) => ($small ? "0.25rem" : theme.spacing.md)};
+
+  width: ${({ $small }) => ($small ? "2rem" : "11.5rem")};
+  height: 100%;
+
+  ${fade}
+`;
+
+export const SidebarLabel = styled.span<{ $hidden: boolean }>`
+  ${fade}
+`;
+
+/**
+ * The primary action at the top. Its label shrinks to nothing when collapsed,
+ * so the centered icon slides along with the width instead of jumping.
+ */
+export const SidebarAction = styled(Button)`
+  gap: 0;
+`;
+
+export const SidebarActionLabel = styled.span<{ $hidden: boolean }>`
+  overflow: hidden;
+
+  max-width: ${({ $hidden }) => ($hidden ? 0 : "10rem")};
+  margin-left: ${({ theme, $hidden }) => ($hidden ? 0 : theme.spacing.sm)};
+
+  opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
+
+  transition:
+    max-width ${({ theme }) => theme.transitions.base},
+    margin ${({ theme }) => theme.transitions.base},
+    opacity ${({ theme }) => theme.transitions.base};
 `;
 
 /**
@@ -79,21 +115,23 @@ export const SidebarLogoContainer = styled.div`
  * @param $isActive - Whether the nav item is currently active (default: false)
  */
 export const NavItem = styled.a<{ $isActive?: boolean }>`
+  cursor: pointer;
+
   display: flex;
+  gap: ${({ theme }) => theme.spacing.md};
   align-items: center;
 
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  width: 100%;
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
+  border-radius: ${({ theme }) => theme.radius.md};
 
-  cursor: pointer;
+  font: ${({ theme }) => theme.typography.bodyMedium.font};
+  color: ${({ theme }) => theme.colors.text.secondary};
+  text-decoration: none;
+
   transition:
     color ${({ theme }) => theme.transitions.base},
     background-color ${({ theme }) => theme.transitions.base};
-
-  border-radius: ${({ theme }) => theme.radius.md};
-  color: ${({ theme }) => theme.colors.text.secondary};
-
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
-  gap: ${({ theme }) => theme.spacing.md};
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary.main};
@@ -108,37 +146,24 @@ export const NavItem = styled.a<{ $isActive?: boolean }>`
       : ""}
 `;
 
+// Icon-only items in a centered row that wraps into a column in the collapsed rail.
 export const SidebarFooter = styled.div`
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing.xs};
   justify-content: center;
 
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.md}
-    0 ${({ theme }) => theme.spacing.md};
-
-  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
   margin-top: auto;
-`;
+  padding-top: ${({ theme }) => theme.spacing.md};
+  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
 
-export const SidebarFooterLink = styled.a`
-  display: flex;
-  align-items: center;
+  & > ${NavItem} {
+    width: auto;
+  }
 
-  gap: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg}`};
-
-  font: ${({ theme }) => theme.typography.bodyMedium.font};
-  cursor: pointer;
-  border-radius: ${({ theme }) => theme.radius.md};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  text-decoration: none;
-
-  transition:
-    color ${({ theme }) => theme.transitions.base},
-    background-color ${({ theme }) => theme.transitions.base};
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary.main};
-    background-color: ${({ theme }) => `${theme.colors.primary.main}26`};
+  @media (max-width: 768px) {
+    & > button {
+      display: none;
+    }
   }
 `;
