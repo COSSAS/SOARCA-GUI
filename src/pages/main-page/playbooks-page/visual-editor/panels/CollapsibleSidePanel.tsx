@@ -14,6 +14,8 @@ import {
 
 type CollapsibleSidePanelProps = {
   side: "left" | "right";
+  /** Use the width of the right panel, e.g. for a left panel with long content. */
+  wide?: boolean;
   label: string;
   title: ReactNode;
   actions?: ReactNode;
@@ -25,6 +27,7 @@ type CollapsibleSidePanelProps = {
 
 export const CollapsibleSidePanel = ({
   side,
+  wide,
   label,
   title,
   actions,
@@ -50,7 +53,12 @@ export const CollapsibleSidePanel = ({
           {actions}
         </SidePanelHeading>
       </SidePanelHeader>
-      <SidePanelContent $side={side} $collapsed={collapsed} inert={collapsed}>
+      <SidePanelContent
+        $side={side}
+        $wide={wide}
+        $collapsed={collapsed}
+        inert={collapsed}
+      >
         {children}
       </SidePanelContent>
     </SidePanel>

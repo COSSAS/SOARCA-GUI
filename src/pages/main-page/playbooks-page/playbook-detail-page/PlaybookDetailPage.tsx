@@ -6,7 +6,7 @@ import {
   IconPlayerPlay,
   IconTrash,
 } from "@tabler/icons-react";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 
@@ -35,23 +35,25 @@ import {
 import { Execution, Playbook } from "@/types";
 import { PATHS } from "@/utils";
 
-import { generatePlaybookFilename, getOrderedSteps } from "../utils";
+import { generatePlaybookFilename } from "../utils";
 import {
-  PlaybookAdditionalDetails,
-  PlaybookMainDetails,
-} from "./PlaybookDetailCards";
-import {
-  LeftColumn,
-  RightColumn,
-  TwoColumnLayout,
+  DetailHeader,
+  DetailPage,
+  PageTitle,
+  TitleRow,
 } from "./PlaybookDetailPage.styles";
-import PlaybookTimeline from "./PlaybookTimeline";
+import { PlaybookPanels } from "./PlaybookPanels";
 import { RunPlaybookModal } from "./RunPlaybookModal";
+
+const loading = (
+  <CenteredCardContent>
+    <Spinner $size={ThemeSize.Medium} />
+  </CenteredCardContent>
+);
 
 export const PlaybookDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { playbookId } = useParams();
-  const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["playbook", playbookId],
@@ -102,39 +104,7 @@ export const PlaybookDetailPage: React.FC = () => {
   ).some((v) => v.external === true);
   const parsedError = getErrorFromApiResponse(error);
 
-  const toggleStep = (stepId: string) => {
-    setExpandedSteps((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(stepId)) {
-        newSet.delete(stepId);
-      } else {
-        newSet.add(stepId);
-      }
-      return newSet;
-    });
-  };
-
-  const orderedSteps = playbook
-    ? getOrderedSteps(playbook.workflow, playbook.workflow_start)
-    : [];
-
-  if (isLoading) {
-    return (
-      <Spacer $direction="vertical" $gap="lg" $align="start">
-        <Link $to={PATHS.PLAYBOOKS.BASE}>
-          <Icon $icon={IconArrowLeft} />
-          Back to playbooks
-        </Link>
-        <CardContainer>
-          <CardBody>
-            <CenteredCardContent>
-              <Spinner $size={ThemeSize.Medium} />
-            </CenteredCardContent>
-          </CardBody>
-        </CardContainer>
-      </Spacer>
-    );
-  }
+  if (isLoading) return loading;
 
   if (isError || !playbook) {
     return (
@@ -159,24 +129,19 @@ export const PlaybookDetailPage: React.FC = () => {
     );
   }
 
-  return (
-    <Spacer $direction="vertical" $gap="lg" $align="start">
-      <Spacer
-        style={{ width: "100%" }}
-        $direction="horizontal"
-        $gap="lg"
-        $align="center"
-        $justify="space-between"
-      >
-        <Link $to={PATHS.PLAYBOOKS.BASE}>
-          <Icon $icon={IconArrowLeft} />
-          Back to playbooks
-        </Link>
+  const content = (
+    <DetailPage>
+      <DetailHeader>
+        <TitleRow>
+          <Link $to={PATHS.PLAYBOOKS.BASE} title="Back to playbooks">
+            <Icon $icon={IconArrowLeft} />
+          </Link>
+          <PageTitle title={playbook.name}>{playbook.name}</PageTitle>
+        </TitleRow>
         <Spacer $direction="horizontal" $gap="sm">
           <RequirePermission permission={Permissions.PlaybookWrite}>
             <Button
               $variant={ThemeVariant.Primary}
-              $fullWidth
               $ghost
               onClick={() =>
                 navigate(
@@ -189,7 +154,6 @@ export const PlaybookDetailPage: React.FC = () => {
             </Button>
             <Button
               $variant={ThemeVariant.Error}
-              $fullWidth
               $ghost
               onClick={() => setOpenDeleteConfirm(true)}
               disabled={deleteMutation.isPending}
@@ -201,7 +165,6 @@ export const PlaybookDetailPage: React.FC = () => {
           <RequirePermission permission={Permissions.PlaybookExecute}>
             <Button
               $variant={ThemeVariant.Success}
-              $fullWidth
               $ghost
               onClick={() =>
                 hasExternalVars
@@ -214,99 +177,66 @@ export const PlaybookDetailPage: React.FC = () => {
               Run
             </Button>
           </RequirePermission>
-
           <ExportButton
             $variant={ThemeVariant.Accent}
-            $fullWidth
             $ghost
             $data={playbook}
             $fileName={generatePlaybookFilename(playbook)}
             $format="json"
             $onSuccess={() => toast.success("Playbook exported")}
             $onError={(err) =>
-              toast.error(formatErrorForToast(err, "Failed to export playbook"))
+              toast.error(
+                formatErrorForToast(err, "Failed to export playbook"),
+              )
             }
           >
             <Icon $icon={IconFileCode} />
             Export
           </ExportButton>
-
-          <ConfirmDialog
-            $isOpen={openRunConfirm}
-            $title="Run playbook"
-            $description={`Run the playbook '${playbook.name}' now?`}
-            $confirmLabel="Run"
-            $cancelLabel="Cancel"
-            $confirmVariant={ThemeVariant.Success}
-            $isPending={mutation.isPending}
-            $onCancel={() => setOpenRunConfirm(false)}
-            $onConfirm={() => {
-              setOpenRunConfirm(false);
-              mutation.mutate();
-            }}
-          />
-
-          <ConfirmDialog
-            $isOpen={openDeleteConfirm}
-            $title="Delete playbook"
-            $description={`Delete the playbook '${playbook.name}'? This action cannot be undone.`}
-            $confirmLabel="Delete"
-            $cancelLabel="Cancel"
-            $confirmVariant={ThemeVariant.Error}
-            $isPending={deleteMutation.isPending}
-            $onCancel={() => setOpenDeleteConfirm(false)}
-            $onConfirm={() => {
-              setOpenDeleteConfirm(false);
-              deleteMutation.mutate();
-            }}
-          />
-          {openRunModal && (
-            <RunPlaybookModal
-              key={playbook.id}
-              playbook={playbook}
-              isOpen={openRunModal}
-              onClose={() => setOpenRunModal(false)}
-              onSuccess={navigateToExecution}
-            />
-          )}
         </Spacer>
-      </Spacer>
+      </DetailHeader>
 
-      <TwoColumnLayout>
-        <LeftColumn>
-          <CardContainer>
-            <CardHeader>
-              <CardTitle>Playbook information</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <PlaybookMainDetails playbook={playbook} />
-            </CardBody>
-          </CardContainer>
-          <CardContainer>
-            <CardHeader>
-              <CardTitle>Additional details</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <PlaybookAdditionalDetails playbook={playbook} />
-            </CardBody>
-          </CardContainer>
-        </LeftColumn>
-        <RightColumn>
-          <CardContainer>
-            <CardHeader>
-              <CardTitle>Workflow steps ({orderedSteps.length})</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <PlaybookTimeline
-                steps={orderedSteps}
-                expandedSteps={expandedSteps}
-                toggleStep={toggleStep}
-                playbookWorkflow={playbook.workflow}
-              />
-            </CardBody>
-          </CardContainer>
-        </RightColumn>
-      </TwoColumnLayout>
-    </Spacer>
+      <PlaybookPanels key={playbook.id} playbook={playbook} />
+      <ConfirmDialog
+        $isOpen={openRunConfirm}
+        $title="Run playbook"
+        $description={`Run the playbook '${playbook.name}' now?`}
+        $confirmLabel="Run"
+        $cancelLabel="Cancel"
+        $confirmVariant={ThemeVariant.Success}
+        $isPending={mutation.isPending}
+        $onCancel={() => setOpenRunConfirm(false)}
+        $onConfirm={() => {
+          setOpenRunConfirm(false);
+          mutation.mutate();
+        }}
+      />
+      <ConfirmDialog
+        $isOpen={openDeleteConfirm}
+        $title="Delete playbook"
+        $description={`Delete the playbook '${playbook.name}'? This action cannot be undone.`}
+        $confirmLabel="Delete"
+        $cancelLabel="Cancel"
+        $confirmVariant={ThemeVariant.Error}
+        $isPending={deleteMutation.isPending}
+        $onCancel={() => setOpenDeleteConfirm(false)}
+        $onConfirm={() => {
+          setOpenDeleteConfirm(false);
+          deleteMutation.mutate();
+        }}
+      />
+      {openRunModal && (
+        <RunPlaybookModal
+          key={playbook.id}
+          playbook={playbook}
+          isOpen={openRunModal}
+          onClose={() => setOpenRunModal(false)}
+          onSuccess={navigateToExecution}
+        />
+      )}
+    </DetailPage>
   );
+
+  // The diagram chunk loads after the playbook; one fallback covers both waits.
+  return <Suspense fallback={loading}>{content}</Suspense>;
 };

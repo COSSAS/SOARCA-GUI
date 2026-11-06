@@ -3,7 +3,7 @@ import { ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import { useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Icon, ThemeSize, ThemeVariant } from "@/components";
+import { Badge, Button, Icon, ThemeVariant } from "@/components";
 import type { Playbook } from "@/types";
 
 import { validatePlaybookJson } from "../../utils";
@@ -179,16 +179,14 @@ const EditorContent: React.FC<VisualEditorProps> = ({
           <Button
             $variant={ThemeVariant.Primary}
             $ghost
-            $size={ThemeSize.Small}
             onClick={handleAutoLayout}
           >
-            <Icon $icon={IconLayoutGrid} $size={ThemeSize.Small} />
+            <Icon $icon={IconLayoutGrid} />
             Auto layout
           </Button>
           <Button
             $variant={ThemeVariant.Primary}
             $ghost
-            $size={ThemeSize.Small}
             onClick={onCancel}
             disabled={isSaving}
           >
@@ -196,7 +194,6 @@ const EditorContent: React.FC<VisualEditorProps> = ({
           </Button>
           <Button
             $variant={ThemeVariant.Success}
-            $size={ThemeSize.Small}
             onClick={handleSave}
             disabled={isSaving || !hasChanges || errors > 0}
           >

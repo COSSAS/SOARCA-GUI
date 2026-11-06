@@ -3,6 +3,7 @@ import React from "react";
 
 import {
   Badge,
+  CodeBlock,
   CopyButton,
   DetailsGrid,
   DetailsItem,
@@ -28,7 +29,6 @@ import {
   formatDuration,
 } from "@/utils";
 import {
-  CodeBlock,
   DetailedContainer,
   DetailedItemSummary,
   Placeholder,
@@ -200,12 +200,13 @@ export const DetailsTabView: React.FC<DetailsTabViewProps> = ({ steps }) => {
                     {Array.isArray(step.commands_b64) &&
                     step.commands_b64.length > 0 ? (
                       step.commands_b64.map((cmd, i) => (
-                        <CodeBlock key={`cmd-${i}`}>
-                          {decodeBase64(cmd) || cmd}
-                        </CodeBlock>
+                        <CodeBlock
+                          key={`cmd-${i}`}
+                          $code={decodeBase64(cmd) || cmd}
+                        />
                       ))
                     ) : (
-                      <CodeBlock>// no commands</CodeBlock>
+                      <CodeBlock $code="// no commands" />
                     )}
                   </DetailsItem>
                   <DetailsItem style={{ width: "100%" }}>

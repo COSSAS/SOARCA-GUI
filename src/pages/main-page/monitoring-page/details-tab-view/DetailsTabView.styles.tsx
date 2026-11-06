@@ -14,18 +14,6 @@ export const DetailedItemSummary = styled.div`
   color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
-export const CodeBlock = styled.pre`
-  width: 100%;
-  background: ${({ theme }) => theme.colors.background.secondary};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.radius.md};
-  padding: ${({ theme }) => theme.spacing.md};
-  font-family: ${({ theme }) => theme.fonts.family.mono};
-  font-size: ${({ theme }) => theme.fonts.size.sm};
-  color: ${({ theme }) => theme.colors.text.primary};
-  overflow: auto;
-`;
-
 export const VariableListContainer = styled.div`
   width: 100%;
   display: flex;
