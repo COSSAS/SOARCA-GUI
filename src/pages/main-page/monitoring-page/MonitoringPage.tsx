@@ -139,7 +139,10 @@ export const MonitoringPage: React.FC = () => {
                 >
                   {r.status}
                   {r.hasActionRequired && (
-                    <Icon $icon={IconExclamationCircle} $size={ThemeSize.Small} />
+                    <Icon
+                      $icon={IconExclamationCircle}
+                      $size={ThemeSize.Small}
+                    />
                   )}
                 </Badge>
               </Cell>

@@ -30,7 +30,8 @@ export const placeSubmenu = (
   submenu: Size,
   viewport: Size,
 ) => {
-  const roomRight = viewport.width - VIEWPORT_MARGIN - parent.right - SUBMENU_GAP;
+  const roomRight =
+    viewport.width - VIEWPORT_MARGIN - parent.right - SUBMENU_GAP;
   const roomLeft = parent.left - VIEWPORT_MARGIN - SUBMENU_GAP;
   const openRight = roomRight >= submenu.width || roomRight >= roomLeft;
   return {

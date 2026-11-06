@@ -23,7 +23,9 @@ const fromValues = (values: string[]) =>
 
 /** Command types the agent of the step can run, or all of them without an agent. */
 const getCommandTypes = (playbook: Playbook, step?: Step): string[] => {
-  const agent = step?.agent ? playbook.agent_definitions?.[step.agent] : undefined;
+  const agent = step?.agent
+    ? playbook.agent_definitions?.[step.agent]
+    : undefined;
   const commandType = agent && SOARCA_CAPABILITIES[agent.name];
   return commandType ? [commandType] : Object.values(SOARCA_CAPABILITIES);
 };

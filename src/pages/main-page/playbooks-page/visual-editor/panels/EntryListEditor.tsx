@@ -1,7 +1,14 @@
 import { IconChevronRight, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 
-import { Button, Icon, Input, SearchSelect, ThemeSize, ThemeVariant } from "@/components";
+import {
+  Button,
+  Icon,
+  Input,
+  SearchSelect,
+  ThemeSize,
+  ThemeVariant,
+} from "@/components";
 
 import { setField } from "../model/fields";
 import type { Field } from "../model/specs";
@@ -38,10 +45,17 @@ const isEntry = (value: unknown): value is Entry =>
 
 /** `items` are an array and `entries` an object by id. Both are edited as [id, entry] pairs. */
 const readEntries = (value: unknown, isList: boolean): EntryPair[] => {
-  const toPair = (id: string, entry: unknown): EntryPair => [id, isEntry(entry) ? entry : {}];
+  const toPair = (id: string, entry: unknown): EntryPair => [
+    id,
+    isEntry(entry) ? entry : {},
+  ];
   if (isList)
-    return Array.isArray(value) ? value.map((entry, i) => toPair(String(i), entry)) : [];
-  return isEntry(value) ? Object.entries(value).map(([id, entry]) => toPair(id, entry)) : [];
+    return Array.isArray(value)
+      ? value.map((entry, i) => toPair(String(i), entry))
+      : [];
+  return isEntry(value)
+    ? Object.entries(value).map(([id, entry]) => toPair(id, entry))
+    : [];
 };
 
 const writeEntries = (pairs: EntryPair[], isList: boolean): unknown =>
@@ -55,7 +69,8 @@ const newEntryId = (field: Field, name: string): string =>
     ? `__${name.replace(/^_+|_+$/g, "").replace(/\s+/g, "_")}__`
     : `${field.newEntry?.defaults.type}--${crypto.randomUUID()}`;
 
-const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+const capitalize = (text: string) =>
+  text.charAt(0).toUpperCase() + text.slice(1);
 
 const entryName = (id: string, entry: Entry) =>
   typeof entry.name === "string" && entry.name ? entry.name : id;
@@ -87,7 +102,8 @@ const EntryRow: React.FC<EntryRowProps> = ({
   const blocking = issues.some((issue) => issue.blocking);
   const type = typeof entry.type === "string" ? entry.type : undefined;
   const visibleFields = fields.filter(
-    (entryField) => !entryField.forTypes || (type && entryField.forTypes.includes(type)),
+    (entryField) =>
+      !entryField.forTypes || (type && entryField.forTypes.includes(type)),
   );
 
   return (
@@ -116,7 +132,9 @@ const EntryRow: React.FC<EntryRowProps> = ({
               value={entry[entryField.key]}
               path={`${path}.${entryField.key}`}
               entryType={type}
-              onChange={(next) => onChange(setField(entry, entryField.key, next))}
+              onChange={(next) =>
+                onChange(setField(entry, entryField.key, next))
+              }
             />
           ))}
           <EntryActions>
@@ -155,11 +173,15 @@ export const EntryListEditor: React.FC<EntryListEditorProps> = ({
   const itemLabel = field.itemLabel ?? field.label.toLowerCase();
   const isVariable = isVariableField(field);
   // Agents are named by their capability, so the name is picked from a list.
-  const nameField = field.entry?.find((entryField) => entryField.key === "name");
+  const nameField = field.entry?.find(
+    (entryField) => entryField.key === "name",
+  );
   const nameSource = nameField?.source;
   const nameOptions = useReferenceOptions(nameSource);
   // Commands start with a type the step's agent can run.
-  const typeSource = field.entry?.find((entryField) => entryField.key === "type")?.source;
+  const typeSource = field.entry?.find(
+    (entryField) => entryField.key === "type",
+  )?.source;
   const firstType = useReferenceOptions(typeSource)[0]?.value;
 
   const save = (next: EntryPair[]) => onChange(writeEntries(next, isList));
@@ -167,14 +189,20 @@ export const EntryListEditor: React.FC<EntryListEditorProps> = ({
   const add = () => {
     const defaults = field.newEntry?.defaults ?? {};
     if (isList) {
-      const entry = firstType ? { ...defaults, type: firstType } : { ...defaults };
+      const entry = firstType
+        ? { ...defaults, type: firstType }
+        : { ...defaults };
       save([...pairs, [String(pairs.length), entry]]);
       setOpenId(String(pairs.length));
       return;
     }
     const trimmed = name.trim();
     if (!trimmed) {
-      setError(nameSource ? `Pick a ${nameField?.label.toLowerCase()} first` : "Enter a name first");
+      setError(
+        nameSource
+          ? `Pick a ${nameField?.label.toLowerCase()} first`
+          : "Enter a name first",
+      );
       return;
     }
     const id = newEntryId(field, trimmed);
@@ -183,7 +211,10 @@ export const EntryListEditor: React.FC<EntryListEditorProps> = ({
       return;
     }
     // Variables are named by their id, the other entries by a name field.
-    save([...pairs, [id, isVariable ? { ...defaults } : { ...defaults, name: trimmed }]]);
+    save([
+      ...pairs,
+      [id, isVariable ? { ...defaults } : { ...defaults, name: trimmed }],
+    ]);
     setOpenId(id);
     setName("");
     setError("");

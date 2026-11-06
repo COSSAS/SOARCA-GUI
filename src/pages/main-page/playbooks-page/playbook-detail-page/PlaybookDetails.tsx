@@ -23,7 +23,10 @@ import {
   IdValue,
   ReferenceItem,
 } from "./PlaybookDetailPage.styles";
-import { FieldMessage, SectionTitle } from "../visual-editor/panels/Panel.styles";
+import {
+  FieldMessage,
+  SectionTitle,
+} from "../visual-editor/panels/Panel.styles";
 
 // Labels match the playbook fields of the visual editor.
 
@@ -96,7 +99,11 @@ const ScoreField = ({
   variant: ThemeVariant;
 }) => (
   <DetailField label={label}>
-    {value === undefined ? <NotSet /> : <Badge $variant={variant}>{value}</Badge>}
+    {value === undefined ? (
+      <NotSet />
+    ) : (
+      <Badge $variant={variant}>{value}</Badge>
+    )}
   </DetailField>
 );
 
@@ -106,7 +113,13 @@ const DateField = ({ label, value }: { label: string; value?: string }) => (
   </DetailField>
 );
 
-export const Section = ({ title, children }: { title: string; children: ReactNode }) => (
+export const Section = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => (
   <DetailSection>
     <SectionTitle>{title}</SectionTitle>
     <FieldGrid>{children}</FieldGrid>

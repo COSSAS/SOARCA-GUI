@@ -31,7 +31,8 @@ export const PanelTabs: React.FC<PanelTabsProps> = ({ tabs, onSelectTab }) => {
     const tabIssues = issues.filter((issue) => issue.tab === tab);
     const tabDrafts = invalidDrafts.filter((draft) => draft.tab === tab);
     const count = tabIssues.length + tabDrafts.length;
-    const blocking = tabDrafts.length > 0 || tabIssues.some((issue) => issue.blocking);
+    const blocking =
+      tabDrafts.length > 0 || tabIssues.some((issue) => issue.blocking);
     return (
       <>
         {TAB_LABELS[tab]}
@@ -46,7 +47,11 @@ export const PanelTabs: React.FC<PanelTabsProps> = ({ tabs, onSelectTab }) => {
   };
 
   return (
-    <TabsProvider $initialTab={activeTab} $activeTab={activeTab} $onSelectTab={selectTab}>
+    <TabsProvider
+      $initialTab={activeTab}
+      $activeTab={activeTab}
+      $onSelectTab={selectTab}
+    >
       <PanelTabBar>
         <Tabs
           $size={ThemeSize.Small}

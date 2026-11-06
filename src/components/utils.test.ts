@@ -87,21 +87,13 @@ describe("Component utility functions", () => {
 
   test("getIconPixelSize returns md pixel value as fallback for invalid size", () => {
     const invalidSize = "invalid" as ThemeSize;
-    expect(getIconPixelSize(invalidSize)).toBe(
-      theme.icon_size.md,
-    );
+    expect(getIconPixelSize(invalidSize)).toBe(theme.icon_size.md);
   });
 
   test("getIconPixelSize returns numeric pixel values", () => {
     // All pixel values should be numbers
-    expect(typeof getIconPixelSize(ThemeSize.Small)).toBe(
-      "number",
-    );
-    expect(typeof getIconPixelSize(ThemeSize.Medium)).toBe(
-      "number",
-    );
-    expect(typeof getIconPixelSize(ThemeSize.Large)).toBe(
-      "number",
-    );
+    expect(typeof getIconPixelSize(ThemeSize.Small)).toBe("number");
+    expect(typeof getIconPixelSize(ThemeSize.Medium)).toBe("number");
+    expect(typeof getIconPixelSize(ThemeSize.Large)).toBe("number");
   });
 });

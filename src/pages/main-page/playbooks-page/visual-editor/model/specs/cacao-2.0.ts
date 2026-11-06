@@ -76,8 +76,20 @@ const argList = (key: "in_args" | "out_args", label: string): StepField => ({
 });
 
 const agentEntry: Field[] = [
-  { key: "name", label: "Capability", kind: "text", required: true, source: "capabilities" },
-  { key: "type", label: "Type", kind: "text", required: true, source: "agentTypes" },
+  {
+    key: "name",
+    label: "Capability",
+    kind: "text",
+    required: true,
+    source: "capabilities",
+  },
+  {
+    key: "type",
+    label: "Type",
+    kind: "text",
+    required: true,
+    source: "agentTypes",
+  },
   { key: "description", label: "Description", kind: "text" },
 ];
 
@@ -118,9 +130,26 @@ export const cacao20: CacaoSpec = {
   version: "cacao-2.0",
   commonFields: [
     { key: "name", label: "Name", kind: "text", tab: "details" },
-    { key: "description", label: "Description", kind: "textarea", tab: "details" },
-    { key: "delay", label: "Delay (ms)", kind: "number", min: 1, tab: "execution" },
-    { key: "timeout", label: "Timeout (ms)", kind: "number", min: 0, tab: "execution" },
+    {
+      key: "description",
+      label: "Description",
+      kind: "textarea",
+      tab: "details",
+    },
+    {
+      key: "delay",
+      label: "Delay (ms)",
+      kind: "number",
+      min: 1,
+      tab: "execution",
+    },
+    {
+      key: "timeout",
+      label: "Timeout (ms)",
+      kind: "number",
+      min: 0,
+      tab: "execution",
+    },
     { key: "owner", label: "Owner", kind: "text", tab: "execution" },
     { ...variables("step_variables"), tab: "variables" },
   ],
@@ -135,8 +164,19 @@ export const cacao20: CacaoSpec = {
     "workflow_start",
   ],
   playbookFields: [
-    { key: "name", label: "Name", kind: "text", required: true, tab: "metadata" },
-    { key: "description", label: "Description", kind: "textarea", tab: "metadata" },
+    {
+      key: "name",
+      label: "Name",
+      kind: "text",
+      required: true,
+      tab: "metadata",
+    },
+    {
+      key: "description",
+      label: "Description",
+      kind: "textarea",
+      tab: "metadata",
+    },
     {
       key: "playbook_types",
       label: "Playbook types",
@@ -180,11 +220,42 @@ export const cacao20: CacaoSpec = {
       ],
     },
     { key: "labels", label: "Labels", kind: "list", tab: "metadata" },
-    { key: "priority", label: "Priority (0-100)", kind: "number", min: 0, max: 100, tab: "metadata" },
-    { key: "severity", label: "Severity (0-100)", kind: "number", min: 0, max: 100, tab: "metadata" },
-    { key: "impact", label: "Impact (0-100)", kind: "number", min: 0, max: 100, tab: "metadata" },
-    { key: "valid_from", label: "Valid from", kind: "timestamp", tab: "metadata" },
-    { key: "valid_until", label: "Valid until", kind: "timestamp", tab: "metadata" },
+    {
+      key: "priority",
+      label: "Priority (0-100)",
+      kind: "number",
+      min: 0,
+      max: 100,
+      tab: "metadata",
+    },
+    {
+      key: "severity",
+      label: "Severity (0-100)",
+      kind: "number",
+      min: 0,
+      max: 100,
+      tab: "metadata",
+    },
+    {
+      key: "impact",
+      label: "Impact (0-100)",
+      kind: "number",
+      min: 0,
+      max: 100,
+      tab: "metadata",
+    },
+    {
+      key: "valid_from",
+      label: "Valid from",
+      kind: "timestamp",
+      tab: "metadata",
+    },
+    {
+      key: "valid_until",
+      label: "Valid until",
+      kind: "timestamp",
+      tab: "metadata",
+    },
     { ...variables("playbook_variables"), tab: "resources" },
     {
       key: "agent_definitions",
@@ -193,7 +264,10 @@ export const cacao20: CacaoSpec = {
       tab: "resources",
       entry: agentEntry,
       itemLabel: "agent",
-      newEntry: { id: "typed-id", defaults: { type: "soarca", name: "soarca-manual" } },
+      newEntry: {
+        id: "typed-id",
+        defaults: { type: "soarca", name: "soarca-manual" },
+      },
     },
     {
       key: "target_definitions",
@@ -283,7 +357,12 @@ export const cacao20: CacaoSpec = {
               required: true,
               source: "commandTypes",
             },
-            { key: "command", label: "Command", kind: "textarea", required: true },
+            {
+              key: "command",
+              label: "Command",
+              kind: "textarea",
+              required: true,
+            },
             {
               key: "content",
               label: "Body",

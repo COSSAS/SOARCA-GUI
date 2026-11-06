@@ -108,16 +108,24 @@ describe("Utility functions used in monitoring page", () => {
 
   test("getIconFromStatus returns correct icons for playbook statuses", () => {
     expect(getIconFromStatus(PlaybookExecutionStatus.Executed)).toBe(IconCheck);
-    expect(getIconFromStatus(PlaybookExecutionStatus.Running)).toBe(IconPlayerPlay);
+    expect(getIconFromStatus(PlaybookExecutionStatus.Running)).toBe(
+      IconPlayerPlay,
+    );
     expect(getIconFromStatus(PlaybookExecutionStatus.Failed)).toBe(IconX);
   });
 
   test("getIconFromStepStatus returns correct icons for step statuses", () => {
     expect(getIconFromStepStatus(StepExecutionStatus.Executed)).toBe(IconCheck);
-    expect(getIconFromStepStatus(StepExecutionStatus.Running)).toBe(IconPlayerPlay);
+    expect(getIconFromStepStatus(StepExecutionStatus.Running)).toBe(
+      IconPlayerPlay,
+    );
     expect(getIconFromStepStatus(StepExecutionStatus.Failed)).toBe(IconX);
-    expect(getIconFromStepStatus(StepExecutionStatus.ServerSideError)).toBe(IconX);
-    expect(getIconFromStepStatus(StepExecutionStatus.ClientSideError)).toBe(IconX);
+    expect(getIconFromStepStatus(StepExecutionStatus.ServerSideError)).toBe(
+      IconX,
+    );
+    expect(getIconFromStepStatus(StepExecutionStatus.ClientSideError)).toBe(
+      IconX,
+    );
     expect(getIconFromStepStatus(StepExecutionStatus.TimeoutError)).toBe(IconX);
     expect(
       getIconFromStepStatus(StepExecutionStatus.ExceptionConditionError),

@@ -59,7 +59,10 @@ type StringLists = Record<string, string[]>;
 const toStringLists = (value: unknown): StringLists =>
   typeof value === "object" && value !== null && !Array.isArray(value)
     ? Object.fromEntries(
-        Object.entries(value).map(([name, values]) => [name, toStrings(values)]),
+        Object.entries(value).map(([name, values]) => [
+          name,
+          toStrings(values),
+        ]),
       )
     : {};
 
@@ -67,7 +70,10 @@ const toStringLists = (value: unknown): StringLists =>
  * Options of a select field. Values that are not in the options stay
  * selectable and are marked, so opening an imported playbook changes nothing.
  */
-const useFieldOptions = (field: Field, selected: string[]): SearchSelectOption[] => {
+const useFieldOptions = (
+  field: Field,
+  selected: string[],
+): SearchSelectOption[] => {
   const references = useReferenceOptions(field.source);
   if (!field.source) return toOptions(field.vocabulary ?? []);
   const suffix = SOARCA_SOURCES.includes(field.source)
@@ -101,7 +107,10 @@ const OptionsSelect: React.FC<ControlProps> = (props) => {
     $size: ThemeSize.Small,
     $options: options,
     $placeholder: "Not set",
-    $emptyMessage: field.source && !options.length ? EMPTY_MESSAGES[field.source] : undefined,
+    $emptyMessage:
+      field.source && !options.length
+        ? EMPTY_MESSAGES[field.source]
+        : undefined,
     $invalid: invalid,
     $creatable: !field.source,
   };
@@ -121,7 +130,12 @@ const OptionsSelect: React.FC<ControlProps> = (props) => {
 const ADDRESS_TYPES = ["ipv4", "ipv6", "dname", "url", "l2mac", "vlan"];
 
 /** Edits one address type and its values. Other types of an imported playbook are kept. */
-const AddressInput: React.FC<ControlProps> = ({ id, value, invalid, onChange }) => {
+const AddressInput: React.FC<ControlProps> = ({
+  id,
+  value,
+  invalid,
+  onChange,
+}) => {
   const address = toStringLists(value);
   const [type, setType] = useState(Object.keys(address)[0] ?? ADDRESS_TYPES[0]);
   const write = (nextType: string, values: string[]) => {
@@ -159,7 +173,12 @@ const AddressInput: React.FC<ControlProps> = ({ id, value, invalid, onChange }) 
 };
 
 /** Headers as "Name: value" lines. */
-const HeadersInput: React.FC<ControlProps> = ({ id, value, invalid, onChange }) => {
+const HeadersInput: React.FC<ControlProps> = ({
+  id,
+  value,
+  invalid,
+  onChange,
+}) => {
   const lines = Object.entries(toStringLists(value)).flatMap(([name, values]) =>
     values.map((headerValue) => `${name}: ${headerValue}`),
   );
@@ -167,7 +186,8 @@ const HeadersInput: React.FC<ControlProps> = ({ id, value, invalid, onChange }) 
     const headers: StringLists = {};
     for (const line of nextLines) {
       const [name, ...rest] = line.split(":");
-      if (name.trim()) (headers[name.trim()] ??= []).push(rest.join(":").trim());
+      if (name.trim())
+        (headers[name.trim()] ??= []).push(rest.join(":").trim());
     }
     onChange(Object.keys(headers).length ? headers : undefined);
   };
@@ -187,7 +207,12 @@ const HeadersInput: React.FC<ControlProps> = ({ id, value, invalid, onChange }) 
   );
 };
 
-const SwitchSelect: React.FC<ControlProps> = ({ id, text, invalid, onChange }) => {
+const SwitchSelect: React.FC<ControlProps> = ({
+  id,
+  text,
+  invalid,
+  onChange,
+}) => {
   const variables = useReferenceOptions("variables");
   const options = toOptions(variables.map(({ value }) => `${value}:value`));
   return (

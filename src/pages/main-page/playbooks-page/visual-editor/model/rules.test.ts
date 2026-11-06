@@ -74,7 +74,13 @@ describe("getConnectTargets", () => {
     } as Playbook;
 
     expect(
-      getConnectTargets(switchPlaybook, cacao20, "switch--1", "cases", "suspicious"),
+      getConnectTargets(
+        switchPlaybook,
+        cacao20,
+        "switch--1",
+        "cases",
+        "suspicious",
+      ),
     ).toEqual(["action--1", "end--2"]);
   });
 });
@@ -90,7 +96,9 @@ describe("getAllIssues", () => {
     name: "Example",
     created_by: "identity--1",
     workflow_start: "start--1",
-    agent_definitions: { "soarca--1": { type: "soarca", name: "soarca-manual" } },
+    agent_definitions: {
+      "soarca--1": { type: "soarca", name: "soarca-manual" },
+    },
     workflow: {
       "start--1": { type: "start", on_completion: "action--1" },
       "action--1": { ...action, on_completion: "end--1" },
@@ -107,22 +115,78 @@ describe("getAllIssues", () => {
   });
 
   it.each([
-    ["an action without an agent", withSteps({ "action--1": { type: "action", on_completion: "end--1" } }), "action--1"],
-    ["an agent the playbook does not define", withSteps({ "action--1": { ...action, agent: "soarca--2", on_completion: "end--1" } }), "action--1"],
-    ["an if condition without a true branch", withSteps({ "if--1": { type: "if-condition", condition: "__a__:value = 1", on_false: "end--1" } }), "if--1"],
-    ["a step that leads nowhere", withSteps({ "action--2": action }), "action--2"],
-    ["a loop", withSteps({ "action--1": { ...action, on_completion: "action--2" }, "action--2": { ...action, on_completion: "action--1" } }), "action--2"],
-    ["a delay of 0", withSteps({ "action--1": { ...action, delay: 0, on_completion: "end--1" } }), "action--1"],
-    ["a priority above 100", { ...valid, priority: 101 } as Playbook, "playbook"],
-    ["an ssh target without an address", { ...valid, target_definitions: { "ssh--1": { type: "ssh", name: "Host" } } } as Playbook, "playbook"],
-    ["a start step that does not exist", { ...valid, workflow_start: "start--2" }, "playbook"],
+    [
+      "an action without an agent",
+      withSteps({ "action--1": { type: "action", on_completion: "end--1" } }),
+      "action--1",
+    ],
+    [
+      "an agent the playbook does not define",
+      withSteps({
+        "action--1": { ...action, agent: "soarca--2", on_completion: "end--1" },
+      }),
+      "action--1",
+    ],
+    [
+      "an if condition without a true branch",
+      withSteps({
+        "if--1": {
+          type: "if-condition",
+          condition: "__a__:value = 1",
+          on_false: "end--1",
+        },
+      }),
+      "if--1",
+    ],
+    [
+      "a step that leads nowhere",
+      withSteps({ "action--2": action }),
+      "action--2",
+    ],
+    [
+      "a loop",
+      withSteps({
+        "action--1": { ...action, on_completion: "action--2" },
+        "action--2": { ...action, on_completion: "action--1" },
+      }),
+      "action--2",
+    ],
+    [
+      "a delay of 0",
+      withSteps({
+        "action--1": { ...action, delay: 0, on_completion: "end--1" },
+      }),
+      "action--1",
+    ],
+    [
+      "a priority above 100",
+      { ...valid, priority: 101 } as Playbook,
+      "playbook",
+    ],
+    [
+      "an ssh target without an address",
+      {
+        ...valid,
+        target_definitions: { "ssh--1": { type: "ssh", name: "Host" } },
+      } as Playbook,
+      "playbook",
+    ],
+    [
+      "a start step that does not exist",
+      { ...valid, workflow_start: "start--2" },
+      "playbook",
+    ],
   ])("blocks saving %s, like SOARCA", (_, changed, ownerId) => {
     expect(blockerOf(changed)).toEqual(expect.objectContaining({ ownerId }));
   });
 
   it("only warns about what SOARCA accepts but cannot run", () => {
     const changed = withSteps({
-      "action--1": { ...action, commands: [{ type: "ssh", command: "ls" }], on_completion: "end--1" },
+      "action--1": {
+        ...action,
+        commands: [{ type: "ssh", command: "ls" }],
+        on_completion: "end--1",
+      },
       "if--1": { type: "if-condition", condition: "a == b", on_true: "end--1" },
       "parallel--1": { type: "parallel", next_steps: ["action--1", "end--1"] },
     });
@@ -150,7 +214,11 @@ describe("getAllIssues", () => {
 
   it("points the save blocker at the field", () => {
     expect(blockerOf({ ...valid, name: "" })).toEqual(
-      expect.objectContaining({ ownerId: "playbook", tab: "metadata", field: "name" }),
+      expect.objectContaining({
+        ownerId: "playbook",
+        tab: "metadata",
+        field: "name",
+      }),
     );
   });
 
@@ -159,6 +227,10 @@ describe("getAllIssues", () => {
       findSaveBlocker(getAllIssues(valid, cacao20), [
         { ownerId: "action--1", tab: "advanced" },
       ]),
-    ).toEqual({ ownerId: "action--1", tab: "advanced", message: "Fix the invalid JSON" });
+    ).toEqual({
+      ownerId: "action--1",
+      tab: "advanced",
+      message: "Fix the invalid JSON",
+    });
   });
 });

@@ -61,7 +61,9 @@ export const PlaybookActionsMenu: React.FC<PlaybookActionsMenuProps> = ({
 }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [dialog, setDialog] = useState<"run" | "variables" | "delete" | null>(null);
+  const [dialog, setDialog] = useState<"run" | "variables" | "delete" | null>(
+    null,
+  );
 
   const hasExternalVars = Object.values(playbook.playbook_variables ?? {}).some(
     (variable) => variable.external === true,
@@ -129,7 +131,10 @@ export const PlaybookActionsMenu: React.FC<PlaybookActionsMenuProps> = ({
             Edit
           </PopoverItem>
         </RequirePermission>
-        <PlaybookActionItem $variant={ThemeVariant.Accent} onClick={handleExport}>
+        <PlaybookActionItem
+          $variant={ThemeVariant.Accent}
+          onClick={handleExport}
+        >
           <Icon $icon={IconFileCode} />
           Export
         </PlaybookActionItem>

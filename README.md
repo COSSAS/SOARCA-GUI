@@ -193,14 +193,15 @@ is involved. The GUI then asks SOARCA for the user's permissions through
    it the button shows `lock`. Any other value makes the login page show an
    error that lists the allowed names.
 
-   | `icon`      | Icon on the button                                                  |
-   | ----------- | ------------------------------------------------------------------- |
-   | `microsoft` | Windows logo ([`IconBrandWindows`](https://tabler.io/icons/icon/brand-windows)) |
+   | `icon`      | Icon on the button                                                                                      |
+   | ----------- | ------------------------------------------------------------------------------------------------------- |
+   | `microsoft` | Windows logo ([`IconBrandWindows`](https://tabler.io/icons/icon/brand-windows))                         |
    | `authentik` | OAuth logo ([`IconBrandOauth`](https://tabler.io/icons/icon/brand-oauth)); Tabler has no Authentik logo |
-   | `lock`      | Open padlock ([`IconLockOpen2`](https://tabler.io/icons/icon/lock-open-2)) |
+   | `lock`      | Open padlock ([`IconLockOpen2`](https://tabler.io/icons/icon/lock-open-2))                              |
 
    Earlier versions picked the Windows logo for a provider with `"id": "entra"`.
    That no longer happens, so add `"icon": "microsoft"` to keep it.
+
 4. Register `https://<GUI host>/login` at the provider as the address to
    return to after sign-out (`post_logout_redirect_uri`). For Entra, add it as
    an extra redirect URI of the Single-page application platform. Without it

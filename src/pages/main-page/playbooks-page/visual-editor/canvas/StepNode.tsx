@@ -53,10 +53,9 @@ export const StepNode = memo(function StepNode({
   // Skipped on mount: React Flow measures new nodes itself, and an extra update there
   // makes the initial fitView run before all nodes have a size.
   const updateNodeInternals = useUpdateNodeInternals();
-  const handleIds = [
-    ...ports.map((port) => port.handleId),
-    data.incoming,
-  ].join("\n");
+  const handleIds = [...ports.map((port) => port.handleId), data.incoming].join(
+    "\n",
+  );
   const measuredHandleIds = useRef(handleIds);
   useEffect(() => {
     if (measuredHandleIds.current === handleIds) return;

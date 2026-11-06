@@ -28,21 +28,39 @@ const INTEGER_FORMAT: TextFormat = {
 const TEXT_FORMATS: Record<string, TextFormat> = {
   integer: INTEGER_FORMAT,
   long: INTEGER_FORMAT,
-  float: { inputType: "number", step: "any", placeholder: "Enter float value", pattern: "^-?\\d+(\\.\\d+)?$" },
-  "ipv4-addr": { placeholder: "192.168.1.1", pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$" },
+  float: {
+    inputType: "number",
+    step: "any",
+    placeholder: "Enter float value",
+    pattern: "^-?\\d+(\\.\\d+)?$",
+  },
+  "ipv4-addr": {
+    placeholder: "192.168.1.1",
+    pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
+  },
   "ipv6-addr": {
     placeholder: "2001:0db8:85a3::8a2e:0370:7334",
     pattern: "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$",
   },
-  "mac-addr": { placeholder: "00:1A:2B:3C:4D:5E", pattern: "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" },
+  "mac-addr": {
+    placeholder: "00:1A:2B:3C:4D:5E",
+    pattern: "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+  },
   uri: { inputType: "url", placeholder: "https://example.com" },
   uuid: {
     placeholder: "550e8400-e29b-41d4-a716-446655440000",
-    pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+    pattern:
+      "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
   },
   hash: { placeholder: "Hash value (hex string)", pattern: "^[a-fA-F0-9]+$" },
-  "md5-hash": { placeholder: "MD5 hash (32 characters)", pattern: "^[a-fA-F0-9]{32}$" },
-  "sha256-hash": { placeholder: "SHA-256 hash (64 characters)", pattern: "^[a-fA-F0-9]{64}$" },
+  "md5-hash": {
+    placeholder: "MD5 hash (32 characters)",
+    pattern: "^[a-fA-F0-9]{32}$",
+  },
+  "sha256-hash": {
+    placeholder: "SHA-256 hash (64 characters)",
+    pattern: "^[a-fA-F0-9]{64}$",
+  },
 };
 
 const isInvalidJson = (text: string) => {
@@ -112,7 +130,9 @@ export const VariableInput: React.FC<VariableInputProps> = ({
         />
       );
     default: {
-      const format: TextFormat = TEXT_FORMATS[type] ?? { placeholder: "Enter value" };
+      const format: TextFormat = TEXT_FORMATS[type] ?? {
+        placeholder: "Enter value",
+      };
       return (
         <Input
           id={id}

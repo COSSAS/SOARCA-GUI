@@ -32,7 +32,9 @@ describe("getStepDetails", () => {
   it("falls back to the raw type and key names for an unknown spec version", () => {
     const step = { type: "custom", out_args: ["a"] } as unknown as Step;
 
-    expect(getStepDetails(step, { spec_version: "cacao-9" } as Playbook)).toEqual({
+    expect(
+      getStepDetails(step, { spec_version: "cacao-9" } as Playbook),
+    ).toEqual({
       typeLabel: "custom",
       details: [{ key: "out_args", label: "Out args", value: ["a"] }],
     });
@@ -42,14 +44,20 @@ describe("getStepDetails", () => {
 describe("readText", () => {
   it("prefers the plain value and otherwise decodes base64", () => {
     expect(readText("ls", btoa("pwd"))).toEqual({ text: "ls", decoded: false });
-    expect(readText(undefined, btoa("pwd"))).toEqual({ text: "pwd", decoded: true });
+    expect(readText(undefined, btoa("pwd"))).toEqual({
+      text: "pwd",
+      decoded: true,
+    });
     expect(readText()).toBeUndefined();
   });
 });
 
 describe("readContent", () => {
   it("pretty-prints valid JSON", () => {
-    expect(readContent('{"a":1}')).toEqual({ code: '{\n  "a": 1\n}', invalid: false });
+    expect(readContent('{"a":1}')).toEqual({
+      code: '{\n  "a": 1\n}',
+      invalid: false,
+    });
   });
 
   it("flags JSON-like text that does not parse and leaves it as written", () => {
@@ -58,6 +66,9 @@ describe("readContent", () => {
   });
 
   it("does not flag text that is not meant to be JSON", () => {
-    expect(readContent("name=value")).toEqual({ code: "name=value", invalid: false });
+    expect(readContent("name=value")).toEqual({
+      code: "name=value",
+      invalid: false,
+    });
   });
 });

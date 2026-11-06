@@ -19,14 +19,14 @@ import { PATHS } from "./utils";
 
 // The visual editor pulls in React Flow, so it is only loaded when opened.
 const PlaybookVisualEditPage = lazy(() =>
-  import(
-    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualEditPage"
-  ).then((m) => ({ default: m.PlaybookVisualEditPage })),
+  import("./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualEditPage").then(
+    (m) => ({ default: m.PlaybookVisualEditPage }),
+  ),
 );
 const PlaybookVisualCreatePage = lazy(() =>
-  import(
-    "./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualCreatePage"
-  ).then((m) => ({ default: m.PlaybookVisualCreatePage })),
+  import("./pages/main-page/playbooks-page/visual-editor/pages/PlaybookVisualCreatePage").then(
+    (m) => ({ default: m.PlaybookVisualCreatePage }),
+  ),
 );
 
 const withSuspense = (page: React.ReactNode) => (

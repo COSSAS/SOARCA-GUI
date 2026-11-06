@@ -114,7 +114,8 @@ const PLAYBOOK_SOURCES: ReferenceSource[] = ["agents", "targets", "auth"];
 /** Whether the field is required, also by the `type` of the entry it is in. */
 export const isRequired = (field: Field, entryType: unknown): boolean =>
   !!field.required ||
-  (typeof entryType === "string" && !!field.requiredForTypes?.includes(entryType));
+  (typeof entryType === "string" &&
+    !!field.requiredForTypes?.includes(entryType));
 
 /** An undefined agent, target or authentication blocks. A value SOARCA cannot run only warns. */
 const getReferenceIssue = (
@@ -134,7 +135,10 @@ const getReferenceIssue = (
   if (missing === undefined) return undefined;
   return isSoarca
     ? { message: `SOARCA cannot run "${missing}" here`, blocking: false }
-    : { message: `"${missing}" is not defined in this playbook`, blocking: true };
+    : {
+        message: `"${missing}" is not defined in this playbook`,
+        blocking: true,
+      };
 };
 
 const getFieldIssues = (
@@ -152,7 +156,11 @@ const getFieldIssues = (
 
   // A command can be given base64 encoded instead.
   const hasAlternative = field.key === "command" && !!value.command_b64;
-  if (isRequired(field, value.type) && isEmptyValue(fieldValue) && !hasAlternative)
+  if (
+    isRequired(field, value.type) &&
+    isEmptyValue(fieldValue) &&
+    !hasAlternative
+  )
     return issue(`${field.label} is required`);
 
   if (typeof fieldValue === "number") {
@@ -252,18 +260,36 @@ const getStepIssues = (
     step.condition &&
     !fieldIssues.length &&
     !isConditionSupported(step.condition)
-      ? [{ field: "condition", tab: condition.tab, message: CONDITION_HINT, blocking: false }]
+      ? [
+          {
+            field: "condition",
+            tab: condition.tab,
+            message: CONDITION_HINT,
+            blocking: false,
+          },
+        ]
       : [];
 
   return [
     ...(isStepTypeSupported(step.type)
       ? []
-      : [{ message: "SOARCA does not run this step type yet", blocking: false }]),
+      : [
+          {
+            message: "SOARCA does not run this step type yet",
+            blocking: false,
+          },
+        ]),
     ...fieldIssues,
     ...conditionIssues,
     ...getLinkIssues(stepId, step, definition),
     ...(inLoop
-      ? [{ message: "This connection makes a loop, SOARCA does not allow loops", blocking: true }]
+      ? [
+          {
+            message:
+              "This connection makes a loop, SOARCA does not allow loops",
+            blocking: true,
+          },
+        ]
       : []),
   ];
 };
@@ -286,7 +312,10 @@ export const PLAYBOOK_OWNER = "playbook";
 type OwnedIssue = Issue & { ownerId: string };
 
 /** Issues of the playbook and of every step. */
-export const getAllIssues = (playbook: Playbook, spec: CacaoSpec): OwnedIssue[] => {
+export const getAllIssues = (
+  playbook: Playbook,
+  spec: CacaoSpec,
+): OwnedIssue[] => {
   const loopSteps = findLoopSteps(playbook, spec);
   return [
     ...getPlaybookIssues(playbook, spec).map((issue) => ({
@@ -294,9 +323,12 @@ export const getAllIssues = (playbook: Playbook, spec: CacaoSpec): OwnedIssue[] 
       ownerId: PLAYBOOK_OWNER,
     })),
     ...Object.entries(playbook.workflow).flatMap(([ownerId, step]) =>
-      getStepIssues(ownerId, { playbook, step }, spec, loopSteps.has(ownerId)).map(
-        (issue) => ({ ...issue, ownerId }),
-      ),
+      getStepIssues(
+        ownerId,
+        { playbook, step },
+        spec,
+        loopSteps.has(ownerId),
+      ).map((issue) => ({ ...issue, ownerId })),
     ),
   ];
 };

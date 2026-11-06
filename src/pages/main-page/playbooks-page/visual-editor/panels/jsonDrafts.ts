@@ -21,11 +21,14 @@ type JsonDraftsState = {
   setDraft: (id: string, draft: JsonDraft) => void;
 };
 
-export const JsonDraftsContext = createContext<JsonDraftsState | undefined>(undefined);
+export const JsonDraftsContext = createContext<JsonDraftsState | undefined>(
+  undefined,
+);
 
 export const useJsonDrafts = (): JsonDraftsState => {
   const state = useContext(JsonDraftsContext);
-  if (!state) throw new Error("useJsonDrafts must be used inside a JsonDraftsContext");
+  if (!state)
+    throw new Error("useJsonDrafts must be used inside a JsonDraftsContext");
   return state;
 };
 
@@ -33,7 +36,8 @@ export const useJsonDraftsState = (): JsonDraftsState => {
   const [drafts, setDrafts] = useState<Record<string, JsonDraft>>({});
   return {
     drafts,
-    setDraft: (id, draft) => setDrafts((current) => ({ ...current, [id]: draft })),
+    setDraft: (id, draft) =>
+      setDrafts((current) => ({ ...current, [id]: draft })),
   };
 };
 
