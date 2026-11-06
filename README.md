@@ -417,6 +417,8 @@ flowchart TB
 - `npm run preview` - Serve the production build locally (Vite preview server)
 - `npm run lint` - Run oxlint, then Stylelint (CSS property order)
 - `npm run lint:css` - Run only Stylelint; add `-- --fix` to reorder properties automatically
+- `npm run format` - Format the code with oxfmt
+- `npm run format:check` - Check formatting without writing changes (run in CI)
 - `npm test` - Run unit tests (Vitest)
 
 ## Documentation
