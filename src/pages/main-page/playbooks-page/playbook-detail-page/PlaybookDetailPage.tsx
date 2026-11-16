@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   IconArrowLeft,
+  IconBraces,
   IconFileCode,
   IconPencil,
   IconPlayerPlay,
@@ -151,6 +152,18 @@ export const PlaybookDetailPage: React.FC = () => {
             >
               <Icon $icon={IconPencil} />
               Edit
+            </Button>
+            <Button
+              $variant={ThemeVariant.Primary}
+              $ghost
+              onClick={() =>
+                navigate(
+                  PATHS.PLAYBOOKS.EDIT_JSON.replace(":playbookId", playbookId!),
+                )
+              }
+            >
+              <Icon $icon={IconBraces} />
+              Edit JSON
             </Button>
             <Button
               $variant={ThemeVariant.Error}

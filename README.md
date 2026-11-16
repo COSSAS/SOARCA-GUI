@@ -446,6 +446,11 @@ Usage of SOARCA-GUI is described here: https://cossas.github.io/SOARCA/docs/
 - The read-only diagram supports panning and step details. Use its zoom buttons to change the zoom.
 - Leaving the visual editor with unsaved changes asks for confirmation, including in-app navigation, reloads and closing the tab.
 
+### JSON playbook editor
+
+- "Edit JSON", next to "Edit" on a playbook page or in a playbook card's menu, opens the raw playbook JSON in a text editor.
+- The GUI checks that the text is valid JSON with the CACAO playbook fields it needs before it saves. SOARCA checks the rest when it receives the playbook.
+
 ## Acknowledgements
 
 The visual playbook editor was written from scratch for SOARCA-GUI, using these projects as a reference for CACAO concepts:

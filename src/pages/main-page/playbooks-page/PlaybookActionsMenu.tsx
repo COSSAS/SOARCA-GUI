@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  IconBraces,
   IconDotsVertical,
   IconFileCode,
   IconPencil,
@@ -129,6 +130,16 @@ export const PlaybookActionsMenu: React.FC<PlaybookActionsMenuProps> = ({
           >
             <Icon $icon={IconPencil} />
             Edit
+          </PopoverItem>
+          <PopoverItem
+            onClick={() =>
+              navigate(
+                PATHS.PLAYBOOKS.EDIT_JSON.replace(":playbookId", playbook.id),
+              )
+            }
+          >
+            <Icon $icon={IconBraces} />
+            Edit JSON
           </PopoverItem>
         </RequirePermission>
         <PlaybookActionItem
