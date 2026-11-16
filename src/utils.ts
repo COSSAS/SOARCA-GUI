@@ -15,6 +15,7 @@ export const PATHS = {
     BASE: "/playbooks",
     DETAIL: "/playbooks/:playbookId",
     EDIT: "/playbooks/:playbookId/edit",
+    EDIT_JSON: "/playbooks/:playbookId/edit-json",
     NEW: "/playbooks/new",
     UPLOAD: "/playbooks/upload",
   },
