@@ -48,7 +48,7 @@ export const DetailBody = styled.div<{
   display: grid;
   grid-template-columns:
     ${({ $stepCollapsed }) => panelWidth("right", $stepCollapsed)}
-    minmax(0, 1fr)
+    minmax(15rem, 1fr)
     ${({ $detailsCollapsed }) => panelWidth("right", $detailsCollapsed)};
   flex: 1;
   gap: ${({ theme }) => theme.spacing.lg};

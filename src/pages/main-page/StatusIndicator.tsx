@@ -6,7 +6,9 @@ import { getVariantColors, ThemeVariant } from "@/components/utils";
 import { theme } from "@/theme";
 import { pulse } from "@/theme/animations";
 
-export const StatusIndicator: React.FC = () => {
+export const StatusIndicator: React.FC<{ collapsed: boolean }> = ({
+  collapsed,
+}) => {
   const { data, isError, status, isFetching } = useQuery({
     queryKey: ["pingStatus"],
     queryFn: async () => {
@@ -33,7 +35,7 @@ export const StatusIndicator: React.FC = () => {
 
   return (
     <StatusDot
-      className="status-indicator" // needed to swap the order when in mobile view. See Main.tsx
+      $collapsed={collapsed}
       $isOnline={isOnline}
       $isReconnecting={isReconnecting}
       title={
@@ -48,21 +50,30 @@ export const StatusIndicator: React.FC = () => {
 };
 
 const StatusDot = styled.div<{
+  $collapsed: boolean;
   $isOnline: boolean;
   $isReconnecting: boolean;
 }>`
-  position: relative;
+  position: absolute;
+  top: ${({ $collapsed }) => ($collapsed ? "-0.25rem" : "50%")};
+  right: ${({ $collapsed }) => ($collapsed ? "auto" : "0")};
+  left: ${({ $collapsed }) => ($collapsed ? "0" : "auto")};
+  transform: ${({ $collapsed }) => ($collapsed ? "none" : "translateY(-50%)")};
 
-  width: 10px;
-  height: 10px;
+  width: ${({ $collapsed }) => ($collapsed ? "2.5rem" : "10px")};
+  height: ${({ $collapsed }) => ($collapsed ? "2.5rem" : "10px")};
+  border: ${({ $collapsed }) => ($collapsed ? "2px solid currentColor" : "0")};
   border-radius: ${({ theme }) => theme.radius.full};
 
-  background-color: ${({ $isOnline, $isReconnecting }) =>
+  color: ${({ $isOnline, $isReconnecting }) =>
     $isOnline
       ? getVariantColors(theme, ThemeVariant.Success).solidBg
       : $isReconnecting
         ? getVariantColors(theme, ThemeVariant.Warning).solidBg
         : getVariantColors(theme, ThemeVariant.Error).solidBg};
+
+  background-color: ${({ $collapsed }) =>
+    $collapsed ? "transparent" : "currentColor"};
 
   ${({ $isOnline, $isReconnecting }) =>
     ($isOnline || $isReconnecting) &&

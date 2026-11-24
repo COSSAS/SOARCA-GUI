@@ -21,7 +21,7 @@ export const EditorLayout = styled.div<{
   display: grid;
   grid-template-columns:
     ${({ $leftCollapsed }) => panelWidth("left", $leftCollapsed)}
-    minmax(0, 1fr)
+    minmax(15rem, 1fr)
     ${({ $rightCollapsed }) => panelWidth("right", $rightCollapsed)};
   grid-template-rows: auto minmax(0, 1fr);
   gap: ${({ theme }) => theme.spacing.lg};

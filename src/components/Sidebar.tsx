@@ -3,14 +3,12 @@ import styled, { css } from "styled-components";
 import { Button } from "./Button";
 
 export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
-  $isOpen: boolean;
   $collapsed?: boolean;
 }
 
 /**
- * App sidebar. On desktop it can collapse to an icon rail. The icons keep their
+ * App sidebar. It can collapse to an icon rail. The icons keep their
  * place in both states, so only the width animates and the labels get clipped.
- * @param $isOpen - Controls sidebar visibility on mobile (default: false)
  * @param $collapsed - Shows only icons (default: false)
  */
 export const Sidebar = styled.aside<SidebarProps>`
@@ -20,7 +18,7 @@ export const Sidebar = styled.aside<SidebarProps>`
   flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing.lg};
 
-  width: ${({ $collapsed }) => ($collapsed ? "4.5rem" : "15rem")};
+  width: ${({ $collapsed }) => ($collapsed ? "calc(4.5rem + 2px)" : "15rem")};
   padding: ${({ theme }) => theme.spacing.lg};
   border-right: ${({ theme, $collapsed }) =>
     $collapsed
@@ -33,15 +31,8 @@ export const Sidebar = styled.aside<SidebarProps>`
 
   transition: width ${({ theme }) => theme.transitions.base};
 
-  @media (max-width: 768px) {
-    position: fixed;
-    z-index: ${({ theme }) => theme.zIndex.sticky};
-    top: 0;
-    bottom: 0;
-    left: 0;
-    transform: translateX(${({ $isOpen }) => ($isOpen ? "0" : "-100%")});
-
-    transition: transform ${({ theme }) => theme.transitions.slow};
+  > * {
+    min-width: 2.5rem;
   }
 `;
 
@@ -75,10 +66,13 @@ export const SidebarLogos = styled.div`
 export const SidebarLogo = styled.img<{ $hidden: boolean; $small?: boolean }>`
   position: absolute;
   top: 0;
-  left: ${({ theme, $small }) => ($small ? "0.25rem" : theme.spacing.md)};
+  left: 0.25rem;
 
   width: ${({ $small }) => ($small ? "2rem" : "11.5rem")};
+  max-width: ${({ $small }) => ($small ? "none" : "calc(100% - 1.5rem)")};
   height: 100%;
+
+  object-fit: contain;
 
   ${fade}
 `;
@@ -146,24 +140,23 @@ export const NavItem = styled.a<{ $isActive?: boolean }>`
       : ""}
 `;
 
-// Icon-only items in a centered row that wraps into a column in the collapsed rail.
+export const SidebarBottom = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-top: auto;
+`;
+
 export const SidebarFooter = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing.xs};
   justify-content: center;
 
-  margin-top: auto;
   padding-top: ${({ theme }) => theme.spacing.md};
   border-top: 1px solid ${({ theme }) => theme.colors.border.light};
 
   & > ${NavItem} {
     width: auto;
-  }
-
-  @media (max-width: 768px) {
-    & > button {
-      display: none;
-    }
   }
 `;
