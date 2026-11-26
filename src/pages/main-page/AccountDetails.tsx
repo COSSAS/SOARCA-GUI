@@ -13,11 +13,15 @@ export const AccountDetails = ({
   <>
     <DetailsItem>
       <FormLabel>Full name</FormLabel>
-      <DetailsValue>{user.name || "Not provided"}</DetailsValue>
+      <DetailsValue title={user.name || undefined}>
+        {user.name || "Not provided"}
+      </DetailsValue>
     </DetailsItem>
     <DetailsItem>
       <FormLabel>Email</FormLabel>
-      <DetailsValue>{user.email || "Not provided"}</DetailsValue>
+      <DetailsValue title={user.email || undefined}>
+        {user.email || "Not provided"}
+      </DetailsValue>
     </DetailsItem>
     {detailed && (
       <>

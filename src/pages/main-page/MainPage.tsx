@@ -1,14 +1,11 @@
 import {
   IconActivity,
-  IconBook,
   IconChevronLeft,
   IconChevronRight,
   IconFilePlus,
   IconHome,
-  IconMenu2,
   IconNotebook,
   IconSettings,
-  IconX,
   type TablerIcon,
 } from "@tabler/icons-react";
 import { useState } from "react";
@@ -21,7 +18,7 @@ import { useAuth } from "@/auth/AuthContext";
 import { RequirePermission } from "@/auth/AuthGate";
 import { Permissions, type Permission } from "@/auth/permissions";
 import type { SessionUser } from "@/types";
-import { PATHS, SOARCA_DOC_URL } from "@/utils";
+import { PATHS } from "@/utils";
 
 import {
   Button,
@@ -29,6 +26,7 @@ import {
   NavItem,
   Popover,
   Sidebar,
+  SidebarBottom,
   SidebarFooter,
   SidebarHeader,
   SidebarAction,
@@ -37,8 +35,6 @@ import {
   SidebarLogo,
   SidebarLogos,
   SidebarNav,
-  Spacer,
-  ThemeSize,
   ThemeVariant,
 } from "@/components";
 
@@ -46,14 +42,13 @@ import { useThemeMode } from "@/theme/ThemeModeContext";
 import {
   ContentArea,
   AccountAvatar,
+  AccountEmail,
+  AccountIdentity,
   AccountMenu,
   AccountMenuContent,
+  AccountName,
   MainContent,
-  MainHeader,
   MainWrapper,
-  MobileLogo,
-  MobileMenuButton,
-  Overlay,
 } from "./MainPage.styles";
 import { AccountDetails } from "./AccountDetails";
 import { StatusIndicator } from "./StatusIndicator";
@@ -92,7 +87,6 @@ export const MainPage: React.FC = () => {
   const navigate = useNavigate();
   const { resolved } = useThemeMode();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem(COLLAPSED_KEY) === "true",
   );
@@ -102,18 +96,13 @@ export const MainPage: React.FC = () => {
     setCollapsed(!collapsed);
   };
 
-  const openSidebar = () => setSidebarOpen(true);
-  const closeSidebar = () => setSidebarOpen(false);
-
   const handleNavigation = (path: string) => {
     navigate(path);
-    closeSidebar();
   };
 
   return (
     <MainWrapper>
-      <Overlay $isOpen={sidebarOpen} onClick={closeSidebar} />
-      <Sidebar $isOpen={sidebarOpen} $collapsed={collapsed}>
+      <Sidebar $collapsed={collapsed}>
         <SidebarHeader>
           <SidebarLogos>
             <SidebarLogo
@@ -122,6 +111,7 @@ export const MainPage: React.FC = () => {
               $hidden={collapsed}
             />
             <SidebarLogo src={logoSmall} alt="" $small $hidden={!collapsed} />
+            <StatusIndicator collapsed={collapsed} />
           </SidebarLogos>
           <RequirePermission permission={Permissions.PlaybookWrite}>
             <SidebarAction
@@ -158,53 +148,24 @@ export const MainPage: React.FC = () => {
             </NavItem>
           ))}
         </SidebarNav>
-        <SidebarFooter>
-          <NavItem
-            href={SOARCA_DOC_URL}
-            target="_blank"
-            rel="help noopener noreferrer"
-            title="Docs"
-          >
-            <Icon $icon={IconBook} />
-          </NavItem>
-          <NavItem
-            as="button"
-            type="button"
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            onClick={toggleCollapsed}
-          >
-            <Icon $icon={collapsed ? IconChevronRight : IconChevronLeft} />
-          </NavItem>
-        </SidebarFooter>
-      </Sidebar>
-      <ContentArea>
-        <MainHeader>
-          <StatusIndicator />
-          <Spacer $gap="lg" $align="center" className="mobile-menu">
-            <MobileLogo
-              src={logoSmall}
-              alt="SOARCA Logo"
-              className="mobile-logo"
-            />
-            <MobileMenuButton
-              onClick={sidebarOpen ? closeSidebar : openSidebar}
-            >
-              {sidebarOpen ? (
-                <Icon $icon={IconX} $size={ThemeSize.Large} />
-              ) : (
-                <Icon $icon={IconMenu2} $size={ThemeSize.Large} />
-              )}
-            </MobileMenuButton>
-          </Spacer>
+        <SidebarBottom>
           {auth.user && !auth.user.anonymous && (
             <AccountMenu>
               <Popover
                 id="account-menu"
                 $label="Account menu"
                 $trigger={
-                  <AccountAvatar aria-hidden="true">
-                    {initial(auth.user)}
-                  </AccountAvatar>
+                  <>
+                    <AccountAvatar aria-hidden="true">
+                      {initial(auth.user)}
+                    </AccountAvatar>
+                    <AccountIdentity>
+                      <AccountName>{auth.user.name || "Account"}</AccountName>
+                      <AccountEmail title={auth.user.email || undefined}>
+                        {auth.user.email || "Not provided"}
+                      </AccountEmail>
+                    </AccountIdentity>
+                  </>
                 }
               >
                 <AccountMenuContent
@@ -224,7 +185,19 @@ export const MainPage: React.FC = () => {
               </Popover>
             </AccountMenu>
           )}
-        </MainHeader>
+          <SidebarFooter>
+            <NavItem
+              as="button"
+              type="button"
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              onClick={toggleCollapsed}
+            >
+              <Icon $icon={collapsed ? IconChevronRight : IconChevronLeft} />
+            </NavItem>
+          </SidebarFooter>
+        </SidebarBottom>
+      </Sidebar>
+      <ContentArea>
         <MainContent>
           <Outlet />
         </MainContent>

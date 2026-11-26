@@ -15,6 +15,7 @@ import {
   DetailsItem,
   DetailsValue,
   FormLabel,
+  Link,
   NotificationCard,
   RadioGroup,
   Spacer,
@@ -24,7 +25,7 @@ import {
   ThemeVariant,
 } from "@/components";
 import { ThemeMode, useThemeMode } from "@/theme";
-import { formatDateTime, formatDuration } from "@/utils";
+import { formatDateTime, formatDuration, SOARCA_DOC_URL } from "@/utils";
 import { CreditsEasterEgg } from "./Credits";
 import { AccountDetails } from "./AccountDetails";
 
@@ -76,9 +77,9 @@ export const SettingsPage: React.FC = () => {
               <RadioGroup
                 name="theme-mode"
                 $options={[
-                  { label: "Automatic", value: "auto" },
+                  { label: "System", value: "auto" },
                   { label: "Light", value: "light" },
-                  { label: "Dark (Beta)", value: "dark" },
+                  { label: "Dark", value: "dark" },
                 ]}
                 $value={mode}
                 $onChange={(v) => setMode(v as ThemeMode)}
@@ -161,6 +162,16 @@ export const SettingsPage: React.FC = () => {
             <DetailsItem>
               <FormLabel>Version</FormLabel>
               <DetailsValue>{__APP_VERSION__}</DetailsValue>
+            </DetailsItem>
+            <DetailsItem>
+              <FormLabel>Documentation</FormLabel>
+              <Link
+                $to={SOARCA_DOC_URL}
+                target="_blank"
+                rel="help noopener noreferrer"
+              >
+                SOARCA documentation
+              </Link>
             </DetailsItem>
             <CreditsEasterEgg />
           </DetailsGrid>
