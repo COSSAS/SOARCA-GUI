@@ -204,6 +204,7 @@ export const VariablesPage: React.FC = () => {
       });
       toast.success("Variable deleted");
     },
+    // A 409 names the playbook mappings that still use the variable.
     onError: (err: Error) =>
       toast.error(formatErrorForToast(err, "Could not delete the variable"), {
         duration: 8000,

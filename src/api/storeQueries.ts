@@ -1,11 +1,13 @@
 import { queryOptions } from "@tanstack/react-query";
 
 import {
+  getPlaybookMapping,
   getSecretBackend,
   getSecrets,
   getSecretVersions,
   getVariables,
   getVariableVersions,
+  resolvePlaybook,
 } from "./store";
 
 /** Every component that reads the store uses these, so keys and caching match. */
@@ -24,5 +26,15 @@ export const storeQueries = {
     queryOptions({
       queryKey: ["variable", variable, "versions"],
       queryFn: () => getVariableVersions(variable),
+    }),
+  mapping: (playbookId: string) =>
+    queryOptions({
+      queryKey: ["mapping", playbookId],
+      queryFn: () => getPlaybookMapping(playbookId),
+    }),
+  resolve: (playbookId: string) =>
+    queryOptions({
+      queryKey: ["resolve", playbookId],
+      queryFn: () => resolvePlaybook(playbookId),
     }),
 };

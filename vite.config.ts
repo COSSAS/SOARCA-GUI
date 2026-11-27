@@ -1,6 +1,8 @@
 import react from "@vitejs/plugin-react-swc";
 import { execSync } from "child_process";
 import fs from "node:fs";
+import http from "node:http";
+import https from "node:https";
 import type { ServerOptions as HttpsServerOptions } from "node:https";
 import path from "node:path";
 import sbom from "rollup-plugin-sbom";
@@ -8,6 +10,7 @@ import { defineConfig, loadEnv, type Connect, type Plugin } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 import { createStoreApi, isStoreRoute } from "./src/mock/storeApi";
+import type { Playbook, Variables } from "./src/types";
 
 // Serves config/auth-config.json at runtime, like nginx does in production,
 // so provider changes need no rebuild.
@@ -32,11 +35,40 @@ const authConfig = (): Plugin => {
 };
 
 /**
- * Answers the secret and variable routes that SOARCA does not have
+ * Answers the secret, variable and mapping routes that SOARCA does not have
  * yet (VITE_MOCK_STORE_API=true). Other /api requests still go to SOARCA.
  */
-const mockStoreApi = (): Plugin => {
-  const store = createStoreApi();
+const mockStoreApi = (backendUrl: string, verifySsl: boolean): Plugin => {
+  const loadPlaybookVariables = (id: string, authorization?: string) =>
+    new Promise<Variables | null>((resolve) => {
+      const url = new URL(
+        `playbook/${encodeURIComponent(id)}`,
+        `${backendUrl.replace(/\/$/, "")}/`,
+      );
+      const request = (url.protocol === "https:" ? https : http).get(
+        url,
+        {
+          headers: authorization ? { Authorization: authorization } : {},
+          rejectUnauthorized: verifySsl,
+        },
+        (res) => {
+          let data = "";
+          res.on("data", (chunk) => (data += chunk));
+          res.on("end", () => {
+            if (res.statusCode !== 200) return resolve(null);
+            try {
+              const playbook = JSON.parse(data) as Playbook;
+              resolve(playbook.playbook_variables ?? {});
+            } catch {
+              resolve(null);
+            }
+          });
+        },
+      );
+      request.on("error", () => resolve(null));
+    });
+
+  const store = createStoreApi({ loadPlaybookVariables });
 
   const readBody = (req: Connect.IncomingMessage) =>
     new Promise<unknown>((resolve, reject) => {
@@ -57,6 +89,12 @@ const mockStoreApi = (): Plugin => {
     if (!url.pathname.startsWith("/api/")) return next();
     const path = url.pathname.slice("/api".length);
     const method = req.method ?? "GET";
+    const deleted = method === "DELETE" && /^\/playbook\/([^/]+)$/.exec(path);
+    if (deleted)
+      res.on("finish", () => {
+        if (res.statusCode < 300)
+          store.forgetPlaybook(decodeURIComponent(deleted[1]));
+      });
     if (!isStoreRoute(path)) return next();
     const body = ["POST", "PUT", "PATCH"].includes(method)
       ? readBody(req)
@@ -68,6 +106,7 @@ const mockStoreApi = (): Plugin => {
           path,
           query: url.searchParams,
           body: parsed,
+          authorization: req.headers.authorization,
         }),
       )
       .then(async (answer) => {
@@ -169,7 +208,11 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths(),
       sbom(),
       authConfig(),
-      env.VITE_MOCK_STORE_API === "true" && mockStoreApi(),
+      env.VITE_MOCK_STORE_API === "true" &&
+        mockStoreApi(
+          env.VITE_BACKEND_URL || "http://localhost:8080",
+          env.VITE_VERIFY_SSL === "true",
+        ),
     ],
     define: {
       __APP_VERSION__: JSON.stringify(getAppVersion()),

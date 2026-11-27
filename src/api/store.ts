@@ -1,5 +1,8 @@
 import type {
+  MappingSource,
   NewStoredVariable,
+  PlaybookMapping,
+  PlaybookResolve,
   SecretBackend,
   SecretMetadata,
   SecretVersion,
@@ -7,6 +10,7 @@ import type {
   StoredVariableVersion,
 } from "@/types";
 import {
+  ApiError,
   deleteToApi,
   fetchFromApi,
   HttpMutationMethod,
@@ -62,3 +66,30 @@ export const updateVariableDescription = (
 
 export const deleteVariable = (variable: string) =>
   deleteToApi(`/api/variable/${segment(variable)}`);
+
+/** Resolves to null when the playbook has no mapping yet. */
+export const getPlaybookMapping = (playbookId: string) =>
+  fetchFromApi<PlaybookMapping>(
+    `/api/playbook/${segment(playbookId)}/mapping`,
+  ).catch((error: unknown) => {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
+  });
+
+/** `version` is the mapping version the user edited, or 0 for a new mapping. */
+export const savePlaybookMapping = (
+  playbookId: string,
+  version: number,
+  variables: Record<string, MappingSource>,
+) =>
+  mutationToApi<PlaybookMapping>(
+    HttpMutationMethod.PUT,
+    `/api/playbook/${segment(playbookId)}/mapping`,
+    { version, variables },
+  );
+
+export const deletePlaybookMapping = (playbookId: string) =>
+  deleteToApi(`/api/playbook/${segment(playbookId)}/mapping`);
+
+export const resolvePlaybook = (playbookId: string) =>
+  fetchFromApi<PlaybookResolve>(`/api/playbook/${segment(playbookId)}/resolve`);

@@ -4,8 +4,11 @@ export const Permissions = {
   PlaybookWrite: "playbook:write",
   PlaybookExecute: "playbook:execute",
   SecretRead: "secret:read",
+  SecretWrite: "secret:write",
   VariableRead: "variable:read",
   VariableWrite: "variable:write",
+  MappingRead: "mapping:read",
+  MappingWrite: "mapping:write",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
@@ -18,5 +21,7 @@ export const MOCKED_PERMISSIONS: readonly Permission[] =
         Permissions.SecretRead,
         Permissions.VariableRead,
         Permissions.VariableWrite,
+        Permissions.MappingRead,
+        Permissions.MappingWrite,
       ]
     : [];

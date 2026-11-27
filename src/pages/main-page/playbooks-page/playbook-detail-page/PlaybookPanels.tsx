@@ -1,5 +1,7 @@
 import { lazy, useState } from "react";
 
+import { useAuth } from "@/auth/AuthContext";
+import { Permissions } from "@/auth/permissions";
 import { Tabs, TabsProvider, ThemeSize, useTabs } from "@/components";
 import type { Playbook } from "@/types";
 
@@ -16,6 +18,7 @@ import {
   PlaybookOverview,
   PlaybookReferences,
 } from "./PlaybookDetails";
+import { PlaybookMappingPanel } from "./PlaybookMapping";
 import { StepDetails } from "./StepDetails";
 
 // Loaded on demand because it pulls in React Flow.
@@ -31,17 +34,28 @@ const DETAIL_TABS = [
   { id: "references", label: "References" },
 ];
 
+const MAPPING_TAB = { id: "mapping", label: "Mapping" };
+
 const DetailTabContent = ({ playbook }: { playbook: Playbook }) => {
   const { activeTab } = useTabs();
   if (activeTab === "description")
     return <PlaybookDescription playbook={playbook} />;
   if (activeTab === "references")
     return <PlaybookReferences playbook={playbook} />;
+  if (activeTab === "mapping")
+    return <PlaybookMappingPanel playbook={playbook} />;
   return <PlaybookOverview playbook={playbook} />;
 };
 
 /** Step details, diagram and playbook details. Starts with the start step selected. */
 export const PlaybookPanels = ({ playbook }: { playbook: Playbook }) => {
+  const { can } = useAuth();
+  const showMapping =
+    can(Permissions.MappingRead) &&
+    Object.values(playbook.playbook_variables ?? {}).some(
+      (v) => v.external === true,
+    );
+  const tabs = showMapping ? [...DETAIL_TABS, MAPPING_TAB] : DETAIL_TABS;
   const [stepCollapsed, setStepCollapsed] = useState(false);
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const [selectedStepId, setSelectedStepId] = useState<string | undefined>(
@@ -88,7 +102,7 @@ export const PlaybookPanels = ({ playbook }: { playbook: Playbook }) => {
           <PanelBody>
             <PanelHeader>
               <PanelTabBar>
-                <Tabs $size={ThemeSize.Small} $tabs={DETAIL_TABS} />
+                <Tabs $size={ThemeSize.Small} $tabs={tabs} />
               </PanelTabBar>
             </PanelHeader>
             <PanelTabContent>
