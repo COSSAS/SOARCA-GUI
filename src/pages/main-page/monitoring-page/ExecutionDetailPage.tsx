@@ -58,14 +58,9 @@ export const ExecutionDetailPage: React.FC = () => {
     queryFn: () => getReportOfExecutionById(executionId!),
     enabled: !!executionId,
     staleTime: 1000,
-    refetchOnWindowFocus: false,
     retry: false,
-    refetchInterval: (data) => {
-      if (!data) return false;
-      return data.status === SoarcaApiPlaybookExecutionStatus.ONGOING
-        ? 1000
-        : false;
-    },
+    refetchInterval: ({ state: { data } }) =>
+      data?.status === SoarcaApiPlaybookExecutionStatus.ONGOING ? 1000 : false,
     refetchIntervalInBackground: true,
   });
 

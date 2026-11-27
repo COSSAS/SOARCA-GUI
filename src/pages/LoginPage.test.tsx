@@ -53,7 +53,6 @@ function CurrentLocation() {
 function renderLogin(path: string, auth: Partial<AuthState> = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
-    logger: { log: () => {}, warn: () => {}, error: () => {} },
   });
   const authState: AuthState = {
     user: null,

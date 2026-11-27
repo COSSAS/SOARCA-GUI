@@ -37,7 +37,7 @@ export const PATHS = {
  * @param ascending - Whether to sort in ascending order, default is true
  * @param caseSensitive - Whether the sort should be case sensitive, default is false
  * @param keyExtractor - Function to extract the string key from each object
- * @returns The original array sorted in place
+ * @returns A sorted copy of the array
  * @example
  * sortByString(users, user => user.name, true, false);
  */
@@ -47,7 +47,7 @@ export const sortByString = <T>(
   ascending: boolean = true,
   caseSensitive: boolean = false,
 ): T[] => {
-  return array.sort((a, b) => {
+  return array.toSorted((a, b) => {
     const keyA = caseSensitive
       ? keyExtractor(a)
       : keyExtractor(a).toLowerCase();
@@ -65,7 +65,7 @@ export const sortByString = <T>(
  * @param array - Array of objects to sort
  * @param ascending - Whether to sort in ascending order, default is true
  * @param keyExtractor - Function to extract the number key from each object
- * @returns The original array sorted in place
+ * @returns A sorted copy of the array
  * @example
  * sortByNumber(products, product => product.price, false);
  */
@@ -74,7 +74,7 @@ export const sortByNumber = <T>(
   keyExtractor: (item: T) => number | undefined,
   ascending: boolean = true,
 ): T[] => {
-  return array.sort((a, b) => {
+  return array.toSorted((a, b) => {
     const keyA = keyExtractor(a);
     const keyB = keyExtractor(b);
     if (keyA === undefined && keyB === undefined) return 0;
@@ -84,33 +84,6 @@ export const sortByNumber = <T>(
     if (keyA > keyB) return ascending ? 1 : -1;
     return 0;
   });
-};
-
-// Grouping
-
-/**
- * Group an array of objects by a key.
- * @param array - Array of objects to group
- * @param keyExtractor - Function to extract the key from each object
- * @returns An object where the keys are the extracted keys and the values are arrays of objects that share that key
- * @example
- * groupBy(orders, order => order.status);
- */
-export const groupBy = <T, K extends PropertyKey>(
-  array: T[],
-  keyExtractor: (item: T) => K,
-): Record<K, T[]> => {
-  return array.reduce(
-    (result, item) => {
-      const key = keyExtractor(item);
-      if (!result[key]) {
-        result[key] = [];
-      }
-      result[key].push(item);
-      return result;
-    },
-    {} as Record<K, T[]>,
-  );
 };
 
 // Formatting / parsing

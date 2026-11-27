@@ -27,7 +27,6 @@ export const StatusIndicator: React.FC<{ collapsed: boolean }> = ({
     retry: 1,
     retryDelay: 500,
     refetchInterval: 5000,
-    refetchOnWindowFocus: true,
   });
 
   const isOnline = status === "success" && !isError && data === "pong";

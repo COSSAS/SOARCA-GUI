@@ -4,7 +4,8 @@ import React, { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 
-import { getPlaybookById, updatePlaybook } from "@/api/playbooks";
+import { playbookQueries } from "@/api/playbookQueries";
+import { updatePlaybook } from "@/api/playbooks";
 import { formatErrorForToast, getErrorFromApiResponse } from "@/api/utils";
 import {
   Button,
@@ -41,19 +42,18 @@ export const PlaybookJsonEditPage: React.FC = () => {
     isLoading,
     isError,
     error: queryError,
-  } = useQuery({
-    queryKey: ["playbook", playbookId],
-    queryFn: () => getPlaybookById(playbookId),
-    enabled: !!playbookId,
-    refetchOnWindowFocus: false,
-  });
+  } = useQuery(playbookQueries.detail(playbookId));
 
   const updateMutation = useMutation({
     mutationFn: (data: Playbook) => updatePlaybook(playbookId, data),
     onSuccess: () => {
       toast.success("Playbook updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["playbook", playbookId] });
-      queryClient.invalidateQueries({ queryKey: ["playbooks"] });
+      queryClient.invalidateQueries({
+        queryKey: playbookQueries.detail(playbookId).queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: playbookQueries.list().queryKey,
+      });
       navigate(detailPath);
     },
     onError: (err: Error) => {

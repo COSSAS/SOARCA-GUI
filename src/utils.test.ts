@@ -4,7 +4,6 @@ import {
   decodeBase64,
   formatDateTime,
   formatDuration,
-  groupBy,
   parseDate,
   sortByNumber,
   sortByString,
@@ -14,6 +13,11 @@ describe("General application utility functions", () => {
   test("sortByString sorts an array of objects by a string key", () => {
     const dataAsc = [{ name: "banana" }, { name: "Apple" }, { name: "cherry" }];
     const sortedAsc = sortByString(dataAsc, (item) => item.name, true);
+    expect(dataAsc.map((item) => item.name)).toEqual([
+      "banana",
+      "Apple",
+      "cherry",
+    ]);
 
     const dataDesc = [
       { name: "banana" },
@@ -68,6 +72,7 @@ describe("General application utility functions", () => {
       { value: 20 },
     ];
     const sortedAsc = sortByNumber(dataAsc, (item) => item.value);
+    expect(dataAsc.map((item) => item.value)).toEqual([10, undefined, 5, 20]);
 
     const dataDesc = [
       { value: 10 },
@@ -92,29 +97,6 @@ describe("General application utility functions", () => {
         { value: 5 },
         { value: undefined },
       ]),
-    );
-  });
-
-  test("Test groupBy groups an array of objects by a key", () => {
-    const data = [
-      { category: "fruit", name: "apple" },
-      { category: "vegetable", name: "carrot" },
-      { category: "fruit", name: "banana" },
-      { category: "vegetable", name: "lettuce" },
-    ];
-    const grouped = groupBy(data, (item) => item.category);
-
-    expect(JSON.stringify(grouped), "Test groupBy").toBe(
-      JSON.stringify({
-        fruit: [
-          { category: "fruit", name: "apple" },
-          { category: "fruit", name: "banana" },
-        ],
-        vegetable: [
-          { category: "vegetable", name: "carrot" },
-          { category: "vegetable", name: "lettuce" },
-        ],
-      }),
     );
   });
 

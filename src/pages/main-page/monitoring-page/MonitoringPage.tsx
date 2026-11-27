@@ -39,7 +39,6 @@ import {
   computeDurationMs,
   formatDateTime,
   formatDuration,
-  groupBy,
   parseDate,
   PATHS,
   sortByNumber,
@@ -65,7 +64,7 @@ const parseReportToRows = (
   reports: PlaybookExecutionReport[],
 ): PlaybookRow[] => {
   const newestFirst = sortByNumber(
-    [...reports],
+    reports,
     (report) => parseDate(report.started)?.getTime(),
     false,
   );
@@ -87,9 +86,8 @@ export const MonitoringPage: React.FC = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["monitoring"],
     queryFn: getReporterState,
-    refetchInterval: (_, query) => (query.state.error ? 10000 : 1000),
+    refetchInterval: (query) => (query.state.error ? 10000 : 1000),
     refetchIntervalInBackground: true,
-    refetchOnWindowFocus: false,
   });
 
   const rows = parseReportToRows(data || []) as PlaybookRow[];
@@ -168,7 +166,7 @@ interface PlaybooksExecutionsCardHeaderProps {
 const PlaybooksExecutionsCardHeader: React.FC<
   PlaybooksExecutionsCardHeaderProps
 > = ({ rows }) => {
-  const groupedByStatus = groupBy(rows, (r) => r.status);
+  const groupedByStatus = Object.groupBy(rows, (r) => r.status);
 
   const executedCount =
     groupedByStatus[PlaybookExecutionStatus.Executed]?.length || 0;

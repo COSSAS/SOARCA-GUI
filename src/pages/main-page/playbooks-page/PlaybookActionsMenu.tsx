@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { playbookQueries } from "@/api/playbookQueries";
 import {
   IconBraces,
   IconDotsVertical,
@@ -96,10 +97,12 @@ export const PlaybookActionsMenu: React.FC<PlaybookActionsMenuProps> = ({
     onSuccess: () => {
       toast.success("Playbook deleted");
       queryClient.removeQueries({
-        queryKey: ["playbook", playbook.id],
+        queryKey: playbookQueries.detail(playbook.id).queryKey,
         exact: true,
       });
-      return queryClient.invalidateQueries({ queryKey: ["playbooks"] });
+      return queryClient.invalidateQueries({
+        queryKey: playbookQueries.list().queryKey,
+      });
     },
     onError: (error: Error) => {
       toast.error(formatErrorForToast(error, "Failed to delete playbook"));

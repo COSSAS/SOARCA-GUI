@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 
-import { getPlaybookById, updatePlaybook } from "@/api/playbooks";
+import { playbookQueries } from "@/api/playbookQueries";
+import { updatePlaybook } from "@/api/playbooks";
 import { formatErrorForToast, getErrorFromApiResponse } from "@/api/utils";
 import { CenteredCardContent, Spinner, Text, ThemeSize } from "@/components";
 import type { Playbook } from "@/types";
@@ -23,18 +24,18 @@ export const PlaybookVisualEditPage: React.FC = () => {
     isLoading,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["playbook", playbookId],
-    queryFn: () => getPlaybookById(playbookId),
-    enabled: !!playbookId,
-  });
+  } = useQuery(playbookQueries.detail(playbookId));
 
   const updateMutation = useMutation({
     mutationFn: (data: Playbook) => updatePlaybook(playbookId, data),
     onSuccess: () => {
       toast.success("Playbook updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["playbook", playbookId] });
-      queryClient.invalidateQueries({ queryKey: ["playbooks"] });
+      queryClient.invalidateQueries({
+        queryKey: playbookQueries.detail(playbookId).queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: playbookQueries.list().queryKey,
+      });
     },
     onError: (err: Error) =>
       toast.error(formatErrorForToast(err, "Failed to update playbook")),

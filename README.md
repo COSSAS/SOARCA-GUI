@@ -20,6 +20,10 @@ Modern [React](https://react.dev) + [Vite](https://vitejs.dev) frontend for the 
 - [npm](https://www.npmjs.com/) 10+ (if runned locally)
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) (for building/running from docker image)
 
+The UI targets current desktop browsers with ES2024 support. Vite keeps its
+default Baseline Widely Available build target. API queries refetch stale data
+when the window regains focus or the connection returns.
+
 ## Running the Project
 
 ### Development Mode
