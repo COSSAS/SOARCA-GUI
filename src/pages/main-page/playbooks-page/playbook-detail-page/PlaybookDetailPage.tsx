@@ -11,7 +11,8 @@ import React, { Suspense, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 
-import { deletePlaybook, getPlaybookById } from "@/api/playbooks";
+import { playbookQueries } from "@/api/playbookQueries";
+import { deletePlaybook } from "@/api/playbooks";
 import { triggerPlaybookById } from "@/api/trigger";
 import { formatErrorForToast, getErrorFromApiResponse } from "@/api/utils";
 import { RequirePermission } from "@/auth/AuthGate";
@@ -54,14 +55,11 @@ const loading = (
 
 export const PlaybookDetailPage: React.FC = () => {
   const navigate = useNavigate();
-  const { playbookId } = useParams();
+  const { playbookId = "" } = useParams();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["playbook", playbookId],
-    queryFn: () => getPlaybookById(playbookId!),
-    enabled: !!playbookId,
-    refetchOnWindowFocus: false,
-  });
+  const { data, isLoading, isError, error } = useQuery(
+    playbookQueries.detail(playbookId),
+  );
 
   const [openRunConfirm, setOpenRunConfirm] = useState(false);
   const [openRunModal, setOpenRunModal] = useState(false);
@@ -78,7 +76,7 @@ export const PlaybookDetailPage: React.FC = () => {
   };
 
   const mutation = useMutation({
-    mutationFn: () => triggerPlaybookById(playbookId!),
+    mutationFn: () => triggerPlaybookById(playbookId),
     onSuccess: (data: Execution) => {
       toast.success("Playbook started");
       navigateToExecution(data);
@@ -89,7 +87,7 @@ export const PlaybookDetailPage: React.FC = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => deletePlaybook(playbookId!),
+    mutationFn: () => deletePlaybook(playbookId),
     onSuccess: () => {
       toast.success("Playbook deleted");
       navigate(PATHS.PLAYBOOKS.BASE);
@@ -146,7 +144,7 @@ export const PlaybookDetailPage: React.FC = () => {
               $ghost
               onClick={() =>
                 navigate(
-                  PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId!),
+                  PATHS.PLAYBOOKS.EDIT.replace(":playbookId", playbookId),
                 )
               }
             >
@@ -158,7 +156,7 @@ export const PlaybookDetailPage: React.FC = () => {
               $ghost
               onClick={() =>
                 navigate(
-                  PATHS.PLAYBOOKS.EDIT_JSON.replace(":playbookId", playbookId!),
+                  PATHS.PLAYBOOKS.EDIT_JSON.replace(":playbookId", playbookId),
                 )
               }
             >

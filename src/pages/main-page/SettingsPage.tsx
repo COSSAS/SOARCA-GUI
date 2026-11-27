@@ -39,7 +39,6 @@ export const SettingsPage: React.FC = () => {
     queryFn: getSystemStatus,
     refetchInterval: 5000,
     refetchIntervalInBackground: true,
-    refetchOnWindowFocus: false,
     enabled: canReadStatus,
   });
 

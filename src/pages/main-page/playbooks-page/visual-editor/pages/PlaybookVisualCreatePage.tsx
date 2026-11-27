@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { playbookQueries } from "@/api/playbookQueries";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
@@ -27,7 +28,9 @@ export const PlaybookVisualCreatePage: React.FC = () => {
     mutationFn: createPlaybook,
     onSuccess: () => {
       toast.success("Playbook created successfully!");
-      queryClient.invalidateQueries({ queryKey: ["playbooks"] });
+      queryClient.invalidateQueries({
+        queryKey: playbookQueries.list().queryKey,
+      });
     },
     onError: (err: Error) =>
       toast.error(formatErrorForToast(err, "Failed to create playbook")),

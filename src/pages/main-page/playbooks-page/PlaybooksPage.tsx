@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import { getPlaybooks } from "@/api/playbooks";
+import { playbookQueries } from "@/api/playbookQueries";
 import { getErrorFromApiResponse } from "@/api/utils";
 import { RequirePermission } from "@/auth/AuthGate";
 import { Permissions } from "@/auth/permissions";
@@ -140,14 +140,10 @@ const PlaybookItem: React.FC<PlaybookItemProps> = ({ playbook, onClick }) => {
 export const PlaybooksPage: React.FC = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["playbooks"],
-    queryFn: getPlaybooks,
-    refetchOnWindowFocus: false,
-  });
+  const { data, isLoading, isError, error } = useQuery(playbookQueries.list());
 
   const sortedPlaybooks = sortByString(
-    [...filterPlaybooks(data || [], search)],
+    filterPlaybooks(data ?? [], search),
     (p) => p.name || "",
     true,
     false,
