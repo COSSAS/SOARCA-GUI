@@ -1,6 +1,7 @@
 import { matchPath } from "react-router";
 
 import { Permissions } from "@/auth/permissions";
+import type { MappingSource } from "@/types";
 import { parseDate, PATHS } from "@/utils";
 
 /** The tabs of the Resources page. Each has its own URL and permission. */
@@ -25,6 +26,14 @@ export const shortIdentity = (identity: string) =>
 
 export const formatStoreDate = (value: string) =>
   parseDate(value)?.toLocaleDateString("en-GB") || value || "—";
+
+export const sourceLabel = (source: MappingSource) => {
+  const name =
+    "secret" in source
+      ? `secret ${source.secret}`
+      : `variable ${source.variable}`;
+  return source.version ? `${name} (v${source.version})` : name;
+};
 
 export const matchesSearch = (search: string, ...fields: string[]) => {
   const needle = search.trim().toLowerCase();

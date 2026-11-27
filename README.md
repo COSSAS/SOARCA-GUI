@@ -181,15 +181,16 @@ development server answer these routes with in-memory seed data:
 
 - `/api/secret/...`: read-only metadata and version history. Secret values are never returned.
 - `/api/variable/...`: create, edit, delete and restore global variable versions.
+- `/api/playbook/{id}/mapping` and `/api/playbook/{id}/resolve`: map external playbook variables to stored secrets and variables, and check whether a run can resolve them. The mock reads the playbook from SOARCA to know its external variables.
 
-All other `/api` requests still go to SOARCA. The flag also grants
-`secret:read`, `variable:read` and `variable:write` to signed-in users because
-SOARCA does not issue those permissions yet. The flag defaults to off, and the
-mock is not served by preview or production builds. Data resets on server restart.
+All other `/api` requests still go to SOARCA. The flag also grants the
+`secret:read`, `variable:read`, `variable:write`, `mapping:read` and
+`mapping:write` permissions to signed-in users because SOARCA does not issue
+them yet. The flag defaults to off, and the mock is not served by preview or
+production builds. Data resets on server restart.
 
-Playbook mappings, resolution and changes to execution inputs are not included
-yet. How global, external and step variables work together still needs planning.
-Existing playbook inputs keep their behavior.
+The playbook mapping is a prototype. How global, external and step variables
+work together still needs planning.
 
 ### Enable sign-in
 

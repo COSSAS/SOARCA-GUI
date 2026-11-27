@@ -1,12 +1,18 @@
 import type {
+  MappingSource,
+  PlaybookMapping,
+  PlaybookMappingVersion,
+  PlaybookResolve,
+  ReferenceStatus,
   SecretBackend,
   SecretMetadata,
   SecretVersion,
   StoredVariable,
   StoredVariableVersion,
+  Variables,
 } from "@/types";
 
-// In-memory stand-in for the secret and variable routes from the
+// In-memory stand-in for the secret, variable and mapping routes from the
 // SOARCA design doc. The Vite dev server runs it (see vite.config.ts), so it
 // uses only plain JavaScript and can be tested without a server.
 
@@ -19,6 +25,8 @@ export interface MockRequest {
   path: string;
   query: URLSearchParams;
   body?: unknown;
+  /** Passed to the playbook loader so it can ask SOARCA as the same user. */
+  authorization?: string;
 }
 
 export interface MockResponse {
@@ -26,7 +34,14 @@ export interface MockResponse {
   body?: unknown;
 }
 
+/** Returns the playbook variables, or null when the playbook does not exist. */
+export type PlaybookLoader = (
+  id: string,
+  authorization?: string,
+) => Promise<Variables | null>;
+
 interface StoreOptions {
+  loadPlaybookVariables: PlaybookLoader;
   identity?: string;
   now?: () => string;
 }
@@ -41,6 +56,11 @@ interface VariableEntry {
   versions: StoredVariableVersion[];
 }
 
+interface MappingEntry {
+  current: PlaybookMapping;
+  history: PlaybookMapping[];
+}
+
 const BACKEND: SecretBackend = {
   type: "openbao",
   production: false,
@@ -50,6 +70,9 @@ const BACKEND: SecretBackend = {
   operations: ["list", "get"],
   kinds: ["password", "token", "url", "ssh-private-key", "generic"],
 };
+
+// Secret values arrive as text, so a secret cannot feed these types.
+const NON_TEXT_TYPES = new Set(["integer", "long", "bool"]);
 
 const ADMIN = "identity--8a3e0f52-1b7c-4d29-9e61-0c5d2f7a4b10";
 
@@ -66,7 +89,8 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 /** True for the paths this mock owns. Everything else belongs to SOARCA. */
 export const isStoreRoute = (path: string) =>
-  /^\/(secret|variable)(\/|$)/.test(path);
+  /^\/(secret|variable)(\/|$)/.test(path) ||
+  /^\/playbook\/[^/]+\/(mapping|resolve)(\/|$)/.test(path);
 
 export function validateVariableValue(
   type: string,
@@ -291,11 +315,78 @@ function seedVariables(): VariableEntry[] {
 }
 
 export function createStoreApi({
+  loadPlaybookVariables,
   identity = ADMIN,
   now = () => new Date().toISOString(),
-}: StoreOptions = {}) {
+}: StoreOptions) {
   const secrets = new Map(seedSecrets().map((s) => [s.meta.name, s]));
   const variables = new Map(seedVariables().map((v) => [v.meta.name, v]));
+  const mappings = new Map<string, MappingEntry>();
+
+  const secretStatus = (
+    source: { secret: string; version?: number },
+    type: string,
+  ): { status: ReferenceStatus; version?: number } => {
+    const entry = secrets.get(source.secret);
+    if (!entry) return { status: "missing" };
+    if (entry.meta.kind === "invalid") return { status: "invalid" };
+    const wanted = source.version ?? entry.meta.version;
+    const version = entry.versions.find((v) => v.version === wanted);
+    if (!version) return { status: "missing" };
+    if (version.destroyed) return { status: "destroyed", version: wanted };
+    if (version.deleted) return { status: "deleted", version: wanted };
+    if (NON_TEXT_TYPES.has(type))
+      return { status: "type_mismatch", version: wanted };
+    return { status: "ok", version: wanted };
+  };
+
+  const variableStatus = (
+    source: { variable: string; version?: number },
+    type: string,
+  ): { status: ReferenceStatus; version?: number } => {
+    const entry = variables.get(source.variable);
+    if (!entry) return { status: "missing" };
+    const wanted = source.version ?? entry.meta.version;
+    if (!entry.versions.some((v) => v.version === wanted))
+      return { status: "missing" };
+    if (entry.meta.type !== type)
+      return { status: "type_mismatch", version: wanted };
+    return { status: "ok", version: wanted };
+  };
+
+  const resolveSource = (source: MappingSource, type: string) =>
+    "secret" in source
+      ? secretStatus(source, type)
+      : variableStatus(source, type);
+
+  const mappingsUsing = (variableName: string) =>
+    [...mappings.entries()]
+      .filter(([, m]) =>
+        Object.values(m.current.variables).some(
+          (s) => "variable" in s && s.variable === variableName,
+        ),
+      )
+      .map(([playbookId]) => playbookId);
+
+  const parseSource = (value: unknown): MappingSource | string => {
+    if (!isRecord(value)) return "must be an object";
+    const keys = Object.keys(value).filter((k) => k !== "version");
+    if (keys.length !== 1 || !["secret", "variable"].includes(keys[0]))
+      return "needs exactly one of secret or variable";
+    const name = value[keys[0]];
+    if (typeof name !== "string" || !name) return "needs a name";
+    const version = value.version;
+    if (
+      version !== undefined &&
+      (!Number.isInteger(version) || (version as number) < 1)
+    )
+      return "has a version that is not a positive whole number";
+    const pinned = version === undefined ? {} : { version: version as number };
+    return keys[0] === "secret"
+      ? { secret: name, ...pinned }
+      : { variable: name, ...pinned };
+  };
+
   const handleSecrets = (req: MockRequest, parts: string[]) => {
     if (req.method !== "GET")
       return error(
@@ -319,6 +410,18 @@ export function createStoreApi({
     return undefined;
   };
 
+  // Mappings that pin a version keep it, beyond the newest MAX_VERSIONS.
+  const pinnedVersions = (variableName: string) =>
+    new Set(
+      [...mappings.values()].flatMap((m) =>
+        Object.values(m.current.variables).flatMap((s) =>
+          "variable" in s && s.variable === variableName && s.version
+            ? [s.version]
+            : [],
+        ),
+      ),
+    );
+
   const writeVariableVersion = (entry: VariableEntry, value: string) => {
     const version = entry.meta.version + 1;
     const created = now();
@@ -326,7 +429,11 @@ export function createStoreApi({
       ...entry.versions.map((v) => ({ ...v, current: undefined })),
       { version, value, created, created_by: identity, current: true },
     ];
-    entry.versions = all.slice(-MAX_VERSIONS);
+    const pinned = pinnedVersions(entry.meta.name);
+    const newest = new Set(all.slice(-MAX_VERSIONS).map((v) => v.version));
+    entry.versions = all.filter(
+      (v) => newest.has(v.version) || pinned.has(v.version),
+    );
     entry.meta = {
       ...entry.meta,
       value,
@@ -437,11 +544,130 @@ export function createStoreApi({
         return json(200, entry.meta);
       }
       case "DELETE": {
+        const users = mappingsUsing(entry.meta.name);
+        if (users.length)
+          return error(
+            409,
+            req.path,
+            `'${entry.meta.name}' is still mapped in: ${users.join(", ")}. Remove those mappings first.`,
+          );
         variables.delete(entry.meta.name);
         return json(204);
       }
     }
     return undefined;
+  };
+
+  const putMapping = async (req: MockRequest, playbookId: string) => {
+    const body = isRecord(req.body) ? req.body : {};
+    if (!isRecord(body.variables))
+      return error(422, req.path, "variables must be an object.");
+    const playbookVariables = await loadPlaybookVariables(
+      playbookId,
+      req.authorization,
+    );
+    if (!playbookVariables)
+      return error(404, req.path, `Playbook '${playbookId}' not found.`);
+    // Checked after the playbook loads, so a write made meanwhile is not lost.
+    const entry = mappings.get(playbookId);
+    const expected = entry?.current.version ?? 0;
+    if ((body.version ?? 0) !== expected)
+      return error(
+        409,
+        req.path,
+        `Someone else changed this mapping. The current version is ${expected}.`,
+      );
+
+    const parsed: Record<string, MappingSource> = {};
+    for (const [ref, raw] of Object.entries(body.variables)) {
+      if (playbookVariables[ref]?.external !== true)
+        return error(
+          422,
+          req.path,
+          `${ref} is not an external variable of this playbook.`,
+        );
+      const source = parseSource(raw);
+      if (typeof source === "string")
+        return error(422, req.path, `The source for ${ref} ${source}.`);
+      parsed[ref] = source;
+    }
+
+    const next: PlaybookMapping = {
+      variables: parsed,
+      version: expected + 1,
+      modified: now(),
+      modified_by: identity,
+    };
+    mappings.set(playbookId, {
+      current: next,
+      history: entry
+        ? [...entry.history, entry.current].slice(-(MAX_VERSIONS - 1))
+        : [],
+    });
+    return json(200, next);
+  };
+
+  const handleMapping = async (
+    req: MockRequest,
+    playbookId: string,
+    rest: string[],
+  ): Promise<MockResponse | undefined> => {
+    const entry = mappings.get(playbookId);
+    if (rest.length === 1 && rest[0] === "versions" && req.method === "GET") {
+      if (!entry) return json(200, []);
+      const history: PlaybookMappingVersion[] = [
+        ...entry.history,
+        { ...entry.current, current: true },
+      ];
+      return json(200, history);
+    }
+    if (rest.length !== 0) return undefined;
+
+    switch (req.method) {
+      case "GET":
+        return entry
+          ? json(200, entry.current)
+          : error(404, req.path, "This playbook has no mapping yet.");
+      case "DELETE":
+        if (!entry)
+          return error(404, req.path, "This playbook has no mapping yet.");
+        mappings.delete(playbookId);
+        return json(204);
+      case "PUT":
+        return putMapping(req, playbookId);
+    }
+    return undefined;
+  };
+
+  const handleResolve = async (
+    req: MockRequest,
+    playbookId: string,
+  ): Promise<MockResponse> => {
+    const playbookVariables = await loadPlaybookVariables(
+      playbookId,
+      req.authorization,
+    );
+    if (!playbookVariables)
+      return error(404, req.path, `Playbook '${playbookId}' not found.`);
+    const mapped = mappings.get(playbookId)?.current.variables ?? {};
+    const resolved = Object.entries(mapped).map(([ref, source]) => {
+      const variable = playbookVariables[ref];
+      const result =
+        variable?.external === true
+          ? resolveSource(source, variable.type)
+          : { status: "missing" as const };
+      return { ref, source, ...result };
+    });
+    const unmapped = Object.entries(playbookVariables)
+      .filter(([ref, v]) => v.external === true && !(ref in mapped))
+      .map(([ref]) => ref);
+    const result: PlaybookResolve = {
+      playbook_id: playbookId,
+      ready: resolved.every((v) => v.status === "ok") && unmapped.length === 0,
+      variables: resolved,
+      unmapped,
+    };
+    return json(200, result);
   };
 
   /** Answers a store route, or returns undefined so the request goes on to SOARCA. */
@@ -451,8 +677,17 @@ export function createStoreApi({
     const [group, ...rest] = parts;
     if (group === "secret") return handleSecrets(req, rest);
     if (group === "variable") return handleVariables(req, rest);
+    if (group === "playbook" && rest.length >= 2) {
+      const [playbookId, route, ...tail] = rest;
+      if (route === "mapping") return handleMapping(req, playbookId, tail);
+      if (route === "resolve" && tail.length === 0 && req.method === "GET")
+        return handleResolve(req, playbookId);
+    }
     return undefined;
   }
 
-  return { handle };
+  /** Deleting a playbook deletes its mapping. */
+  const forgetPlaybook = (playbookId: string) => mappings.delete(playbookId);
+
+  return { handle, forgetPlaybook };
 }
