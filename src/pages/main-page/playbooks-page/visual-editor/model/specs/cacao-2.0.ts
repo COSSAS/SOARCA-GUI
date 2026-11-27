@@ -27,29 +27,32 @@ const AGENT_TARGET_TYPES = [
   "ssh",
 ];
 
+/** CACAO 2.0 variable-type-ov values. */
+export const VARIABLE_TYPES = [
+  "bool",
+  "dictionary",
+  "float",
+  "hexstring",
+  "integer",
+  "ipv4-addr",
+  "ipv6-addr",
+  "long",
+  "mac-addr",
+  "hash",
+  "md5-hash",
+  "sha256-hash",
+  "string",
+  "uri",
+  "uuid",
+];
+
 const variableEntry: Field[] = [
   {
     key: "type",
     label: "Type",
     kind: "text",
     required: true,
-    vocabulary: [
-      "bool",
-      "dictionary",
-      "float",
-      "hexstring",
-      "integer",
-      "ipv4-addr",
-      "ipv6-addr",
-      "long",
-      "mac-addr",
-      "hash",
-      "md5-hash",
-      "sha256-hash",
-      "string",
-      "uri",
-      "uuid",
-    ],
+    vocabulary: VARIABLE_TYPES,
   },
   { key: "value", label: "Value", kind: "variable-value" },
   { key: "description", label: "Description", kind: "text" },

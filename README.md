@@ -121,6 +121,7 @@ flowchart TB
 - `VITE_HTTPS_CERT_FILE` - Path to the TLS certificate used by Vite
 - `VITE_HTTPS_KEY_FILE` - Path to the TLS certificate key used by Vite
 - `VITE_VERIFY_SSL` - Set to `true` to verify the backend certificate when Vite proxies API requests
+- `VITE_MOCK_STORE_API` - Set to `true` for the Resources page's temporary secret and variable endpoints (see [Mock store API](#mock-store-api))
 - `DOCKER_HOST_PORT` - The port of the host machine that is mapped to the `VITE_SERVER_PORT` of the Vite dev server running in the container. This is only relevant when running the Development Container.
 - `HOST_PORT` - is the same of the `VITE_SERVER_PORT` if run locally or `DOCKER_HOST_PORT` if running the Development Container.
 
@@ -171,6 +172,24 @@ flowchart TB
    docker compose -f docker-compose.dev.yml up
    ```
    The app will be available at `http://localhost:HOST_PORT` with hot-reload enabled.
+
+#### Mock store API
+
+The Resources page groups global variables and read-only secrets into two tabs.
+SOARCA does not serve this API yet. Set `VITE_MOCK_STORE_API=true` to let the
+development server answer these routes with in-memory seed data:
+
+- `/api/secret/...`: read-only metadata and version history. Secret values are never returned.
+- `/api/variable/...`: create, edit, delete and restore global variable versions.
+
+All other `/api` requests still go to SOARCA. The flag also grants
+`secret:read`, `variable:read` and `variable:write` to signed-in users because
+SOARCA does not issue those permissions yet. The flag defaults to off, and the
+mock is not served by preview or production builds. Data resets on server restart.
+
+Playbook mappings, resolution and changes to execution inputs are not included
+yet. How global, external and step variables work together still needs planning.
+Existing playbook inputs keep their behavior.
 
 ### Enable sign-in
 

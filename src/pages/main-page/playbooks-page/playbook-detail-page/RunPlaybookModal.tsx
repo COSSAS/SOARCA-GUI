@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { triggerPlaybookById } from "@/api/trigger";
 import { formatErrorForToast } from "@/api/utils";
 import { Button, Modal, ThemeVariant } from "@/components";
-import { VariableInput } from "@/pages/main-page/monitoring-page/timeline-tab-view/VariableInputs";
+import { VariableInput } from "@/components/VariableInput";
 import { Execution, Playbook, Variables } from "@/types";
 
 import {

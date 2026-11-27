@@ -7,6 +7,8 @@ import sbom from "rollup-plugin-sbom";
 import { defineConfig, loadEnv, type Connect, type Plugin } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+import { createStoreApi, isStoreRoute } from "./src/mock/storeApi";
+
 // Serves config/auth-config.json at runtime, like nginx does in production,
 // so provider changes need no rebuild.
 const authConfig = (): Plugin => {
@@ -26,6 +28,86 @@ const authConfig = (): Plugin => {
     name: "soarca-auth-config",
     configureServer: (server) => void server.middlewares.use(serve),
     configurePreviewServer: (server) => void server.middlewares.use(serve),
+  };
+};
+
+/**
+ * Answers the secret and variable routes that SOARCA does not have
+ * yet (VITE_MOCK_STORE_API=true). Other /api requests still go to SOARCA.
+ */
+const mockStoreApi = (): Plugin => {
+  const store = createStoreApi();
+
+  const readBody = (req: Connect.IncomingMessage) =>
+    new Promise<unknown>((resolve, reject) => {
+      let data = "";
+      req.on("data", (chunk) => (data += chunk));
+      req.on("error", reject);
+      req.on("end", () => {
+        try {
+          resolve(data ? JSON.parse(data) : undefined);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+
+  const serve: Connect.NextHandleFunction = (req, res, next) => {
+    const url = new URL(req.url ?? "/", "http://localhost");
+    if (!url.pathname.startsWith("/api/")) return next();
+    const path = url.pathname.slice("/api".length);
+    const method = req.method ?? "GET";
+    if (!isStoreRoute(path)) return next();
+    const body = ["POST", "PUT", "PATCH"].includes(method)
+      ? readBody(req)
+      : Promise.resolve(undefined);
+    void body
+      .then((parsed) =>
+        store.handle({
+          method,
+          path,
+          query: url.searchParams,
+          body: parsed,
+        }),
+      )
+      .then(async (answer) => {
+        const reply = answer ?? {
+          status: 404,
+          body: {
+            status: 404,
+            "original-call": url.pathname,
+            message: "Not found.",
+          },
+        };
+        // A short delay makes loading states visible, as with a real backend.
+        await new Promise((r) => setTimeout(r, 250));
+        res.statusCode = reply.status;
+        if (reply.body === undefined) return res.end();
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify(reply.body));
+      })
+      .catch((err: unknown) => {
+        console.error("Mock store API failed", err);
+        if (res.headersSent) return res.end();
+        const status = err instanceof SyntaxError ? 400 : 500;
+        res.statusCode = status;
+        res.setHeader("Content-Type", "application/json");
+        res.end(
+          JSON.stringify({
+            status,
+            "original-call": url.pathname,
+            message:
+              status === 400
+                ? "The request body must be valid JSON."
+                : "The mock store API failed.",
+          }),
+        );
+      });
+  };
+
+  return {
+    name: "soarca-mock-store-api",
+    configureServer: (server) => void server.middlewares.use(serve),
   };
 };
 
@@ -82,7 +164,13 @@ export default defineConfig(({ mode }) => {
   );
 
   return {
-    plugins: [react(), tsconfigPaths(), sbom(), authConfig()],
+    plugins: [
+      react(),
+      tsconfigPaths(),
+      sbom(),
+      authConfig(),
+      env.VITE_MOCK_STORE_API === "true" && mockStoreApi(),
+    ],
     define: {
       __APP_VERSION__: JSON.stringify(getAppVersion()),
     },

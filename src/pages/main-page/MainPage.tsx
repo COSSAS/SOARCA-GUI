@@ -7,10 +7,11 @@ import {
   IconLogout,
   IconNotebook,
   IconSettings,
+  IconStack2,
   type TablerIcon,
 } from "@tabler/icons-react";
 import { useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { matchPath, Outlet, useLocation, useNavigate } from "react-router";
 
 import logoDark from "@/assets/soarca-logo-cropped-dark.svg";
 import logo from "@/assets/soarca-logo-cropped.svg";
@@ -53,30 +54,34 @@ import {
 } from "./MainPage.styles";
 import { AccountDetails } from "./AccountDetails";
 import { StatusIndicator } from "./StatusIndicator";
+import { resourceTabAt, RESOURCE_TABS } from "./store-pages/utils";
 import { ThemeModeControl } from "./ThemeModeControl";
 
 interface NavRoute {
-  path: string;
   label: string;
   icon: TablerIcon;
-  permission?: Permission;
+  /** The item opens the first permitted page and is active on any of them. */
+  pages: readonly { path: string; permission?: Permission }[];
 }
 
 const NAV_ROUTES: NavRoute[] = [
-  { path: PATHS.DASHBOARD, label: "Dashboard", icon: IconHome },
+  { label: "Dashboard", icon: IconHome, pages: [{ path: PATHS.DASHBOARD }] },
   {
-    path: PATHS.PLAYBOOKS.BASE,
     label: "Playbooks",
     icon: IconNotebook,
-    permission: Permissions.PlaybookRead,
+    pages: [
+      { path: PATHS.PLAYBOOKS.BASE, permission: Permissions.PlaybookRead },
+    ],
   },
   {
-    path: PATHS.MONITORING.BASE,
     label: "Monitoring",
     icon: IconActivity,
-    permission: Permissions.PlaybookRead,
+    pages: [
+      { path: PATHS.MONITORING.BASE, permission: Permissions.PlaybookRead },
+    ],
   },
-  { path: PATHS.SETTINGS, label: "Settings", icon: IconSettings },
+  { label: "Resources", icon: IconStack2, pages: RESOURCE_TABS },
+  { label: "Settings", icon: IconSettings, pages: [{ path: PATHS.SETTINGS }] },
 ];
 
 const initial = (user: SessionUser) =>
@@ -89,6 +94,7 @@ export const MainPage: React.FC = () => {
   const navigate = useNavigate();
   const { resolved } = useThemeMode();
   const location = useLocation();
+  const isResources = !!resourceTabAt(location.pathname);
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem(COLLAPSED_KEY) === "true",
   );
@@ -129,25 +135,29 @@ export const MainPage: React.FC = () => {
           </RequirePermission>
         </SidebarHeader>
         <SidebarNav>
-          {NAV_ROUTES.filter(
-            (route) => !route.permission || auth.can(route.permission),
-          ).map((route) => (
-            <NavItem
-              key={route.path}
-              $isActive={
-                location.pathname === route.path ||
-                (route.path === PATHS.MONITORING.BASE &&
-                  location.pathname.includes(PATHS.MONITORING.BASE)) ||
-                (route.path === PATHS.PLAYBOOKS.BASE &&
-                  location.pathname.includes(PATHS.PLAYBOOKS.BASE))
-              }
-              title={collapsed ? route.label : undefined}
-              onClick={() => handleNavigation(route.path)}
-            >
-              <Icon $icon={route.icon} />
-              <SidebarLabel $hidden={collapsed}>{route.label}</SidebarLabel>
-            </NavItem>
-          ))}
+          {NAV_ROUTES.map((route) => {
+            const target = route.pages.find(
+              (page) => !page.permission || auth.can(page.permission),
+            );
+            if (!target) return null;
+            return (
+              <NavItem
+                key={route.label}
+                $isActive={route.pages.some(
+                  (page) =>
+                    !!matchPath(
+                      { path: page.path, end: false },
+                      location.pathname,
+                    ),
+                )}
+                title={collapsed ? route.label : undefined}
+                onClick={() => handleNavigation(target.path)}
+              >
+                <Icon $icon={route.icon} />
+                <SidebarLabel $hidden={collapsed}>{route.label}</SidebarLabel>
+              </NavItem>
+            );
+          })}
         </SidebarNav>
         <SidebarBottom>
           {auth.user && !auth.user.anonymous && (
@@ -198,8 +208,8 @@ export const MainPage: React.FC = () => {
           </SidebarFooter>
         </SidebarBottom>
       </Sidebar>
-      <ContentArea>
-        <MainContent>
+      <ContentArea $resources={isResources}>
+        <MainContent $resources={isResources}>
           <Outlet />
         </MainContent>
       </ContentArea>

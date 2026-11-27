@@ -16,6 +16,8 @@ import { PlaybookCreatePage } from "./pages/main-page/playbooks-page/PlaybookCre
 import { PlaybookJsonEditPage } from "./pages/main-page/playbooks-page/PlaybookJsonEditPage";
 import { PlaybooksPage } from "./pages/main-page/playbooks-page/PlaybooksPage";
 import { PlaybookDetailPage } from "./pages/main-page/playbooks-page/playbook-detail-page/PlaybookDetailPage";
+import { StorePage } from "./pages/main-page/store-pages/StorePage";
+import { RESOURCE_TABS } from "./pages/main-page/store-pages/utils";
 import { PATHS } from "./utils";
 
 // The visual editor pulls in React Flow, so it is only loaded when opened.
@@ -96,6 +98,14 @@ function App() {
                 element={<PlaybookJsonEditPage />}
               />
             </Route>
+            {RESOURCE_TABS.map(({ path, permission }) => (
+              <Route
+                key={path}
+                element={<PermissionGate permission={permission} />}
+              >
+                <Route path={path} element={<StorePage />} />
+              </Route>
+            ))}
             <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
           </Route>
         </Route>

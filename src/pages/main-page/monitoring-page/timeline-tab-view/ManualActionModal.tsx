@@ -9,7 +9,13 @@ import toast from "react-hot-toast";
 
 import { getStepManualData, postStepActionResult } from "@/api/manual";
 import { formatErrorForToast } from "@/api/utils";
-import { Button, Modal, Spinner, ThemeVariant } from "@/components";
+import {
+  Button,
+  Modal,
+  Spinner,
+  ThemeVariant,
+  VariableInput,
+} from "@/components";
 import {
   Execution,
   ManualOutArgsUpdatePayload,
@@ -34,7 +40,6 @@ import {
   VariableRow,
   VariableType,
 } from "./ManualActionModal.styles";
-import { VariableInput } from "./VariableInputs";
 
 interface ManualActionModalProps {
   activeStep: StepExecutionReport | null;

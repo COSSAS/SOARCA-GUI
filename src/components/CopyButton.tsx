@@ -3,10 +3,10 @@ import React from "react";
 import toast from "react-hot-toast";
 
 import { formatErrorForToast } from "@/api/utils";
-import { Button } from "./Button";
+import { Button, type ButtonProps } from "./Button";
 import Icon from "./Icon";
 
-export interface CopyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface CopyButtonProps extends ButtonProps {
   $value: string;
 }
 
@@ -25,7 +25,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
 }) => {
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (disabled || !$value) return;
+    if (disabled) return;
 
     try {
       await navigator.clipboard.writeText($value);

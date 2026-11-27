@@ -6,6 +6,7 @@ export * from "./CodeEditor";
 export * from "./ConfirmDialog";
 export * from "./Containers";
 export * from "./CopyButton";
+export * from "./DataTable";
 export * from "./Details";
 export * from "./ExportButton";
 export * from "./export";
@@ -24,6 +25,7 @@ export * from "./Spinner";
 export * from "./Table";
 export * from "./Tabs";
 export * from "./Typography";
+export * from "./VariableInput";
 
 export * from "./cards/index";
 export * from "./utils";
