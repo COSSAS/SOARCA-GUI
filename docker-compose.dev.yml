@@ -20,6 +20,7 @@ services:
       - VITE_HTTPS_CERT_FILE=${VITE_HTTPS_CERT_FILE:-/app/certs/server.crt}
       - VITE_HTTPS_KEY_FILE=${VITE_HTTPS_KEY_FILE:-/app/certs/server.key}
       - VITE_VERIFY_SSL=${VITE_VERIFY_SSL:-false}
+      - VITE_MOCK_STORE_API=${VITE_MOCK_STORE_API:-false}
       - VITE_IS_DOCKER=true
     volumes:
       - .:/app

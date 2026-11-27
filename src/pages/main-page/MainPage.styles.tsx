@@ -76,9 +76,10 @@ export const MainWrapper = styled.div`
 `;
 
 // A size container, so MainContent can take the visible height with cqh.
-export const ContentArea = styled(ScrollArea)`
+export const ContentArea = styled(ScrollArea)<{ $resources: boolean }>`
   flex: 1;
-  background-color: ${({ theme }) => theme.colors.secondary.bg};
+  background-color: ${({ theme, $resources }) =>
+    $resources ? theme.colors.background.primary : theme.colors.secondary.bg};
 
   > [data-radix-scroll-area-viewport] {
     container-type: size;
@@ -87,9 +88,9 @@ export const ContentArea = styled(ScrollArea)`
 
 // Grows with its page. A page marked with data-fill-height gets exactly the
 // visible height instead, so it can scroll parts of itself.
-export const MainContent = styled.main`
-  min-width: 550px;
-  padding: ${({ theme }) => theme.spacing.lg};
+export const MainContent = styled.main<{ $resources: boolean }>`
+  min-width: ${({ $resources }) => ($resources ? "0" : "550px")};
+  padding: ${({ theme, $resources }) => ($resources ? "0" : theme.spacing.lg)};
 
   &:has(> [data-fill-height]) {
     height: 100cqh;

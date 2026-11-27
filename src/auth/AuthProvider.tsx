@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { redirectToLogin } from "@/api/utils";
 import { AuthContext } from "@/auth/AuthContext";
 import { signOut } from "@/auth/oidc";
+import { MOCKED_PERMISSIONS } from "@/auth/permissions";
 import { loadSession } from "@/auth/session";
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -42,7 +43,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
         isLoading: session.isLoading,
         // Only the initial check blocks; a failed background refetch keeps the cached user.
         isError: session.isLoadingError,
-        can: (permission) => user?.permissions.includes(permission) ?? false,
+        can: (permission) =>
+          !!user &&
+          (user.permissions.includes(permission) ||
+            MOCKED_PERMISSIONS.includes(permission)),
         logout: () =>
           void signOut().then(
             (url) => window.location.assign(url),

@@ -5,4 +5,5 @@ export * from "./keymanagement";
 export * from "./manual";
 export * from "./reporter";
 export * from "./status";
+export * from "./store";
 export * from "./trigger";

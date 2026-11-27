@@ -24,6 +24,8 @@ export const PATHS = {
     DETAIL: "/monitoring/:executionId",
   },
   SETTINGS: "/settings",
+  SECRETS: "/secrets",
+  VARIABLES: "/variables",
   LOGIN: "/login",
   LOGIN_CALLBACK: "/login/callback",
   NOT_FOUND: "/are-you-lost",

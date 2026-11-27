@@ -1,4 +1,6 @@
-import { CodeEditor, Input, Select, ThemeSize } from "@/components";
+import { CodeEditor } from "./CodeEditor";
+import { Input, Select } from "./Form";
+import { ThemeSize } from "./utils";
 
 interface VariableInputProps {
   /** Id of the control, for a label's htmlFor. */

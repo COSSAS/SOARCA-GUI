@@ -7,8 +7,8 @@ import {
   SearchSelect,
   type SearchSelectOption,
   ThemeSize,
+  VariableInput,
 } from "@/components";
-import { VariableInput } from "@/pages/main-page/monitoring-page/timeline-tab-view/VariableInputs";
 
 import { SOARCA_SOURCES } from "../model/references";
 import { isRequired } from "../model/rules";
