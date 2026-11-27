@@ -12,15 +12,16 @@ export const ContextMenuSurface = styled(PopoverContent).attrs({
   position-area: none;
   position-try-fallbacks: none;
 
-  overflow: auto;
-  overscroll-behavior: contain;
-
   margin: 0;
 
   box-shadow: ${({ theme }) => theme.shadows.md};
 
   &:focus {
     outline: none;
+  }
+
+  [data-radix-scroll-area-viewport] {
+    overscroll-behavior: contain;
   }
 `;
 

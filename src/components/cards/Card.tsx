@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 /**
  * Basic card container with border, shadow, and theme-based styling.
- * Provides a white background with rounded corners and subtle elevation.
+ * Provides a background with subtle elevation.
  * Use as a wrapper for CardHeader, CardBody, and CardFooter components.
  * @example
  * <CardContainer>
@@ -13,8 +13,6 @@ import styled from "styled-components";
 export const CardContainer = styled.div`
   width: 100%;
   border: 1px solid ${({ theme }) => theme.colors.border.medium};
-  border-radius: ${({ theme }) => theme.radius.md};
-
   background: ${({ theme }) => theme.colors.background.primary};
   box-shadow: ${({ theme }) => theme.shadows.sm};
 `;

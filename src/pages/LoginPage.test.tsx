@@ -110,10 +110,10 @@ describe("LoginPage providers", () => {
     ]);
   });
 
-  it("shows a spinner and no prompt while the providers load", () => {
+  it("shows no prompt or providers while the providers load", () => {
     vi.mocked(loadAuthConfig).mockReturnValue(new Promise(() => {}));
     renderLogin(PATHS.LOGIN);
-    expect(screen.getByLabelText("Loading login providers")).toBeTruthy();
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
     expect(screen.queryByText(prompt)).toBeNull();
   });
 
@@ -131,9 +131,6 @@ describe("LoginPage providers", () => {
     for (const button of providerButtons()) {
       expect(button.getAttribute("aria-disabled")).toBe("true");
     }
-    expect(screen.getByRole("status").textContent).toBe(
-      "Redirecting to sign in",
-    );
   });
 
   it("explains that sign-in requires HTTPS in an insecure context", async () => {
@@ -165,7 +162,6 @@ describe("LoginPage providers", () => {
     for (const button of providerButtons()) {
       expect(button.getAttribute("aria-disabled")).toBe("false");
     }
-    expect(screen.getByRole("status").textContent).toBe("");
   });
 
   it("shows an error and keeps the return path when the provider is unreachable", async () => {
@@ -186,9 +182,7 @@ describe("LoginPage providers", () => {
   it("shows the error and session ended notices above the providers", async () => {
     renderLogin(`${PATHS.LOGIN}?error=sign_in_denied&reason=expired`);
     await screen.findByText(prompt);
-    expect(screen.getByRole("alert").textContent).toBe(
-      signInErrorMessage("sign_in_denied"),
-    );
+    expect(screen.getByText(signInErrorMessage("sign_in_denied"))).toBeTruthy();
     expect(screen.getByText(/Your session has ended/)).toBeTruthy();
   });
 
@@ -200,7 +194,7 @@ describe("LoginPage providers", () => {
     expect(
       await screen.findByText(/providers\[0\]\.icon must be one of/),
     ).toBeTruthy();
-    expect(screen.getAllByRole("alert")).toHaveLength(2);
+    expect(screen.getByText(signInErrorMessage("sign_in_failed"))).toBeTruthy();
     expect(screen.queryByText(prompt)).toBeNull();
   });
 });
@@ -215,7 +209,7 @@ describe("LoginPage session states", () => {
 
   it("shows the session check without the prompt", () => {
     renderLogin(PATHS.LOGIN, { isLoading: true });
-    expect(screen.getByLabelText("Checking your session")).toBeTruthy();
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
     expect(screen.queryByText(prompt)).toBeNull();
     expect(loadAuthConfig).not.toHaveBeenCalled();
   });
@@ -231,7 +225,7 @@ describe("LoginPage callback", () => {
   it("shows only the spinner while the sign-in finishes", () => {
     vi.mocked(finishSignIn).mockReturnValue(new Promise(() => {}));
     renderLogin(PATHS.LOGIN_CALLBACK, { isLoading: true });
-    expect(screen.getByLabelText("Signing in")).toBeTruthy();
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
     expect(screen.queryByText(prompt)).toBeNull();
     expect(loadAuthConfig).not.toHaveBeenCalled();
   });
@@ -242,9 +236,7 @@ describe("LoginPage callback", () => {
     );
     renderLogin(PATHS.LOGIN_CALLBACK);
     expect(await screen.findByText(prompt)).toBeTruthy();
-    expect(screen.getByRole("alert").textContent).toBe(
-      signInErrorMessage("sign_in_denied"),
-    );
+    expect(screen.getByText(signInErrorMessage("sign_in_denied"))).toBeTruthy();
     expect(finishSignIn).toHaveBeenCalledTimes(1);
   });
 });

@@ -2,6 +2,7 @@ import { IconChevronRight } from "@tabler/icons-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Icon, ThemeSize } from "@/components";
+import { ScrollArea } from "@/components/ScrollArea";
 
 import {
   ContextMenuItem,
@@ -50,29 +51,31 @@ const MenuEntries = ({
   entries: ContextMenuEntry[];
   onClose: () => void;
 }) => (
-  <ContextMenuList>
-    {entries.map((entry, index) => {
-      if (entry.type === "separator")
-        return <ContextMenuSeparator key={`separator-${index}`} />;
-      if (entry.type === "submenu")
+  <ScrollArea>
+    <ContextMenuList>
+      {entries.map((entry, index) => {
+        if (entry.type === "separator")
+          return <ContextMenuSeparator key={`separator-${index}`} />;
+        if (entry.type === "submenu")
+          return (
+            <ContextSubmenu key={entry.label} entry={entry} onClose={onClose} />
+          );
         return (
-          <ContextSubmenu key={entry.label} entry={entry} onClose={onClose} />
+          <ContextMenuItem
+            key={entry.label}
+            type="button"
+            disabled={entry.disabled}
+            onClick={() => {
+              onClose();
+              entry.onSelect();
+            }}
+          >
+            {entry.label}
+          </ContextMenuItem>
         );
-      return (
-        <ContextMenuItem
-          key={entry.label}
-          type="button"
-          disabled={entry.disabled}
-          onClick={() => {
-            onClose();
-            entry.onSelect();
-          }}
-        >
-          {entry.label}
-        </ContextMenuItem>
-      );
-    })}
-  </ContextMenuList>
+      })}
+    </ContextMenuList>
+  </ScrollArea>
 );
 
 const ContextSubmenu = ({

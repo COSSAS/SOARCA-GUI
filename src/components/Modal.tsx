@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import { IconX } from "@tabler/icons-react";
 import { Icon } from "./Icon";
+import { ScrollArea } from "./ScrollArea";
 
 const Overlay = styled.dialog`
   overflow: hidden;
@@ -34,6 +35,7 @@ const Dialog = styled.div`
 
   width: min(640px, 90vw);
   max-height: 90vh;
+  border: 1px solid ${({ theme }) => theme.colors.dataTable.border};
   border-radius: ${({ theme }) => theme.radius.lg};
 
   background: ${({ theme }) => theme.colors.background.primary};
@@ -41,7 +43,7 @@ const Dialog = styled.div`
 `;
 
 /**
- * Modal header section with info-colored background and consistent padding.
+ * Modal header section with the colors of a table header and consistent padding.
  * Contains a Modal.Title and optional close button.
  * @example
  * <Modal.Header>
@@ -55,10 +57,11 @@ const Header = styled.div`
   justify-content: space-between;
 
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.dataTable.border};
 
-  color: ${({ theme }) => theme.colors.info.solidText};
+  color: ${({ theme }) => theme.colors.dataTable.headerText};
 
-  background-color: ${({ theme }) => theme.colors.info.solidBg};
+  background-color: ${({ theme }) => theme.colors.dataTable.headerBg};
 `;
 
 /**
@@ -70,21 +73,25 @@ const Title = styled.h2`
   font: ${({ theme }) => theme.typography.h2.font};
 `;
 
+const BodyContent = styled.div`
+  padding: ${({ theme }) => theme.spacing.lg};
+  font: ${({ theme }) => theme.typography.body.font};
+  color: ${({ theme }) => theme.colors.text.primary};
+`;
+
 /**
- * Modal body section with scrollable overflow for long content.
- * Main content area of the modal with consistent padding and text styling.
- * Automatically scrolls if content exceeds available height.
+ * Modal body section with consistent padding and text styling.
+ * Scrolls if the content is higher than the space left in the modal.
  * @example
  * <Modal.Body>
  *   <p>This is the main content of the modal.</p>
  * </Modal.Body>
  */
-const Body = styled.div`
-  overflow: auto;
-  padding: ${({ theme }) => theme.spacing.lg};
-  font: ${({ theme }) => theme.typography.body.font};
-  color: ${({ theme }) => theme.colors.text.primary};
-`;
+const Body = ({ children }: { children: React.ReactNode }) => (
+  <ScrollArea>
+    <BodyContent>{children}</BodyContent>
+  </ScrollArea>
+);
 
 /**
  * Modal footer section for action buttons, aligned to the right.
@@ -114,7 +121,7 @@ const Footer = styled.div`
 const CloseButton = styled.button`
   display: flex;
   align-items: center;
-  color: ${({ theme }) => theme.colors.primary.text};
+  color: ${({ theme }) => theme.colors.dataTable.headerText};
 `;
 
 /**

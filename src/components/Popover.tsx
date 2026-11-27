@@ -29,15 +29,12 @@ export const Popover: React.FC<PopoverProps> = ({
         type="button"
         $anchorName={anchorName}
         popoverTarget={id}
-        aria-controls={id}
         aria-label={$label}
       >
         {$trigger}
       </PopoverTrigger>
       <PopoverContext.Provider value={id}>
         <PopoverContent
-          role="group"
-          aria-label={$label}
           {...contentProps}
           id={id}
           popover="auto"

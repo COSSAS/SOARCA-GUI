@@ -4,10 +4,11 @@ import { Tabs, TabsProvider, ThemeSize, useTabs } from "@/components";
 import type { Playbook } from "@/types";
 
 import { CollapsibleSidePanel } from "../visual-editor/panels/CollapsibleSidePanel";
+import { PanelTabContent } from "../visual-editor/panels/PanelTabs";
 import {
   PanelBody,
+  PanelHeader,
   PanelTabBar,
-  PanelTabContent,
 } from "../visual-editor/panels/Panel.styles";
 import { DetailBody, DiagramFrame } from "./PlaybookDetailPage.styles";
 import {
@@ -79,14 +80,17 @@ export const PlaybookPanels = ({ playbook }: { playbook: Playbook }) => {
         side="right"
         label="playbook details"
         title="Playbook details"
+        tabbed
         collapsed={detailsCollapsed}
         onToggle={() => setDetailsCollapsed(!detailsCollapsed)}
       >
         <TabsProvider $initialTab="overview">
           <PanelBody>
-            <PanelTabBar>
-              <Tabs $size={ThemeSize.Small} $tabs={DETAIL_TABS} />
-            </PanelTabBar>
+            <PanelHeader>
+              <PanelTabBar>
+                <Tabs $size={ThemeSize.Small} $tabs={DETAIL_TABS} />
+              </PanelTabBar>
+            </PanelHeader>
             <PanelTabContent>
               <DetailTabContent playbook={playbook} />
             </PanelTabContent>

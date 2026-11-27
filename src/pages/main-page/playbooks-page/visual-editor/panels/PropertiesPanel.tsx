@@ -74,6 +74,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     return (
       <CollapsibleSidePanel
         {...panel}
+        tabbed
         title={
           <>
             <StepIcon
@@ -107,7 +108,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   }
 
   return (
-    <CollapsibleSidePanel {...panel} title="Playbook">
+    <CollapsibleSidePanel {...panel} tabbed title="Playbook">
       <PlaybookPanel
         playbook={playbook}
         spec={spec}

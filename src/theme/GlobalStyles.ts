@@ -49,47 +49,9 @@ export const GlobalStyles = createGlobalStyle`
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  :root {
-    --scrollbar-track: ${({ theme }) => theme.colors.background.tertiary};
-    --scrollbar-thumb: ${({ theme }) => theme.colors.border.light};
-    --scrollbar-thumb-hover: ${({ theme }) => theme.colors.primary.hover};
-    --scrollbar-size: 10px;
-    --scrollbar-radius: 9999px;
-  }
-
-  /* Firefox */
+  /* Native scrollbars that remain, e.g. in text areas and the code editor. */
   * {
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-color: ${({ theme }) => theme.colors.primary.main} transparent;
     scrollbar-width: thin;
-  }
-
-  /* WebKit (Chrome, Edge, Safari) */
-  *::-webkit-scrollbar {
-    width: var(--scrollbar-size);
-    height: var(--scrollbar-size);
-  }
-
-  *::-webkit-scrollbar-track {
-    border-radius: var(--scrollbar-radius);
-    background: var(--scrollbar-track);
-  }
-
-  *::-webkit-scrollbar-thumb {
-    min-height: 28px;
-    border: 3px solid var(--scrollbar-track);
-    border-radius: var(--scrollbar-radius);
-    background-color: var(--scrollbar-thumb);
-  }
-
-  *::-webkit-scrollbar-thumb:hover {
-    background-color: var(--scrollbar-thumb-hover);
-  }
-
-  *::-webkit-scrollbar-corner {
-    background: var(--scrollbar-track);
-  }
-
-  pre, code, textarea {
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
 `;

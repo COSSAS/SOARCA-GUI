@@ -41,6 +41,11 @@ const RadioInput = styled.input`
     border-color: ${({ theme }) => theme.colors.primary.main};
   }
 
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary.main};
+    outline-offset: 2px;
+  }
+
   &:checked {
     border-color: ${({ theme }) => theme.colors.primary.main};
     background: ${({ theme }) => theme.colors.primary.main};

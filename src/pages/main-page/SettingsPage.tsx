@@ -17,22 +17,20 @@ import {
   FormLabel,
   Link,
   NotificationCard,
-  RadioGroup,
   Spacer,
   Spinner,
   Text,
   ThemeSize,
   ThemeVariant,
 } from "@/components";
-import { ThemeMode, useThemeMode } from "@/theme";
 import { formatDateTime, formatDuration, SOARCA_DOC_URL } from "@/utils";
 import { CreditsEasterEgg } from "./Credits";
 import { AccountDetails } from "./AccountDetails";
+import { ThemeModeControl } from "./ThemeModeControl";
 
 export const SettingsPage: React.FC = () => {
   const { user, can } = useAuth();
   const canReadStatus = can(Permissions.StatusRead);
-  const { mode, setMode } = useThemeMode();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["system-status"],
@@ -52,7 +50,7 @@ export const SettingsPage: React.FC = () => {
           <CardBody>
             {user.anonymous ? (
               <Spacer $direction="vertical" $align="start">
-                <NotificationCard $variant={ThemeVariant.Warning} role="status">
+                <NotificationCard $variant={ThemeVariant.Warning}>
                   Sign-in is turned off on this SOARCA server. Everyone who can
                   reach this GUI has full access, without signing in.
                 </NotificationCard>
@@ -71,19 +69,7 @@ export const SettingsPage: React.FC = () => {
         </CardHeader>
         <CardBody>
           <DetailsGrid>
-            <DetailsItem>
-              <FormLabel>Theme</FormLabel>
-              <RadioGroup
-                name="theme-mode"
-                $options={[
-                  { label: "System", value: "auto" },
-                  { label: "Light", value: "light" },
-                  { label: "Dark", value: "dark" },
-                ]}
-                $value={mode}
-                $onChange={(v) => setMode(v as ThemeMode)}
-              />
-            </DetailsItem>
+            <ThemeModeControl />
           </DetailsGrid>
         </CardBody>
       </CardContainer>

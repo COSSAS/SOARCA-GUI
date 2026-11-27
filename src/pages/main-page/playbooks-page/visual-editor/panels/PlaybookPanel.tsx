@@ -20,9 +20,9 @@ import {
 import { FieldInput } from "./FieldInput";
 import { IssueNotices } from "./IssueNotices";
 import { JsonFieldsEditor } from "./JsonFieldsEditor";
-import { Hint, PanelBody, PanelTabContent, SpecBadgeRow } from "./Panel.styles";
+import { Hint, PanelBody, PanelHeader, SpecBadgeRow } from "./Panel.styles";
 import { PanelFormContext } from "./panelForm";
-import { PanelTabs } from "./PanelTabs";
+import { PanelTabContent, PanelTabs } from "./PanelTabs";
 
 type PlaybookPanelProps = {
   playbook: Playbook;
@@ -86,12 +86,10 @@ export const PlaybookPanel: React.FC<PlaybookPanelProps> = ({
       value={{ playbook, ownerId: PLAYBOOK_OWNER, tab, issues }}
     >
       <PanelBody>
-        <Hint>
-          Select a step to edit it, or drag a new step onto the canvas.
-        </Hint>
-        <IssueNotices issues={playbookProblems} />
-
-        <PanelTabs tabs={PLAYBOOK_TABS} onSelectTab={onSelectTab} />
+        <PanelHeader>
+          <IssueNotices issues={playbookProblems} />
+          <PanelTabs tabs={PLAYBOOK_TABS} onSelectTab={onSelectTab} />
+        </PanelHeader>
 
         <PanelTabContent>
           <div>

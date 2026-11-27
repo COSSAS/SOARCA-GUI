@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { DetailsValue, Spacer } from "@/components";
+import { ScrollArea } from "@/components/ScrollArea";
 
 export const AccountMenu = styled.div`
   margin-inline: -${({ theme }) => theme.spacing.xs};
@@ -74,22 +75,23 @@ export const MainWrapper = styled.div`
   height: 100vh;
 `;
 
-export const ContentArea = styled.div`
-  scrollbar-gutter: stable;
-
-  overflow: auto;
-  display: flex;
+// A size container, so MainContent can take the visible height with cqh.
+export const ContentArea = styled(ScrollArea)`
   flex: 1;
-  flex-direction: column;
-
-  min-width: 0;
-
   background-color: ${({ theme }) => theme.colors.secondary.bg};
+
+  > [data-radix-scroll-area-viewport] {
+    container-type: size;
+  }
 `;
 
+// Grows with its page. A page marked with data-fill-height gets exactly the
+// visible height instead, so it can scroll parts of itself.
 export const MainContent = styled.main`
-  flex: 1;
   min-width: 550px;
-  min-height: 0;
   padding: ${({ theme }) => theme.spacing.lg};
+
+  &:has(> [data-fill-height]) {
+    height: 100cqh;
+  }
 `;
