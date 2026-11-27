@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { panelWidth } from "../visual-editor/pages/panelWidth";
 
 // Fills the content area so the page itself never scrolls.
-export const DetailPage = styled.div`
+export const DetailPage = styled.div.attrs<{ "data-fill-height"?: boolean }>({
+  "data-fill-height": true,
+})`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};

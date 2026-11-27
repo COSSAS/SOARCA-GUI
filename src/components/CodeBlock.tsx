@@ -2,6 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import { CopyButton } from "./CopyButton";
+import { ScrollArea } from "./ScrollArea";
 
 const CodeContainer = styled.div`
   position: relative;
@@ -9,22 +10,24 @@ const CodeContainer = styled.div`
   min-width: 0;
 `;
 
-const Pre = styled.pre<{ $maxHeight?: string; $copyable?: boolean }>`
-  counter-reset: line;
-
-  overflow-y: auto;
+const Frame = styled(ScrollArea)<{ $maxHeight?: string }>`
+  --scroll-area-radius: calc(${({ theme }) => theme.radius.md} - 1px);
 
   max-height: ${({ $maxHeight = "none" }) => $maxHeight};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.radius.md};
+  background: ${({ theme }) => theme.colors.background.secondary};
+`;
+
+const Pre = styled.pre<{ $copyable?: boolean }>`
+  counter-reset: line;
+
   margin: 0;
   padding: ${({ theme }) => theme.spacing.sm} 0;
   padding-right: ${({ $copyable }) => ($copyable ? "2.5rem" : 0)};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.radius.md};
 
   font: ${({ theme }) => theme.typography.code.font};
   color: ${({ theme }) => theme.colors.text.primary};
-
-  background: ${({ theme }) => theme.colors.background.secondary};
 `;
 
 // Long lines wrap, so the block never scrolls sideways. Numbers stay out of a copy.
@@ -84,13 +87,15 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   const numbered = lines.length > 1;
   return (
     <CodeContainer {...rest}>
-      <Pre $maxHeight={$maxHeight} $copyable={$copyable}>
-        {lines.map((line, index) => (
-          <Line key={index} $numbered={numbered}>
-            {line || " "}
-          </Line>
-        ))}
-      </Pre>
+      <Frame $maxHeight={$maxHeight}>
+        <Pre $copyable={$copyable}>
+          {lines.map((line, index) => (
+            <Line key={index} $numbered={numbered}>
+              {line || " "}
+            </Line>
+          ))}
+        </Pre>
+      </Frame>
       {$copyable && (
         <CopyCorner>
           <CopyButton $value={$code} title="Copy" />

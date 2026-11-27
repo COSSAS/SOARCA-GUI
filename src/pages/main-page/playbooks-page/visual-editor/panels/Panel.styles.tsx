@@ -1,13 +1,24 @@
 import styled from "styled-components";
 
 import { Button } from "@/components";
+import { ScrollArea } from "@/components/ScrollArea";
 
-// Fills the panel, so only PanelTabContent scrolls.
+/**
+ * A tabbed panel: PanelHeader with the notices and the tabs stays in place,
+ * and PanelTabContent below it scrolls. Use it in a `tabbed` side panel.
+ */
 export const PanelBody = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+`;
+
+export const PanelHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
-  height: 100%;
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg} 0`};
 `;
 
 export const SectionTitle = styled.div`
@@ -109,26 +120,19 @@ export const CheckboxLabel = styled.label`
   color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
-/** Line under the panel tabs. */
 export const PanelTabBar = styled.div`
-  flex-shrink: 0;
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
 `;
 
-/**
- * The content of the active tab. It scrolls on its own so the tabs above stay put.
- * The negative margin moves the scrollbar to the panel edge.
- */
-export const PanelTabContent = styled.div`
-  overflow-y: auto;
-  display: flex;
+export const PanelTabScroll = styled(ScrollArea)`
   flex: 1;
+`;
+
+export const PanelTabInner = styled.div`
+  display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
-
-  min-height: 0;
-  margin-inline: calc(-1 * ${({ theme }) => theme.spacing.lg});
-  padding-inline: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.lg};
 `;
 
 /** Number of problems on a tab or an entry. Red when one of them blocks saving. */

@@ -66,10 +66,9 @@ export const SidebarLogos = styled.div`
 export const SidebarLogo = styled.img<{ $hidden: boolean; $small?: boolean }>`
   position: absolute;
   top: 0;
-  left: 0.25rem;
+  left: ${({ $small }) => ($small ? "0.25rem" : "0")};
 
-  width: ${({ $small }) => ($small ? "2rem" : "11.5rem")};
-  max-width: ${({ $small }) => ($small ? "none" : "calc(100% - 1.5rem)")};
+  width: ${({ $small }) => ($small ? "2rem" : "100%")};
   height: 100%;
 
   object-fit: contain;
@@ -87,6 +86,7 @@ export const SidebarLabel = styled.span<{ $hidden: boolean }>`
  */
 export const SidebarAction = styled(Button)`
   gap: 0;
+  width: 100%;
 `;
 
 export const SidebarActionLabel = styled.span<{ $hidden: boolean }>`

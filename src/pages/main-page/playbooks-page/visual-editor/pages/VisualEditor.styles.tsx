@@ -1,5 +1,7 @@
 import styled, { css } from "styled-components";
 
+import { ScrollArea } from "@/components/ScrollArea";
+
 import { PANEL_WIDTH, panelWidth, type Side } from "./panelWidth";
 
 const PANEL_BORDERS_WIDTH = "2px";
@@ -14,7 +16,9 @@ const fadeWhenCollapsed = css<{ $collapsed: boolean }>`
 `;
 
 // Fills the page content area; MainContent has a fixed height, so 100% is enough.
-export const EditorLayout = styled.div<{
+export const EditorLayout = styled.div.attrs<{ "data-fill-height"?: boolean }>({
+  "data-fill-height": true,
+})<{
   $leftCollapsed: boolean;
   $rightCollapsed: boolean;
 }>`
@@ -135,20 +139,35 @@ export const SidePanelToggle = styled.button`
 
 // Fixed width so the content does not reflow while the panel animates.
 // A wide panel has the width of the right panel on either side.
-export const SidePanelContent = styled.div<{
+type SidePanelContentProps = {
   $side: Side;
   $wide?: boolean;
   $collapsed: boolean;
-}>`
-  overflow-y: auto;
-  flex: 1;
+};
 
+const sidePanelContent = css<SidePanelContentProps>`
+  flex: 1;
   width: calc(
     ${({ $side, $wide }) => PANEL_WIDTH[$wide ? "right" : $side]} -
       ${PANEL_BORDERS_WIDTH}
   );
-  min-height: 0;
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg} ${theme.spacing.lg}`};
 
   ${fadeWhenCollapsed}
+`;
+
+export const SidePanelContent = styled(ScrollArea)<SidePanelContentProps>`
+  ${sidePanelContent}
+`;
+
+/** Content of a tabbed panel. It does not scroll, the tab content below the tabs does. */
+export const SidePanelTabbedContent = styled.div<SidePanelContentProps>`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  ${sidePanelContent}
+`;
+
+export const SidePanelInner = styled.div`
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.lg} ${theme.spacing.lg}`};
 `;

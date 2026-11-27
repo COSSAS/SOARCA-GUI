@@ -31,36 +31,36 @@ export const StatusIndicator: React.FC<{ collapsed: boolean }> = ({
 
   const isOnline = status === "success" && !isError && data === "pong";
   const isReconnecting = isFetching && !isOnline;
+  const label = isOnline
+    ? "Connected to SOARCA!"
+    : isReconnecting
+      ? "Reconnecting to SOARCA..."
+      : "We lost contact with SOARCA!";
 
   return (
-    <StatusDot
+    <StatusLine
       $collapsed={collapsed}
       $isOnline={isOnline}
       $isReconnecting={isReconnecting}
-      title={
-        isOnline
-          ? "Connected to SOARCA!"
-          : isReconnecting
-            ? "Reconnecting to SOARCA..."
-            : "We lost contact with SOARCA!"
-      }
+      role="img"
+      aria-label={label}
+      title={label}
     />
   );
 };
 
-const StatusDot = styled.div<{
+const StatusLine = styled.div<{
   $collapsed: boolean;
   $isOnline: boolean;
   $isReconnecting: boolean;
 }>`
   position: absolute;
-  top: ${({ $collapsed }) => ($collapsed ? "-0.25rem" : "50%")};
-  right: ${({ $collapsed }) => ($collapsed ? "auto" : "0")};
-  left: ${({ $collapsed }) => ($collapsed ? "0" : "auto")};
-  transform: ${({ $collapsed }) => ($collapsed ? "none" : "translateY(-50%)")};
+  top: ${({ $collapsed }) => ($collapsed ? "-0.25rem" : "auto")};
+  bottom: ${({ $collapsed }) => ($collapsed ? "auto" : "-0.5rem")};
+  left: 0;
 
-  width: ${({ $collapsed }) => ($collapsed ? "2.5rem" : "10px")};
-  height: ${({ $collapsed }) => ($collapsed ? "2.5rem" : "10px")};
+  width: ${({ $collapsed }) => ($collapsed ? "2.5rem" : "100%")};
+  height: ${({ $collapsed }) => ($collapsed ? "2.5rem" : "2px")};
   border: ${({ $collapsed }) => ($collapsed ? "2px solid currentColor" : "0")};
   border-radius: ${({ theme }) => theme.radius.full};
 

@@ -1,9 +1,23 @@
+import type { ReactNode } from "react";
+
 import { Tabs, TabsProvider, ThemeSize } from "@/components";
 
 import type { PanelTab } from "../model/specs";
 import { getInvalidDrafts, useJsonDrafts } from "./jsonDrafts";
-import { IssueCount, PanelTabBar } from "./Panel.styles";
+import {
+  IssueCount,
+  PanelTabBar,
+  PanelTabInner,
+  PanelTabScroll,
+} from "./Panel.styles";
 import { usePanelForm } from "./panelForm";
+
+/** The content of the active tab. It scrolls below the tabs. */
+export const PanelTabContent = ({ children }: { children: ReactNode }) => (
+  <PanelTabScroll>
+    <PanelTabInner>{children}</PanelTabInner>
+  </PanelTabScroll>
+);
 
 const TAB_LABELS: Record<PanelTab, string> = {
   details: "Details",

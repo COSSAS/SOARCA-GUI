@@ -17,9 +17,9 @@ import { STEP_TABS, type CacaoSpec, type PanelTab } from "../model/specs";
 import { FieldInput } from "./FieldInput";
 import { IssueNotices } from "./IssueNotices";
 import { JsonFieldsEditor } from "./JsonFieldsEditor";
-import { Hint, PanelBody, PanelTabContent, SectionTitle } from "./Panel.styles";
+import { Hint, PanelBody, PanelHeader, SectionTitle } from "./Panel.styles";
 import { PanelFormContext } from "./panelForm";
-import { PanelTabs } from "./PanelTabs";
+import { PanelTabContent, PanelTabs } from "./PanelTabs";
 
 type StepPanelProps = {
   playbook: Playbook;
@@ -85,9 +85,10 @@ export const StepPanel: React.FC<StepPanelProps> = ({
   return (
     <PanelFormContext value={{ playbook, step, ownerId: stepId, tab, issues }}>
       <PanelBody>
-        <IssueNotices issues={stepProblems} />
-
-        <PanelTabs tabs={STEP_TABS} onSelectTab={onSelectTab} />
+        <PanelHeader>
+          <IssueNotices issues={stepProblems} />
+          <PanelTabs tabs={STEP_TABS} onSelectTab={onSelectTab} />
+        </PanelHeader>
 
         <PanelTabContent>
           {tabFields.length > 0 && (

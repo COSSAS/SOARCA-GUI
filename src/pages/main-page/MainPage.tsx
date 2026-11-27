@@ -4,6 +4,7 @@ import {
   IconChevronRight,
   IconFilePlus,
   IconHome,
+  IconLogout,
   IconNotebook,
   IconSettings,
   type TablerIcon,
@@ -52,6 +53,7 @@ import {
 } from "./MainPage.styles";
 import { AccountDetails } from "./AccountDetails";
 import { StatusIndicator } from "./StatusIndicator";
+import { ThemeModeControl } from "./ThemeModeControl";
 
 interface NavRoute {
   path: string;
@@ -116,7 +118,6 @@ export const MainPage: React.FC = () => {
           <RequirePermission permission={Permissions.PlaybookWrite}>
             <SidebarAction
               $variant={ThemeVariant.Primary}
-              $fullWidth
               title={collapsed ? "New playbook" : undefined}
               onClick={() => handleNavigation(PATHS.PLAYBOOKS.NEW)}
             >
@@ -156,9 +157,7 @@ export const MainPage: React.FC = () => {
                 $label="Account menu"
                 $trigger={
                   <>
-                    <AccountAvatar aria-hidden="true">
-                      {initial(auth.user)}
-                    </AccountAvatar>
+                    <AccountAvatar>{initial(auth.user)}</AccountAvatar>
                     <AccountIdentity>
                       <AccountName>{auth.user.name || "Account"}</AccountName>
                       <AccountEmail title={auth.user.email || undefined}>
@@ -174,11 +173,13 @@ export const MainPage: React.FC = () => {
                   $gap="md"
                 >
                   <AccountDetails user={auth.user} />
+                  <ThemeModeControl />
                   <Button
                     $variant={ThemeVariant.Error}
                     $fullWidth
                     onClick={auth.logout}
                   >
+                    <Icon $icon={IconLogout} />
                     Log out
                   </Button>
                 </AccountMenuContent>

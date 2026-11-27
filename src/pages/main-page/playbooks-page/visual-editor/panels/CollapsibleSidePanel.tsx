@@ -8,6 +8,8 @@ import {
   SidePanelContent,
   SidePanelHeader,
   SidePanelHeading,
+  SidePanelInner,
+  SidePanelTabbedContent,
   SidePanelTitle,
   SidePanelToggle,
 } from "../pages/VisualEditor.styles";
@@ -19,6 +21,8 @@ type CollapsibleSidePanelProps = {
   label: string;
   title: ReactNode;
   actions?: ReactNode;
+  /** The children bring their own scroll area below fixed tabs, see PanelBody. */
+  tabbed?: boolean;
   collapsed: boolean;
   onToggle: () => void;
   children: ReactNode;
@@ -31,6 +35,7 @@ export const CollapsibleSidePanel = ({
   label,
   title,
   actions,
+  tabbed = false,
   collapsed,
   onToggle,
   children,
@@ -53,14 +58,25 @@ export const CollapsibleSidePanel = ({
           {actions}
         </SidePanelHeading>
       </SidePanelHeader>
-      <SidePanelContent
-        $side={side}
-        $wide={wide}
-        $collapsed={collapsed}
-        inert={collapsed}
-      >
-        {children}
-      </SidePanelContent>
+      {tabbed ? (
+        <SidePanelTabbedContent
+          $side={side}
+          $wide={wide}
+          $collapsed={collapsed}
+          inert={collapsed}
+        >
+          {children}
+        </SidePanelTabbedContent>
+      ) : (
+        <SidePanelContent
+          $side={side}
+          $wide={wide}
+          $collapsed={collapsed}
+          inert={collapsed}
+        >
+          <SidePanelInner>{children}</SidePanelInner>
+        </SidePanelContent>
+      )}
     </SidePanel>
   );
 };

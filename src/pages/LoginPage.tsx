@@ -117,12 +117,12 @@ export const LoginPage: React.FC = () => {
   const withNotices = (content: ReactNode) => (
     <FormContainer>
       {signInError !== null && (
-        <NotificationCard $variant={ThemeVariant.Error} role="alert">
+        <NotificationCard $variant={ThemeVariant.Error}>
           {signInErrorMessage(signInError)}
         </NotificationCard>
       )}
       {params.get("reason") === "expired" && (
-        <NotificationCard $variant={ThemeVariant.Warning} role="status">
+        <NotificationCard $variant={ThemeVariant.Warning}>
           Your session has ended. Select a provider to sign in again.
         </NotificationCard>
       )}
@@ -133,18 +133,16 @@ export const LoginPage: React.FC = () => {
   const renderBody = () => {
     switch (view) {
       case "callback":
-        return <CenteredSpinner role="status" aria-label="Signing in" />;
+        return <CenteredSpinner />;
       case "session":
         return <AuthStatus />;
       case "noAccess":
         return <NoAccess />;
       case "loadingProviders":
-        return (
-          <CenteredSpinner role="status" aria-label="Loading login providers" />
-        );
+        return <CenteredSpinner />;
       case "configError":
         return withNotices(
-          <NotificationCard $variant={ThemeVariant.Error} role="alert">
+          <NotificationCard $variant={ThemeVariant.Error}>
             Could not read the sign-in settings of this GUI:{" "}
             {config.error instanceof Error
               ? config.error.message
@@ -170,19 +168,12 @@ export const LoginPage: React.FC = () => {
                   <span>{provider.label}</span>
                 </ProviderIdentity>
                 {pendingProvider === provider.id ? (
-                  <Spinner aria-hidden="true" />
+                  <Spinner />
                 ) : (
-                  <Icon
-                    $icon={IconArrowRight}
-                    className="provider-arrow"
-                    aria-hidden="true"
-                  />
+                  <Icon $icon={IconArrowRight} className="provider-arrow" />
                 )}
               </ProviderButton>
             ))}
-            <VisuallyHidden role="status">
-              {pendingProvider !== null && "Redirecting to sign in"}
-            </VisuallyHidden>
           </>,
         );
     }
@@ -291,17 +282,4 @@ const ProviderIdentity = styled.span`
   gap: inherit;
   align-items: center;
   justify-content: center;
-`;
-
-const VisuallyHidden = styled.span`
-  position: absolute;
-
-  overflow: hidden;
-
-  width: 1px;
-  height: 1px;
-
-  white-space: nowrap;
-
-  clip-path: inset(50%);
 `;

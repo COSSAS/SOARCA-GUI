@@ -29,9 +29,9 @@ export function AuthStatus() {
   return (
     <Spacer $direction="vertical" $gap="md" $align="center">
       {auth.isLoading ? (
-        <Spinner role="status" aria-label="Checking your session" />
+        <Spinner />
       ) : (
-        <NotificationCard $variant={ThemeVariant.Error} role="alert">
+        <NotificationCard $variant={ThemeVariant.Error}>
           <CardTitle>Sign-in unavailable</CardTitle>
           <Text>
             We could not check your sign-in status. Please try again. If the
@@ -47,7 +47,7 @@ export function AuthStatus() {
 export function NoAccess() {
   const { logout } = useAuth();
   return (
-    <NotificationCard $variant={ThemeVariant.Warning} role="alert">
+    <NotificationCard $variant={ThemeVariant.Warning}>
       <CardTitle>No access to SOARCA</CardTitle>
       <Text>
         You are signed in, but your account has no SOARCA role. Ask your
@@ -86,7 +86,7 @@ export function PermissionGate({ permission }: { permission: Permission }) {
   const { can } = useAuth();
   if (can(permission)) return <Outlet />;
   return (
-    <NotificationCard $variant={ThemeVariant.Error} role="alert">
+    <NotificationCard $variant={ThemeVariant.Error}>
       <CardTitle>Access denied</CardTitle>
       <Text>
         You do not have permission to view this page. Contact your administrator

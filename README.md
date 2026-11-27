@@ -24,6 +24,10 @@ The UI targets current desktop browsers with ES2024 support. Vite keeps its
 default Baseline Widely Available build target. API queries refetch stale data
 when the window regains focus or the connection returns.
 
+Scrollable pages, panels, modals and code blocks share the same thin scrollbars.
+Side-panel tabs stay above the scrolling content. Native editors and text areas
+keep their own scrollbars, with matching theme colors.
+
 ## Running the Project
 
 ### Development Mode
